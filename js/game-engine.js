@@ -175,11 +175,11 @@ class GameEngine {
 
     this.audio.onSpeechEnd = () => {
       this.character.setTalking(false);
-      this.checkAutoAdvance();
+      this.checkAutoAdvance(true);
     };
   }
 
-  checkAutoAdvance() {
+  checkAutoAdvance(fromSpeechEnd = false) {
     clearTimeout(this.autoTimer);
     if (!this.isAutoMode) return;
 
@@ -190,12 +190,16 @@ class GameEngine {
     if (!currentEntry) return;
     const scene = currentEntry.scene;
 
-    // 選択肢画面・証拠品つきつけ画面では自動進行しない
-    if ((scene.choices && scene.choices.length > 0) || scene.present) return;
+    // 選択肢画面・証拠品つきつけ画面・エンディング画面では自動進行しない
+    if ((scene.choices && scene.choices.length > 0) || scene.present || scene.ending) return;
 
-    // 文字数に応じた十分な読書時間を計算（最低2.2秒、最大5.5秒）
-    const textLen = (scene.text || '').length;
-    const readingDelay = Math.min(5500, Math.max(2200, textLen * 65));
+    // 音声終了後は聞き終えているので小気味よいテンポ感（600ms）で次へ！
+    // 音声が無いシーンのみ文字数に応じた読書待機（1.6秒〜3.2秒）
+    let readingDelay = 600;
+    if (!fromSpeechEnd) {
+      const textLen = (scene.text || '').length;
+      readingDelay = Math.min(3200, Math.max(1600, textLen * 45));
+    }
 
     this.autoTimer = setTimeout(() => {
       if (this.isAutoMode && !this.isTextTyping && !this.audio.isPlaying) {

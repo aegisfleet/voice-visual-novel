@@ -67,10 +67,19 @@ class AudioController {
    */
   async play(lineData) {
     this.stop();
+
+    if (!lineData || !lineData.text) {
+      this.isPlaying = false;
+      return;
+    }
+
     this.isPlaying = true;
 
-    // 1. 本番用TTS音声ファイルが存在するか確認
-    const hasAudioFile = lineData.voiceFile ? await this.checkAudioExists(lineData.voiceFile) : false;
+    // 1. 本番用TTS音声ファイルが存在するか確認（存在フラグ等で最適化）
+    let hasAudioFile = false;
+    if (lineData.voiceFile && this.hasAudioFilesInstalled) {
+      hasAudioFile = await this.checkAudioExists(lineData.voiceFile);
+    }
 
     if (hasAudioFile) {
       return this._playAudioFile(lineData.voiceFile);
@@ -88,22 +97,18 @@ class AudioController {
 
       if (this.onSpeechStart) this.onSpeechStart();
 
-      this.currentAudio.onended = () => {
+      const finish = () => {
+        if (!this.isPlaying) return;
         this.isPlaying = false;
         if (this.onSpeechEnd) this.onSpeechEnd();
         resolve();
       };
 
-      this.currentAudio.onerror = () => {
-        this.isPlaying = false;
-        if (this.onSpeechEnd) this.onSpeechEnd();
-        resolve();
-      };
+      this.currentAudio.onended = finish;
+      this.currentAudio.onerror = finish;
 
       this.currentAudio.play().catch(() => {
-        this.isPlaying = false;
-        if (this.onSpeechEnd) this.onSpeechEnd();
-        resolve();
+        finish();
       });
     });
   }
@@ -114,8 +119,19 @@ class AudioController {
   _playWebSpeech(lineData) {
     return new Promise((resolve) => {
       if (!this.synth) {
+        this.isPlaying = false;
+        if (this.onSpeechEnd) this.onSpeechEnd();
         resolve();
         return;
+      }
+
+      // Chrome等でspeechSynthesisがpausedのまま固まる現象を解消
+      try {
+        if (this.synth.paused) {
+          this.synth.resume();
+        }
+      } catch (e) {
+        console.warn(e);
       }
 
       const text = lineData.text || '';
@@ -123,30 +139,54 @@ class AudioController {
       const utter = new SpeechSynthesisUtterance(text);
 
       utter.lang = 'ja-JP';
-      utter.pitch = config.pitch !== undefined ? config.pitch : 1.1; // 女性キャラ向けに少し高め
+      utter.pitch = config.pitch !== undefined ? config.pitch : 1.1;
       utter.rate = config.rate !== undefined ? config.rate : 1.05;
 
       const voice = this.getJapaneseVoice(config.gender || 'female');
       if (voice) utter.voice = voice;
 
-      utter.onstart = () => {
-        if (this.onSpeechStart) this.onSpeechStart();
-      };
-
-      utter.onend = () => {
-        this.isPlaying = false;
-        if (this.onSpeechEnd) this.onSpeechEnd();
-        resolve();
-      };
-
-      utter.onerror = () => {
-        this.isPlaying = false;
-        if (this.onSpeechEnd) this.onSpeechEnd();
-        resolve();
-      };
-
+      // ChromeのGC対策: グローバル参照に保持して発話中の強制切断を防ぐ
+      window.__activeUtterance = utter;
       this.currentUtterance = utter;
-      this.synth.speak(utter);
+
+      let hasFinished = false;
+      let resumeTimer = null;
+
+      const finish = () => {
+        if (hasFinished) return;
+        hasFinished = true;
+        clearInterval(resumeTimer);
+        window.__activeUtterance = null;
+        this.currentUtterance = null;
+        this.isPlaying = false;
+        if (this.onSpeechEnd) this.onSpeechEnd();
+        resolve();
+      };
+
+      utter.onstart = () => {
+        this.isPlaying = true;
+        if (this.onSpeechStart) this.onSpeechStart();
+
+        // 長文時のChrome自動ポーズ防止
+        clearInterval(resumeTimer);
+        resumeTimer = setInterval(() => {
+          if (this.synth && this.synth.speaking && !hasFinished) {
+            try { this.synth.resume(); } catch (e) {}
+          } else {
+            clearInterval(resumeTimer);
+          }
+        }, 4000);
+      };
+
+      utter.onend = finish;
+      utter.onerror = finish;
+
+      try {
+        this.synth.speak(utter);
+      } catch (err) {
+        console.error('Speech synthesis error:', err);
+        finish();
+      }
     });
   }
 
@@ -155,16 +195,18 @@ class AudioController {
    */
   stop() {
     this.isPlaying = false;
+    window.__activeUtterance = null;
+    this.currentUtterance = null;
     if (this.currentAudio) {
       this.currentAudio.pause();
       this.currentAudio.currentTime = 0;
       this.currentAudio = null;
     }
     if (this.synth) {
-      this.synth.cancel();
+      try {
+        this.synth.cancel();
+      } catch (e) {}
     }
-    this.currentUtterance = null;
-    if (this.onSpeechEnd) this.onSpeechEnd();
   }
 }
 

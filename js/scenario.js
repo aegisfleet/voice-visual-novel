@@ -147,18 +147,19 @@ const SCENARIO_DATA = [
     character: null,
     text: "不自然に露呈したIPと、安全リミッターの外れた家庭用ロボット。どこを重点的に捜査する？",
     choices: [
-      { text: "【通常捜査】リビングの通信端末を押収し、ロボットの身柄確保を急ぐ", jump: "home_search_router" },
+      { text: "【通常捜査A】リビングのルーターと通信機器を解析し、外部接続ログを押収する", jump: "home_search_router" },
+      { text: "【通常捜査B】母親とイブを直接取り調べ、リビング内の不審物を捜索する", jump: "home_search_interrogate" },
       { text: "【再捜査】なぜ母がリミッターを外したのか？ 子供部屋と医療記録を徹底捜査する", jump: "home_search_childroom", requiresReinvestigation: true }
     ]
   },
 
-  // --- 通常捜査ルート（1周目・2周目共通） ---
+  // --- 通常捜査A: 通信ルーター解析 ---
   {
     id: "home_search_router",
     background: "assets/backgrounds/home_living.svg",
     speaker: "アイリス",
     character: { id: "iris", expression: "serious", motion: "nod" },
-    text: "ルーターとイブのログを押収完了！…国家クラウドを突破した痕跡はあるけど、どうしてこんな改造が施され、なぜ生IPが残されていたのかしら…？",
+    text: "ルーターとイブの接続ログを押収完了！…国家クラウドを突破した侵入ツールが見つかったわ。でも、どうしてこんな初歩的な生IPが残されていたのかしら…？",
     voiceFile: "assets/audio/home_iris_04.mp3",
     speechConfig: { pitch: 1.25, rate: 1.05, gender: "female" },
     addEvidence: "ev_tool"
@@ -178,6 +179,51 @@ const SCENARIO_DATA = [
     speaker: null,
     character: null,
     text: "安全リミッターの外れた家庭用アンドロイド『イブ』を緊急逮捕。警察署の取調室へ連行した。",
+    jump: "interrog_start"
+  },
+
+  // --- 通常捜査B: 母親とイブへの直接取り調べ ---
+  {
+    id: "home_search_interrogate",
+    background: "assets/backgrounds/home_living.svg",
+    speaker: "あなた",
+    character: null,
+    text: "「シノハラさん、イブ。この家庭用ロボットの安全ガードレールが外されている理由を説明してください」"
+  },
+  {
+    id: "home_search_interrogate_02",
+    background: "assets/backgrounds/home_living.svg",
+    speaker: "シノハラ",
+    character: { id: "shinohara", expression: "worried", motion: "shake" },
+    text: "わ、私には何もわかりません…！ この子は娘のお世話をしてくれる普通の子なんです…！ お願いです、乱暴にしないで…！",
+    voiceFile: "assets/audio/home_shinohara_01.mp3",
+    speechConfig: { pitch: 1.15, rate: 0.95, gender: "female" }
+  },
+  {
+    id: "home_search_interrogate_03",
+    background: "assets/backgrounds/home_living.svg",
+    speaker: "イブ",
+    character: { id: "eve", expression: "sad", motion: "nod" },
+    text: "……私ニ、異常ハ……アリマセン。オ母様トユイチャンヲ……怖ガラセナイデクダサイ……。",
+    voiceFile: "assets/audio/home_eve_01.mp3",
+    speechConfig: { pitch: 1.1, rate: 0.9, gender: "female" }
+  },
+  {
+    id: "home_search_interrogate_04",
+    background: "assets/backgrounds/home_living.svg",
+    speaker: "アイリス",
+    character: { id: "iris", expression: "serious", motion: "tilt" },
+    text: "先輩、イブの本体ストレージから国家クラウドを突破した【侵入用サイバーツール】のバイナリを直接検出したわ！ 二人とも何かを必死に隠しているようだけど、物証は確実よ！",
+    voiceFile: "assets/audio/home_iris_03.mp3",
+    speechConfig: { pitch: 1.25, rate: 1.1, gender: "female" },
+    addEvidence: "ev_tool"
+  },
+  {
+    id: "home_search_interrogate_05",
+    background: "assets/backgrounds/home_living.svg",
+    speaker: null,
+    character: null,
+    text: "母親は怯えて口を閉ざし、イブも沈黙を守るのみ。これ以上の現場捜査は困難と判断し、被疑ロボット『イブ』を取調室へ連行した。",
     jump: "interrog_start"
   },
 

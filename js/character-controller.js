@@ -206,73 +206,124 @@ class CharacterController {
   }
 
   /* ========================================================
-     キャラクター2: イブ (EVE) - 少女型AIシッターロボット
+     キャラクター2: イブ (EVE) - 家庭用ケア・シッターロボット
      ======================================================== */
   getEveSVG() {
     return `
       <svg class="character-svg holo-character" viewBox="0 0 500 800" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <linearGradient id="eveHairGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stop-color="#a7f3d0"/><stop offset="50%" stop-color="#5eead4"/><stop offset="100%" stop-color="#2dd4bf"/>
+            <stop offset="0%" stop-color="#bbf7d0"/><stop offset="50%" stop-color="#5eead4"/><stop offset="100%" stop-color="#14b8a6"/>
           </linearGradient>
           <linearGradient id="eveSkinGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stop-color="#f0fdfa"/><stop offset="100%" stop-color="#ccfbf1"/>
+            <stop offset="0%" stop-color="#f8fafc"/><stop offset="100%" stop-color="#e2e8f0"/>
           </linearGradient>
           <linearGradient id="eveEyeGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stop-color="#0f766e"/><stop offset="60%" stop-color="#14b8a6"/><stop offset="100%" stop-color="#99f6e4"/>
+            <stop offset="0%" stop-color="#0f766e"/><stop offset="60%" stop-color="#14b8a6"/><stop offset="100%" stop-color="#a7f3d0"/>
           </linearGradient>
-          <linearGradient id="eveDressGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stop-color="#115e59"/><stop offset="100%" stop-color="#042f2e"/>
+          <linearGradient id="eveApronGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#ffffff"/><stop offset="100%" stop-color="#f1f5f9"/>
+          </linearGradient>
+          <linearGradient id="eveDressUnderGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#0d9488"/><stop offset="100%" stop-color="#115e59"/>
           </linearGradient>
         </defs>
 
-        <!-- 1. 後ろ髪 (透明感のあるツインテール) -->
-        <g class="layer-back-hair" opacity="0.85">
+        <!-- 1. 後ろ髪 (柔らかいミントグリーンのツインテール) -->
+        <g class="layer-back-hair" opacity="0.9">
           <path d="M 140 230 C 80 360 70 580 110 710 C 150 560 180 440 200 370 Z" fill="url(#eveHairGrad)"/>
           <path d="M 360 230 C 420 360 430 580 390 710 C 350 560 320 440 300 370 Z" fill="url(#eveHairGrad)"/>
-          <path d="M 160 210 C 120 340 140 560 170 650 C 220 670 280 670 330 650 C 360 560 380 340 340 210 Z" fill="url(#eveHairGrad)" opacity="0.6"/>
+          <path d="M 160 210 C 120 340 140 560 170 650 C 220 670 280 670 330 650 C 360 560 380 340 340 210 Z" fill="url(#eveHairGrad)" opacity="0.65"/>
         </g>
 
-        <!-- 2. 体・サイバードレス -->
+        <!-- 2. 体・家庭用シッターロボットユニフォーム（エプロンドレス） -->
         <g class="layer-body" id="partBody">
-          <path d="M 234 300 L 234 370 L 266 370 L 266 300 Z" fill="url(#eveSkinGrad)"/>
-          <!-- アンドロイドチョーカー -->
-          <rect x="230" y="335" width="40" height="10" rx="3" fill="#0f766e"/>
-          <circle cx="250" cy="340" r="3.5" fill="#5eead4"/>
-          <!-- ドレス -->
-          <path d="M 170 370 Q 250 350 330 370 L 370 590 L 130 590 Z" fill="url(#eveDressGrad)"/>
-          <!-- 胸のコアサークル -->
-          <circle cx="250" cy="430" r="24" fill="none" stroke="#2dd4bf" stroke-width="2" stroke-dasharray="6,4"/>
-          <circle cx="250" cy="430" r="12" fill="#2dd4bf" opacity="0.5"/>
+          <!-- ロボット首部（関節シリンダー＆接続ポート） -->
+          <path d="M 234 300 L 234 365 L 266 365 L 266 300 Z" fill="url(#eveSkinGrad)"/>
+          <rect x="236" y="325" width="28" height="4" rx="2" fill="#94a3b8"/>
+          <rect x="238" y="335" width="24" height="3" rx="1.5" fill="#2dd4bf" opacity="0.8"/>
+          <!-- 首の型番刻印 -->
+          <rect x="242" y="345" width="16" height="5" rx="1" fill="#cbd5e1"/>
+
+          <!-- インナードレス -->
+          <path d="M 165 365 Q 250 345 335 365 L 375 600 L 125 600 Z" fill="url(#eveDressUnderGrad)"/>
+
+          <!-- 肩の球体関節（ロボットショルダー） -->
+          <circle cx="150" cy="385" r="16" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+          <circle cx="150" cy="385" r="7" fill="#2dd4bf" opacity="0.6"/>
+          <circle cx="350" cy="385" r="16" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+          <circle cx="350" cy="385" r="7" fill="#2dd4bf" opacity="0.6"/>
+
+          <!-- ホワイトケアエプロン -->
+          <path d="M 195 365 L 305 365 L 330 600 L 170 600 Z" fill="url(#eveApronGrad)" stroke="#cbd5e1" stroke-width="1.5"/>
+          <path d="M 195 365 L 210 460 L 290 460 L 305 365" stroke="#2dd4bf" stroke-width="2.5" fill="none"/>
+
+          <!-- エプロン胸元のケアバッジ（ホームケアAIエンブレム） -->
+          <circle cx="250" cy="415" r="18" fill="#ffffff" stroke="#2dd4bf" stroke-width="2"/>
+          <circle cx="250" cy="415" r="12" fill="#ccfbf1"/>
+          <!-- ハートケアマーク -->
+          <path d="M 246 412 C 246 408 250 408 250 411 C 250 408 254 408 254 412 C 254 416 250 419 250 421 C 250 419 246 416 246 412 Z" fill="#0d9488"/>
+
+          <!-- エプロンのお世話ツールポケット -->
+          <rect x="215" y="490" width="70" height="45" rx="6" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/>
+          <line x1="215" y1="500" x2="285" y2="500" stroke="#2dd4bf" stroke-width="2"/>
         </g>
 
-        <!-- 3. 頭部・ホログラムリング (天使の輪) -->
+        <!-- 3. 頭部・顔パーツ (中心 x=250) -->
         <g class="layer-head" id="partHead">
-          <!-- サイバーハロー (頭上の光輪) -->
-          <ellipse cx="250" cy="130" rx="85" ry="18" fill="none" stroke="#2dd4bf" stroke-width="3" opacity="0.9"/>
-          <!-- 輪郭 -->
+          <!-- ロボットカチューシャ（ヘッドインターフェース） -->
+          <path d="M 165 210 Q 250 145 335 210" stroke="#f8fafc" stroke-width="9" stroke-linecap="round" fill="none"/>
+          <path d="M 165 210 Q 250 145 335 210" stroke="#2dd4bf" stroke-width="3" stroke-linecap="round" fill="none"/>
+
+          <!-- 左右の耳型オーディオセンサーユニット（家庭用ロボットイヤーポッド） -->
+          <g class="ear-pod-left">
+            <rect x="150" y="225" width="16" height="38" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+            <circle cx="158" cy="244" r="5" fill="#2dd4bf"/>
+            <circle cx="158" cy="244" r="2.5" fill="#ffffff"/>
+          </g>
+          <g class="ear-pod-right">
+            <rect x="334" y="225" width="16" height="38" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+            <circle cx="342" cy="244" r="5" fill="#2dd4bf"/>
+            <circle cx="342" cy="244" r="2.5" fill="#ffffff"/>
+          </g>
+
+          <!-- 輪郭（陶器のような白く滑らかなアンドロイド肌） -->
           <path d="M 175 210 C 175 320 215 360 250 360 C 285 360 325 320 325 210 C 325 150 175 150 175 210 Z" fill="url(#eveSkinGrad)"/>
-          <!-- サイバーチーク -->
-          <g id="partBlush"><ellipse cx="205" cy="285" rx="14" ry="7" fill="#2dd4bf" opacity="0.3"/><ellipse cx="295" cy="285" rx="14" ry="7" fill="#2dd4bf" opacity="0.3"/></g>
+
+          <!-- 頬のロボットジョイント・スリットライン -->
+          <path d="M 185 270 Q 188 285 195 295" stroke="#94a3b8" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.6"/>
+          <path d="M 315 270 Q 312 285 305 295" stroke="#94a3b8" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.6"/>
+
+          <!-- チークLED（温かな淡いミントピンクのステータス発光） -->
+          <g id="partBlush">
+            <ellipse cx="205" cy="285" rx="14" ry="7" fill="#f43f5e" opacity="0.25"/>
+            <ellipse cx="295" cy="285" rx="14" ry="7" fill="#f43f5e" opacity="0.25"/>
+          </g>
+
           <!-- 鼻 -->
           <circle cx="250" cy="275" r="1.5" fill="#14b8a6"/>
+
           <!-- 眉毛 -->
           <path d="M 195 216 Q 212 210 228 216" stroke="#0f766e" stroke-width="2.5" stroke-linecap="round" fill="none"/>
           <path d="M 272 216 Q 288 210 305 216" stroke="#0f766e" stroke-width="2.5" stroke-linecap="round" fill="none"/>
 
-          <!-- 表情A: 通常目 (eyesNormal) -->
+          <!-- 表情A: 通常目（デジタルグラスアイ） (eyesNormal) -->
           <g id="eyesNormal">
             <g class="eye-left">
-              <ellipse cx="212" cy="245" rx="20" ry="22" fill="#f0fdfa"/>
+              <ellipse cx="212" cy="245" rx="20" ry="22" fill="#ffffff"/>
+              <!-- デジタル光彩サークル -->
               <ellipse cx="213" cy="246" rx="14" ry="18" fill="url(#eveEyeGrad)"/>
+              <ellipse cx="213" cy="246" rx="11" ry="14" fill="none" stroke="#5eead4" stroke-width="1" stroke-dasharray="3,2"/>
               <circle cx="213" cy="245" r="6" fill="#042f2e"/>
               <circle cx="208" cy="238" r="4.5" fill="#ffffff"/>
               <circle cx="218" cy="254" r="2.5" fill="#ccfbf1" opacity="0.9"/>
               <path d="M 190 240 Q 212 220 234 240" stroke="#0f766e" stroke-width="3.5" stroke-linecap="round" fill="none"/>
             </g>
             <g class="eye-right">
-              <ellipse cx="288" cy="245" rx="20" ry="22" fill="#f0fdfa"/>
+              <ellipse cx="288" cy="245" rx="20" ry="22" fill="#ffffff"/>
+              <!-- デジタル光彩サークル -->
               <ellipse cx="287" cy="246" rx="14" ry="18" fill="url(#eveEyeGrad)"/>
+              <ellipse cx="287" cy="246" rx="11" ry="14" fill="none" stroke="#5eead4" stroke-width="1" stroke-dasharray="3,2"/>
               <circle cx="287" cy="245" r="6" fill="#042f2e"/>
               <circle cx="283" cy="238" r="4.5" fill="#ffffff"/>
               <circle cx="293" cy="254" r="2.5" fill="#ccfbf1" opacity="0.9"/>
