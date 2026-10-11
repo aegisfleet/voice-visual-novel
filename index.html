@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PROJECT EVE: 偽りの暴走 - 近未来SFミステリーノベル</title>
+  <title>PROJECT EVE: 秘匿された流出 - 電脳フォレンジック裁判ノベル</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -11,16 +11,16 @@
   <div id="gameViewport">
     <!-- 1. タイトル画面 -->
     <div id="titleScreen" class="title-screen">
-      <div class="cyber-badge">CYBER MYSTERY NOVEL</div>
+      <div class="cyber-badge">CYBER FORENSIC &amp; TRIBUNAL NOVEL</div>
       <h1 class="title-logo">PROJECT EVE</h1>
-      <p class="title-sub">〜 偽りの暴走 〜</p>
+      <p class="title-sub">〜 秘匿された流出 〜</p>
 
       <div class="endings-collection" id="endingsBadge">
         <!-- 達成バッジがJSで挿入される -->
       </div>
 
       <button id="btnStart" class="start-btn">捜査を開始する</button>
-      <p class="start-notice">※音声読み上げ（フルボイス）が有効になります。プレイ時間目安：約3分</p>
+      <p class="start-notice">※【前段: 現場捜査パート】＆【後段: 緊急査問会パート】の2部構成（フルボイス対応・目安5分）</p>
     </div>
 
     <!-- 2. ゲーム画面 -->
@@ -31,18 +31,33 @@
       <!-- キャラクターレイヤー (Live2D風立ち絵) -->
       <div id="characterContainer" class="character-layer"></div>
 
+      <!-- 証拠品入手ポップアップ通知 -->
+      <div id="evidencePopup" class="evidence-popup hidden">
+        <span class="popup-icon">💡</span>
+        <span id="evidencePopupText">証拠品を入手しました</span>
+      </div>
+
+      <!-- 異議あり！カットイン演出 -->
+      <div id="objectionCutin" class="objection-cutin hidden">
+        <div class="objection-flash"></div>
+        <div class="objection-text">異議あり！</div>
+        <div class="objection-sub">OBJECTION!</div>
+      </div>
+
       <!-- UIレイヤー -->
       <div class="ui-layer">
         <!-- 上部コントロールメニュー -->
         <div class="controls-bar">
+          <button id="btnEvidence" class="ctrl-btn evidence-btn">
+            📂 証拠品手帳 (<span id="evidenceBadgeCount">0</span>)
+          </button>
           <button id="btnAuto" class="ctrl-btn">AUTO</button>
           <button id="btnLog" class="ctrl-btn">LOG</button>
           <button id="btnTitle" class="ctrl-btn">TITLE</button>
         </div>
 
-        <!-- 選択肢オーバーレイ -->
+        <!-- 選択肢 / つきつけるオーバーレイ -->
         <div id="choicesOverlay" class="choices-overlay">
-          <div class="choice-title">【 INVESTIGATION CHOICE 】</div>
           <div id="choicesList" class="choices-list"></div>
         </div>
 
@@ -57,7 +72,21 @@
       </div>
     </div>
 
-    <!-- 3. エンディングモーダル -->
+    <!-- 3. 証拠品手帳モーダル -->
+    <div id="evidenceModal" class="evidence-modal hidden">
+      <div class="evidence-card">
+        <div class="modal-header">
+          <span>📁 収集した電脳証拠品手帳 (Evidence)</span>
+          <button id="btnCloseEvidence" class="btn-close-modal">&times;</button>
+        </div>
+        <div class="evidence-body">
+          <div class="evidence-list" id="evidenceList"></div>
+          <div class="evidence-detail" id="evidenceDetail"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. エンディングモーダル -->
     <div id="endingModal" class="ending-modal hidden">
       <div class="ending-card">
         <div id="endingType" class="ending-type-badge">ENDING</div>
@@ -67,10 +96,10 @@
       </div>
     </div>
 
-    <!-- 4. バックログモーダル -->
+    <!-- 5. バックログモーダル -->
     <div id="logModal" class="log-modal hidden">
       <div class="log-header">
-        <span>捜査ログ (Backlog)</span>
+        <span>捜査・証言ログ (Backlog)</span>
         <button id="btnCloseLog" class="btn-close-log">&times;</button>
       </div>
       <div id="logContent" class="log-content"></div>

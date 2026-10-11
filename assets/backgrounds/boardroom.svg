@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="100%" height="100%">
+  <defs>
+    <linearGradient id="boardWall" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#18181b"/>
+      <stop offset="100%" stop-color="#09090b"/>
+    </linearGradient>
+    <linearGradient id="woodTable" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#3f271d"/>
+      <stop offset="50%" stop-color="#583728"/>
+      <stop offset="100%" stop-color="#3f271d"/>
+    </linearGradient>
+    <linearGradient id="spotLight" x1="50%" y1="0%" x2="50%" y2="100%">
+      <stop offset="0%" stop-color="rgba(255,255,255,0.2)"/>
+      <stop offset="100%" stop-color="rgba(255,255,255,0.0)"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1920" height="1080" fill="url(#boardWall)"/>
+
+  <!-- Back Wall Panels with gold/brass trims (Court / Boardroom feel) -->
+  <rect x="160" y="80" width="1600" height="520" fill="#27272a" stroke="#ca8a04" stroke-width="3"/>
+  <rect x="220" y="120" width="440" height="440" fill="#18181b" stroke="#713f12" stroke-width="2"/>
+  <rect x="740" y="120" width="440" height="440" fill="#18181b" stroke="#ca8a04" stroke-width="2"/>
+  <rect x="1260" y="120" width="440" height="440" fill="#18181b" stroke="#713f12" stroke-width="2"/>
+
+  <!-- Corporate / Tribunal Emblem in Center -->
+  <circle cx="960" cy="280" r="80" fill="none" stroke="#ca8a04" stroke-width="4"/>
+  <polygon points="960,220 985,270 935,270" fill="#ca8a04"/>
+  <rect x="945" y="275" width="30" height="40" fill="#ca8a04"/>
+  <text x="960" y="380" fill="#eab308" font-family="monospace" font-size="20" font-weight="bold" text-anchor="middle" letter-spacing="4">SPECIAL AUDIT TRIBUNAL</text>
+  <text x="960" y="420" fill="#a1a1aa" font-family="monospace" font-size="14" text-anchor="middle">NEO SOLUTIONS CORP.</text>
+
+  <!-- Spotlight Cone onto speaker stand -->
+  <polygon points="960,0 600,1080 1320,1080" fill="url(#spotLight)"/>
+
+  <!-- Grand Boardroom / Tribunal Table in Foreground -->
+  <polygon points="0,1080 300,720 1620,720 1920,1080" fill="url(#woodTable)" stroke="#a16207" stroke-width="4"/>
+  <!-- Microphone Stand on Table -->
+  <rect x="945" y="680" width="30" height="50" rx="4" fill="#52525b"/>
+  <line x1="960" y1="680" x2="960" y2="620" stroke="#71717a" stroke-width="4"/>
+  <ellipse cx="960" cy="615" rx="10" ry="14" fill="#27272a" stroke="#a1a1aa" stroke-width="2"/>
+</svg>

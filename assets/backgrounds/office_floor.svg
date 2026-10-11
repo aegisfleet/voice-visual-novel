@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="100%" height="100%">
+  <defs>
+    <linearGradient id="officeWall" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+    <linearGradient id="officeFloor" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#334155"/>
+      <stop offset="100%" stop-color="#1e293b"/>
+    </linearGradient>
+    <linearGradient id="windowLight" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#0369a1" stop-opacity="0.05"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Wall -->
+  <rect width="1920" height="720" fill="url(#officeWall)"/>
+
+  <!-- Large Glass Windows (Skyscraper View) -->
+  <rect x="200" y="80" width="1520" height="480" rx="8" fill="#082f49" stroke="#475569" stroke-width="6"/>
+  <rect x="210" y="90" width="1500" height="460" fill="url(#windowLight)"/>
+
+  <!-- Distant Futuristic Skyscrapers in window -->
+  <polygon points="300,550 300,280 380,280 380,550" fill="#0c4a6e" opacity="0.6"/>
+  <polygon points="450,550 450,200 520,180 570,200 570,550" fill="#075985" opacity="0.7"/>
+  <polygon points="700,550 700,260 820,260 820,550" fill="#0369a1" opacity="0.5"/>
+  <polygon points="1000,550 1000,160 1100,160 1100,550" fill="#075985" opacity="0.8"/>
+  <polygon points="1200,550 1200,240 1320,240 1320,550" fill="#0c4a6e" opacity="0.6"/>
+  <polygon points="1400,550 1400,300 1500,300 1500,550" fill="#0369a1" opacity="0.5"/>
+
+  <!-- Window mullions -->
+  <line x1="580" y1="80" x2="580" y2="560" stroke="#334155" stroke-width="8"/>
+  <line x1="960" y1="80" x2="960" y2="560" stroke="#334155" stroke-width="8"/>
+  <line x1="1340" y1="80" x2="1340" y2="560" stroke="#334155" stroke-width="8"/>
+
+  <!-- Floor -->
+  <rect y="700" width="1920" height="380" fill="url(#officeFloor)"/>
+
+  <!-- Office Desks & Monitors (Development Floor) -->
+  <rect x="180" y="660" width="480" height="180" rx="6" fill="#1e293b" stroke="#0ea5e9" stroke-width="2"/>
+  <rect x="240" y="580" width="120" height="80" rx="4" fill="#0f172a" stroke="#38bdf8" stroke-width="2"/>
+  <polygon points="290,660 310,660 305,680 295,680" fill="#64748b"/>
+
+  <rect x="1260" y="660" width="480" height="180" rx="6" fill="#1e293b" stroke="#0ea5e9" stroke-width="2"/>
+  <rect x="1360" y="580" width="120" height="80" rx="4" fill="#0f172a" stroke="#38bdf8" stroke-width="2"/>
+
+  <!-- Ceiling lights (perspective) -->
+  <polygon points="500,0 600,0 650,60 450,60" fill="#f8fafc" opacity="0.15"/>
+  <polygon points="850,0 1070,0 1050,60 870,60" fill="#f8fafc" opacity="0.15"/>
+  <polygon points="1320,0 1420,0 1470,60 1270,60" fill="#f8fafc" opacity="0.15"/>
+</svg>

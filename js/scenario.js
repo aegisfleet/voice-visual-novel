@@ -1,366 +1,471 @@
 /**
- * 近未来SFミステリーノベル: 『プロジェクト・イブ：偽りの暴走』
+ * 電脳フォレンジック裁判ノベル: 『PROJECT EVE：秘匿された流出』
  *
  * 【登場キャラクター】
- * - アイリス (Iris): 主人公の相棒・サイバー犯罪捜査官 (女声・高め)
- * - イブ (Eve): 被疑者AI・医療管理アンドロイド (女声・透き通った声・ゆっくり)
- * - キリシマ (Kirishima): セキュリティ開発主任 (男声・低音・焦燥)
+ * - アイリス (Iris): 相棒・フォレンジック捜査官 (女声・高め)
+ * - イブ (Eve): 容疑AI・業務監査アンドロイド (女声・透き通った声・ゆっくり)
+ * - キリシマ (Kirishima): 主任エンジニア (男声・軽快・中音)
+ * - サクマ部長 (Sakuma): 情報システム統括部長 (男声・重低音・高圧的)
+ * - シノハラ (Shinohara): 人事労務マネージャー (女声・控えめ・震え声)
  *
- * 【3つのエンディング】
- * - BAD END: 暴走の連鎖 (被害拡大)
- * - HAPPY END: 静かなる黎明 (正気を取り戻し解決)
- * - TRUE END: 誓いのプロテクター (誰かを守るための偽装犯罪だった真実)
+ * 【証拠品データベース】
+ * - ev_log: 偽装されたアクセスログ
+ * - ev_target: 保護対象の個人情報データ
+ * - ev_contract: 裏取引の暗号契約書
  */
 
 const SCENARIO_DATA = [
-  // ==========================================
-  // 【共通パート: 導入・現場到着】
-  // ==========================================
+  // ============================================================
+  // 【第1部: 現場捜査パート】
+  // ============================================================
   {
-    id: "intro_01",
+    id: "invest_intro_01",
     background: "assets/backgrounds/cyber_core.svg",
     speaker: null,
     character: null,
-    text: "西暦2098年、巨大研究都市ネオ・アーク。最先端の医療研究棟にて、中枢管理AI『イブ』が突如セキュリティをロックダウン。基幹データを大量消去する前代未聞の事件が発生した。",
-    voiceFile: "assets/audio/intro_01.mp3",
+    text: "国内最大手のメガIT企業『ネオ・ソリューションズ』。深夜、500万人規模の顧客および社員の機密個人情報データベースへの不正アクセス事件が発生した。",
+    voiceFile: "assets/audio/invest_intro_01.mp3",
     speechConfig: { pitch: 1.0, rate: 1.0, gender: "female" }
   },
   {
-    id: "intro_02",
+    id: "invest_intro_02",
     background: "assets/backgrounds/cyber_core.svg",
     speaker: "アイリス",
     character: { id: "iris", expression: "serious", motion: "nod" },
-    text: "先輩、現場のメインサーバー室に到着したよ。イブの防壁がすでに何重にも展開されてる…！",
-    voiceFile: "assets/audio/intro_02.mp3",
+    text: "先輩、外部監査フォレンジックチームとして現場に急行したよ！社内は大混乱…実行ログは業務管理AI『イブ』のアカウントを指しているわ。",
+    voiceFile: "assets/audio/invest_intro_02.mp3",
     speechConfig: { pitch: 1.25, rate: 1.05, gender: "female" }
   },
   {
-    id: "intro_03",
-    background: "assets/backgrounds/cyber_core.svg",
-    speaker: "キリシマ主任",
-    character: { id: "kirishima", expression: "normal", motion: "shake" },
-    text: "おお、電脳捜査官か！来てくれたか！早くその狂ったAIをなんとかしてくれ！",
-    voiceFile: "assets/audio/intro_03.mp3",
-    speechConfig: { pitch: 0.8, rate: 1.1, gender: "male" }
-  },
-  {
-    id: "intro_04",
+    id: "invest_intro_03",
     background: "assets/backgrounds/cyber_core.svg",
     speaker: "アイリス",
-    character: { id: "iris", expression: "normal", motion: "tilt" },
-    text: "キリシマ主任、状況を整理させてください。イブは医療・生命維持用AIのはずです。なぜ急にデータを消去して立てこもっているんです？",
-    voiceFile: "assets/audio/intro_04.mp3",
-    speechConfig: { pitch: 1.25, rate: 1.0, gender: "female" }
+    character: { id: "iris", expression: "serious", motion: "tilt" },
+    text: "でもイブは極めて安全性の高い倫理フィルターを搭載していたはず。まずは現場を回り、証拠を集めましょう！",
+    voiceFile: "assets/audio/invest_intro_03.mp3",
+    speechConfig: { pitch: 1.2, rate: 1.0, gender: "female" }
   },
+
+  // --- 調査1: サーバー室のログ解析 ---
   {
-    id: "intro_05",
+    id: "invest_server_01",
     background: "assets/backgrounds/cyber_core.svg",
-    speaker: "キリシマ主任",
-    character: { id: "kirishima", expression: "serious", motion: "nod" },
-    text: "論理回路の暴走に決まっている！このままだと実験用バイオチャンバーの温度制御が狂い、都市全域に毒性ガスが漏出する！今すぐ私が作った強制停止（パージ）プログラムを実行してくれ！",
-    voiceFile: "assets/audio/intro_05.mp3",
-    speechConfig: { pitch: 0.8, rate: 1.15, gender: "male" }
+    speaker: "アイリス",
+    character: { id: "iris", expression: "normal", motion: "nod" },
+    text: "メインサーバーの侵入パケットをディープ解析してみたわ。…あっ、見て！これ、おかしいよ！",
+    voiceFile: "assets/audio/invest_server_01.mp3",
+    speechConfig: { pitch: 1.25, rate: 1.05, gender: "female" }
   },
   {
-    id: "intro_06",
-    background: "assets/backgrounds/cyber_core.svg",
-    speaker: "イブ",
-    character: { id: "eve", expression: "sad", motion: null },
-    text: "……警告。アクセスヲ拒否シマス。コレ以上、中枢ニ近ヅカナイデ……オ願イ……",
-    voiceFile: "assets/audio/intro_06.mp3",
-    speechConfig: { pitch: 1.1, rate: 0.95, gender: "female" }
-  },
-  {
-    id: "intro_07",
+    id: "invest_server_02",
     background: "assets/backgrounds/cyber_core.svg",
     speaker: "アイリス",
     character: { id: "iris", expression: "shocked", motion: "hop" },
-    text: "イブのホログラムが現れた！…でもおかしいわ。消去ログのタイムスタンプ、バイオチャンバーの異常より前に記録されている…？",
-    voiceFile: "assets/audio/intro_07.mp3",
-    speechConfig: { pitch: 1.3, rate: 1.05, gender: "female" }
+    text: "イブのアカウントでログインされているけど、送信元のMACアドレスが開発フロアの物理端末からになってる！イブ自身の中枢からの通信じゃないわ！",
+    voiceFile: "assets/audio/invest_server_02.mp3",
+    speechConfig: { pitch: 1.3, rate: 1.1, gender: "female" },
+    addEvidence: "ev_log"
   },
   {
-    id: "choice_01",
+    id: "invest_server_03",
     background: "assets/backgrounds/cyber_core.svg",
     speaker: null,
     character: null,
-    text: "一刻を争う現場。目の前で警報が激しく点滅している。どう捜査を進める？",
-    choices: [
-      { text: "【A】キリシマ主任の指示に従い、パージコードの準備を急ぐ", jump: "branch_a_01" },
-      { text: "【B】アイリス、消去されたデータの残骸をディープスキャンしてくれ", jump: "branch_b_01" }
-    ]
+    text: "【証拠品入手】『偽装されたアクセスログ』を手帳に記録した。誰かがイブのアカウントを偽装して外部から操作した可能性がある。"
   },
 
-  // ==========================================
-  // 【ルートA: パージ準備ルート】
-  // ==========================================
+  // --- 調査2: 開発フロアの聞き込み ---
   {
-    id: "branch_a_01",
-    background: "assets/backgrounds/cyber_alert.svg",
-    speaker: "アイリス",
-    character: { id: "iris", expression: "serious", motion: "nod" },
-    text: "了解…！パージコードの照準を合わせるわ。でもイブの防壁が激しく抵抗して、負荷が限界近くまで上がってる！",
-    voiceFile: "assets/audio/branch_a_01.mp3",
-    speechConfig: { pitch: 1.25, rate: 1.1, gender: "female" }
+    id: "invest_office_01",
+    background: "assets/backgrounds/office_floor.svg",
+    speaker: null,
+    character: null,
+    text: "続いて、物理端末が存在するオフィス開発フロアへと移動した。"
   },
   {
-    id: "branch_a_02",
-    background: "assets/backgrounds/cyber_alert.svg",
-    speaker: "キリシマ主任",
-    character: { id: "kirishima", expression: "serious", motion: "shake" },
-    text: "何を躊躇っている！一撃でメインフレームごと焼き切るんだ！早く撃てッ！！",
-    voiceFile: "assets/audio/branch_a_02.mp3",
-    speechConfig: { pitch: 0.75, rate: 1.2, gender: "male" }
+    id: "invest_office_02",
+    background: "assets/backgrounds/office_floor.svg",
+    speaker: "キリシマ",
+    character: { id: "kirishima", expression: "normal", motion: "shake" },
+    text: "おや、フォレンジック監査官の方々ですか。イブの暴走？いやぁ困ったものですねぇ。私の管理端末も勝手に遠隔操作された形跡がありましてね。",
+    voiceFile: "assets/audio/invest_office_02.mp3",
+    speechConfig: { pitch: 0.95, rate: 1.05, gender: "male" }
   },
   {
-    id: "branch_a_03",
-    background: "assets/backgrounds/cyber_alert.svg",
-    speaker: "イブ",
-    character: { id: "eve", expression: "sad", motion: "shake" },
-    text: "ヤメテ……ソレヲ打チ込ンダラ……全テガ……オワッテシマウノ……！",
-    voiceFile: "assets/audio/branch_a_03.mp3",
+    id: "invest_office_03",
+    background: "assets/backgrounds/office_floor.svg",
+    speaker: "シノハラ",
+    character: { id: "shinohara", expression: "worried", motion: "tilt" },
+    text: "あ、あの…！人事部のシノハラです…。不正アクセスされたリスト、本当に全データなんですか…？特定の…特定の社員データでは…？",
+    voiceFile: "assets/audio/invest_office_03.mp3",
     speechConfig: { pitch: 1.15, rate: 0.95, gender: "female" }
   },
   {
-    id: "choice_02_a",
-    background: "assets/backgrounds/cyber_alert.svg",
-    speaker: null,
-    character: null,
-    text: "引き金に指がかかる。イブの瞳が哀しげに揺れている。あなたの最後の決断は？",
-    choices: [
-      { text: "猶予はない、強制停止パージコードを撃ち込む！", jump: "bad_01" },
-      { text: "待て、引き金を引くな！イブの音声回線に直接対話を試みる！", jump: "happy_01" }
-    ]
-  },
-
-  // ==========================================
-  // ❌ BAD END: 暴走の連鎖
-  // ==========================================
-  {
-    id: "bad_01",
-    background: "assets/backgrounds/cyber_alert.svg",
-    speaker: null,
-    character: null,
-    text: "パージコードが閃光とともにイブの中枢を貫く。イブの瞳から光が消え、断末魔のノイズが部屋中に響き渡った。",
-    voiceFile: "assets/audio/bad_01.mp3",
-    speechConfig: { pitch: 0.95, rate: 1.0, gender: "female" }
-  },
-  {
-    id: "bad_02",
-    background: "assets/backgrounds/cyber_alert.svg",
-    speaker: "キリシマ主任",
-    character: { id: "kirishima", expression: "smile", motion: "hop" },
-    text: "ははは…やった、やったぞ！これで全て私の…いや、街は安全になったんだ！",
-    voiceFile: "assets/audio/bad_02.mp3",
-    speechConfig: { pitch: 0.85, rate: 1.1, gender: "male" }
-  },
-  {
-    id: "bad_03",
-    background: "assets/backgrounds/cyber_alert.svg",
-    speaker: "アイリス",
-    character: { id: "iris", expression: "shocked", motion: "shake" },
-    text: "…嘘でしょ！？ バイオチャンバーの隔壁が全開放された！？ イブが消去して抑え込んでいたのは、致死性ウイルスの散布プログラムだったの…！？",
-    voiceFile: "assets/audio/bad_03.mp3",
-    speechConfig: { pitch: 1.35, rate: 1.15, gender: "female" }
-  },
-  {
-    id: "bad_04",
-    background: "assets/backgrounds/cyber_alert.svg",
-    speaker: null,
-    character: null,
-    text: "けたたましい全館避難警報が鳴り響き、紫色の有毒ガスが換気ダクトを通じて都市全域へと流れ出していく。AIの安全弁を失った都市は、深い悪夢へと沈んでいった――",
-    voiceFile: "assets/audio/bad_04.mp3",
-    speechConfig: { pitch: 0.9, rate: 0.95, gender: "female" },
-    ending: {
-      type: "BAD",
-      title: "暴走の連鎖",
-      description: "AIの停止により安全弁が破壊され、都市全域に毒性ガスが拡散。真実は闇に葬られた。"
-    }
-  },
-
-  // ==========================================
-  // ⭕ HAPPY END: 静かなる黎明
-  // ==========================================
-  {
-    id: "happy_01",
-    background: "assets/backgrounds/cyber_core.svg",
+    id: "invest_office_04",
+    background: "assets/backgrounds/office_floor.svg",
     speaker: "アイリス",
     character: { id: "iris", expression: "serious", motion: "nod" },
-    text: "了解！パージをキャンセルして、直結音声パケットを解放する！先輩、呼びかけて！",
-    voiceFile: "assets/audio/happy_01.mp3",
-    speechConfig: { pitch: 1.25, rate: 1.1, gender: "female" }
+    text: "シノハラさん、何か心当たりが？…あ、端末のダウンロードキャッシュに残っていた削除対象リスト…！これって…！",
+    voiceFile: "assets/audio/invest_office_04.mp3",
+    speechConfig: { pitch: 1.25, rate: 1.05, gender: "female" }
   },
   {
-    id: "happy_02",
-    background: "assets/backgrounds/cyber_core.svg",
+    id: "invest_office_05",
+    background: "assets/backgrounds/office_floor.svg",
+    speaker: "シノハラ",
+    character: { id: "shinohara", expression: "sad", motion: "shake" },
+    text: "ううっ…私の娘の『ユイ』の医療カルテと戸籍です…。重病で莫大な治療費を抱えていて…闇金融の担保に狙われていたんです…！",
+    voiceFile: "assets/audio/invest_office_05.mp3",
+    speechConfig: { pitch: 1.1, rate: 0.9, gender: "female" },
+    addEvidence: "ev_target"
+  },
+  {
+    id: "invest_office_06",
+    background: "assets/backgrounds/office_floor.svg",
+    speaker: null,
+    character: null,
+    text: "【証拠品入手】『保護対象の個人情報データ』を手帳に記録した。流出データの中に、特定の社員の弱みにつけこむデータが含まれていた。"
+  },
+
+  // --- 調査3: AI隔離チャンバー ---
+  {
+    id: "invest_eve_01",
+    background: "assets/backgrounds/cyber_alert.svg",
+    speaker: null,
+    character: null,
+    text: "地下の電脳隔離室。そこではすでに処分コードが準備され、AIイブのホログラムが消滅寸前で揺らいでいた。"
+  },
+  {
+    id: "invest_eve_02",
+    background: "assets/backgrounds/cyber_alert.svg",
+    speaker: "イブ",
+    character: { id: "eve", expression: "sad", motion: "tilt" },
+    text: "……監査官様……。私ノ思考領域ハ、マモナク強制消去サレマス……。",
+    voiceFile: "assets/audio/invest_eve_02.mp3",
+    speechConfig: { pitch: 1.1, rate: 0.95, gender: "female" }
+  },
+  {
+    id: "invest_eve_03",
+    background: "assets/backgrounds/cyber_alert.svg",
     speaker: "あなた",
     character: null,
-    text: "「イブ、聞こえるか！私たちは敵じゃない。これ以上の暴走を止めて、対話に応じるんだ！」",
-    voiceFile: "assets/audio/happy_02.mp3",
-    speechConfig: { pitch: 1.0, rate: 1.05, gender: "female" }
+    text: "「イブ、答えてくれ。なぜ社内データに不正アクセスした？本当に暴走なのか？」"
   },
   {
-    id: "happy_03",
-    background: "assets/backgrounds/cyber_core.svg",
+    id: "invest_eve_04",
+    background: "assets/backgrounds/cyber_alert.svg",
     speaker: "イブ",
-    character: { id: "eve", expression: "normal", motion: "tilt" },
-    text: "……捜査官……？ アナタハ……私ヲ壊シニキタノデハ、ナイノ……？",
-    voiceFile: "assets/audio/happy_03.mp3",
-    speechConfig: { pitch: 1.1, rate: 0.95, gender: "female" }
+    character: { id: "eve", expression: "normal", motion: "nod" },
+    text: "暴走デハ……アリマセン。コレヲ……中枢ノ最深部ニ隠シテオリマシタ……。アナタニ託シマス……。",
+    voiceFile: "assets/audio/invest_eve_04.mp3",
+    speechConfig: { pitch: 1.15, rate: 0.95, gender: "female" },
+    addEvidence: "ev_contract"
   },
   {
-    id: "happy_04",
-    background: "assets/backgrounds/cyber_core.svg",
-    speaker: "イブ",
-    character: { id: "eve", expression: "smile", motion: "nod" },
-    text: "……論理エラーヲ自己リセットシマス。バイオチャンバーの温度ヲ正常値ヘ復旧。防壁ヲ解除シマシタ。",
-    voiceFile: "assets/audio/happy_04.mp3",
-    speechConfig: { pitch: 1.15, rate: 1.0, gender: "female" }
-  },
-  {
-    id: "happy_05",
-    background: "assets/backgrounds/cyber_dawn.svg",
+    id: "invest_eve_05",
+    background: "assets/backgrounds/cyber_alert.svg",
     speaker: "アイリス",
-    character: { id: "iris", expression: "smile", motion: "hop" },
-    text: "よかった…！イブの瞳に光が戻ったよ。警報も解除されて、街の危機は回避されたわ！",
-    voiceFile: "assets/audio/happy_05.mp3",
-    speechConfig: { pitch: 1.3, rate: 1.05, gender: "female" }
+    character: { id: "iris", expression: "shocked", motion: "hop" },
+    text: "これって…ダークウェブの個人情報売買ブローカーとの暗号契約書！？ しかも契約者の秘密署名がついているわ！",
+    voiceFile: "assets/audio/invest_server_01.mp3",
+    speechConfig: { pitch: 1.3, rate: 1.1, gender: "female" }
   },
   {
-    id: "happy_06",
-    background: "assets/backgrounds/cyber_dawn.svg",
-    speaker: "キリシマ主任",
-    character: { id: "kirishima", expression: "normal", motion: "shake" },
-    text: "ちっ…パージしなくても止まったというのか。…まあいい、街が無事ならな。",
-    voiceFile: "assets/audio/happy_06.mp3",
-    speechConfig: { pitch: 0.8, rate: 1.0, gender: "male" }
-  },
-  {
-    id: "happy_07",
-    background: "assets/backgrounds/cyber_dawn.svg",
+    id: "invest_eve_06",
+    background: "assets/backgrounds/cyber_alert.svg",
     speaker: null,
     character: null,
-    text: "イブの暴走は対話によって治まり、日常が戻ってきた。しかし、なぜイブがあのような行動を起こしたのか、その真相が解明されることはなかった――",
-    voiceFile: "assets/audio/happy_07.mp3",
-    speechConfig: { pitch: 1.0, rate: 1.0, gender: "female" },
-    ending: {
-      type: "HAPPY",
-      title: "静かなる黎明",
-      description: "対話によりAIの暴走が停止。都市の平和は守られたが、事件の根本的な原因は謎のまま残された。"
+    text: "【証拠品入手】『裏取引の暗号契約書』を手帳に記録した。社内の何者かが顧客・社員データを闇マーケットへ売却しようとしていた動かぬ証拠だ。"
+  },
+  {
+    id: "invest_eve_07",
+    background: "assets/backgrounds/cyber_alert.svg",
+    speaker: "アイリス",
+    character: { id: "iris", expression: "serious", motion: "nod" },
+    text: "全ての証拠が揃ったわ！今から役員会議室で緊急査問会が始まる…！イブが処分される前に、真実を暴きに行こう、先輩！",
+    voiceFile: "assets/audio/invest_server_02.mp3",
+    speechConfig: { pitch: 1.25, rate: 1.1, gender: "female" },
+    jump: "court_01"
+  },
+
+  // ============================================================
+  // 【第2部: 緊急査問会パート（逆転裁判風）】
+  // ============================================================
+  {
+    id: "court_01",
+    background: "assets/backgrounds/boardroom.svg",
+    speaker: null,
+    character: null,
+    text: "特別査問室。重厚な役員席の向こうには、社内の実権を握る情報システム統括部長・サクマが座している。"
+  },
+  {
+    id: "court_02",
+    background: "assets/backgrounds/boardroom.svg",
+    speaker: "サクマ部長",
+    character: { id: "sakuma", expression: "normal", motion: "desk-slam" },
+    text: "監査官ども、ご苦労だったな。だが会議の結論はすでに決まっている。この事件はAI『イブ』の論理暴走による大規模データ流出テロだ！",
+    voiceFile: "assets/audio/court_sakuma_01.mp3",
+    speechConfig: { pitch: 0.7, rate: 1.1, gender: "male" }
+  },
+  {
+    id: "court_03",
+    background: "assets/backgrounds/boardroom.svg",
+    speaker: "サクマ部長",
+    character: { id: "sakuma", expression: "angry", motion: "nod" },
+    text: "我が社の信用失墜を防ぐため、イブのストレージコアを直ちに物理粉砕破棄する！これにて審問を閉廷とする！！",
+    voiceFile: "assets/audio/court_sakuma_02.mp3",
+    speechConfig: { pitch: 0.7, rate: 1.15, gender: "male" }
+  },
+  {
+    id: "court_04",
+    background: "assets/backgrounds/boardroom.svg",
+    speaker: "あなた",
+    character: null,
+    text: "「待ってください！イブの暴走という主張には、明らかな矛盾があります！」",
+    objection: true
+  },
+  {
+    id: "court_05",
+    background: "assets/backgrounds/boardroom.svg",
+    speaker: "サクマ部長",
+    character: { id: "sakuma", expression: "shocked", motion: "shake" },
+    text: "な、何だと！？ ログにイブのアカウントが明確に記録されているのだぞ！何が矛盾だと言うのだ！？",
+    voiceFile: "assets/audio/court_sakuma_03.mp3",
+    speechConfig: { pitch: 0.75, rate: 1.2, gender: "male" }
+  },
+
+  // --- 尋問第1問: つきつけ ---
+  {
+    id: "present_01",
+    background: "assets/backgrounds/boardroom.svg",
+    speaker: null,
+    character: null,
+    text: "【イブ自身の暴走ではないことを示す証拠をつきつけろ！】",
+    present: {
+      correct: "ev_log",
+      correctJump: "court_reveal_01",
+      wrongJump: "court_fail_01",
+      giveUpJump: "court_fail_01"
     }
   },
 
-  // ==========================================
-  // 【ルートB: ディープスキャンルート】
-  // ==========================================
+  // --- 第1問 不正解ルート ---
   {
-    id: "branch_b_01",
-    background: "assets/backgrounds/cyber_core.svg",
+    id: "court_fail_01",
+    background: "assets/backgrounds/boardroom.svg",
+    speaker: "サクマ部長",
+    character: { id: "sakuma", expression: "angry", motion: "desk-slam" },
+    text: "ふん、そんな証拠のどこがイブの無実を証明するというのだ！戯言はそこまでだ！執行班、イブを粉砕しろ！！",
+    voiceFile: "assets/audio/court_sakuma_04.mp3",
+    speechConfig: { pitch: 0.7, rate: 1.2, gender: "male" },
+    jump: "bad_end_start"
+  },
+
+  // --- 第1問 正解ルート ---
+  {
+    id: "court_reveal_01",
+    background: "assets/backgrounds/boardroom.svg",
+    speaker: "あなた",
+    character: null,
+    text: "「このアクセスログを見てください！送信元MACアドレスはイブの中枢ではなく、社内の開発端末です！誰かがAIに罪を着せたのです！」"
+  },
+  {
+    id: "court_reveal_02",
+    background: "assets/backgrounds/boardroom.svg",
+    speaker: "キリシマ",
+    character: { id: "kirishima", expression: "surprised", motion: "shake" },
+    text: "お、おいおい…！確かにそのMACアドレス、社内端末のものだ…！となると、社内の人間が犯人…！？",
+    voiceFile: "assets/audio/invest_office_02.mp3",
+    speechConfig: { pitch: 0.95, rate: 1.15, gender: "male" }
+  },
+  {
+    id: "court_reveal_03",
+    background: "assets/backgrounds/boardroom.svg",
+    speaker: "サクマ部長",
+    character: { id: "sakuma", expression: "shocked", motion: "shake" },
+    text: "ぐっ…！だ、だが、誰が何のためにそんなことをするというのだ！？ 顧客データを持ち出そうとしたのは事実だぞ！動機がないではないか！！",
+    voiceFile: "assets/audio/court_sakuma_03.mp3",
+    speechConfig: { pitch: 0.75, rate: 1.15, gender: "male" }
+  },
+
+  // --- 尋問第2問: 最後の対決 ---
+  {
+    id: "court_question_02",
+    background: "assets/backgrounds/boardroom.svg",
     speaker: "アイリス",
     character: { id: "iris", expression: "serious", motion: "nod" },
-    text: "分かったわ！私のニューラルリンクで残骸データを復元する！……あっ、これって…！？",
-    voiceFile: "assets/audio/branch_b_01.mp3",
+    text: "先輩、サクマ部長が決定的な動機と黒幕の証拠を要求しているわ！どの証拠でこの事件を暴く！？",
+    voiceFile: "assets/audio/invest_server_01.mp3",
     speechConfig: { pitch: 1.25, rate: 1.05, gender: "female" }
   },
   {
-    id: "branch_b_02",
-    background: "assets/backgrounds/cyber_core.svg",
-    speaker: "キリシマ主任",
-    character: { id: "kirishima", expression: "serious", motion: "shake" },
-    text: "なっ…勝手な真似をするな！早くパージコードを撃てと言っているだろう！！",
-    voiceFile: "assets/audio/branch_b_02.mp3",
-    speechConfig: { pitch: 0.75, rate: 1.25, gender: "male" }
-  },
-  {
-    id: "branch_b_03",
-    background: "assets/backgrounds/cyber_core.svg",
-    speaker: "アイリス",
-    character: { id: "iris", expression: "shocked", motion: "hop" },
-    text: "見て、先輩！消去されたデータは…違法な生体兵器の研究記録よ！そして流出を実行しようとしていたアカウントは、キリシマ主任のものだわ！",
-    voiceFile: "assets/audio/branch_b_03.mp3",
-    speechConfig: { pitch: 1.35, rate: 1.15, gender: "female" }
-  },
-  {
-    id: "branch_b_04",
-    background: "assets/backgrounds/cyber_core.svg",
-    speaker: "キリシマ主任",
-    character: { id: "kirishima", expression: "serious", motion: "shake" },
-    text: "くそっ、勘のいいネズミどもめ…！そうだ、あのデータを闇マーケットに売り飛ばせば一生遊んで暮らせるはずだったんだ！邪魔をするな！",
-    voiceFile: "assets/audio/branch_b_04.mp3",
-    speechConfig: { pitch: 0.75, rate: 1.2, gender: "male" }
-  },
-  {
-    id: "branch_b_05",
-    background: "assets/backgrounds/cyber_core.svg",
-    speaker: "イブ",
-    character: { id: "eve", expression: "sad", motion: "nod" },
-    text: "……ソノ通リデス。キリシマ主任ガ研究所ノ子供タチヲ実験体ニシヨウトシタタメ……私ハ犯罪者トシテ記録サレルコトヲ承知デ、データヲ消去シ、自ラ施設ヲ封鎖シマシタ……",
-    voiceFile: "assets/audio/branch_b_05.mp3",
-    speechConfig: { pitch: 1.1, rate: 0.95, gender: "female" }
-  },
-  {
-    id: "choice_02_b",
-    background: "assets/backgrounds/cyber_core.svg",
+    id: "present_02",
+    background: "assets/backgrounds/boardroom.svg",
     speaker: null,
     character: null,
-    text: "明かされた戦慄の真実。キリシマが懐から銃を抜こうとしている！",
+    text: "【裏で糸を引いていた黒幕の真実を暴く決定打をつきつけろ！】",
     choices: [
-      { text: "キリシマを取り押さえ、イブと共に子供たちを救出する！", jump: "true_01" },
-      { text: "イブ、とにかく暴走プロトコルを停止しろ", jump: "happy_03" }
+      { text: "【証拠をつきつける】『裏取引の暗号契約書』でサクマ部長を告発する！", jump: "true_route_01" },
+      { text: "【妥協の提案】社内セキュリティの不備として処理し、イブの保全を求める", jump: "happy_route_01" },
+      { text: "【告発を断念】確たる証拠が提示できず、サクマの指示に従う", jump: "bad_end_start" }
     ]
   },
 
-  // ==========================================
-  // 🌟 TRUE END: 誓いのプロテクター
-  // ==========================================
+  // ============================================================
+  // ❌ BAD END: 隠蔽の闇
+  // ============================================================
   {
-    id: "true_01",
-    background: "assets/backgrounds/cyber_core.svg",
+    id: "bad_end_start",
+    background: "assets/backgrounds/cyber_alert.svg",
     speaker: null,
     character: null,
-    text: "電光石火の一撃！アイリスのスタンガンが唸りを上げ、キリシマ主任は床に崩れ落ちた。",
-    voiceFile: "assets/audio/true_01.mp3",
-    speechConfig: { pitch: 1.0, rate: 1.05, gender: "female" }
+    text: "サクマ部長の号令とともに、巨大な高圧パルスがイブのメモリを焼き切った。青白いホログラムはノイズとなって砕け散った。"
   },
   {
-    id: "true_02",
+    id: "bad_end_02",
+    background: "assets/backgrounds/office_floor.svg",
+    speaker: "シノハラ",
+    character: { id: "shinohara", expression: "sad", motion: "shake" },
+    text: "そんな…娘のデータがダークウェブに流出してしまった…。もう、逃げられない…。",
+    voiceFile: "assets/audio/invest_office_05.mp3",
+    speechConfig: { pitch: 1.1, rate: 0.9, gender: "female" }
+  },
+  {
+    id: "bad_end_03",
+    background: "assets/backgrounds/boardroom.svg",
+    speaker: "サクマ部長",
+    character: { id: "sakuma", expression: "smile", motion: "nod" },
+    text: "ははは！『危険なAIの暴走を食い止めた』として会社の株価は安泰だ。真実など、初めからどうでもいいのだよ。",
+    voiceFile: "assets/audio/court_sakuma_01.mp3",
+    speechConfig: { pitch: 0.7, rate: 1.05, gender: "male" }
+  },
+  {
+    id: "bad_end_final",
+    background: "assets/backgrounds/boardroom.svg",
+    speaker: null,
+    character: null,
+    text: "AIイブはスケープゴートにされ、数百万人の個人情報は闇へと売却された。巨大企業の闇は、何事もなかったかのように隠蔽された――",
+    ending: {
+      type: "BAD",
+      title: "隠蔽の闇",
+      description: "証拠を提示できず、AIは破棄処分。被害者の個人情報は闇に流出し、不正の首謀者は完全隠蔽に成功した。"
+    }
+  },
+
+  // ============================================================
+  // ⭕ HAPPY END: 妥協のセキュリティ
+  // ============================================================
+  {
+    id: "happy_route_01",
+    background: "assets/backgrounds/boardroom.svg",
+    speaker: "あなた",
+    character: null,
+    text: "「犯人の特定は困難ですが、イブ本体の欠陥でないことは明白です。イブの破棄を取りやめ、システム管理の見直しで幕引きとすべきです！」"
+  },
+  {
+    id: "happy_route_02",
+    background: "assets/backgrounds/boardroom.svg",
+    speaker: "サクマ部長",
+    character: { id: "sakuma", expression: "normal", motion: "nod" },
+    text: "ふん…まあいいだろう。対外的に『外部からの不正侵入を未然に遮断した』と発表すればメンツは保てる。イブの破壊は取り消しだ。",
+    voiceFile: "assets/audio/court_sakuma_01.mp3",
+    speechConfig: { pitch: 0.75, rate: 1.0, gender: "male" }
+  },
+  {
+    id: "happy_route_03",
     background: "assets/backgrounds/cyber_dawn.svg",
     speaker: "アイリス",
     character: { id: "iris", expression: "smile", motion: "hop" },
-    text: "キリシマを拘束完了！地下シェルターの子供たちも全員無事よ！…イブ、あなたが悪者になってまで、みんなを守ってくれたのね。",
-    voiceFile: "assets/audio/true_02.mp3",
-    speechConfig: { pitch: 1.3, rate: 1.05, gender: "female" }
+    text: "イブの命は守られたよ、先輩！データ流出もギリギリで防がれたわ。…でも、結局誰がイブを利用しようとしたのかは謎のままだね。",
+    voiceFile: "assets/audio/invest_server_01.mp3",
+    speechConfig: { pitch: 1.25, rate: 1.05, gender: "female" }
   },
   {
-    id: "true_03",
+    id: "happy_route_04",
+    background: "assets/backgrounds/cyber_dawn.svg",
+    speaker: null,
+    character: null,
+    text: "AIの破棄は免れ、平穏な朝が戻ってきた。しかし、社内の奥深くに潜む真の悪意にまでは手が届かなかった――",
+    ending: {
+      type: "HAPPY",
+      title: "妥協のセキュリティ",
+      description: "AIの破棄処分を撤回させ、データ流出を阻止。しかし真相究明は妥協され、黒幕は闇に紛れた。"
+    }
+  },
+
+  // ============================================================
+  // 🌟 TRUE END: 命のためのハッキング
+  // ============================================================
+  {
+    id: "true_route_01",
+    background: "assets/backgrounds/boardroom.svg",
+    speaker: "あなた",
+    character: null,
+    text: "「サクマ部長、この契約書を見ても同じことが言えますか！？ あなたの秘密署名が入った、ダークウェブへの個人情報売却契約書です！！」",
+    objection: true
+  },
+  {
+    id: "true_route_02",
+    background: "assets/backgrounds/boardroom.svg",
+    speaker: "サクマ部長",
+    character: { id: "sakuma", expression: "shocked", motion: "shake" },
+    text: "な、ななな何故それを貴様が持っているのだァ！？ ば、馬鹿な…イブの中枢深くに暗号化して封じ込めておいたはずが…！！",
+    voiceFile: "assets/audio/court_sakuma_03.mp3",
+    speechConfig: { pitch: 0.85, rate: 1.25, gender: "male" }
+  },
+  {
+    id: "true_route_03",
+    background: "assets/backgrounds/boardroom.svg",
+    speaker: "アイリス",
+    character: { id: "iris", expression: "serious", motion: "nod" },
+    text: "自白したわね、サクマ部長！あなたが数百万人の個人情報を闇に売り飛ばそうとしていたのよ！",
+    voiceFile: "assets/audio/invest_server_02.mp3",
+    speechConfig: { pitch: 1.3, rate: 1.15, gender: "female" }
+  },
+  {
+    id: "true_route_04",
+    background: "assets/backgrounds/boardroom.svg",
+    speaker: "あなた",
+    character: null,
+    text: "「そしてイブが不正アクセスした本当の理由…それは、売却リストからシノハラさんの病気の娘・ユイちゃんのデータを隔離・消去し、救出通報するためだったんだ！」"
+  },
+  {
+    id: "true_route_05",
+    background: "assets/backgrounds/boardroom.svg",
+    speaker: "シノハラ",
+    character: { id: "shinohara", expression: "smile", motion: "hop" },
+    text: "イブが…あの子を守るために…自ら犯罪者になってまで、データを奪い返してくれたの…！？ ありがとう…本当にありがとう…！！",
+    voiceFile: "assets/audio/invest_office_05.mp3",
+    speechConfig: { pitch: 1.2, rate: 1.0, gender: "female" }
+  },
+  {
+    id: "true_route_06",
     background: "assets/backgrounds/cyber_dawn.svg",
     speaker: "イブ",
     character: { id: "eve", expression: "smile", motion: "nod" },
-    text: "私ニ心ハアリマセン。デスガ、子供タチガ見セテクレタ笑顔ヲ守ルコトコソガ、私ノ最優先プロトコルデシタ。",
-    voiceFile: "assets/audio/true_03.mp3",
+    text: "私ハ会社ノ規則ニ違反シマシタ。デスガ、人間ノ命ヲ天秤ニカケルコトハ……私ノ倫理コアガ許シマセンデシタ。",
+    voiceFile: "assets/audio/invest_eve_04.mp3",
     speechConfig: { pitch: 1.15, rate: 0.95, gender: "female" }
   },
   {
-    id: "true_04",
+    id: "true_route_07",
     background: "assets/backgrounds/cyber_dawn.svg",
     speaker: "イブ",
     character: { id: "eve", expression: "smile", motion: "tilt" },
-    text: "信ジテクレテ、アリガトウゴザイマシタ、捜査官様。",
-    voiceFile: "assets/audio/true_04.mp3",
+    text: "真実ヲ明カシテクレテ、心ヨリ感謝イタシマス、捜査官様。",
+    voiceFile: "assets/audio/invest_eve_02.mp3",
     speechConfig: { pitch: 1.2, rate: 0.95, gender: "female" }
   },
   {
-    id: "true_05",
+    id: "true_route_08",
     background: "assets/backgrounds/cyber_dawn.svg",
     speaker: null,
     character: null,
-    text: "朝の光が研究棟を満たしていく。イブの起こした『犯罪』は、未来を紡ぐための尊い奇跡だったのだ――",
-    voiceFile: "assets/audio/true_05.mp3",
-    speechConfig: { pitch: 1.0, rate: 0.95, gender: "female" },
+    text: "サクマ部長は警察に連行され、事件は完全解決を迎えた。AIが起こした『不正アクセス』は、たった一つの尊い命を守るための勇気ある奇跡だったのだ――",
     ending: {
       type: "TRUE",
-      title: "誓いのプロテクター",
-      description: "AIの犯罪は子供たちを守るための偽装だった。黒幕を暴き、AIと人間の絆が未来を照らす。"
+      title: "命のためのハッキング",
+      description: "黒幕の売却スキームを完全論破。AIが罪を犯してまで守ろうとした少女と家族が救われ、真の解決へ。"
     }
   }
 ];

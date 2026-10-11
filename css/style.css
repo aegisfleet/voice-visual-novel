@@ -1,12 +1,12 @@
 /* ========================================================
-   スタイルシート: 近未来SFミステリーノベル 『PROJECT EVE』
+   スタイルシート: 電脳フォレンジック裁判ノベル 『PROJECT EVE』
    ======================================================== */
 
 :root {
   --primary-color: #00f3ff;
   --secondary-color: #ff0055;
-  --accent-eve: #2dd4bf;
-  --dialog-bg: rgba(7, 14, 28, 0.88);
+  --gold-accent: #f59e0b;
+  --dialog-bg: rgba(7, 14, 28, 0.9);
   --dialog-border: rgba(0, 243, 255, 0.35);
   --text-color: #e6f1ff;
   --speaker-bg: linear-gradient(135deg, #00f3ff 0%, #0077ff 100%);
@@ -77,7 +77,7 @@ body {
   font-size: 3.8rem;
   font-weight: 900;
   letter-spacing: 0.15em;
-  background: linear-gradient(135deg, #00f3ff, #5eead4, #ff758c);
+  background: linear-gradient(135deg, #00f3ff, #5eead4, #f59e0b);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   margin-bottom: 8px;
@@ -85,13 +85,12 @@ body {
 }
 
 .title-sub {
-  font-size: 1.25rem;
-  letter-spacing: 0.1em;
+  font-size: 1.3rem;
+  letter-spacing: 0.12em;
   color: #94a3b8;
   margin-bottom: 30px;
 }
 
-/* エンディング収集バッジ */
 .endings-collection {
   display: flex;
   gap: 12px;
@@ -182,7 +181,6 @@ body {
   animation: breathing 4.2s ease-in-out infinite;
 }
 
-/* ホログラムAI（イブ）専用のサイバー発光 */
 .holo-character {
   filter: drop-shadow(0 0 25px rgba(45, 212, 191, 0.6));
   animation: holoGlow 3s ease-in-out infinite alternate;
@@ -270,6 +268,124 @@ body {
   75% { transform: translateX(12px) rotate(1.5deg); }
 }
 
+.motion-desk-slam { animation: motionDeskSlam 0.5s ease-in-out !important; }
+@keyframes motionDeskSlam {
+  0%, 100% { transform: translateY(0); }
+  20% { transform: translateY(-25px); }
+  40% { transform: translateY(28px); }
+  60% { transform: translateY(-8px); }
+}
+
+/* ========================================================
+   証拠品入手通知ポップアップ
+   ======================================================== */
+.evidence-popup {
+  position: absolute;
+  top: 85px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-30px);
+  z-index: 55;
+  background: linear-gradient(135deg, #1e293b, #0f172a);
+  border: 2px solid #f59e0b;
+  box-shadow: 0 0 25px rgba(245, 158, 11, 0.6);
+  color: #fff;
+  padding: 14px 30px;
+  border-radius: 40px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 700;
+  font-size: 1.1rem;
+  opacity: 0;
+  transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  pointer-events: none;
+}
+
+.evidence-popup.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.evidence-popup.hidden {
+  display: none;
+}
+
+.popup-icon {
+  font-size: 1.5rem;
+}
+
+/* ========================================================
+   異議あり！（OBJECTION!）カットイン演出
+   ======================================================== */
+.objection-cutin {
+  position: absolute;
+  inset: 0;
+  z-index: 90;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  pointer-events: none;
+}
+
+.objection-cutin.hidden {
+  display: none;
+}
+
+.objection-flash {
+  position: absolute;
+  inset: 0;
+  background: #ffffff;
+  opacity: 0;
+}
+
+.objection-cutin.active .objection-flash {
+  animation: flashAnim 0.4s ease-out;
+}
+@keyframes flashAnim {
+  0% { opacity: 0.95; }
+  100% { opacity: 0; }
+}
+
+.objection-text {
+  font-size: 6rem;
+  font-weight: 900;
+  color: #ef4444;
+  -webkit-text-stroke: 4px #ffffff;
+  letter-spacing: 0.2em;
+  text-shadow: 0 0 40px rgba(239, 68, 68, 0.9), 6px 6px 0 #000;
+  transform: scale(3) rotate(-6deg);
+  opacity: 0;
+}
+
+.objection-sub {
+  font-size: 2rem;
+  font-family: monospace;
+  font-weight: 900;
+  letter-spacing: 0.4em;
+  color: #facc15;
+  text-shadow: 0 0 20px rgba(250, 204, 21, 0.8);
+  opacity: 0;
+}
+
+.objection-cutin.active .objection-text {
+  animation: objectionSlam 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+.objection-cutin.active .objection-sub {
+  animation: objectionSubSlam 0.6s 0.15s ease-out forwards;
+}
+
+@keyframes objectionSlam {
+  0% { transform: scale(3.5) rotate(-12deg); opacity: 0; }
+  60% { transform: scale(0.95) rotate(-4deg); opacity: 1; }
+  100% { transform: scale(1) rotate(-4deg); opacity: 1; }
+}
+
+@keyframes objectionSubSlam {
+  0% { transform: translateY(30px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
 /* ========================================================
    UIレイヤー
    ======================================================== */
@@ -312,6 +428,16 @@ body {
 .ctrl-btn.active {
   background: #00f3ff;
   color: #030712;
+}
+
+.evidence-btn {
+  border-color: #f59e0b;
+  color: #f59e0b;
+}
+.evidence-btn:hover {
+  background: rgba(245, 158, 11, 0.25);
+  border-color: #f59e0b;
+  box-shadow: 0 0 15px rgba(245, 158, 11, 0.5);
 }
 
 /* ダイアログボックス */
@@ -372,12 +498,12 @@ body {
 }
 
 /* ========================================================
-   選択肢オーバーレイ
+   選択肢 & つきつけるオーバーレイ
    ======================================================== */
 .choices-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(3, 7, 18, 0.75);
+  background: rgba(3, 7, 18, 0.82);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -386,7 +512,7 @@ body {
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.3s;
-  backdrop-filter: blur(6px);
+  backdrop-filter: blur(8px);
 }
 
 .choices-overlay.active {
@@ -394,21 +520,12 @@ body {
   pointer-events: auto;
 }
 
-.choice-title {
-  font-family: monospace;
-  font-size: 1.1rem;
-  letter-spacing: 0.2em;
-  color: #00f3ff;
-  margin-bottom: 24px;
-  text-shadow: 0 0 15px rgba(0, 243, 255, 0.6);
-}
-
 .choices-list {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 16px;
   width: 90%;
-  max-width: 620px;
+  max-width: 660px;
 }
 
 .choice-button {
@@ -430,6 +547,156 @@ body {
   border-color: #00f3ff;
   transform: translateY(-3px);
   box-shadow: 0 8px 30px rgba(0, 243, 255, 0.4);
+}
+
+.evidence-choice-btn {
+  border-color: #f59e0b;
+  background: rgba(30, 20, 10, 0.9);
+}
+.evidence-choice-btn:hover {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.4) 0%, rgba(217, 119, 6, 0.4) 100%);
+  border-color: #f59e0b;
+  box-shadow: 0 8px 30px rgba(245, 158, 11, 0.5);
+}
+
+.choice-giveup {
+  opacity: 0.7;
+  border-style: dashed;
+}
+
+/* ========================================================
+   証拠品手帳 モーダル
+   ======================================================== */
+.evidence-modal {
+  position: absolute;
+  inset: 0;
+  z-index: 60;
+  background: rgba(2, 6, 23, 0.92);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 30px;
+  backdrop-filter: blur(14px);
+}
+
+.evidence-modal.hidden {
+  display: none;
+}
+
+.evidence-card {
+  max-width: 900px;
+  width: 92%;
+  height: 600px;
+  background: #0f172a;
+  border: 2px solid #f59e0b;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 0 50px rgba(245, 158, 11, 0.3);
+}
+
+.modal-header {
+  padding: 20px 28px;
+  background: #1e293b;
+  color: #f59e0b;
+  font-size: 1.3rem;
+  font-weight: 800;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.btn-close-modal {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 2rem;
+  cursor: pointer;
+}
+
+.evidence-body {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+.evidence-list {
+  width: 40%;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  overflow-y: auto;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.evidence-list-item {
+  padding: 14px 18px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: #e2e8f0;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.evidence-list-item:hover {
+  background: rgba(245, 158, 11, 0.15);
+  border-color: #f59e0b;
+}
+
+.evidence-list-item.selected {
+  background: rgba(245, 158, 11, 0.25);
+  border-color: #f59e0b;
+  color: #f59e0b;
+}
+
+.evidence-detail {
+  flex: 1;
+  padding: 30px;
+  overflow-y: auto;
+}
+
+.ev-detail-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 20px;
+  margin-bottom: 20px;
+}
+
+.ev-detail-icon {
+  font-size: 3rem;
+}
+
+.ev-detail-header h3 {
+  color: #fff;
+  font-size: 1.5rem;
+  margin-bottom: 6px;
+}
+
+.ev-category {
+  display: inline-block;
+  padding: 4px 12px;
+  background: rgba(245, 158, 11, 0.2);
+  border: 1px solid #f59e0b;
+  color: #f59e0b;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-family: monospace;
+}
+
+.ev-detail-body {
+  color: #cbd5e1;
+  font-size: 1.2rem;
+  line-height: 1.8;
 }
 
 /* ========================================================
