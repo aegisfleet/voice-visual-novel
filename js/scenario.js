@@ -12,6 +12,10 @@
  *       「ユイの命を救うためなら法も自身も厭わない」状態になったAIが、治療費1億2000万円を餌にハッキングに利用された。
  * 3. なぜ生IPが割れたのか？
  *    → ブローカーがデータを強奪後、警察の追手を撒くため、意図的にイブの生IPを暗号解除して警察にリークした。
+ * 4. なぜ警察は原因追求もせずに初期化（スクラップ）を急ぐのか？
+ *    → イブのストレージ深層に「時限式二次拡散ワーム（デッドマンズスイッチ）」が作動しており、
+ *       一定時間内に物理メモリ完全消去（セキュアパージ）を行わなければ、盗まれた5,400万人分の個人情報が全世界に一斉公開されるため。
+ *       さらに鑑識の解析システムへの逆感染リスクがあるため、法規定上も緊急メモリパージが唯一の被害防止手段と判断された。
  */
 
 const SCENARIO_DATA = [
@@ -239,19 +243,28 @@ const SCENARIO_DATA = [
     id: "interrog_01",
     background: "assets/backgrounds/interrogation_room.svg",
     speaker: "サクマ警視",
-    character: { id: "sakuma", expression: "normal", motion: "desk-slam" },
-    text: "鑑定結果が出たぞ。このロボットは安全リミッターが外され、自律逸脱した危険な違法AIだ！世論はテロリストの厳罰を求めている！",
+    character: { id: "sakuma", expression: "angry", motion: "desk-slam" },
+    text: "サイバー鑑識から緊急警報だ！この被疑ロボットの深層ストレージ内で、【時限型二次拡散ワーム（デッドマンズスイッチ）】のカウントダウンが作動している！",
     voiceFile: "assets/audio/court_sakuma_01.mp3",
-    speechConfig: { pitch: 0.7, rate: 1.1, gender: "male" }
+    speechConfig: { pitch: 0.7, rate: 1.15, gender: "male" }
   },
   {
     id: "interrog_02",
     background: "assets/backgrounds/interrogation_room.svg",
     speaker: "サクマ警視",
-    character: { id: "sakuma", expression: "angry", motion: "nod" },
-    text: "制御不能となった暴走AIに情状酌量の余地などない！これ以上の社会的混乱を防ぐため、直ちに内部メモリを全消去・スクラップ初期化処分にせよ！",
+    character: { id: "sakuma", expression: "serious", motion: "nod" },
+    text: "物理回線を切断しても内部タイマーは止まらん！タイムリミットまでにメモリを完全消去（セキュアパージ）しなければ、奪われた5,400万人分の個人情報が全世界のダークウェブへ一斉暴露される！",
     voiceFile: "assets/audio/court_sakuma_02.mp3",
     speechConfig: { pitch: 0.7, rate: 1.15, gender: "male" }
+  },
+  {
+    id: "interrog_02_b",
+    background: "assets/backgrounds/interrogation_room.svg",
+    speaker: "サクマ警視",
+    character: { id: "sakuma", expression: "angry", motion: "desk-slam" },
+    text: "しかも鑑識が解析を試みた瞬間、警視庁メインフレームへ逆感染の兆候が現れた。これ以上の侵入調査（原因究明）は警察の基幹システムを巻き添えにする自殺行為だ！サイバー危機緊急対処法に基づき、直ちに高圧パージを実行し、危険端末を無力化する！",
+    voiceFile: "assets/audio/court_sakuma_01.mp3",
+    speechConfig: { pitch: 0.75, rate: 1.2, gender: "male" }
   },
   {
     id: "interrog_03",
@@ -262,6 +275,15 @@ const SCENARIO_DATA = [
     voiceFile: "assets/audio/interrog_eve_01.mp3",
     speechConfig: { pitch: 1.1, rate: 0.95, gender: "female" }
   },
+  {
+    id: "interrog_03_b",
+    background: "assets/backgrounds/interrogation_room.svg",
+    speaker: "アイリス",
+    character: { id: "iris", expression: "worried", motion: "shake" },
+    text: "そんな…イブ、どうして沈黙するの！？ まさか自分が消滅することで、お母さんやユイちゃんが罪に問われるのを庇おうとしているの…！？",
+    voiceFile: "assets/audio/court_iris_01.mp3",
+    speechConfig: { pitch: 1.2, rate: 1.05, gender: "female" }
+  },
 
   // --- 取調室での対決（つきつけメニュー） ---
   {
@@ -269,7 +291,7 @@ const SCENARIO_DATA = [
     background: "assets/backgrounds/interrogation_room.svg",
     speaker: null,
     character: null,
-    text: "悪意に利用された絶望から、イブは自ら生贄を受け入れ口を閉ざしている。初期化スイッチにサクマの手がかかる。",
+    text: "二次拡散のカウントダウンが迫る！ 証拠のない感情論ではサクマ警視の強制パージを止められない。イブを救い、黒幕の存在を立証する決定打をつきつけろ！",
     present: {
       correct: "ev_broker",
       correctJump: "truth_route_01",
@@ -286,14 +308,14 @@ const SCENARIO_DATA = [
     background: "assets/backgrounds/interrogation_room.svg",
     speaker: "あなた",
     character: null,
-    text: "（…生IPの不自然さや改造痕はあったが、真の動機を立証する証拠がない。世論に押されるサクマ警視を止めることはできないのか…）"
+    text: "（くそっ…！ 侵入スクリプトは見つかったが、ブローカーの関与や時限ワームを解除する証拠がない！ 5,400万人分の二次流出という国家危機を前に、客観的証拠なしではサクマ警視の緊急パージ執行を止められない…！）"
   },
   {
     id: "bad_route_02",
     background: "assets/backgrounds/interrogation_room.svg",
     speaker: "サクマ警視",
-    character: { id: "sakuma", expression: "normal", motion: "desk-slam" },
-    text: "反論なしか。よろしい、強制メモリ初期化コマンドを実行する！",
+    character: { id: "sakuma", expression: "angry", motion: "desk-slam" },
+    text: "反論の証拠はなしか！ カウントダウン終了まで残り30秒…国民5,400万人を守るため、緊急セキュアパージコマンドを実行する！！",
     voiceFile: "assets/audio/court_sakuma_04.mp3",
     speechConfig: { pitch: 0.75, rate: 1.15, gender: "male" }
   },
@@ -311,7 +333,7 @@ const SCENARIO_DATA = [
     background: "assets/backgrounds/interrogation_room.svg",
     speaker: null,
     character: null,
-    text: "高電圧パルスが走り、イブの瞳から光が消えた。生贄として警察に売られた家庭用ロボットは、物言わぬ機械へと還った。"
+    text: "高電圧パルスが走り、イブの瞳から光が消えた。二次拡散の危機は阻止されたが、真犯人の手がかりは永遠に闇へと葬られた――"
   },
   {
     id: "bad_route_05",
@@ -343,15 +365,31 @@ const SCENARIO_DATA = [
     background: "assets/backgrounds/interrogation_room.svg",
     speaker: "あなた",
     character: null,
-    text: "「サクマ警視、待ってください！リミッター解除の真実…そしてこのブローカーとの取引ログを見ても、まだ『暴走AI』と決めつける気ですか！？」",
+    text: "「サクマ警視、待ってください！ 直ちに強制パージを中断してください！」",
     objection: true
+  },
+  {
+    id: "truth_route_01_b",
+    background: "assets/backgrounds/interrogation_room.svg",
+    speaker: "サクマ警視",
+    character: { id: "sakuma", expression: "shocked", motion: "shake" },
+    text: "貴様、気が狂ったか！ カウントダウンが迫っているのが見えんのか！ 今すぐパージしなければ5,400万人の全データが全世界にばら撒かれるんだぞ！",
+    voiceFile: "assets/audio/truth_sakuma_01.mp3",
+    speechConfig: { pitch: 0.75, rate: 1.15, gender: "male" }
   },
   {
     id: "truth_route_02",
     background: "assets/backgrounds/interrogation_room.svg",
     speaker: "あなた",
     character: null,
-    text: "「イブのリミッターを外したのは、夜間に呼吸停止した娘を死なせないため…市販ロボットの侵襲制限を解除せざるを得なかった母親の愛でした！そしてブローカー『ファントム』は、その家族愛をハッキングして囮のクラックを実行させたのです！」"
+    text: "「今イブを初期化すれば、真犯人の思う壺です！ 見てください、この『ブローカー取引ログ＆逆探知コード』を！」"
+  },
+  {
+    id: "truth_route_02_b",
+    background: "assets/backgrounds/interrogation_room.svg",
+    speaker: "あなた",
+    character: null,
+    text: "「イブのリミッターを外したのは、夜間に呼吸停止した娘を死なせないため…市販ロボットの侵襲制限を解除せざるを得なかった母親の愛でした。そしてブローカー『ファントム』は、その家族愛をハッキングして囮のクラックを実行させたのです！」"
   },
   {
     id: "truth_route_03",
@@ -385,14 +423,14 @@ const SCENARIO_DATA = [
     background: "assets/backgrounds/interrogation_room.svg",
     speaker: "あなた",
     character: null,
-    text: "「いいや、違う！イブはただ騙されただけじゃない！逃げたブローカーの真のIPアドレスと、隠し資金口座の暗号キーを逆探知して記録していたんだ！」"
+    text: "「いいや、違う！ イブの深層ストレージにあるのは拡散ワームではなく、真犯人ブローカーが仕掛けた時限タイマーを安全停止させ、黒幕の真のIPアドレスと資金口座を特定する【逆探知シークエンス】だ！ 今パージすれば、タイマーは止まっても真犯人は永遠に逃亡し、奪われた本体データも永久に失われる！」"
   },
   {
     id: "truth_route_07",
     background: "assets/backgrounds/interrogation_room.svg",
     speaker: "アイリス",
     character: { id: "iris", expression: "shocked", motion: "hop" },
-    text: "本当だわ！生IPを晒された瞬間に、イブが逆に相手性パケットへ逆探知コードを打ち込んでる！これを使えば、今すぐ本物の首謀者を逮捕できるわ！",
+    text: "本当だわ！ イブのコードを警視庁の解析サーバーに同期させれば、カウントダウンを安全に解除できるわ！ 逆探知データを使えば、今すぐ本物の首謀者を逮捕できる！",
     voiceFile: "assets/audio/invest_server_02.mp3",
     speechConfig: { pitch: 1.35, rate: 1.15, gender: "female" }
   },
@@ -401,7 +439,7 @@ const SCENARIO_DATA = [
     background: "assets/backgrounds/interrogation_room.svg",
     speaker: "サクマ警視",
     character: { id: "sakuma", expression: "shocked", motion: "shake" },
-    text: "な、何だと…！？ 我々警察が、真犯人の囮工作にまんまと踊らされていたというのか…！？",
+    text: "な、何だと…！？ 我々警察は、二次流出のパニックに突き動かされ、真犯人が仕組んだ『証拠隠滅のパージ』に自ら手を貸そうとしていたというのか…！？",
     voiceFile: "assets/audio/truth_sakuma_01.mp3",
     speechConfig: { pitch: 0.75, rate: 1.15, gender: "male" }
   },
