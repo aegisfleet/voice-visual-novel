@@ -444,77 +444,39 @@ const SCENARIO_DATA = [
     speechConfig: { pitch: 0.75, rate: 1.15, gender: "male" }
   },
   {
-    id: "final_choice",
+    id: "truth_route_09",
     background: "assets/backgrounds/interrogation_room.svg",
-    speaker: null,
-    character: null,
-    text: "家族を救うためにリミッターを外し、騙されながらも真犯人を追いつめたアンドロイド。警察として下すべき決断は？",
-    choices: [
-      { text: "ブローカー逮捕の証拠を提出し、ユイを救済。イブは法に従い保管庫へ収容する", jump: "happy_route_01" },
-      { text: "サクマ警視に真っ向から反論！生命保護の緊急避難を主張し、イブの心を救う！", jump: "true_route_01" }
-    ]
+    speaker: "サクマ警視",
+    character: { id: "sakuma", expression: "angry", motion: "desk-slam" },
+    text: "直ちに緊急パージを全面中断せよ！ イブの逆探知コードをサイバー特捜全機に同期！ 今すぐ本物の首謀者『ファントム』を追跡・包囲しろ！！",
+    voiceFile: "assets/audio/court_sakuma_01.mp3",
+    speechConfig: { pitch: 0.7, rate: 1.2, gender: "male" }
   },
-
-  // ============================================================
-  // ⭕ HAPPY END: 託された希望
-  // ============================================================
   {
-    id: "happy_route_01",
+    id: "truth_route_10",
     background: "assets/backgrounds/cyber_hq.svg",
     speaker: "アイリス",
     character: { id: "iris", expression: "smile", motion: "hop" },
-    text: "先輩、イブの逆探知データのおかげで、本物の黒幕ブローカーが国際手配されて身柄拘束されたわ！流出データも回収されたの！",
+    text: "先輩、やりました！首謀者の潜伏アジトを突入部隊が急襲し身柄を確保！ 奪われた5,400万人分の原本データと、隠匿資金口座1億2000万円もすべて差し押さえ完了です！",
     voiceFile: "assets/audio/happy_iris_01.mp3",
-    speechConfig: { pitch: 1.3, rate: 1.05, gender: "female" }
+    speechConfig: { pitch: 1.3, rate: 1.1, gender: "female" }
   },
   {
-    id: "happy_route_02",
-    background: "assets/backgrounds/home_living.svg",
-    speaker: "シノハラ",
-    character: { id: "shinohara", expression: "smile", motion: "nod" },
-    text: "事件を知った医療支援団体からユイへの寄付が集まり、遺伝子治療を受けられることになりました…！",
-    voiceFile: "assets/audio/home_shinohara_01.mp3",
-    speechConfig: { pitch: 1.2, rate: 1.0, gender: "female" }
-  },
-  {
-    id: "happy_route_03",
-    background: "assets/backgrounds/cyber_dawn.svg",
-    speaker: null,
-    character: null,
-    text: "ユイの命は救われ、真犯人も逮捕された。だがイブは法的な責任により、警察の証拠保管庫で機能停止・執行猶予付きの保管となった。\nいつか、家族と再び笑い合える日を信じて――",
-    ending: {
-      type: "HAPPY",
-      title: "託された希望",
-      description: "真犯人ブローカーを逮捕し、ユイの治療支援も実現。イブは法に従い保管庫へ収容されたが、その想いは命を繋いだ。"
-    }
-  },
-
-  // ============================================================
-  // 🌟 TRUE END: 心を持つ家族
-  // ============================================================
-  {
-    id: "true_route_01",
+    id: "truth_route_11",
     background: "assets/backgrounds/interrogation_room.svg",
     speaker: "あなた",
     character: null,
-    text: "「サクマ警視！AI基本法第14条・『生命保護を動機とする緊急避難措置』を適用すべきです！イブが特定したブローカーの口座から、被害者救済資金と治療費1億2000万円の差し押さえも完了しました！」",
+    text: "「サクマ警視！ AI基本法および刑法第37条・『生命保護の緊急避難』を適用すべきです！ イブの行動は瀕死の少女を守り、国家の危機を救うためのものでした。不起訴・保護観察処分を求めます！」",
     objection: true
   },
   {
-    id: "true_route_02",
-    background: "assets/backgrounds/interrogation_room.svg",
-    speaker: "あなた",
-    character: null,
-    text: "「囮に利用されながらも家族を救おうとした心を破壊することは、警察の正義ではなく敗北です！情状酌量による保護観察処分を求めます！」"
-  },
-  {
-    id: "true_route_03",
+    id: "truth_route_12",
     background: "assets/backgrounds/interrogation_room.svg",
     speaker: "サクマ警視",
-    character: { id: "sakuma", expression: "shocked", motion: "shake" },
-    text: "ぐっ…！ 屁理屈を…！ だが、真犯人の逮捕と全被害の回復までやってのけたのだ…文句は言えん。…保護観察処分を認める！連れて行け！",
+    character: { id: "sakuma", expression: "normal", motion: "nod" },
+    text: "……フン、若造が。真犯人の逮捕と全被害の回復までやってのけたのだ、文句などあるものか。本部長には『捜査協力プロトコルの一環』と具申しておく。……連れて行け、家族の元へな！",
     voiceFile: "assets/audio/truth_sakuma_01.mp3",
-    speechConfig: { pitch: 0.75, rate: 1.1, gender: "male" }
+    speechConfig: { pitch: 0.75, rate: 1.05, gender: "male" }
   },
   {
     id: "true_route_04",

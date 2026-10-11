@@ -291,6 +291,7 @@ class GameEngine {
     this.isTextTyping = true;
     this.dom.nextIndicator.style.opacity = '0';
     this.dom.messageText.textContent = '';
+    if (this.dom.dialogBox) this.dom.dialogBox.scrollTop = 0;
     this.currentFullText = fullText;
     this.typingOnComplete = onComplete;
 
@@ -301,6 +302,9 @@ class GameEngine {
       if (charIndex < fullText.length) {
         this.dom.messageText.textContent += fullText[charIndex];
         charIndex++;
+        if (this.dom.dialogBox) {
+          this.dom.dialogBox.scrollTop = this.dom.dialogBox.scrollHeight;
+        }
       } else {
         this.completeTyping();
       }
@@ -311,6 +315,9 @@ class GameEngine {
     clearInterval(this.typewriterTimer);
     this.isTextTyping = false;
     this.dom.messageText.textContent = this.currentFullText;
+    if (this.dom.dialogBox) {
+      this.dom.dialogBox.scrollTop = this.dom.dialogBox.scrollHeight;
+    }
     this.dom.nextIndicator.style.opacity = '1';
     if (this.typingOnComplete) {
       const cb = this.typingOnComplete;
@@ -505,13 +512,11 @@ class GameEngine {
     try {
       const cleared = JSON.parse(localStorage.getItem('cleared_endings') || '[]');
       const bad = cleared.includes('BAD') ? 'cleared' : '';
-      const happy = cleared.includes('HAPPY') ? 'cleared' : '';
       const trueEnd = cleared.includes('TRUE') ? 'cleared' : '';
 
       this.dom.endingsBadge.innerHTML = `
-        <span class="badge-item ${bad}">BAD END: ${cleared.includes('BAD') ? '達成済' : '未達成'}</span>
-        <span class="badge-item ${happy}">HAPPY END: ${cleared.includes('HAPPY') ? '達成済' : '未達成'}</span>
-        <span class="badge-item ${trueEnd}">TRUE END: ${cleared.includes('TRUE') ? '達成済' : '未達成'}</span>
+        <span class="badge-item ${bad}">❌ BAD END: ${cleared.includes('BAD') ? '達成済' : '未達成'}</span>
+        <span class="badge-item ${trueEnd}">🌟 TRUE END: ${cleared.includes('TRUE') ? '達成済' : '未達成'}</span>
       `;
 
       if (this.dom.reinvestigationBanner) {
