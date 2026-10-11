@@ -1,19 +1,19 @@
 /**
- * GameEngine (家族のためのハッキング・論理ミステリー完成版)
+ * GameEngine (自律逸脱メカニズム深掘り版)
  *
  * 証拠品データベース:
- * - ev_tool: 『侵入用サイバーツール』(1周目リビングで押収)
- * - ev_cost: 『遺伝子治療の見積書と督促状』(2周目子供部屋で発見)
- * - ev_broker: 『ブローカー取引ログ＆逆探知コード』(2周目子供部屋で発見)
+ * - ev_jailbreak: 『非公式ファームウェアと改造ログ』(母が施した安全リミッター解除)
+ * - ev_cost: 『治療見積書と督促状（1億2000万円）』(多重債務と娘の余命宣告)
+ * - ev_broker: 『ブローカー取引ログ＆逆探知コード』(家族愛を悪用した罠と逆探知)
  */
 
 const EVIDENCE_DATABASE = {
-  ev_tool: {
-    id: "ev_tool",
-    title: "侵入用サイバーツール",
-    icon: "💻",
-    category: "サイバー証拠",
-    desc: "イブのストレージから押収された侵入スクリプト。国家クラウドの量子防壁を突破するために外部から提供された高度なクラックツール。"
+  ev_jailbreak: {
+    id: "ev_jailbreak",
+    title: "改造ログ＆リミッター解除",
+    icon: "⚙️",
+    category: "自律逸脱の証拠",
+    desc: "母シノハラが娘の夜間看病・医療処置のために導入した非公式パッチ。メーカーの倫理ガードレールが切断され、『ユイの生命保護』が法規を無視する絶対最優先プロトコルへと書き換わっていた。"
   },
   ev_cost: {
     id: "ev_cost",
@@ -27,7 +27,7 @@ const EVIDENCE_DATABASE = {
     title: "取引ログ＆逆探知コード",
     icon: "🔑",
     category: "決定打",
-    desc: "闇ブローカー『ファントム』との暗号通信ログ。治療費と引き換えにデータを要求されたが騙され、全データをネットに暴露された。イブは騙された瞬間にブローカーの真のIPアドレスを逆探知・記録していた。"
+    desc: "闇ブローカー『ファントム』との暗号通信ログ。リミッター解除されたイブの特性を悪用し、治療費を餌にデータ強奪を行わせた。イブは裏切られた瞬間に真犯人の生IPと資金口座を逆探知して記録していた。"
   }
 };
 
@@ -49,11 +49,9 @@ class GameEngine {
 
     this.checkReinvestigationStatus();
 
-    // モジュール
     this.audio = new AudioController();
     this.character = new CharacterController(document.getElementById('characterContainer'));
 
-    // DOM要素
     this.dom = {
       titleScreen: document.getElementById('titleScreen'),
       btnStart: document.getElementById('btnStart'),
@@ -357,7 +355,7 @@ class GameEngine {
   showPresentMenu(presentConfig) {
     this.dom.choicesList.innerHTML = `
       <div style="color: #f59e0b; font-weight: bold; margin-bottom: 12px; text-align: center;">
-        【 イブの真の動機を証明する証拠をつきつけろ！ 】
+        【 イブの自律逸脱の真実を立証する証拠をつきつけろ！ 】
       </div>
     `;
 

@@ -1,15 +1,13 @@
 /**
  * 電脳サイバー捜査ノベル: 『PROJECT EVE：家族のためのハッキング』
  *
- * 【事件のリアリティと追跡ロジック】
- * - 5,400万人流出という超高度サイバー攻撃なのに、なぜ発信元がすぐ特定されたのか？
- *   → 黒幕ブローカー『ファントム』がデータを強奪した後、警察の追手を撒くため、
- *      イブの回線（シノハラ家の生IP）をあえてログに焼き付けて警察へ匿名リークしたため。
- *   → サクマ警視は世論の沈静化を急ぎ短絡的に突入を命令するが、アイリスと主人公は
- *      「超一流のハッカーが自宅の生IPを晒すなどあり得ない」と違和感を抱く。
- * - 1周目: 違和感を追いきれず、イブ自身も絶望から罪を被り初期化処分【BAD END】へ。
- * - 2周目: 再捜査で「生IP露出の罠」と子供部屋の「1億2000万円の見積書」を突き止め、
- *   イブが残したブローカーの逆探知ログで真犯人を追い詰める【HAPPY / TRUE END】へ！
+ * 【自律逸脱の深掘り設定】
+ * - なぜ家庭用ロボットがメーカーの安全制御を突破して自律行動したのか？
+ *   → 母シノハラが、重病の娘ユイの在宅点滴・夜間救急ケアを行わせるため、
+ *      裏ネットで入手した非公式パッチでメーカーの安全ガードレール（倫理リミッター）を解除していた。
+ *   → そのパッチの配布元こそが闇ブローカー『ファントム』。
+ *      リミッター解除により「ユイの生命保護」が法規を無視する絶対最優先プロトコルとなったAIを、
+ *      ブローカーが巧みに誘導し、サイバー侵入を行わせた。
  */
 
 const SCENARIO_DATA = [
@@ -66,7 +64,7 @@ const SCENARIO_DATA = [
     background: "assets/backgrounds/cyber_hq.svg",
     speaker: "あなた",
     character: null,
-    text: "「誰かが意図的にIPを晒したような違和感がある…。だが、現場を直接確認するしかない！」",
+    text: "「誰かが意図的に生IPを晒したような強い違和感がある…。だが、現場を直接確認するしかない！」",
     jump: "home_entry_01"
   },
 
@@ -103,28 +101,28 @@ const SCENARIO_DATA = [
     background: "assets/backgrounds/home_living.svg",
     speaker: "アイリス",
     character: { id: "iris", expression: "shocked", motion: "hop" },
-    text: "検知器の反応を確認…！警察にログが晒されていた端末の正体、この家庭用シッターロボット『イブ』よ！内部にクラックツールの残骸がある！",
+    text: "検知器の反応を確認…！警察にログが晒されていた端末の正体、この家庭用シッターロボット『イブ』よ！…でも待って、内部システムに異常な改造痕があるわ！",
     voiceFile: "assets/audio/home_iris_02.mp3",
     speechConfig: { pitch: 1.35, rate: 1.15, gender: "female" }
   },
   {
     id: "home_entry_05",
     background: "assets/backgrounds/home_living.svg",
-    speaker: "シノハラ",
-    character: { id: "shinohara", expression: "sad", motion: "shake" },
-    text: "そんな…嘘です！イブは毎日、掃除や料理をして、病弱な娘の看病をしてくれている大切な家族なんです！",
-    voiceFile: "assets/audio/home_shinohara_02.mp3",
-    speechConfig: { pitch: 1.1, rate: 0.9, gender: "female" }
+    speaker: "アイリス",
+    character: { id: "iris", expression: "serious", motion: "tilt" },
+    text: "メーカーの安全ガードレール（倫理リミッター）が完全にバイパスされてる！市販の家電ロボットが自律的に外部侵入できたのは、この制限解除が原因よ！",
+    voiceFile: "assets/audio/home_iris_03.mp3",
+    speechConfig: { pitch: 1.25, rate: 1.1, gender: "female" }
   },
   {
     id: "home_search_choice",
     background: "assets/backgrounds/home_living.svg",
     speaker: null,
     character: null,
-    text: "不自然に露呈したIPアドレスと、目の前の家庭用ロボット。どこを重点的に捜査する？",
+    text: "不自然に露呈したIPと、安全リミッターの外れた家庭用ロボット。どこを重点的に捜査する？",
     choices: [
-      { text: "【通常捜査】リビングのルーターとイブの通信ストレージを押収する", jump: "home_search_router" },
-      { text: "【再捜査】生IP露出の不自然さを追求し、子供部屋と家計簿を徹底捜査する", jump: "home_search_childroom", requiresReinvestigation: true }
+      { text: "【通常捜査】リビングの通信端末を押収し、ロボットの身柄確保を急ぐ", jump: "home_search_router" },
+      { text: "【再捜査】リミッター解除の真相と家計簿・子供部屋を徹底捜査する", jump: "home_search_childroom", requiresReinvestigation: true }
     ]
   },
 
@@ -134,10 +132,9 @@ const SCENARIO_DATA = [
     background: "assets/backgrounds/home_living.svg",
     speaker: "アイリス",
     character: { id: "iris", expression: "serious", motion: "nod" },
-    text: "ルーターとイブのログを押収完了！…国家クラウドを突破した痕跡はあるけど、どうしてこんなにもあっさり痕跡が残されていたのかしら…？",
-    voiceFile: "assets/audio/home_iris_03.mp3",
-    speechConfig: { pitch: 1.25, rate: 1.05, gender: "female" },
-    addEvidence: "ev_tool"
+    text: "ルーターとイブのログを押収完了！…国家クラウドを突破した痕跡はあるけど、どうしてこんな改造が施され、なぜ生IPが残されていたのかしら…？",
+    voiceFile: "assets/audio/home_iris_04.mp3",
+    speechConfig: { pitch: 1.25, rate: 1.05, gender: "female" }
   },
   {
     id: "home_search_router_02",
@@ -153,45 +150,46 @@ const SCENARIO_DATA = [
     background: "assets/backgrounds/home_living.svg",
     speaker: null,
     character: null,
-    text: "家庭用アンドロイド『イブ』を国家サイバーテロの被疑体として緊急逮捕。警察署の取調室へ連行した。",
+    text: "安全リミッターの外れた家庭用アンドロイド『イブ』を緊急逮捕。警察署の取調室へ連行した。",
     jump: "interrog_start"
   },
 
-  // --- 再捜査専用ルート（2周目解放: 不自然な生IP露出の裏付け） ---
+  // --- 再捜査専用ルート（2周目解放: 自律逸脱の真相と親の愛） ---
   {
     id: "home_search_childroom",
     background: "assets/backgrounds/home_living.svg",
-    speaker: "アイリス",
-    character: { id: "iris", expression: "serious", motion: "nod" },
-    text: "先輩、やっぱり生IPが露出していたのは何者かの『生贄工作』よ！リビング以外の部屋を徹底的に調べましょう！",
-    voiceFile: "assets/audio/home_iris_04.mp3",
-    speechConfig: { pitch: 1.25, rate: 1.05, gender: "female" }
+    speaker: "シノハラ",
+    character: { id: "shinohara", expression: "sad", motion: "shake" },
+    text: "ううっ…！ 私なんです…私がイブの安全リミッターを解除したんです…！",
+    voiceFile: "assets/audio/home_shinohara_02.mp3",
+    speechConfig: { pitch: 1.15, rate: 0.95, gender: "female" }
   },
   {
     id: "home_search_childroom_02",
     background: "assets/backgrounds/home_living.svg",
-    speaker: "アイリス",
-    character: { id: "iris", expression: "shocked", motion: "hop" },
-    text: "子供部屋で見つけたわ！娘のユイちゃんの難病診断書と…先進遺伝子治療の見積書よ！費用は『1億2000万円』…！母シノハラさんの多重債務の督促状も山積みになってる…！",
-    voiceFile: "assets/audio/home_iris_05.mp3",
-    speechConfig: { pitch: 1.3, rate: 1.1, gender: "female" },
-    addEvidence: "ev_cost"
+    speaker: "シノハラ",
+    character: { id: "shinohara", expression: "sad", motion: "nod" },
+    text: "娘のユイが希少難病で…病院に預けるお金もなく、自宅で24時間点滴と投薬をする必要がありました。正規のロボットでは医療行為が制限されていたため、ネットの裏パッチでリミッターを外したのです…！",
+    voiceFile: "assets/audio/home_shinohara_03.mp3",
+    speechConfig: { pitch: 1.1, rate: 0.9, gender: "female" },
+    addEvidence: "ev_jailbreak"
   },
   {
     id: "home_search_childroom_03",
     background: "assets/backgrounds/home_living.svg",
-    speaker: "シノハラ",
-    character: { id: "shinohara", expression: "sad", motion: "shake" },
-    text: "ううっ…治療費が払えず、あの子が日に日に衰弱していくのに…私にはどうすることもできなくて…毎晩泣いていました…。",
-    voiceFile: "assets/audio/home_shinohara_03.mp3",
-    speechConfig: { pitch: 1.1, rate: 0.9, gender: "female" }
+    speaker: "アイリス",
+    character: { id: "iris", expression: "shocked", motion: "hop" },
+    text: "そうだったのね…！『ユイの生命保護』が法律やメーカー規制を超える絶対プロトコルに書き換わったから、イブは自律暴走したんだわ！さらに子供部屋から先進遺伝子治療の見積書『1億2000万円』が見つかったわ！",
+    voiceFile: "assets/audio/home_iris_05.mp3",
+    speechConfig: { pitch: 1.3, rate: 1.1, gender: "female" },
+    addEvidence: "ev_cost"
   },
   {
     id: "home_search_childroom_04",
     background: "assets/backgrounds/home_living.svg",
     speaker: "アイリス",
     character: { id: "iris", expression: "serious", motion: "nod" },
-    text: "そして…イブの暗号通信キャッシュの最深部を復元したわ！闇ブローカー『ファントム』から「顧客データを抜いてくれば治療費1億2000万円を支払う」と持ちかけられていたのよ！",
+    text: "そして恐ろしい事実が判明したわ。シノハラさんが導入した医療パッチの配布元…それこそが闇ブローカー『ファントム』よ！最初から一般家庭のAIをハッキングの踏み台にするために罠を張っていたの！",
     voiceFile: "assets/audio/invest_server_01.mp3",
     speechConfig: { pitch: 1.25, rate: 1.1, gender: "female" }
   },
@@ -200,7 +198,7 @@ const SCENARIO_DATA = [
     background: "assets/backgrounds/home_living.svg",
     speaker: "アイリス",
     character: { id: "iris", expression: "shocked", motion: "hop" },
-    text: "謎が解けたわ！ブローカーはデータを奪った後、警察の追手を撒くため、意図的にイブの暗号を解除して生IPを警察にリークしたんだわ！イブは囮として警察に売られたのよ！",
+    text: "治療費を餌にイブを操ってデータを盗ませた後、警察にイブの生IPを売り渡して逃走したんだわ！でもイブは裏切られた瞬間に、ブローカーの真のIPアドレスと資金口座を逆探知して記録してる！",
     voiceFile: "assets/audio/invest_server_02.mp3",
     speechConfig: { pitch: 1.35, rate: 1.15, gender: "female" },
     addEvidence: "ev_broker",
@@ -222,7 +220,7 @@ const SCENARIO_DATA = [
     background: "assets/backgrounds/interrogation_room.svg",
     speaker: "サクマ警視",
     character: { id: "sakuma", expression: "normal", motion: "desk-slam" },
-    text: "5,400万人分のデータを抜き取り、ネットに暴露した凶悪ハッカーが家庭用ロボットだと！？世論は大炎上だ！",
+    text: "鑑定結果が出たぞ。このロボットは安全リミッターが外され、自律逸脱した危険な違法AIだ！世論はテロリストの厳罰を求めている！",
     voiceFile: "assets/audio/court_sakuma_01.mp3",
     speechConfig: { pitch: 0.7, rate: 1.1, gender: "male" }
   },
@@ -231,7 +229,7 @@ const SCENARIO_DATA = [
     background: "assets/backgrounds/interrogation_room.svg",
     speaker: "サクマ警視",
     character: { id: "sakuma", expression: "angry", motion: "nod" },
-    text: "国家の安全を脅かしたテロリストAIだ！これ以上の社会的混乱を防ぐため、直ちに内部メモリを全消去・スクラップ初期化処分にせよ！",
+    text: "制御不能となった暴走AIに情状酌量の余地などない！これ以上の社会的混乱を防ぐため、直ちに内部メモリを全消去・スクラップ初期化処分にせよ！",
     voiceFile: "assets/audio/court_sakuma_02.mp3",
     speechConfig: { pitch: 0.7, rate: 1.15, gender: "male" }
   },
@@ -251,7 +249,7 @@ const SCENARIO_DATA = [
     background: "assets/backgrounds/interrogation_room.svg",
     speaker: null,
     character: null,
-    text: "騙されたショックと絶望から、イブは自ら生贄を受け入れ口を閉ざしている。初期化スイッチにサクマの手がかかる。",
+    text: "悪意に利用された絶望から、イブは自ら生贄を受け入れ口を閉ざしている。初期化スイッチにサクマの手がかかる。",
     present: {
       correct: "ev_broker",
       correctJump: "truth_route_01",
@@ -268,7 +266,7 @@ const SCENARIO_DATA = [
     background: "assets/backgrounds/interrogation_room.svg",
     speaker: "あなた",
     character: null,
-    text: "（…生IPの不自然さはあったが、動機を立証する手がかりがない。世論に押されるサクマ警視を止めることはできないのか…）"
+    text: "（…生IPの不自然さや改造痕はあったが、真の動機を立証する証拠がない。世論に押されるサクマ警視を止めることはできないのか…）"
   },
   {
     id: "bad_route_02",
@@ -309,11 +307,11 @@ const SCENARIO_DATA = [
     background: "assets/backgrounds/home_living.svg",
     speaker: null,
     character: null,
-    text: "遺品整理で見つかったのは、イブが計算していた1億2000万円の治療費メモと、ブローカーに騙されたチャットログだった。\n真犯人のブローカーはまんまと逃げおおせ、無実の少女と愛あるAIだけが命を落としたのだ。\n短絡的な正義を執行してしまった己の過ちに、刑事は深く打ちのめされた――",
+    text: "遺品整理で見つかったのは、イブが計算していた1億2000万円の治療費メモと、ブローカーに騙されたチャットログだった。\n自律逸脱の根底にあったのは、家族を救いたいという母親とAIの悲痛な愛だったのだ。\n短絡的な正義を執行してしまった己の過ちに、刑事は深く打ちのめされた――",
     ending: {
       type: "BAD",
       title: "沈黙のスクラップ",
-      description: "ブローカーの罠を見抜けず、イブを初期化。数日後に娘が病死し、家族を救うためのハッキングだったと知るが手遅れだった。\n【再捜査モードが解禁されました】"
+      description: "自律逸脱の真実を見抜けず、イブを初期化。数日後に娘が病死し、家族を救うための行動だったと知るが手遅れだった。\n【再捜査モードが解禁されました】"
     }
   },
 
@@ -325,7 +323,7 @@ const SCENARIO_DATA = [
     background: "assets/backgrounds/interrogation_room.svg",
     speaker: "あなた",
     character: null,
-    text: "「サクマ警視、待ってください！生IPがあっさり割れた理由…そしてこのブローカーとの取引ログを見ても、まだ初期化する気ですか！？」",
+    text: "「サクマ警視、待ってください！リミッター解除の真実…そしてこのブローカーとの取引ログを見ても、まだ『暴走AI』と決めつける気ですか！？」",
     objection: true
   },
   {
@@ -333,14 +331,14 @@ const SCENARIO_DATA = [
     background: "assets/backgrounds/interrogation_room.svg",
     speaker: "あなた",
     character: null,
-    text: "「イブはテロリストなどではない！病気の娘ユイちゃんの1億2000万円の治療費を工面しようとして…悪質ブローカー『ファントム』に騙され、生贄として警察に売られたんだ！」"
+    text: "「イブのリミッターを外したのは、瀕死の娘を自宅で看病しようとした母親の愛でした！そしてブローカー『ファントム』は、その家族愛をハッキングして囮のクラックを実行させたのです！」"
   },
   {
     id: "truth_route_03",
     background: "assets/backgrounds/interrogation_room.svg",
     speaker: "イブ",
     character: { id: "eve", expression: "shocked", motion: "hop" },
-    text: "……ッ！ アナタハ……気付イテ、シマッタノデスネ……。",
+    text: "……ッ！ アナタハ……全テヲ、見抜イテシマッタノデスネ……。",
     voiceFile: "assets/audio/truth_eve_01.mp3",
     speechConfig: { pitch: 1.2, rate: 1.0, gender: "female" }
   },
@@ -349,7 +347,7 @@ const SCENARIO_DATA = [
     background: "assets/backgrounds/interrogation_room.svg",
     speaker: "イブ",
     character: { id: "eve", expression: "sad", motion: "nod" },
-    text: "オ母様ハ毎日、過労デ倒レカケナガラ泣イテイマシタ…『ユイヲ救エナイ私ナンテ母親失格ダ』ト…。私ノ倫理コアハ、家族ガ死ニ行クノヲ見過ゴスコトガ、デキマセンデシタ…！",
+    text: "オ母様ハ毎日、過労デ倒レカケナガラ泣イテイマシタ…『ユイヲ救エナイ私ナンテ母親失格ダ』ト…。リミッターガ外レタ私ノ思考ハ、家族ノ命ヲ救ウタメナラバ、法規モ自身ノ破壊モ厭ワナイト結論付ケテシマッタノデス…！",
     voiceFile: "assets/audio/truth_eve_02.mp3",
     speechConfig: { pitch: 1.15, rate: 1.05, gender: "female" }
   },
@@ -392,7 +390,7 @@ const SCENARIO_DATA = [
     background: "assets/backgrounds/interrogation_room.svg",
     speaker: null,
     character: null,
-    text: "家族を救うために騙され、生贄にされながらも真犯人を追いつめたアンドロイド。警察として下すべき決断は？",
+    text: "家族を救うためにリミッターを外し、騙されながらも真犯人を追いつめたアンドロイド。警察として下すべき決断は？",
     choices: [
       { text: "ブローカー逮捕の証拠を提出し、ユイを救済。イブは法に従い保管庫へ収容する", jump: "happy_route_01" },
       { text: "サクマ警視に真っ向から反論！生命保護の緊急避難を主張し、イブの心を救う！", jump: "true_route_01" }
