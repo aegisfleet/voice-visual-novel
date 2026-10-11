@@ -74,15 +74,15 @@ def main():
                     f.write(raw_bytes)
                 print(f"-> 生成完了: {final_path} ({len(raw_bytes) / 1024:.1f} KB)")
 
-                # シームレスループ加工
+                # 自然フェードアウト＆余韻インターバル加工
                 try:
-                    from make_seamless_loop import create_seamless_loop
-                    temp_loop = output_dir / f"loop_{filename}"
-                    create_seamless_loop(final_path, temp_loop, crossfade_sec=4.0)
-                    temp_loop.replace(final_path)
-                    print(f"-> シームレスループ加工完了: {filename}")
-                except Exception as loop_err:
-                    print(f"-> ループ加工警告 (元ファイルを維持): {loop_err}")
+                    from process_fade_bgm import process_fade_out_bgm
+                    temp_fade = output_dir / f"fade_{filename}"
+                    process_fade_out_bgm(final_path, temp_fade, fade_out_sec=3.5, silence_tail_sec=1.5, fade_in_sec=0.5)
+                    temp_fade.replace(final_path)
+                    print(f"-> 自然フェードアウト加工完了: {filename}")
+                except Exception as fade_err:
+                    print(f"-> フェード加工警告 (元ファイルを維持): {fade_err}")
             else:
                 print("-> 音声データが取得できませんでした")
 
