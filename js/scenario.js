@@ -29,6 +29,11 @@
  *    → イブのストレージ深層に「時限式二次拡散ワーム（デッドマンズスイッチ）」が作動しており、
  *       一定時間内に物理メモリ完全消去（セキュアパージ）を行わなければ、盗まれた5,400万人分の個人情報が全世界に一斉公開されるため。
  *       さらに鑑識の解析システムへの逆感染リスクがあるため、法規定上も緊急メモリパージが唯一の被害防止手段と判断された。
+ * 8. なぜ被疑者家族が1億2000万円の手術を受けられたのか？（押収金の私的流用ではないのか？）
+ *    → 押収されたブローカーの隠匿口座1億2000万円は、法律（犯罪収益没収法）に基づき国庫没収された。
+ *       シノハラ家が手術を受けられたのは、5,400万人分の国家危機を阻止した特大功績に対する「内閣サイバー特別功労報奨金」と、
+ *       サクマ警視の尽力による厚生省「小児難病先進医療・特例治験枠」の適用による公的支援。
+ *       イブが少女を守るために記録した極限下のバイタルログが貴重な臨床研究データとして認められたことで、正当な全額公的支援が実現した。
  */
 
 const SCENARIO_DATA = [
@@ -532,16 +537,43 @@ const SCENARIO_DATA = [
     background: "assets/backgrounds/interrogation_room.svg",
     speaker: "サクマ警視",
     character: { id: "sakuma", expression: "normal", motion: "nod" },
-    text: "……フン、若造が。真犯人の逮捕と全被害の回復までやってのけたのだ、文句などあるものか。本部長には『捜査協力プロトコルの一環』と具申しておく。……連れて行け、家族の元へな！",
+    text: "……フン、若造が。真犯人の逮捕と全被害の回復までやってのけたのだ、文句などあるものか。本部長には『重大サイバー危機阻止に伴う捜査協力プロトコル』と具申しておく。",
     voiceFile: "assets/audio/truth_sakuma_01.mp3",
     speechConfig: { pitch: 0.75, rate: 1.05, gender: "male" }
+  },
+  {
+    id: "truth_route_12_b",
+    background: "assets/backgrounds/interrogation_room.svg",
+    speaker: "サクマ警視",
+    character: { id: "sakuma", expression: "serious", motion: "desk-slam" },
+    text: "それと……勘違いするなよ。押収したブローカーの隠匿口座1億2000万円は、犯罪収益として当然国庫へ没収だ。警察がその金を勝手に横領して被疑者家族の手術費に回せるわけがない。",
+    voiceFile: "assets/audio/court_sakuma_02.mp3",
+    speechConfig: { pitch: 0.75, rate: 1.15, gender: "male" }
+  },
+  {
+    id: "truth_route_12_c",
+    background: "assets/backgrounds/interrogation_room.svg",
+    speaker: "アイリス",
+    character: { id: "iris", expression: "shocked", motion: "hop" },
+    text: "えっ…！？ そ、そんな…！ じゃあ、ユイちゃんの遺伝子手術はどうなってしまうんですか…！？",
+    voiceFile: "assets/audio/court_iris_01.mp3",
+    speechConfig: { pitch: 1.25, rate: 1.1, gender: "female" }
+  },
+  {
+    id: "truth_route_12_d",
+    background: "assets/backgrounds/interrogation_room.svg",
+    speaker: "サクマ警視",
+    character: { id: "sakuma", expression: "normal", motion: "nod" },
+    text: "馬鹿者が。国家5,400万人を救った最大の功績者を見殺しにするほど、国も法も落ちぶれてはおらん。内閣サイバー特別功績報奨金が閣議決定された。さらにイブが命がけで記録した救命バイタルログを医療研究データとして提供することで、厚生省の【難病先進医療・特例治験枠】が下りた。全額公的支援だ。……手術費の心配はもう要らん。早く娘の元へ連れて帰ってやれ！",
+    voiceFile: "assets/audio/truth_sakuma_01.mp3",
+    speechConfig: { pitch: 0.75, rate: 1.1, gender: "male" }
   },
   {
     id: "true_route_04",
     background: "assets/backgrounds/home_living.svg",
     speaker: "シノハラ",
     character: { id: "shinohara", expression: "smile", motion: "hop" },
-    text: "おかえりなさい、イブ…！ 差し押さえられた資金でユイの遺伝子手術、無事に大成功したのよ…！",
+    text: "おかえりなさい、イブ…！ 警察の皆さんとサクマ警視が奔走してくださって、国家特例枠でユイの遺伝子手術が無事に大成功したのよ…！",
     voiceFile: "assets/audio/true_shinohara_01.mp3",
     speechConfig: { pitch: 1.25, rate: 1.05, gender: "female" }
   },
@@ -563,7 +595,7 @@ const SCENARIO_DATA = [
     ending: {
       type: "TRUE",
       title: "心を持つ家族",
-      description: "真犯人を逮捕し、少女の治療費1億2000万円も回復。警察の良心によりイブは無罪放免となり、家族の温かな日常を取り戻した。"
+      description: "真犯人を逮捕。国家を救った功績への特別報奨金と公的先進医療特例により、少女の遺伝子手術が無事成功。イブは家族の温かな日常を取り戻した。"
     }
   }
 ];
