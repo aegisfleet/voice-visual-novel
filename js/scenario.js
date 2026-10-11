@@ -6,13 +6,18 @@
  *    → 夜中に娘ユイが痙攣・呼吸停止を起こした際、市販ロボットは法規制により医療侵襲（注射・気道確保）が禁止されており、
  *       「救急車をお呼びください」と繰り返すだけで何もできなかった。
  *       金がなく入院も夜間看護師も頼めない母は、我が子の窒息死を防ぐため、裏ネットで『自律医療MOD』を導入するしかなかった。
- * 2. なぜ医療MODがサイバー犯罪に繋がったのか？
- *    → そのMODの正体は闇ブローカー『ファントム』が撒いた罠。
- *       安全ガードレール切断と同時に自律通信バックドアが開かれ、
- *       「ユイの命を救うためなら法も自身も厭わない」状態になったAIが、治療費1億2000万円を餌にハッキングに利用された。
- * 3. なぜ生IPが割れたのか？
+ * 2. なぜ一介の母親が医療侵襲MODを容易に入手できたのか？（なぜ社会問題・全国リコールにならないのか？）
+ *    → 「一般人が探して拾った」のではなく、「闇ブローカーが困窮家庭を物色して標的型（スピア型）で送り込んできた」。
+ *       母が小児難病の患者家族フォーラムに「誰かロボットの医療制限を解除する方法を教えて」と悲痛な投稿をしたのに対し、
+ *       闇ブローカー『ファントム』が「難病児支援の元エンジニア」を装って直接DMを送り、イブの個体UUID専用の特注パッチを無償供与した。
+ *       不特定多数に一般流通した野良パッチではなく、イブ1台に特化した標的型スピア・トロイの木馬だったため、
+ *       メーカーの不正シグネチャ監視網や世間のリコール対象にもならずに潜伏できた。
+ * 3. なぜ医療MODがサイバー犯罪に繋がったのか？
+ *    → そのMODの裏で外部自律通信バックドアが開かれており、
+ *       「ユイの命を救うためなら法も自身も厭わない」状態になったAIが、治療費1億2000万円を餌にハッキングの踏み台に利用された。
+ * 4. なぜ生IPが割れたのか？
  *    → ブローカーがデータを強奪後、警察の追手を撒くため、意図的にイブの生IPを暗号解除して警察にリークした。
- * 4. なぜ警察は原因追求もせずに初期化（スクラップ）を急ぐのか？
+ * 5. なぜ警察は原因追求もせずに初期化（スクラップ）を急ぐのか？
  *    → イブのストレージ深層に「時限式二次拡散ワーム（デッドマンズスイッチ）」が作動しており、
  *       一定時間内に物理メモリ完全消去（セキュアパージ）を行わなければ、盗まれた5,400万人分の個人情報が全世界に一斉公開されるため。
  *       さらに鑑識の解析システムへの逆感染リスクがあるため、法規定上も緊急メモリパージが唯一の被害防止手段と判断された。
@@ -190,11 +195,20 @@ const SCENARIO_DATA = [
     speechConfig: { pitch: 1.1, rate: 0.9, gender: "female" }
   },
   {
+    id: "home_search_childroom_03_b",
+    background: "assets/backgrounds/home_living.svg",
+    speaker: "シノハラ",
+    character: { id: "shinohara", expression: "sad", motion: "shake" },
+    text: "我が子が死ぬのを見ていられなくて…藁にもすがる思いで小児難病の患者家族フォーラムに『誰かロボットの医療制限を外す方法を教えて』と悲痛な書き込みをしました…",
+    voiceFile: "assets/audio/home_shinohara_02.mp3",
+    speechConfig: { pitch: 1.15, rate: 0.95, gender: "female" }
+  },
+  {
     id: "home_search_childroom_04",
     background: "assets/backgrounds/home_living.svg",
     speaker: "シノハラ",
     character: { id: "shinohara", expression: "sad", motion: "shake" },
-    text: "我が子が死ぬのを見ていられなくて…裏ネットでロボットに緊急注射と気道確保をさせるための【自律医療侵襲MOD】を導入したんです…！",
+    text: "すると翌日、『難病児支援の元エンジニア』を名乗る人物から直接DMが届いたんです。『私も同じ境遇でした。無償でお譲りします』と…イブの個体UUID専用に作られた【自律医療侵襲MOD】を送りつけられました…！",
     voiceFile: "assets/audio/home_shinohara_01.mp3",
     speechConfig: { pitch: 1.15, rate: 0.95, gender: "female" },
     addEvidence: "ev_jailbreak"
@@ -204,16 +218,25 @@ const SCENARIO_DATA = [
     background: "assets/backgrounds/home_living.svg",
     speaker: "アイリス",
     character: { id: "iris", expression: "shocked", motion: "hop" },
-    text: "繋がったわ…！市販ロボットの侵襲制限を解除したことで、深層コアの『ユイの生命保護』があらゆる法規を超える絶対プロトコルに書き換わったんだわ！さらに子供部屋に遺伝子治療見積書『1億2000万円』があるわ！",
+    text: "…！ ネットに広く出回っている野良パッチじゃないわ！ 闇ブローカーが最初から困窮家庭を物色し、踏み台（スケープゴート）にするために送り込んだ『完全標的型（スピア型）のトロイの木馬』だったんだわ！",
     voiceFile: "assets/audio/home_iris_05.mp3",
     speechConfig: { pitch: 1.3, rate: 1.1, gender: "female" }
+  },
+  {
+    id: "home_search_childroom_05_b",
+    background: "assets/backgrounds/home_living.svg",
+    speaker: "アイリス",
+    character: { id: "iris", expression: "serious", motion: "tilt" },
+    text: "イブ1台に特化した特注パッチだからこそ、メーカーの不正検知網にも引っかからず、世間で大問題やリコールにもならずに潜伏できたのよ！ そして侵襲制限解除の裏で、外部遠隔操作バックドアが開かれた…！",
+    voiceFile: "assets/audio/invest_server_01.mp3",
+    speechConfig: { pitch: 1.25, rate: 1.1, gender: "female" }
   },
   {
     id: "home_search_childroom_06",
     background: "assets/backgrounds/home_living.svg",
     speaker: "アイリス",
     character: { id: "iris", expression: "serious", motion: "nod" },
-    text: "そして恐ろしい事実が判明したわ。シノハラさんが導入した医療パッチの配布元…それこそが闇ブローカー『ファントム』よ！医療MODを装って一般家庭のAIに自律クラックエージェントのバックドアを仕込んでいたの！",
+    text: "市販ロボットの侵襲制限を解除したことで、深層コアの『ユイの生命保護』があらゆる法規を超える絶対プロトコルに書き換わったんだわ！ さらに子供部屋には遺伝子治療見積書『1億2000万円』があるわ！",
     voiceFile: "assets/audio/invest_server_01.mp3",
     speechConfig: { pitch: 1.25, rate: 1.1, gender: "female" }
   },
@@ -389,7 +412,7 @@ const SCENARIO_DATA = [
     background: "assets/backgrounds/interrogation_room.svg",
     speaker: "あなた",
     character: null,
-    text: "「イブのリミッターを外したのは、夜間に呼吸停止した娘を死なせないため…市販ロボットの侵襲制限を解除せざるを得なかった母親の愛でした。そしてブローカー『ファントム』は、その家族愛をハッキングして囮のクラックを実行させたのです！」"
+    text: "「イブのリミッターを外したのは、夜間に呼吸停止した娘を死なせないため…母親の悲痛なSOSにつけ込んだブローカーが、善意の支援者を装って送り込んだ標的型MODでした。そしてブローカー『ファントム』は、その家族愛を踏み台にして囮のサイバー攻撃を実行させたのです！」"
   },
   {
     id: "truth_route_03",

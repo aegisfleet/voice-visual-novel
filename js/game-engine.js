@@ -20,7 +20,7 @@ const EVIDENCE_DATABASE = {
     title: "自律医療MOD＆改造ログ",
     icon: "⚙️",
     category: "自律逸脱の真相",
-    desc: "娘ユイの夜間呼吸停止・窒息を防ぐため、母が導入した非公式パッチ。市販ロボットの医療侵襲制限（注射・気道確保の禁止）を解除したが、裏で外部自律通信バックドアが開かれていた。"
+    desc: "娘ユイの夜間窒息死を防ぐため、難病相談フォーラムで支援者を装ったブローカーから母が直接譲り受けたスピア型特注MOD。市販ロボットの医療侵襲制限（注射・気道確保）を解除したが、裏で外部遠隔操作バックドアが開かれていた。"
   },
   ev_broker: {
     id: "ev_broker",
@@ -122,8 +122,10 @@ class GameEngine {
       e.stopPropagation();
       this.isAutoMode = !this.isAutoMode;
       this.dom.btnAuto.classList.toggle('active', this.isAutoMode);
-      if (this.isAutoMode && !this.isTextTyping && !this.audio.isPlaying) {
-        this.advanceNext();
+      if (this.isAutoMode) {
+        this.checkAutoAdvance();
+      } else {
+        clearTimeout(this.autoTimer);
       }
     });
 
@@ -173,13 +175,33 @@ class GameEngine {
 
     this.audio.onSpeechEnd = () => {
       this.character.setTalking(false);
-      if (this.isAutoMode && !this.isTextTyping) {
-        clearTimeout(this.autoTimer);
-        this.autoTimer = setTimeout(() => {
-          if (this.isAutoMode) this.advanceNext();
-        }, 1100);
-      }
+      this.checkAutoAdvance();
     };
+  }
+
+  checkAutoAdvance() {
+    clearTimeout(this.autoTimer);
+    if (!this.isAutoMode) return;
+
+    // タイピング中、または音声再生中の場合は次に進まない
+    if (this.isTextTyping || this.audio.isPlaying) return;
+
+    const currentEntry = this.scenarioMap.get(this.currentSceneId);
+    if (!currentEntry) return;
+    const scene = currentEntry.scene;
+
+    // 選択肢画面・証拠品つきつけ画面では自動進行しない
+    if ((scene.choices && scene.choices.length > 0) || scene.present) return;
+
+    // 文字数に応じた十分な読書時間を計算（最低2.2秒、最大5.5秒）
+    const textLen = (scene.text || '').length;
+    const readingDelay = Math.min(5500, Math.max(2200, textLen * 65));
+
+    this.autoTimer = setTimeout(() => {
+      if (this.isAutoMode && !this.isTextTyping && !this.audio.isPlaying) {
+        this.advanceNext();
+      }
+    }, readingDelay);
   }
 
   handleUserAdvance() {
@@ -217,6 +239,7 @@ class GameEngine {
   }
 
   goToScene(sceneId) {
+    clearTimeout(this.autoTimer);
     const entry = this.scenarioMap.get(sceneId);
     if (!entry) {
       console.error(`Scene not found: ${sceneId}`);
@@ -291,19 +314,19 @@ class GameEngine {
     this.isTextTyping = true;
     this.dom.nextIndicator.style.opacity = '0';
     this.dom.messageText.textContent = '';
-    if (this.dom.dialogBox) this.dom.dialogBox.scrollTop = 0;
+    if (this.dom.messageText) this.dom.messageText.scrollTop = 0;
     this.currentFullText = fullText;
     this.typingOnComplete = onComplete;
 
     let charIndex = 0;
-    const speed = 28;
+    const speed = 26;
 
     this.typewriterTimer = setInterval(() => {
       if (charIndex < fullText.length) {
         this.dom.messageText.textContent += fullText[charIndex];
         charIndex++;
-        if (this.dom.dialogBox) {
-          this.dom.dialogBox.scrollTop = this.dom.dialogBox.scrollHeight;
+        if (this.dom.messageText) {
+          this.dom.messageText.scrollTop = this.dom.messageText.scrollHeight;
         }
       } else {
         this.completeTyping();
@@ -315,8 +338,8 @@ class GameEngine {
     clearInterval(this.typewriterTimer);
     this.isTextTyping = false;
     this.dom.messageText.textContent = this.currentFullText;
-    if (this.dom.dialogBox) {
-      this.dom.dialogBox.scrollTop = this.dom.dialogBox.scrollHeight;
+    if (this.dom.messageText) {
+      this.dom.messageText.scrollTop = this.dom.messageText.scrollHeight;
     }
     this.dom.nextIndicator.style.opacity = '1';
     if (this.typingOnComplete) {
@@ -324,6 +347,7 @@ class GameEngine {
       this.typingOnComplete = null;
       cb();
     }
+    this.checkAutoAdvance();
   }
 
   showChoices(choices) {

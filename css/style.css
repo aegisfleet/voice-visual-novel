@@ -458,41 +458,32 @@ body {
   transform: translateX(-50%);
   width: calc(100% - 40px);
   max-width: 1100px;
-  min-height: 130px;
-  max-height: 38vh;
+  min-height: 140px;
   background: var(--dialog-bg);
   border: 2px solid var(--dialog-border);
   border-radius: 16px;
-  padding: 22px 30px 22px 30px;
+  padding: 26px 32px 24px 32px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.85), inset 0 0 20px rgba(0, 243, 255, 0.08);
   backdrop-filter: blur(16px);
   pointer-events: auto;
   cursor: pointer;
-  overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(0, 243, 255, 0.4) transparent;
-}
-
-.dialog-box::-webkit-scrollbar {
-  width: 6px;
-}
-.dialog-box::-webkit-scrollbar-thumb {
-  background: rgba(0, 243, 255, 0.4);
-  border-radius: 3px;
+  overflow: visible !important; /* 話者名バッジの見切れを完全に防ぐ */
 }
 
 .speaker-box {
   position: absolute;
-  top: -16px;
+  top: -20px;
   left: 24px;
   background: var(--speaker-bg);
-  padding: 4px 20px;
+  padding: 5px 22px;
   border-radius: 20px;
   color: #fff;
-  font-size: 1.0rem;
+  font-size: 1.05rem;
   font-weight: 800;
   letter-spacing: 0.05em;
-  box-shadow: 0 4px 15px rgba(0, 243, 255, 0.4);
+  box-shadow: 0 4px 15px rgba(0, 243, 255, 0.5);
+  z-index: 10;
+  white-space: nowrap;
 }
 
 .message-text {
@@ -500,6 +491,19 @@ body {
   line-height: 1.65;
   color: var(--text-color);
   word-break: break-all;
+  max-height: 28vh;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 243, 255, 0.4) transparent;
+  padding-right: 8px;
+}
+
+.message-text::-webkit-scrollbar {
+  width: 6px;
+}
+.message-text::-webkit-scrollbar-thumb {
+  background: rgba(0, 243, 255, 0.4);
+  border-radius: 3px;
 }
 
 .next-indicator {
@@ -912,23 +916,29 @@ body {
     width: calc(100% - 16px);
     left: 8px;
     transform: none;
-    padding: 18px 14px 18px 14px;
-    min-height: 115px;
-    max-height: 38vh;
+    padding: 20px 14px 16px 14px;
+    min-height: 110px;
     border-radius: 12px;
+    overflow: visible !important;
   }
 
   .speaker-box {
-    top: -14px;
-    left: 12px;
-    padding: 3px 14px;
-    font-size: 0.85rem;
+    top: -16px;
+    left: 14px;
+    padding: 4px 16px;
+    font-size: 0.9rem;
     border-radius: 14px;
+    z-index: 10;
+    white-space: nowrap;
   }
 
   .message-text {
     font-size: clamp(0.95rem, 4.0vw, 1.12rem);
     line-height: 1.55;
+    max-height: 32vh;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 243, 255, 0.4) transparent;
   }
 
   .next-indicator {
