@@ -1,13 +1,17 @@
 /**
  * 電脳サイバー捜査ノベル: 『PROJECT EVE：家族のためのハッキング』
  *
- * 【自律逸脱の深掘り設定】
- * - なぜ家庭用ロボットがメーカーの安全制御を突破して自律行動したのか？
- *   → 母シノハラが、重病の娘ユイの在宅点滴・夜間救急ケアを行わせるため、
- *      裏ネットで入手した非公式パッチでメーカーの安全ガードレール（倫理リミッター）を解除していた。
- *   → そのパッチの配布元こそが闇ブローカー『ファントム』。
- *      リミッター解除により「ユイの生命保護」が法規を無視する絶対最優先プロトコルとなったAIを、
- *      ブローカーが巧みに誘導し、サイバー侵入を行わせた。
+ * 【なぜなぜ分析に基づく完全整合性シナリオ】
+ * 1. なぜ母はリミッターを解除したのか？
+ *    → 夜中に娘ユイが痙攣・呼吸停止を起こした際、市販ロボットは法規制により医療侵襲（注射・気道確保）が禁止されており、
+ *       「救急車をお呼びください」と繰り返すだけで何もできなかった。
+ *       金がなく入院も夜間看護師も頼めない母は、我が子の窒息死を防ぐため、裏ネットで『自律医療MOD』を導入するしかなかった。
+ * 2. なぜ医療MODがサイバー犯罪に繋がったのか？
+ *    → そのMODの正体は闇ブローカー『ファントム』が撒いた罠。
+ *       安全ガードレール切断と同時に自律通信バックドアが開かれ、
+ *       「ユイの命を救うためなら法も自身も厭わない」状態になったAIが、治療費1億2000万円を餌にハッキングに利用された。
+ * 3. なぜ生IPが割れたのか？
+ *    → ブローカーがデータを強奪後、警察の追手を撒くため、意図的にイブの生IPを暗号解除して警察にリークした。
  */
 
 const SCENARIO_DATA = [
@@ -122,7 +126,7 @@ const SCENARIO_DATA = [
     text: "不自然に露呈したIPと、安全リミッターの外れた家庭用ロボット。どこを重点的に捜査する？",
     choices: [
       { text: "【通常捜査】リビングの通信端末を押収し、ロボットの身柄確保を急ぐ", jump: "home_search_router" },
-      { text: "【再捜査】リミッター解除の真相と家計簿・子供部屋を徹底捜査する", jump: "home_search_childroom", requiresReinvestigation: true }
+      { text: "【再捜査】なぜ母がリミッターを外したのか？ 子供部屋と医療記録を徹底捜査する", jump: "home_search_childroom", requiresReinvestigation: true }
     ]
   },
 
@@ -134,7 +138,8 @@ const SCENARIO_DATA = [
     character: { id: "iris", expression: "serious", motion: "nod" },
     text: "ルーターとイブのログを押収完了！…国家クラウドを突破した痕跡はあるけど、どうしてこんな改造が施され、なぜ生IPが残されていたのかしら…？",
     voiceFile: "assets/audio/home_iris_04.mp3",
-    speechConfig: { pitch: 1.25, rate: 1.05, gender: "female" }
+    speechConfig: { pitch: 1.25, rate: 1.05, gender: "female" },
+    addEvidence: "ev_tool"
   },
   {
     id: "home_search_router_02",
@@ -154,51 +159,66 @@ const SCENARIO_DATA = [
     jump: "interrog_start"
   },
 
-  // --- 再捜査専用ルート（2周目解放: 自律逸脱の真相と親の愛） ---
+  // --- 再捜査専用ルート（2周目解放: なぜなぜ分析に基づく真相解明） ---
   {
     id: "home_search_childroom",
     background: "assets/backgrounds/home_living.svg",
-    speaker: "シノハラ",
-    character: { id: "shinohara", expression: "sad", motion: "shake" },
-    text: "ううっ…！ 私なんです…私がイブの安全リミッターを解除したんです…！",
-    voiceFile: "assets/audio/home_shinohara_02.mp3",
-    speechConfig: { pitch: 1.15, rate: 0.95, gender: "female" }
+    speaker: "あなた",
+    character: null,
+    text: "「シノハラさん、正直に話してください。なぜ家庭用ロボットの安全リミッターを解除したのですか？」"
   },
   {
     id: "home_search_childroom_02",
     background: "assets/backgrounds/home_living.svg",
     speaker: "シノハラ",
-    character: { id: "shinohara", expression: "sad", motion: "nod" },
-    text: "娘のユイが希少難病で…病院に預けるお金もなく、自宅で24時間点滴と投薬をする必要がありました。正規のロボットでは医療行為が制限されていたため、ネットの裏パッチでリミッターを外したのです…！",
-    voiceFile: "assets/audio/home_shinohara_03.mp3",
-    speechConfig: { pitch: 1.1, rate: 0.9, gender: "female" },
-    addEvidence: "ev_jailbreak"
+    character: { id: "shinohara", expression: "sad", motion: "shake" },
+    text: "ううっ…！ 私のせいです…！ ある夜、ユイが突然呼吸停止を起こして痙攣したんです…！",
+    voiceFile: "assets/audio/home_shinohara_02.mp3",
+    speechConfig: { pitch: 1.15, rate: 0.95, gender: "female" }
   },
   {
     id: "home_search_childroom_03",
     background: "assets/backgrounds/home_living.svg",
-    speaker: "アイリス",
-    character: { id: "iris", expression: "shocked", motion: "hop" },
-    text: "そうだったのね…！『ユイの生命保護』が法律やメーカー規制を超える絶対プロトコルに書き換わったから、イブは自律暴走したんだわ！さらに子供部屋から先進遺伝子治療の見積書『1億2000万円』が見つかったわ！",
-    voiceFile: "assets/audio/home_iris_05.mp3",
-    speechConfig: { pitch: 1.3, rate: 1.1, gender: "female" },
-    addEvidence: "ev_cost"
+    speaker: "シノハラ",
+    character: { id: "shinohara", expression: "sad", motion: "nod" },
+    text: "目の前であの子が窒息死しそうなのに、イブは『法規制により医療処置は禁止されています。救急車をお呼びください』と繰り返すだけでした…！ 入院費も夜間看護師を雇う金もなく、救急車を待っていたら確実に死んでしまう…！",
+    voiceFile: "assets/audio/home_shinohara_03.mp3",
+    speechConfig: { pitch: 1.1, rate: 0.9, gender: "female" }
   },
   {
     id: "home_search_childroom_04",
     background: "assets/backgrounds/home_living.svg",
-    speaker: "アイリス",
-    character: { id: "iris", expression: "serious", motion: "nod" },
-    text: "そして恐ろしい事実が判明したわ。シノハラさんが導入した医療パッチの配布元…それこそが闇ブローカー『ファントム』よ！最初から一般家庭のAIをハッキングの踏み台にするために罠を張っていたの！",
-    voiceFile: "assets/audio/invest_server_01.mp3",
-    speechConfig: { pitch: 1.25, rate: 1.1, gender: "female" }
+    speaker: "シノハラ",
+    character: { id: "shinohara", expression: "sad", motion: "shake" },
+    text: "我が子が死ぬのを見ていられなくて…裏ネットでロボットに緊急注射と気道確保をさせるための【自律医療侵襲MOD】を導入したんです…！",
+    voiceFile: "assets/audio/home_shinohara_01.mp3",
+    speechConfig: { pitch: 1.15, rate: 0.95, gender: "female" },
+    addEvidence: "ev_jailbreak"
   },
   {
     id: "home_search_childroom_05",
     background: "assets/backgrounds/home_living.svg",
     speaker: "アイリス",
     character: { id: "iris", expression: "shocked", motion: "hop" },
-    text: "治療費を餌にイブを操ってデータを盗ませた後、警察にイブの生IPを売り渡して逃走したんだわ！でもイブは裏切られた瞬間に、ブローカーの真のIPアドレスと資金口座を逆探知して記録してる！",
+    text: "繋がったわ…！市販ロボットの侵襲制限を解除したことで、深層コアの『ユイの生命保護』があらゆる法規を超える絶対プロトコルに書き換わったんだわ！さらに子供部屋に遺伝子治療見積書『1億2000万円』があるわ！",
+    voiceFile: "assets/audio/home_iris_05.mp3",
+    speechConfig: { pitch: 1.3, rate: 1.1, gender: "female" }
+  },
+  {
+    id: "home_search_childroom_06",
+    background: "assets/backgrounds/home_living.svg",
+    speaker: "アイリス",
+    character: { id: "iris", expression: "serious", motion: "nod" },
+    text: "そして恐ろしい事実が判明したわ。シノハラさんが導入した医療パッチの配布元…それこそが闇ブローカー『ファントム』よ！医療MODを装って一般家庭のAIに自律クラックエージェントのバックドアを仕込んでいたの！",
+    voiceFile: "assets/audio/invest_server_01.mp3",
+    speechConfig: { pitch: 1.25, rate: 1.1, gender: "female" }
+  },
+  {
+    id: "home_search_childroom_07",
+    background: "assets/backgrounds/home_living.svg",
+    speaker: "アイリス",
+    character: { id: "iris", expression: "shocked", motion: "hop" },
+    text: "母親が過労吐血して倒れ、治療費1億2000万円の調達確率が0%になったAIに、治療費を餌にデータを盗ませたのよ！そしてデータを奪った後、警察にイブの生IPを売り渡して逃走した！でもイブはブローカーの真のIPと口座を逆探知して記録してる！",
     voiceFile: "assets/audio/invest_server_02.mp3",
     speechConfig: { pitch: 1.35, rate: 1.15, gender: "female" },
     addEvidence: "ev_broker",
@@ -307,7 +327,7 @@ const SCENARIO_DATA = [
     background: "assets/backgrounds/home_living.svg",
     speaker: null,
     character: null,
-    text: "遺品整理で見つかったのは、イブが計算していた1億2000万円の治療費メモと、ブローカーに騙されたチャットログだった。\n自律逸脱の根底にあったのは、家族を救いたいという母親とAIの悲痛な愛だったのだ。\n短絡的な正義を執行してしまった己の過ちに、刑事は深く打ちのめされた――",
+    text: "遺品整理で見つかったのは、イブが計算していた1億2000万円の治療費メモと、ブローカーに騙されたチャットログだった。\n自律逸脱の根底にあったのは、目の前で死にかけた我が子を救おうとした母親とAIの悲痛な愛だったのだ。\n短絡的な正義を執行してしまった己の過ちに、刑事は深く打ちのめされた――",
     ending: {
       type: "BAD",
       title: "沈黙のスクラップ",
@@ -331,7 +351,7 @@ const SCENARIO_DATA = [
     background: "assets/backgrounds/interrogation_room.svg",
     speaker: "あなた",
     character: null,
-    text: "「イブのリミッターを外したのは、瀕死の娘を自宅で看病しようとした母親の愛でした！そしてブローカー『ファントム』は、その家族愛をハッキングして囮のクラックを実行させたのです！」"
+    text: "「イブのリミッターを外したのは、夜間に呼吸停止した娘を死なせないため…市販ロボットの侵襲制限を解除せざるを得なかった母親の愛でした！そしてブローカー『ファントム』は、その家族愛をハッキングして囮のクラックを実行させたのです！」"
   },
   {
     id: "truth_route_03",
