@@ -34,6 +34,11 @@ class AudioController {
     // 音声ファイルの自動検知・再生を有効化
     this.hasAudioFilesInstalled = true;
 
+    // 音声再生世代トークン (非同期競合防止)
+    this.playSessionId = 0;
+    // 音声ファイル存在判定キャッシュ
+    this.audioExistsCache = new Map();
+
     this.initVoices();
   }
 
@@ -298,10 +303,16 @@ class AudioController {
 
   async checkAudioExists(url) {
     if (!url) return false;
+    if (this.audioExistsCache.has(url)) {
+      return this.audioExistsCache.get(url);
+    }
     try {
       const response = await fetch(url, { method: 'HEAD' });
-      return response.ok;
+      const ok = response.ok;
+      this.audioExistsCache.set(url, ok);
+      return ok;
     } catch {
+      this.audioExistsCache.set(url, false);
       return false;
     }
   }
@@ -314,6 +325,7 @@ class AudioController {
       return;
     }
 
+    const sessionId = ++this.playSessionId;
     this.isPlaying = true;
 
     let hasAudioFile = false;
@@ -321,41 +333,74 @@ class AudioController {
       hasAudioFile = await this.checkAudioExists(lineData.voiceFile);
     }
 
+    // 非同期待機中に別の再生や停止が行われていた場合は中断
+    if (this.playSessionId !== sessionId) {
+      return;
+    }
+
     if (hasAudioFile) {
-      return this._playAudioFile(lineData.voiceFile);
+      return this._playAudioFile(lineData.voiceFile, sessionId);
     } else {
-      return this._playWebSpeech(lineData);
+      return this._playWebSpeech(lineData, sessionId);
     }
   }
 
-  _playAudioFile(url) {
+  _playAudioFile(url, sessionId) {
     return new Promise((resolve) => {
-      this.currentAudio = new Audio(url);
+      if (this.playSessionId !== sessionId) {
+        resolve();
+        return;
+      }
 
-      if (this.onSpeechStart) this.onSpeechStart();
+      const audio = new Audio(url);
+      this.currentAudio = audio;
 
+      if (this.onSpeechStart && this.playSessionId === sessionId) {
+        this.onSpeechStart();
+      }
+
+      let hasFinished = false;
       const finish = () => {
-        if (!this.isPlaying) return;
-        this.isPlaying = false;
-        if (this.onSpeechEnd) this.onSpeechEnd();
+        if (hasFinished) return;
+        hasFinished = true;
+        audio.onended = null;
+        audio.onerror = null;
+
+        // 現在の世代と一致する場合のみグローバル状態・コールバックを更新
+        if (this.playSessionId === sessionId) {
+          if (this.currentAudio === audio) {
+            this.currentAudio = null;
+          }
+          this.isPlaying = false;
+          if (this.onSpeechEnd) this.onSpeechEnd();
+        }
         resolve();
       };
 
-      this.currentAudio.onended = finish;
-      this.currentAudio.onerror = finish;
+      audio.onended = finish;
+      audio.onerror = finish;
 
-      this.currentAudio.play().catch(() => {
-        finish();
-      });
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {
+          // 再生中断（stopによるpause等）で世代が異なる場合は副作用を起こさない
+          if (this.playSessionId !== sessionId) {
+            resolve();
+            return;
+          }
+          finish();
+        });
+      }
     });
   }
 
-  _playWebSpeech(lineData) {
+  _playWebSpeech(lineData, sessionId) {
     return new Promise((resolve) => {
-      if (!this.synth) {
+      if (!this.synth || this.playSessionId !== sessionId) {
         this.isPlaying = false;
-        if (this.onSpeechEnd) this.onSpeechEnd();
+        if (this.playSessionId === sessionId && this.onSpeechEnd) this.onSpeechEnd();
         resolve();
+        return;
       }
 
       try {
@@ -385,14 +430,29 @@ class AudioController {
         if (hasFinished) return;
         hasFinished = true;
         clearInterval(resumeTimer);
-        window.__activeUtterance = null;
-        this.currentUtterance = null;
-        this.isPlaying = false;
-        if (this.onSpeechEnd) this.onSpeechEnd();
+        utter.onstart = null;
+        utter.onend = null;
+        utter.onerror = null;
+
+        if (window.__activeUtterance === utter) {
+          window.__activeUtterance = null;
+        }
+        if (this.currentUtterance === utter) {
+          this.currentUtterance = null;
+        }
+
+        if (this.playSessionId === sessionId) {
+          this.isPlaying = false;
+          if (this.onSpeechEnd) this.onSpeechEnd();
+        }
         resolve();
       };
 
       utter.onstart = () => {
+        if (this.playSessionId !== sessionId) {
+          try { this.synth.cancel(); } catch (e) {}
+          return;
+        }
         this.isPlaying = true;
         if (this.onSpeechStart) this.onSpeechStart();
 
@@ -418,14 +478,29 @@ class AudioController {
   }
 
   stop() {
+    this.playSessionId++; // 世代を進めて過去の非同期待機・コールバックを全て無効化
     this.isPlaying = false;
-    window.__activeUtterance = null;
-    this.currentUtterance = null;
+
     if (this.currentAudio) {
-      this.currentAudio.pause();
-      this.currentAudio.currentTime = 0;
+      const audio = this.currentAudio;
       this.currentAudio = null;
+      audio.onended = null;
+      audio.onerror = null;
+      try {
+        audio.pause();
+        audio.currentTime = 0;
+      } catch (e) {}
     }
+
+    if (this.currentUtterance) {
+      const utter = this.currentUtterance;
+      this.currentUtterance = null;
+      utter.onstart = null;
+      utter.onend = null;
+      utter.onerror = null;
+    }
+    window.__activeUtterance = null;
+
     if (this.synth) {
       try {
         this.synth.cancel();

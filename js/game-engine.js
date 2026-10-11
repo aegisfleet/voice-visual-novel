@@ -44,6 +44,7 @@ class GameEngine {
     this.typewriterTimer = null;
     this.isAutoMode = true;
     this.autoTimer = null;
+    this.lastAdvanceTime = 0;
     this.logHistory = [];
     this.collectedEvidence = new Set();
 
@@ -265,6 +266,15 @@ class GameEngine {
   }
 
   handleUserAdvance() {
+    // 連続タップによる短時間の多重進行を防止（180ms デバウンス）
+    const now = Date.now();
+    if (this.lastAdvanceTime && (now - this.lastAdvanceTime < 180)) {
+      return;
+    }
+    this.lastAdvanceTime = now;
+
+    clearTimeout(this.autoTimer);
+
     if (this.isTextTyping) {
       this.completeTyping();
     } else {
@@ -273,6 +283,7 @@ class GameEngine {
   }
 
   advanceNext() {
+    clearTimeout(this.autoTimer);
     const currentEntry = this.scenarioMap.get(this.currentSceneId);
     if (!currentEntry) return;
 
@@ -300,6 +311,9 @@ class GameEngine {
 
   goToScene(sceneId) {
     clearTimeout(this.autoTimer);
+    // 直前の音声を即座に安全停止
+    this.audio.stop();
+
     const entry = this.scenarioMap.get(sceneId);
     if (!entry) {
       console.error(`Scene not found: ${sceneId}`);
@@ -460,7 +474,10 @@ class GameEngine {
       this.typingOnComplete = null;
       cb();
     }
-    this.checkAutoAdvance();
+    // 音声再生中なら音声終了(onSpeechEnd)で自動進行するため、非再生時のみ読了タイマーをセット
+    if (!this.audio.isPlaying) {
+      this.checkAutoAdvance();
+    }
   }
 
   showChoices(choices) {
