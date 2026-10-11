@@ -885,6 +885,7 @@
     // 音声管理
     let currentAudio = null;
     let isPlayingAll = false;
+    let sequenceTimer = null;
     let lastPlayedIndex = 0;
     let currentDialogueIndex = 0;
     const dialogues = Array.from(document.querySelectorAll('.dialogue-block'));
@@ -892,6 +893,8 @@
 
     function stopCurrentAudio() {
       if (currentAudio) {
+        currentAudio.onended = null;
+        currentAudio.onerror = null;
         currentAudio.pause();
         currentAudio.currentTime = 0;
         currentAudio = null;
@@ -942,19 +945,27 @@
       };
     }
 
-    // 各ボタンの個別再生
+    // 各ボタンの個別再生 ＆ 連続再生中のジャンプ継続
     dialogues.forEach((block, idx) => {
       const btn = block.querySelector('.btn-voice');
       if (btn) {
         btn.addEventListener('click', (e) => {
           e.stopPropagation();
-          if (block.classList.contains('playing-voice')) {
-            stopCurrentAudio();
-            if (isPlayingAll) stopPlayAll();
+          if (isPlayingAll) {
+            if (block.classList.contains('playing-voice')) {
+              // 連続再生中に現在再生中のセリフを押した場合は停止
+              stopPlayAll();
+            } else {
+              // 連続再生中に別のセリフを押した場合は、そこから連続再生を継続
+              startPlayAll(idx);
+            }
           } else {
-            if (isPlayingAll) stopPlayAll();
-            lastPlayedIndex = idx; // 最後に再生した位置を記録
-            playDialogueAudio(block);
+            if (block.classList.contains('playing-voice')) {
+              stopCurrentAudio();
+            } else {
+              lastPlayedIndex = idx; // 最後に再生した位置を記録
+              playDialogueAudio(block);
+            }
           }
         });
       }
@@ -965,6 +976,10 @@
       if (startIndex < 0 || startIndex >= dialogues.length) {
         startIndex = 0;
       }
+      if (sequenceTimer) {
+        clearTimeout(sequenceTimer);
+        sequenceTimer = null;
+      }
       isPlayingAll = true;
       btnPlayAll.textContent = '■ 朗読停止';
       btnPlayAll.classList.add('playing');
@@ -974,6 +989,10 @@
 
     function stopPlayAll() {
       isPlayingAll = false;
+      if (sequenceTimer) {
+        clearTimeout(sequenceTimer);
+        sequenceTimer = null;
+      }
       btnPlayAll.textContent = '▶ 連続朗読再生';
       btnPlayAll.classList.remove('playing');
       stopCurrentAudio();
@@ -993,7 +1012,7 @@
       block.scrollIntoView({ behavior: 'smooth', block: 'center' });
       playDialogueAudio(block, () => {
         currentDialogueIndex++;
-        setTimeout(playNextInSequence, 600);
+        sequenceTimer = setTimeout(playNextInSequence, 600);
       });
     }
 
