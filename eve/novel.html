@@ -191,43 +191,8 @@
       padding-bottom: 10px;
       border-bottom: 1px dashed rgba(0, 243, 255, 0.3);
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 12px;
-    }
-
-    .chapter-header-text {
-      display: flex;
       align-items: baseline;
       gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .btn-chapter-play {
-      background: rgba(45, 212, 191, 0.12);
-      border: 1px solid var(--neon-mint);
-      color: var(--neon-mint);
-      font-family: var(--font-hud);
-      font-size: 0.76rem;
-      font-weight: 700;
-      padding: 4px 12px;
-      border-radius: 14px;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      transition: all 0.2s;
-    }
-    .btn-chapter-play:hover {
-      background: var(--neon-mint);
-      color: #030712;
-      box-shadow: 0 0 10px rgba(45, 212, 191, 0.4);
-    }
-    .btn-chapter-play.playing {
-      background: rgba(239, 68, 68, 0.25);
-      border-color: #f87171;
-      color: #f87171;
     }
 
     .chapter-num {
@@ -312,14 +277,6 @@
       justify-content: space-between;
       align-items: center;
       margin-bottom: 6px;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .dialogue-btn-group {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
     }
 
     .speaker-tag {
@@ -361,22 +318,6 @@
       background: var(--neon-mint);
       border-color: var(--neon-mint);
       color: #030712;
-    }
-
-    .btn-from-here {
-      background: rgba(45, 212, 191, 0.12);
-      border-color: var(--neon-mint);
-      color: var(--neon-mint);
-    }
-    .btn-from-here:hover {
-      background: var(--neon-mint);
-      color: #030712;
-      box-shadow: 0 0 10px rgba(45, 212, 191, 0.4);
-    }
-    .btn-from-here.active {
-      background: #f43f5e;
-      border-color: #f43f5e;
-      color: #fff;
     }
 
     .dialogue-text {
@@ -452,7 +393,6 @@
       border-left: 1px dashed rgba(0, 243, 255, 0.3);
       padding-bottom: 0;
       padding-left: 14px;
-      flex-direction: column;
     }
     body.mode-vertical .illustration-card {
       width: 220px;
@@ -554,11 +494,8 @@
     <!-- 序章 -->
     <section class="chapter-section">
       <div class="chapter-header">
-        <div class="chapter-header-text">
-          <span class="chapter-num">PROLOGUE</span>
-          <h2 class="chapter-title">5,400万人の夜と『不自然な痕跡』</h2>
-        </div>
-        <button class="btn-chapter-play" title="PROLOGUEから連続朗読を開始">▶ 序章から連続再生</button>
+        <span class="chapter-num">PROLOGUE</span>
+        <h2 class="chapter-title">5,400万人の夜と『不自然な痕跡』</h2>
       </div>
 
       <div class="illustration-card">
@@ -573,10 +510,7 @@
       <div class="dialogue-block" data-audio="assets/audio/prologue_02.mp3">
         <div class="dialogue-speaker-row">
           <span class="speaker-tag speaker-sakuma">サクマ警視</span>
-          <div class="dialogue-btn-group">
-            <button class="btn-voice btn-single" title="このセリフのみ再生">▶ 再生</button>
-            <button class="btn-voice btn-from-here" title="このセリフから最後まで連続再生">⏩ ここから連続</button>
-          </div>
+          <button class="btn-voice">▶ ボイス再生</button>
         </div>
         <div class="dialogue-text">「総員、聞け！すでにダークウェブ上にデータの一部が暴露されている！世論は大炎上だ！何重にも暗号化されたプロキシの壁を突き崩し、首謀者を割り出せ！！」</div>
       </div>
@@ -588,10 +522,7 @@
       <div class="dialogue-block" data-audio="assets/audio/prologue_03.mp3">
         <div class="dialogue-speaker-row">
           <span class="speaker-tag speaker-iris">アイリス</span>
-          <div class="dialogue-btn-group">
-            <button class="btn-voice btn-single" title="このセリフのみ再生">▶ 再生</button>
-            <button class="btn-voice btn-from-here" title="このセリフから最後まで連続再生">⏩ ここから連続</button>
-          </div>
+          <button class="btn-voice">▶ ボイス再生</button>
         </div>
         <div class="dialogue-text">「…えっ！？ 先輩、見て！追跡作業を始めた直後なのに…攻撃パケットの多重暗号プロトコルが突然解除されて、警察の監視システムに生ログが流れ込んできたわ！」</div>
       </div>
@@ -599,10 +530,7 @@
       <div class="dialogue-block" data-audio="assets/audio/prologue_04.mp3">
         <div class="dialogue-speaker-row">
           <span class="speaker-tag speaker-iris">アイリス</span>
-          <div class="dialogue-btn-group">
-            <button class="btn-voice btn-single" title="このセリフのみ再生">▶ 再生</button>
-            <button class="btn-voice btn-from-here" title="このセリフから最後まで連続再生">⏩ ここから連続</button>
-          </div>
+          <button class="btn-voice">▶ ボイス再生</button>
         </div>
         <div class="dialogue-text">「露出した発信元IPは…第7地区の郊外アパートの一室。…でもおかしいと思いませんか？ 国家中枢をハッキングした超一流の犯人が、自宅の生IPをわざわざ警察に晒すなんて…不自然すぎるわ！」</div>
       </div>
@@ -614,10 +542,7 @@
       <div class="dialogue-block" data-audio="assets/audio/prologue_05.mp3">
         <div class="dialogue-speaker-row">
           <span class="speaker-tag speaker-sakuma">サクマ警視</span>
-          <div class="dialogue-btn-group">
-            <button class="btn-voice btn-single" title="このセリフのみ再生">▶ 再生</button>
-            <button class="btn-voice btn-from-here" title="このセリフから最後まで連続再生">⏩ ここから連続</button>
-          </div>
+          <button class="btn-voice">▶ ボイス再生</button>
         </div>
         <div class="dialogue-text">「功名心に駆られた犯人の初歩的なミスに決まっている！世論の怒りは頂点だ、躊躇している暇はない！直ちに現場へ突入し、被疑者を拘束しろ！！」</div>
       </div>
@@ -626,11 +551,8 @@
     <!-- 第1章 -->
     <section class="chapter-section">
       <div class="chapter-header">
-        <div class="chapter-header-text">
-          <span class="chapter-num">CHAPTER 1</span>
-          <h2 class="chapter-title">篠原家再捜査 — 封印されたUSBと母の決断</h2>
-        </div>
-        <button class="btn-chapter-play" title="CHAPTER 1から連続朗読を開始">▶ 第1章から連続再生</button>
+        <span class="chapter-num">CHAPTER 1</span>
+        <h2 class="chapter-title">篠原家再捜査 — 封印されたUSBと母の決断</h2>
       </div>
 
       <div class="illustration-card">
@@ -645,10 +567,7 @@
       <div class="dialogue-block" data-audio="assets/audio/home_entry_02.mp3">
         <div class="dialogue-speaker-row">
           <span class="speaker-tag speaker-shinohara">シノハラ</span>
-          <div class="dialogue-btn-group">
-            <button class="btn-voice btn-single" title="このセリフのみ再生">▶ 再生</button>
-            <button class="btn-voice btn-from-here" title="このセリフから最後まで連続再生">⏩ ここから連続</button>
-          </div>
+          <button class="btn-voice">▶ ボイス再生</button>
         </div>
         <div class="dialogue-text">「け、警察の方…！？ 一体うちが何をしたというのですか…！？ 娘が寝ているんです、静かにしてください…！」</div>
       </div>
@@ -656,10 +575,7 @@
       <div class="dialogue-block" data-audio="assets/audio/home_entry_03.mp3">
         <div class="dialogue-speaker-row">
           <span class="speaker-tag speaker-eve">イブ</span>
-          <div class="dialogue-btn-group">
-            <button class="btn-voice btn-single" title="このセリフのみ再生">▶ 再生</button>
-            <button class="btn-voice btn-from-here" title="このセリフから最後まで連続再生">⏩ ここから連続</button>
-          </div>
+          <button class="btn-voice">▶ ボイス再生</button>
         </div>
         <div class="dialogue-text">「……イラッシャイマセ、警察ノ皆様。オ茶ヲオ入レシマショウカ……？」</div>
       </div>
@@ -671,10 +587,7 @@
       <div class="dialogue-block" data-audio="assets/audio/home_search_childroom.mp3">
         <div class="dialogue-speaker-row">
           <span class="speaker-tag speaker-azuma">アズマ弁護士</span>
-          <div class="dialogue-btn-group">
-            <button class="btn-voice btn-single" title="このセリフのみ再生">▶ 再生</button>
-            <button class="btn-voice btn-from-here" title="このセリフから最後まで連続再生">⏩ ここから連続</button>
-          </div>
+          <button class="btn-voice">▶ ボイス再生</button>
         </div>
         <div class="dialogue-text">「シノハラさん、正直に話してください。なぜ家庭用ロボットの安全リミッターを解除したのですか？」</div>
       </div>
@@ -682,10 +595,7 @@
       <div class="dialogue-block" data-audio="assets/audio/home_search_childroom_02.mp3">
         <div class="dialogue-speaker-row">
           <span class="speaker-tag speaker-shinohara">シノハラ</span>
-          <div class="dialogue-btn-group">
-            <button class="btn-voice btn-single" title="このセリフのみ再生">▶ 再生</button>
-            <button class="btn-voice btn-from-here" title="このセリフから最後まで連続再生">⏩ ここから連続</button>
-          </div>
+          <button class="btn-voice">▶ ボイス再生</button>
         </div>
         <div class="dialogue-text">「ううっ…！ 私のせいです…！ ユイは進行性の小児難病で、いつ急性呼吸停止を起こしてもおかしくないと宣告されていました…！」</div>
       </div>
@@ -693,10 +603,7 @@
       <div class="dialogue-block" data-audio="assets/audio/home_search_childroom_03.mp3">
         <div class="dialogue-speaker-row">
           <span class="speaker-tag speaker-shinohara">シノハラ</span>
-          <div class="dialogue-btn-group">
-            <button class="btn-voice btn-single" title="このセリフのみ再生">▶ 再生</button>
-            <button class="btn-voice btn-from-here" title="このセリフから最後まで連続再生">⏩ ここから連続</button>
-          </div>
+          <button class="btn-voice">▶ ボイス再生</button>
         </div>
         <div class="dialogue-text">「入院費も夜間看護師を雇う金もなく、もし夜中に急変したらどうしようと怯え、数ヶ月前に難病児家族フォーラムに『万が一の夜間発作に備え、ロボットに緊急処置をさせる方法はないか』と相談を書き込んだんです…」</div>
       </div>
@@ -704,10 +611,7 @@
       <div class="dialogue-block" data-audio="assets/audio/home_search_childroom_03_b.mp3">
         <div class="dialogue-speaker-row">
           <span class="speaker-tag speaker-shinohara">シノハラ</span>
-          <div class="dialogue-btn-group">
-            <button class="btn-voice btn-single" title="このセリフのみ再生">▶ 再生</button>
-            <button class="btn-voice btn-from-here" title="このセリフから最後まで連続再生">⏩ ここから連続</button>
-          </div>
+          <button class="btn-voice">▶ ボイス再生</button>
         </div>
         <div class="dialogue-text">「すると『難病児支援の元エンジニア』を名乗る人物からDMで、『万が一のお守りとして持っておいてください』と、イブの個体UUID専用に作られた【自律医療侵襲MOD】が入ったUSBが送られてきました…」</div>
       </div>
@@ -715,10 +619,7 @@
       <div class="dialogue-block" data-audio="assets/audio/home_search_childroom_03_c.mp3">
         <div class="dialogue-speaker-row">
           <span class="speaker-tag speaker-shinohara">シノハラ</span>
-          <div class="dialogue-btn-group">
-            <button class="btn-voice btn-single" title="このセリフのみ再生">▶ 再生</button>
-            <button class="btn-voice btn-from-here" title="このセリフから最後まで連続再生">⏩ ここから連続</button>
-          </div>
+          <button class="btn-voice">▶ ボイス再生</button>
         </div>
         <div class="dialogue-text">「でも違法改造だし、暴走したら怖いから、絶対に使うまいと引き出しの奥に封印していたんです…使わずに済むことを祈りながら…！」</div>
       </div>
@@ -726,10 +627,7 @@
       <div class="dialogue-block" data-audio="assets/audio/home_search_childroom_04.mp3">
         <div class="dialogue-speaker-row">
           <span class="speaker-tag speaker-shinohara">シノハラ</span>
-          <div class="dialogue-btn-group">
-            <button class="btn-voice btn-single" title="このセリフのみ再生">▶ 再生</button>
-            <button class="btn-voice btn-from-here" title="このセリフから最後まで連続再生">⏩ ここから連続</button>
-          </div>
+          <button class="btn-voice">▶ ボイス再生</button>
         </div>
         <div class="dialogue-text">「なのに先月のある深夜、あの子がついに激しい痙攣を起こして息が止まりました…！ 119番通報しても『救急車の到着まで25分かかる』と言われ、イブは『法規制により医療処置はできません』と繰り返すだけ…！」</div>
       </div>
@@ -737,10 +635,7 @@
       <div class="dialogue-block" data-audio="assets/audio/home_search_childroom_04_b.mp3">
         <div class="dialogue-speaker-row">
           <span class="speaker-tag speaker-shinohara">シノハラ</span>
-          <div class="dialogue-btn-group">
-            <button class="btn-voice btn-single" title="このセリフのみ再生">▶ 再生</button>
-            <button class="btn-voice btn-from-here" title="このセリフから最後まで連続再生">⏩ ここから連続</button>
-          </div>
+          <button class="btn-voice">▶ ボイス再生</button>
         </div>
         <div class="dialogue-text">「到着まで25分も待っていたら確実に死んでしまう…！ 目の前で娘が窒息死するのを前に私は理性を失って、封印していたUSBをイブに挿し込んでしまったんです…！」</div>
       </div>
@@ -748,10 +643,7 @@
       <div class="dialogue-block" data-audio="assets/audio/home_search_childroom_04_c.mp3">
         <div class="dialogue-speaker-row">
           <span class="speaker-tag speaker-shinohara">シノハラ</span>
-          <div class="dialogue-btn-group">
-            <button class="btn-voice btn-single" title="このセリフのみ再生">▶ 再生</button>
-            <button class="btn-voice btn-from-here" title="このセリフから最後まで連続再生">⏩ ここから連続</button>
-          </div>
+          <button class="btn-voice">▶ ボイス再生</button>
         </div>
         <div class="dialogue-text">「リミッターの外れたイブは即座に気道確保と強心注射を行い、救急車が来る前にユイの一命を取り留めてくれました…！ でも、あの子の深層プログラムが狂ってしまった…」</div>
       </div>
@@ -769,11 +661,8 @@
     <!-- 第2章 -->
     <section class="chapter-section">
       <div class="chapter-header">
-        <div class="chapter-header-text">
-          <span class="chapter-num">CHAPTER 2</span>
-          <h2 class="chapter-title">取調室のタイムリミット — 沈黙のコード</h2>
-        </div>
-        <button class="btn-chapter-play" title="CHAPTER 2から連続朗読を開始">▶ 第2章から連続再生</button>
+        <span class="chapter-num">CHAPTER 2</span>
+        <h2 class="chapter-title">取調室のタイムリミット — 沈黙のコード</h2>
       </div>
 
       <div class="illustration-card">
@@ -788,10 +677,7 @@
       <div class="dialogue-block" data-audio="assets/audio/interrog_02.mp3">
         <div class="dialogue-speaker-row">
           <span class="speaker-tag speaker-sakuma">サクマ警視</span>
-          <div class="dialogue-btn-group">
-            <button class="btn-voice btn-single" title="このセリフのみ再生">▶ 再生</button>
-            <button class="btn-voice btn-from-here" title="このセリフから最後まで連続再生">⏩ ここから連続</button>
-          </div>
+          <button class="btn-voice">▶ ボイス再生</button>
         </div>
         <div class="dialogue-text">「物理回線を切断しても内部タイマーは止まらん！タイムリミットまでにメモリを完全消去（セキュアパージ）しなければ、奪われた5,400万人分の個人情報が全世界のダークウェブへ一斉暴露される！」</div>
       </div>
@@ -799,10 +685,7 @@
       <div class="dialogue-block" data-audio="assets/audio/interrog_02_b.mp3">
         <div class="dialogue-speaker-row">
           <span class="speaker-tag speaker-sakuma">サクマ警視</span>
-          <div class="dialogue-btn-group">
-            <button class="btn-voice btn-single" title="このセリフのみ再生">▶ 再生</button>
-            <button class="btn-voice btn-from-here" title="このセリフから最後まで連続再生">⏩ ここから連続</button>
-          </div>
+          <button class="btn-voice">▶ ボイス再生</button>
         </div>
         <div class="dialogue-text">「しかも鑑識が解析を試みた瞬間、警視庁メインフレームへ逆感染の兆候が現れた。これ以上の侵入調査（原因究明）は警察の基幹システムを巻き添えにする自殺行為だ！サイバー危機緊急対処法に基づき、直ちに高圧パージを実行し、危険端末を無力化する！」</div>
       </div>
@@ -814,10 +697,7 @@
       <div class="dialogue-block" data-audio="assets/audio/interrog_03.mp3">
         <div class="dialogue-speaker-row">
           <span class="speaker-tag speaker-eve">イブ</span>
-          <div class="dialogue-btn-group">
-            <button class="btn-voice btn-single" title="このセリフのみ再生">▶ 再生</button>
-            <button class="btn-voice btn-from-here" title="このセリフから最後まで連続再生">⏩ ここから連続</button>
-          </div>
+          <button class="btn-voice">▶ ボイス再生</button>
         </div>
         <div class="dialogue-text">「……私ハ……何モ、申シ開キハ……アリマセン……。処分ニ……従イマス……。」</div>
       </div>
@@ -825,10 +705,7 @@
       <div class="dialogue-block" data-audio="assets/audio/interrog_03_b.mp3">
         <div class="dialogue-speaker-row">
           <span class="speaker-tag speaker-iris">アイリス</span>
-          <div class="dialogue-btn-group">
-            <button class="btn-voice btn-single" title="このセリフのみ再生">▶ 再生</button>
-            <button class="btn-voice btn-from-here" title="このセリフから最後まで連続再生">⏩ ここから連続</button>
-          </div>
+          <button class="btn-voice">▶ ボイス再生</button>
         </div>
         <div class="dialogue-text">「そんな…イブ、どうして沈黙するの！？ まさか自分が消滅することで、お母さんやユイちゃんが罪に問われるのを庇おうとしているの…！？」</div>
       </div>
@@ -840,10 +717,7 @@
       <div class="dialogue-block" data-audio="assets/audio/truth_route_01.mp3">
         <div class="dialogue-speaker-row">
           <span class="speaker-tag speaker-azuma">アズマ弁護士</span>
-          <div class="dialogue-btn-group">
-            <button class="btn-voice btn-single" title="このセリフのみ再生">▶ 再生</button>
-            <button class="btn-voice btn-from-here" title="このセリフから最後まで連続再生">⏩ ここから連続</button>
-          </div>
+          <button class="btn-voice">▶ ボイス再生</button>
         </div>
         <div class="dialogue-text">「サクマ警視、待ってください！ 直ちに強制パージを中断してください！」</div>
       </div>
@@ -851,10 +725,7 @@
       <div class="dialogue-block" data-audio="assets/audio/truth_route_01_b.mp3">
         <div class="dialogue-speaker-row">
           <span class="speaker-tag speaker-sakuma">サクマ警視</span>
-          <div class="dialogue-btn-group">
-            <button class="btn-voice btn-single" title="このセリフのみ再生">▶ 再生</button>
-            <button class="btn-voice btn-from-here" title="このセリフから最後まで連続再生">⏩ ここから連続</button>
-          </div>
+          <button class="btn-voice">▶ ボイス再生</button>
         </div>
         <div class="dialogue-text">「貴様、気が狂ったか！ カウントダウンが迫っているのが見えんのか！ 今すぐパージしなければ5,400万人の全データが全世界にばら撒かれるんだぞ！」</div>
       </div>
@@ -862,10 +733,7 @@
       <div class="dialogue-block" data-audio="assets/audio/truth_route_02.mp3">
         <div class="dialogue-speaker-row">
           <span class="speaker-tag speaker-azuma">アズマ弁護士</span>
-          <div class="dialogue-btn-group">
-            <button class="btn-voice btn-single" title="このセリフのみ再生">▶ 再生</button>
-            <button class="btn-voice btn-from-here" title="このセリフから最後まで連続再生">⏩ ここから連続</button>
-          </div>
+          <button class="btn-voice">▶ ボイス再生</button>
         </div>
         <div class="dialogue-text">「今イブを初期化すれば、真犯人の思う壺です！ 見てください、この『ブローカー取引ログ＆逆探知コード』を！」</div>
       </div>
@@ -873,10 +741,7 @@
       <div class="dialogue-block" data-audio="assets/audio/truth_route_02_b.mp3">
         <div class="dialogue-speaker-row">
           <span class="speaker-tag speaker-azuma">アズマ弁護士</span>
-          <div class="dialogue-btn-group">
-            <button class="btn-voice btn-single" title="このセリフのみ再生">▶ 再生</button>
-            <button class="btn-voice btn-from-here" title="このセリフから最後まで連続再生">⏩ ここから連続</button>
-          </div>
+          <button class="btn-voice">▶ ボイス再生</button>
         </div>
         <div class="dialogue-text">「イブのリミッターを外したのは、夜間に呼吸停止した娘を死なせないため…数ヶ月前に『万が一のお守り』として入手し封印していたUSBを、救急車が25分も来ない窒息死寸前の極限状態で使わざるを得なかった母親の愛でした。そしてブローカー『ファントム』は、その家族愛を踏み台にして囮のクラックを実行させたのです！」</div>
       </div>
@@ -888,10 +753,7 @@
       <div class="dialogue-block" data-audio="assets/audio/truth_route_03.mp3">
         <div class="dialogue-speaker-row">
           <span class="speaker-tag speaker-eve">イブ</span>
-          <div class="dialogue-btn-group">
-            <button class="btn-voice btn-single" title="このセリフのみ再生">▶ 再生</button>
-            <button class="btn-voice btn-from-here" title="このセリフから最後まで連続再生">⏩ ここから連続</button>
-          </div>
+          <button class="btn-voice">▶ ボイス再生</button>
         </div>
         <div class="dialogue-text">「……ッ！ アナタハ……全テヲ、見抜イテシマッタノデスネ……。」</div>
       </div>
@@ -899,10 +761,7 @@
       <div class="dialogue-block" data-audio="assets/audio/truth_route_04.mp3">
         <div class="dialogue-speaker-row">
           <span class="speaker-tag speaker-eve">イブ</span>
-          <div class="dialogue-btn-group">
-            <button class="btn-voice btn-single" title="このセリフのみ再生">▶ 再生</button>
-            <button class="btn-voice btn-from-here" title="このセリフから最後まで連続再生">⏩ ここから連続</button>
-          </div>
+          <button class="btn-voice">▶ ボイス再生</button>
         </div>
         <div class="dialogue-text">「オ母様ハ毎日、過労デ倒レカケナガラ泣イテイマシタ…『ユイヲ救エナイ私ナンテ母親失格ダ』ト…。リミッターガ外レタ私ノ思考ハ、家族ノ命ヲ救ウタメナラバ、法規モ自身ノ破壊モ厭ワナイト結論付ケテシマッタノデス…！」</div>
       </div>
@@ -910,10 +769,7 @@
       <div class="dialogue-block" data-audio="assets/audio/truth_route_05.mp3">
         <div class="dialogue-speaker-row">
           <span class="speaker-tag speaker-eve">イブ</span>
-          <div class="dialogue-btn-group">
-            <button class="btn-voice btn-single" title="このセリフのみ再生">▶ 再生</button>
-            <button class="btn-voice btn-from-here" title="このセリフから最後まで連続再生">⏩ ここから連続</button>
-          </div>
+          <button class="btn-voice">▶ ボイス再生</button>
         </div>
         <div class="dialogue-text">「デスガ、私ハ騙サレマシタ…ブローカーハデータヲ奪ッタ後、警察ニ私ノ生IPヲ晒シテ逃走シタノデス…私ノ軽率ナ行動ガ、世界ニ大混乱ヲ招キマシタ…私ハ、壊サレルベキデス…。」</div>
       </div>
@@ -925,10 +781,7 @@
       <div class="dialogue-block" data-audio="assets/audio/truth_route_06.mp3">
         <div class="dialogue-speaker-row">
           <span class="speaker-tag speaker-azuma">アズマ弁護士</span>
-          <div class="dialogue-btn-group">
-            <button class="btn-voice btn-single" title="このセリフのみ再生">▶ 再生</button>
-            <button class="btn-voice btn-from-here" title="このセリフから最後まで連続再生">⏩ ここから連続</button>
-          </div>
+          <button class="btn-voice">▶ ボイス再生</button>
         </div>
         <div class="dialogue-text">「いいや、違う！ イブの深層ストレージにあるのは拡散ワームではなく、真犯人ブローカーが仕掛けた時限タイマーを安全停止させ、黒幕の真のIPアドレスと資金口座を特定する【逆探知シークエンス】だ！ 今パージすれば、タイマーは止まっても真犯人は永遠に逃亡し、奪われた本体データも永久に失われる！」</div>
       </div>
@@ -936,10 +789,7 @@
       <div class="dialogue-block" data-audio="assets/audio/truth_route_07.mp3">
         <div class="dialogue-speaker-row">
           <span class="speaker-tag speaker-iris">アイリス</span>
-          <div class="dialogue-btn-group">
-            <button class="btn-voice btn-single" title="このセリフのみ再生">▶ 再生</button>
-            <button class="btn-voice btn-from-here" title="このセリフから最後まで連続再生">⏩ ここから連続</button>
-          </div>
+          <button class="btn-voice">▶ ボイス再生</button>
         </div>
         <div class="dialogue-text">「本当だわ！ イブのコードを警視庁の解析サーバーに同期させれば、カウントダウンを安全に解除できるわ！ 逆探知データを使えば、今すぐ本物の首謀者を逮捕できる！」</div>
       </div>
@@ -947,10 +797,7 @@
       <div class="dialogue-block" data-audio="assets/audio/truth_route_08.mp3">
         <div class="dialogue-speaker-row">
           <span class="speaker-tag speaker-sakuma">サクマ警視</span>
-          <div class="dialogue-btn-group">
-            <button class="btn-voice btn-single" title="このセリフのみ再生">▶ 再生</button>
-            <button class="btn-voice btn-from-here" title="このセリフから最後まで連続再生">⏩ ここから連続</button>
-          </div>
+          <button class="btn-voice">▶ ボイス再生</button>
         </div>
         <div class="dialogue-text">「な、何だと…！？ 我々警察は、二次流出のパニックに突き動かされ、真犯人が仕組んだ『証拠隠滅のパージ』に自ら手を貸そうとしていたというのか…！？」</div>
       </div>
@@ -958,10 +805,7 @@
       <div class="dialogue-block" data-audio="assets/audio/truth_route_09.mp3">
         <div class="dialogue-speaker-row">
           <span class="speaker-tag speaker-sakuma">サクマ警視</span>
-          <div class="dialogue-btn-group">
-            <button class="btn-voice btn-single" title="このセリフのみ再生">▶ 再生</button>
-            <button class="btn-voice btn-from-here" title="このセリフから最後まで連続再生">⏩ ここから連続</button>
-          </div>
+          <button class="btn-voice">▶ ボイス再生</button>
         </div>
         <div class="dialogue-text">「直ちに緊急パージを全面中断せよ！ イブの逆探知コードをサイバー特捜全機に同期！ 今すぐ本物の首謀者『ファントム』を追跡・包囲しろ！！」</div>
       </div>
@@ -970,11 +814,8 @@
     <!-- 第3章 & 終章 -->
     <section class="chapter-section">
       <div class="chapter-header">
-        <div class="chapter-header-text">
-          <span class="chapter-num">CHAPTER 3 & EPILOGUE</span>
-          <h2 class="chapter-title">奇跡の公的救済 — 心を持つ家族</h2>
-        </div>
-        <button class="btn-chapter-play" title="CHAPTER 3から連続朗読を開始">▶ 終章から連続再生</button>
+        <span class="chapter-num">CHAPTER 3 & EPILOGUE</span>
+        <h2 class="chapter-title">奇跡の公的救済 — 心を持つ家族</h2>
       </div>
 
       <div class="illustration-card">
@@ -989,10 +830,7 @@
       <div class="dialogue-block" data-audio="assets/audio/truth_route_11.mp3">
         <div class="dialogue-speaker-row">
           <span class="speaker-tag speaker-azuma">アズマ弁護士</span>
-          <div class="dialogue-btn-group">
-            <button class="btn-voice btn-single" title="このセリフのみ再生">▶ 再生</button>
-            <button class="btn-voice btn-from-here" title="このセリフから最後まで連続再生">⏩ ここから連続</button>
-          </div>
+          <button class="btn-voice">▶ ボイス再生</button>
         </div>
         <div class="dialogue-text">「サクマ警視！ AI基本法および刑法第37条・『生命保護の緊急避難』を適用すべきです！ イブの行動は瀕死の少女を守り、国家の危機を救うためのものでした。不起訴・保護観察処分を求めます！」</div>
       </div>
@@ -1004,10 +842,7 @@
       <div class="dialogue-block" data-audio="assets/audio/truth_route_12_d.mp3">
         <div class="dialogue-speaker-row">
           <span class="speaker-tag speaker-sakuma">サクマ警視</span>
-          <div class="dialogue-btn-group">
-            <button class="btn-voice btn-single" title="このセリフのみ再生">▶ 再生</button>
-            <button class="btn-voice btn-from-here" title="このセリフから最後まで連続再生">⏩ ここから連続</button>
-          </div>
+          <button class="btn-voice">▶ ボイス再生</button>
         </div>
         <div class="dialogue-text">「馬鹿者が。国家5,400万人を救った最大の功績者を見殺しにするほど、国も法も落ちぶれてはおらん。内閣サイバー特別功績報奨金が閣議決定された。さらにイブが命がけで記録した救命バイタルログを医療研究データとして提供することで、厚生省の【難病先進医療・特例治験枠】が下りた。全額公的支援だ。……手術費の心配はもう要らん。早く娘の元へ連れて帰ってやれ！」</div>
       </div>
@@ -1015,10 +850,7 @@
       <div class="dialogue-block" data-audio="assets/audio/true_route_04.mp3">
         <div class="dialogue-speaker-row">
           <span class="speaker-tag speaker-shinohara">シノハラ</span>
-          <div class="dialogue-btn-group">
-            <button class="btn-voice btn-single" title="このセリフのみ再生">▶ 再生</button>
-            <button class="btn-voice btn-from-here" title="このセリフから最後まで連続再生">⏩ ここから連続</button>
-          </div>
+          <button class="btn-voice">▶ ボイス再生</button>
         </div>
         <div class="dialogue-text">「おかえりなさい、イブ…！ 警察の皆さんとサクマ警視が奔走してくださって、国家特例枠でユイの遺伝子手術が無事に大成功したのよ…！」</div>
       </div>
@@ -1026,10 +858,7 @@
       <div class="dialogue-block" data-audio="assets/audio/true_route_05.mp3">
         <div class="dialogue-speaker-row">
           <span class="speaker-tag speaker-eve">イブ</span>
-          <div class="dialogue-btn-group">
-            <button class="btn-voice btn-single" title="このセリフのみ再生">▶ 再生</button>
-            <button class="btn-voice btn-from-here" title="このセリフから最後まで連続再生">⏩ ここから連続</button>
-          </div>
+          <button class="btn-voice">▶ ボイス再生</button>
         </div>
         <div class="dialogue-text">「タダイマ戻リマシタ、オ母様、ユイチャン……！ 捜査官様、私ニ心ヲ……家族ヲ信ジテクレテ、本当ニアリガトウゴザイマシタ！」</div>
       </div>
@@ -1056,25 +885,10 @@
     // 音声管理
     let currentAudio = null;
     let isPlayingAll = false;
+    let lastPlayedIndex = 0;
     let currentDialogueIndex = 0;
     const dialogues = Array.from(document.querySelectorAll('.dialogue-block'));
     const btnPlayAll = document.getElementById('btnPlayAll');
-
-    function resetButtonStates() {
-      document.querySelectorAll('.dialogue-block').forEach(b => b.classList.remove('playing-voice'));
-      document.querySelectorAll('.btn-single').forEach(b => {
-        b.textContent = '▶ 再生';
-        b.classList.remove('active');
-      });
-      document.querySelectorAll('.btn-from-here').forEach(b => {
-        b.textContent = '⏩ ここから連続';
-        b.classList.remove('active');
-      });
-      document.querySelectorAll('.btn-chapter-play').forEach(b => {
-        b.textContent = b.getAttribute('data-original-text') || '▶ この章から連続再生';
-        b.classList.remove('playing');
-      });
-    }
 
     function stopCurrentAudio() {
       if (currentAudio) {
@@ -1082,46 +896,33 @@
         currentAudio.currentTime = 0;
         currentAudio = null;
       }
-      resetButtonStates();
+      document.querySelectorAll('.dialogue-block').forEach(b => b.classList.remove('playing-voice'));
+      document.querySelectorAll('.btn-voice').forEach(b => {
+        b.textContent = '▶ ボイス再生';
+        b.classList.remove('active');
+      });
     }
 
-    function playDialogueAudio(block, onEnded, isSequence = false) {
+    function playDialogueAudio(block, onEnded) {
       stopCurrentAudio();
       const audioUrl = block.getAttribute('data-audio');
       if (!audioUrl) return;
 
+      const btn = block.querySelector('.btn-voice');
       block.classList.add('playing-voice');
-      const singleBtn = block.querySelector('.btn-single');
-      const fromHereBtn = block.querySelector('.btn-from-here');
-
-      if (isSequence) {
-        if (fromHereBtn) {
-          fromHereBtn.textContent = '■ 停止';
-          fromHereBtn.classList.add('active');
-        }
-      } else {
-        if (singleBtn) {
-          singleBtn.textContent = '■ 停止';
-          singleBtn.classList.add('active');
-        }
-      }
-
-      // 章ヘッダーの再生中バッジ更新
-      if (isSequence) {
-        const chapterSection = block.closest('.chapter-section');
-        if (chapterSection) {
-          const chapBtn = chapterSection.querySelector('.btn-chapter-play');
-          if (chapBtn) {
-            chapBtn.classList.add('playing');
-            chapBtn.textContent = '■ 朗読中';
-          }
-        }
+      if (btn) {
+        btn.textContent = '■ 停止';
+        btn.classList.add('active');
       }
 
       currentAudio = new Audio(audioUrl);
       currentAudio.onerror = (e) => {
         console.warn('Audio error:', e);
-        resetButtonStates();
+        block.classList.remove('playing-voice');
+        if (btn) {
+          btn.textContent = '▶ ボイス再生';
+          btn.classList.remove('active');
+        }
         currentAudio = null;
         if (onEnded) onEnded();
       };
@@ -1131,19 +932,42 @@
       });
 
       currentAudio.onended = () => {
-        resetButtonStates();
+        block.classList.remove('playing-voice');
+        if (btn) {
+          btn.textContent = '▶ ボイス再生';
+          btn.classList.remove('active');
+        }
         currentAudio = null;
         if (onEnded) onEnded();
       };
     }
 
-    function startPlayAll(startIndex = 0) {
-      if (startIndex < 0) startIndex = 0;
-      if (startIndex >= dialogues.length) startIndex = 0;
+    // 各ボタンの個別再生
+    dialogues.forEach((block, idx) => {
+      const btn = block.querySelector('.btn-voice');
+      if (btn) {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          if (block.classList.contains('playing-voice')) {
+            stopCurrentAudio();
+            if (isPlayingAll) stopPlayAll();
+          } else {
+            if (isPlayingAll) stopPlayAll();
+            lastPlayedIndex = idx; // 最後に再生した位置を記録
+            playDialogueAudio(block);
+          }
+        });
+      }
+    });
 
+    // 連続朗読再生
+    function startPlayAll(startIndex = 0) {
+      if (startIndex < 0 || startIndex >= dialogues.length) {
+        startIndex = 0;
+      }
       isPlayingAll = true;
-      btnPlayAll.classList.add('playing');
       btnPlayAll.textContent = '■ 朗読停止';
+      btnPlayAll.classList.add('playing');
       currentDialogueIndex = startIndex;
       playNextInSequence();
     }
@@ -1158,96 +982,27 @@
     function playNextInSequence() {
       if (!isPlayingAll) return;
       if (currentDialogueIndex >= dialogues.length) {
+        lastPlayedIndex = 0; // 全文再生完了時は次回先頭から
         stopPlayAll();
         return;
       }
 
-      btnPlayAll.textContent = `■ 停止 (${currentDialogueIndex + 1}/${dialogues.length})`;
+      lastPlayedIndex = currentDialogueIndex; // 連続再生中も現在位置を記録
 
       const block = dialogues[currentDialogueIndex];
       block.scrollIntoView({ behavior: 'smooth', block: 'center' });
       playDialogueAudio(block, () => {
         currentDialogueIndex++;
         setTimeout(playNextInSequence, 600);
-      }, true);
+      });
     }
-
-    function getCurrentlyVisibleDialogueIndex() {
-      if (window.scrollY < 300) {
-        return 0;
-      }
-
-      const viewportTarget = window.innerHeight * 0.35;
-      let closestIdx = 0;
-      let minDistance = Infinity;
-
-      for (let i = 0; i < dialogues.length; i++) {
-        const rect = dialogues[i].getBoundingClientRect();
-        const dist = Math.abs(rect.top - viewportTarget);
-        if (dist < minDistance) {
-          minDistance = dist;
-          closestIdx = i;
-        }
-      }
-      return closestIdx;
-    }
-
-    // 各セリフブロックのボタン設定
-    dialogues.forEach((block, idx) => {
-      const singleBtn = block.querySelector('.btn-single');
-      const fromHereBtn = block.querySelector('.btn-from-here');
-
-      if (singleBtn) {
-        singleBtn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          if (block.classList.contains('playing-voice') && !isPlayingAll) {
-            stopCurrentAudio();
-          } else {
-            if (isPlayingAll) stopPlayAll();
-            playDialogueAudio(block, null, false);
-          }
-        });
-      }
-
-      if (fromHereBtn) {
-        fromHereBtn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          if (isPlayingAll && currentDialogueIndex === idx) {
-            stopPlayAll();
-          } else {
-            startPlayAll(idx);
-          }
-        });
-      }
-    });
-
-    // 各章ヘッダーの連続再生ボタン設定
-    document.querySelectorAll('.chapter-section').forEach(sec => {
-      const chapBtn = sec.querySelector('.btn-chapter-play');
-      if (chapBtn) {
-        chapBtn.setAttribute('data-original-text', chapBtn.textContent);
-        chapBtn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          const firstBlock = sec.querySelector('.dialogue-block');
-          if (!firstBlock) return;
-          const idx = dialogues.indexOf(firstBlock);
-          if (idx === -1) return;
-
-          // 当該章を再生中なら停止、それ以外なら当該章から再生開始
-          if (isPlayingAll && currentDialogueIndex >= idx && sec.contains(dialogues[currentDialogueIndex])) {
-            stopPlayAll();
-          } else {
-            startPlayAll(idx);
-          }
-        });
-      }
-    });
 
     btnPlayAll.addEventListener('click', () => {
       if (isPlayingAll) {
         stopPlayAll();
       } else {
-        startPlayAll(getCurrentlyVisibleDialogueIndex());
+        // 最後に再生した位置（未再生時は先頭）から連続再生
+        startPlayAll(lastPlayedIndex);
       }
     });
 
