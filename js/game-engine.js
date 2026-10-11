@@ -452,9 +452,6 @@ class GameEngine {
         }
 
         charIndex++;
-        if (this.dom.messageText) {
-          this.dom.messageText.scrollTop = this.dom.messageText.scrollHeight;
-        }
       } else {
         this.completeTyping();
       }
@@ -466,7 +463,7 @@ class GameEngine {
     this.isTextTyping = false;
     this.dom.messageText.textContent = this.currentFullText;
     if (this.dom.messageText) {
-      this.dom.messageText.scrollTop = this.dom.messageText.scrollHeight;
+      this.dom.messageText.scrollTop = 0;
     }
     this.dom.nextIndicator.style.opacity = '1';
     if (this.typingOnComplete) {
