@@ -72,7 +72,17 @@ def main():
                 raw_bytes = base64.b64decode(ac.data) if isinstance(ac.data, str) else ac.data
                 with open(final_path, "wb") as f:
                     f.write(raw_bytes)
-                print(f"-> 完了: {final_path} ({len(raw_bytes) / 1024:.1f} KB)")
+                print(f"-> 生成完了: {final_path} ({len(raw_bytes) / 1024:.1f} KB)")
+
+                # シームレスループ加工
+                try:
+                    from make_seamless_loop import create_seamless_loop
+                    temp_loop = output_dir / f"loop_{filename}"
+                    create_seamless_loop(final_path, temp_loop, crossfade_sec=4.0)
+                    temp_loop.replace(final_path)
+                    print(f"-> シームレスループ加工完了: {filename}")
+                except Exception as loop_err:
+                    print(f"-> ループ加工警告 (元ファイルを維持): {loop_err}")
             else:
                 print("-> 音声データが取得できませんでした")
 
