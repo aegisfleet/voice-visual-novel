@@ -48,8 +48,8 @@ VOICE_PROFILES = {
         "style": "confident, passionate young defense attorney, courtroom drama, clear and determined"
     },
     "default": {
-        "voice": "Orus",
-        "style": "deep, calm, articulate, serious, cyberpunk cinematic narrator"
+        "voice": "Puck",
+        "style": "clear, crisp, intelligent, composed young narrator, engaging cyberpunk story"
     }
 }
 
@@ -163,9 +163,18 @@ def main():
     scenes = extract_scenes()
     total = len(scenes)
 
-    print("==================================================")
-    print(f"Vertex AI: 全シナリオ ({total} シーン) フルボイス一括生成開始")
-    print("==================================================")
+    import sys
+    narrator_only = "--narrator-only" in sys.argv
+    if narrator_only:
+        scenes = [s for s in scenes if not s["speaker"]]
+        total = len(scenes)
+        print("==================================================")
+        print(f"Vertex AI: ナレーターのみ ({total} シーン) 再生成開始")
+        print("==================================================")
+    else:
+        print("==================================================")
+        print(f"Vertex AI: 全シナリオ ({total} シーン) フルボイス一括生成開始")
+        print("==================================================")
 
     # イブの正式採用ボイス (sample_eve_leda.wav) を sample_eve.wav にもコピー
     leda_sample = output_dir / "samples" / "sample_eve_leda.wav"
@@ -174,6 +183,14 @@ def main():
         with open(leda_sample, "rb") as src, open(main_eve_sample, "wb") as dst:
             dst.write(src.read())
         print(f"イブのメインサンプルに Leda を適用: {main_eve_sample}")
+
+    # ナレーターの正式採用ボイス (sample_narrator_puck.wav) を sample_narrator.wav にもコピー
+    narrator_puck_sample = output_dir / "samples" / "sample_narrator_puck.wav"
+    main_narrator_sample = output_dir / "samples" / "sample_narrator.wav"
+    if narrator_puck_sample.exists():
+        with open(narrator_puck_sample, "rb") as src, open(main_narrator_sample, "wb") as dst:
+            dst.write(src.read())
+        print(f"ナレーターのメインサンプルに Puck を適用: {main_narrator_sample}")
 
     success_count = 0
     fail_count = 0

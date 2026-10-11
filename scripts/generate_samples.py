@@ -53,8 +53,8 @@ CHARACTER_SAMPLES = [
     {
         "id": "sample_narrator",
         "name": "ナレーション (システム)",
-        "voice": "Orus",
-        "style": "deep, calm, articulate, serious, cyberpunk cinematic narrator",
+        "voice": "Puck",
+        "style": "clear, crisp, intelligent, composed young narrator, engaging cyberpunk story",
         "text": "西暦2098年、未曾有のサイバークライシスが発生。国家厚生・金融クラウドから機密データが突如流出した。"
     }
 ]
