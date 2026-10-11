@@ -77,11 +77,73 @@ Web標準技術（HTML5 / CSS3 / JavaScript / Web Speech API）のみで構築�
 
 ---
 
+## 🎙️ フルボイス音声システム (Gemini 3.8 Flash TTS)
+
+Google の最新音声生成専用モデル **`gemini-3.8-flash-tts`**（Vertex AI 経由）を採用し、プロローグからエンディングまで**全65シーンの完全フルボイス**を実現しています。
+
+### 🎭 キャラクター別ボイス割り当て
+
+| キャラクター | 話者名 | ボイスモデル | 演技・声質ニュアンス |
+| :--- | :--- | :--- | :--- |
+| **イブ** (Eve) | `イブ` | `Leda` | 可憐・繊細で健気な少女声。ロボット感を排した自然で感情豊かなトーン |
+| **サクマ警視** (Sakuma) | `サクマ警視` | `Charon` | 50代後半〜60代・重厚な低音。圧倒的な貫禄と威圧感を放つベテラン警視 |
+| **シノハラ** (篠原ミサト) | `シノハラ` | `Aoede` | 心労と恐怖に苛まれ、我が子の助命を涙ながらに懇願する母親の震え声 |
+| **アイリス** (Iris) | `アイリス` | `Zephyr` | 明るく快活・聡明な若手女性分析官。状況をハキハキと報告する明瞭な声 |
+| **アズマ弁護士** (主人公) | `あなた` | `Puck` | 正義感と知性に満ちた若き青年弁護士。法廷劇にふさわしい明瞭で力強い声 |
+| **ナレーション** (System) | `None` | `Orus` | 重厚で落ち着きのあるシネマティック・サイバーSFナレーション |
+
+> 💡 **試聴ページ**: [samples.html](samples.html) をブラウザで開くことで、各キャラクターのボイスをその場で聞き比べできます。
+
+---
+
+## 🛠️ 音声生成の再現手順
+
+プロジェクト内のスクリプトを用いて、全音声をワンコマンドで再生成・MP3圧縮できます。
+
+### 1. 前提条件
+* Python 3.10+
+* `ffmpeg`（MP3圧縮用）
+* Google Cloud SDK (`gcloud`)
+
+### 2. 環境セットアップ
+```bash
+# 必要なライブラリのインストール
+pip install --upgrade google-genai python-dotenv
+
+# Google Cloud 認証
+gcloud auth application-default login
+```
+
+### 3. 環境変数の設定 (`.env`)
+プロジェクトルートに `.env` ファイルを作成し、ご自身の Google Cloud プロジェクトIDを指定します（`.env` は `.gitignore` により Git 追跡から除外されます）：
+
+```env
+GOOGLE_CLOUD_PROJECT=your-google-cloud-project-id
+GOOGLE_CLOUD_LOCATION=global
+```
+
+### 4. 音声の一括生成コマンド
+```bash
+# 全65シーンの音声を自動生成 ＆ MP3(128kbps)へ圧縮
+python scripts/generate_all_voices.py
+
+# サンプル音声のみを生成する場合
+python scripts/generate_samples.py
+```
+
+### 💡 技術的ポイント（実装ノウハウ）
+* **`SpeechMetadata` による指示文の分離**:  
+  Gemini 3.8 Flash TTS では `text` に渡した文字列が一言一句そのまま読み上げられます。演技指示が台本として誤読されるのを防ぐため、本文は `text` に純粋なセリフのみを渡し、演技やトーンは `types.SpeechMetadata(style="...")` フィールドに完全分離しています。
+* **軽量MP3圧縮（128kbps）**:  
+  APIから返る24kHz生WAVデータを即座に `ffmpeg` で MP3 圧縮。全65シーン合わせても**総容量約 13.9 MB** に抑えられており、Webやモバイル通信でも一瞬でロードされます。
+
+---
+
 ## 🚀 起動方法
 
 ```bash
-cd /root/voice-visual-novel
-python3 -m http.server 8080
+python -m http.server 8080
 ```
 ブラウザで `http://localhost:8080` を開き、「事件の捜査を開始する」をクリックしてください。
 まずは1周目の切ないバッドエンドを経験し、2周目で子供部屋の手がかりを掴んで真実に辿り着くドラマをお楽しみください！
+

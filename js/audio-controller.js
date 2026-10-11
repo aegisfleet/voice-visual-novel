@@ -24,6 +24,9 @@ class AudioController {
     this.audioCtx = null;
     this.isAudioUnlocked = false;
 
+    // 音声ファイルの自動検知・再生を有効化
+    this.hasAudioFilesInstalled = true;
+
     this.initVoices();
   }
 

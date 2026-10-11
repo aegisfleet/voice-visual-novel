@@ -1,0 +1,18 @@
+# 環境変数・APIキー（Git追跡除外）
+.env
+.env.local
+.env.*.local
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+
+# OS / エディタ
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
