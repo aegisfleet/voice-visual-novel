@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="100%" height="100%">
+  <defs>
+    <linearGradient id="alertBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2a050d"/>
+      <stop offset="50%" stop-color="#190308"/>
+      <stop offset="100%" stop-color="#080002"/>
+    </linearGradient>
+    <linearGradient id="redGlow" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ff0044" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#990022" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1920" height="1080" fill="url(#alertBg)"/>
+
+  <!-- Alert Lines & Grid -->
+  <g opacity="0.5">
+    <line x1="0" y1="800" x2="1920" y2="800" stroke="#ff0044" stroke-width="2"/>
+    <line x1="0" y1="880" x2="1920" y2="880" stroke="#ff0044" stroke-width="2"/>
+    <line x1="0" y1="980" x2="1920" y2="980" stroke="#ff0044" stroke-width="3"/>
+    <line x1="960" y1="700" x2="0" y2="1080" stroke="#ff0044" stroke-width="2"/>
+    <line x1="960" y1="700" x2="400" y2="1080" stroke="#ff0044" stroke-width="2"/>
+    <line x1="960" y1="700" x2="800" y2="1080" stroke="#ff0044" stroke-width="2"/>
+    <line x1="960" y1="700" x2="1120" y2="1080" stroke="#ff0044" stroke-width="2"/>
+    <line x1="960" y1="700" x2="1520" y2="1080" stroke="#ff0044" stroke-width="2"/>
+    <line x1="960" y1="700" x2="1920" y2="1080" stroke="#ff0044" stroke-width="2"/>
+  </g>
+
+  <!-- Giant Alert Hexagon Overlay -->
+  <circle cx="960" cy="540" r="450" fill="none" stroke="#ff0044" stroke-width="4" stroke-dasharray="25,15" opacity="0.6"/>
+  <polygon points="610,720 1310,720 1200,200 720,200" fill="url(#redGlow)" opacity="0.35"/>
+
+  <!-- Big Alert Text in Background -->
+  <text x="960" y="320" fill="#ff0044" font-family="monospace" font-size="72" font-weight="900" text-anchor="middle" letter-spacing="12" opacity="0.75">CRITICAL ALERT</text>
+  <text x="960" y="380" fill="#ffffff" font-family="monospace" font-size="28" font-weight="bold" text-anchor="middle" letter-spacing="6" opacity="0.6">AI PROTOCOL BREACH DETECTED</text>
+</svg>

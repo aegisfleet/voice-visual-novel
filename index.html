@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Voice Visual Novel - Live2D Prototype</title>
+  <title>PROJECT EVE: 偽りの暴走 - 近未来SFミステリーノベル</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -11,10 +11,16 @@
   <div id="gameViewport">
     <!-- 1. タイトル画面 -->
     <div id="titleScreen" class="title-screen">
-      <h1 class="title-logo">PROJECT VOICE NOVEL</h1>
-      <p class="title-sub">Web Speech API &amp; Live2D Prototype</p>
-      <button id="btnStart" class="start-btn">ゲームスタート</button>
-      <p class="start-notice">※クリックすると音声の読み上げが有効になります</p>
+      <div class="cyber-badge">CYBER MYSTERY NOVEL</div>
+      <h1 class="title-logo">PROJECT EVE</h1>
+      <p class="title-sub">〜 偽りの暴走 〜</p>
+
+      <div class="endings-collection" id="endingsBadge">
+        <!-- 達成バッジがJSで挿入される -->
+      </div>
+
+      <button id="btnStart" class="start-btn">捜査を開始する</button>
+      <p class="start-notice">※音声読み上げ（フルボイス）が有効になります。プレイ時間目安：約3分</p>
     </div>
 
     <!-- 2. ゲーム画面 -->
@@ -31,10 +37,12 @@
         <div class="controls-bar">
           <button id="btnAuto" class="ctrl-btn">AUTO</button>
           <button id="btnLog" class="ctrl-btn">LOG</button>
+          <button id="btnTitle" class="ctrl-btn">TITLE</button>
         </div>
 
         <!-- 選択肢オーバーレイ -->
         <div id="choicesOverlay" class="choices-overlay">
+          <div class="choice-title">【 INVESTIGATION CHOICE 】</div>
           <div id="choicesList" class="choices-list"></div>
         </div>
 
@@ -49,10 +57,20 @@
       </div>
     </div>
 
-    <!-- 3. バックログモーダル -->
+    <!-- 3. エンディングモーダル -->
+    <div id="endingModal" class="ending-modal hidden">
+      <div class="ending-card">
+        <div id="endingType" class="ending-type-badge">ENDING</div>
+        <h2 id="endingTitle" class="ending-title">エンディング名</h2>
+        <p id="endingDesc" class="ending-desc">エンディングの詳細説明</p>
+        <button id="btnReturnTitle" class="btn-return-title">タイトルへ戻る</button>
+      </div>
+    </div>
+
+    <!-- 4. バックログモーダル -->
     <div id="logModal" class="log-modal hidden">
       <div class="log-header">
-        <span>バックログ</span>
+        <span>捜査ログ (Backlog)</span>
         <button id="btnCloseLog" class="btn-close-log">&times;</button>
       </div>
       <div id="logContent" class="log-content"></div>
@@ -65,7 +83,6 @@
   <script src="js/scenario.js"></script>
   <script src="js/game-engine.js"></script>
   <script>
-    // ゲーム初期化
     window.addEventListener('DOMContentLoaded', () => {
       window.game = new GameEngine(window.SCENARIO_DATA);
     });

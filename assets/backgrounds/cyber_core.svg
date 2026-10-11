@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="100%" height="100%">
+  <defs>
+    <linearGradient id="cyberBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#050a14"/>
+      <stop offset="50%" stop-color="#0a192f"/>
+      <stop offset="100%" stop-color="#02050b"/>
+    </linearGradient>
+    <linearGradient id="neonGlow" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#00f3ff" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#0066ff" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="serverLight" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00f3ff"/>
+      <stop offset="100%" stop-color="#ff0055"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background base -->
+  <rect width="1920" height="1080" fill="url(#cyberBg)"/>
+
+  <!-- Cyber Grid floor -->
+  <g opacity="0.35">
+    <line x1="0" y1="800" x2="1920" y2="800" stroke="#00f3ff" stroke-width="2"/>
+    <line x1="0" y1="880" x2="1920" y2="880" stroke="#00f3ff" stroke-width="2"/>
+    <line x1="0" y1="980" x2="1920" y2="980" stroke="#00f3ff" stroke-width="3"/>
+    <!-- Perspective grid lines -->
+    <line x1="960" y1="700" x2="0" y2="1080" stroke="#00f3ff" stroke-width="2"/>
+    <line x1="960" y1="700" x2="400" y2="1080" stroke="#00f3ff" stroke-width="2"/>
+    <line x1="960" y1="700" x2="800" y2="1080" stroke="#00f3ff" stroke-width="2"/>
+    <line x1="960" y1="700" x2="1120" y2="1080" stroke="#00f3ff" stroke-width="2"/>
+    <line x1="960" y1="700" x2="1520" y2="1080" stroke="#00f3ff" stroke-width="2"/>
+    <line x1="960" y1="700" x2="1920" y2="1080" stroke="#00f3ff" stroke-width="2"/>
+  </g>
+
+  <!-- Server Racks (Left) -->
+  <rect x="120" y="200" width="280" height="600" fill="#0d1f36" stroke="#00f3ff" stroke-width="2"/>
+  <line x1="140" y1="260" x2="380" y2="260" stroke="#00f3ff" stroke-width="2" opacity="0.6"/>
+  <line x1="140" y1="320" x2="380" y2="320" stroke="#00f3ff" stroke-width="2" opacity="0.6"/>
+  <line x1="140" y1="380" x2="380" y2="380" stroke="#00f3ff" stroke-width="2" opacity="0.6"/>
+  <line x1="140" y1="440" x2="380" y2="440" stroke="#00f3ff" stroke-width="2" opacity="0.6"/>
+  <circle cx="160" cy="230" r="5" fill="#00ff66"/>
+  <circle cx="180" cy="230" r="5" fill="#00f3ff"/>
+  <circle cx="200" cy="230" r="5" fill="#ff0055"/>
+
+  <!-- Server Racks (Right) -->
+  <rect x="1520" y="200" width="280" height="600" fill="#0d1f36" stroke="#00f3ff" stroke-width="2"/>
+  <line x1="1540" y1="260" x2="1780" y2="260" stroke="#00f3ff" stroke-width="2" opacity="0.6"/>
+  <line x1="1540" y1="320" x2="1780" y2="320" stroke="#00f3ff" stroke-width="2" opacity="0.6"/>
+  <circle cx="1560" cy="230" r="5" fill="#00ff66"/>
+  <circle cx="1580" cy="230" r="5" fill="#00f3ff"/>
+
+  <!-- Central Hologram Ring -->
+  <ellipse cx="960" cy="720" rx="350" ry="80" fill="none" stroke="#00f3ff" stroke-width="3" opacity="0.8"/>
+  <ellipse cx="960" cy="720" rx="420" ry="95" fill="none" stroke="#ff0055" stroke-width="1.5" opacity="0.5"/>
+  <polygon points="610,720 1310,720 1200,200 720,200" fill="url(#neonGlow)" opacity="0.25"/>
+
+  <!-- Cyber Monitors (Holo screens) -->
+  <rect x="520" y="160" width="220" height="130" rx="8" fill="rgba(0,243,255,0.08)" stroke="#00f3ff" stroke-width="2"/>
+  <path d="M 540 210 L 590 190 L 630 230 L 680 180" stroke="#00f3ff" stroke-width="2" fill="none"/>
+  
+  <rect x="1180" y="160" width="220" height="130" rx="8" fill="rgba(255,0,85,0.08)" stroke="#ff0055" stroke-width="2"/>
+  <text x="1200" y="210" fill="#ff0055" font-family="monospace" font-size="18">WARNING: LOCKDOWN</text>
+  <text x="1200" y="240" fill="#00f3ff" font-family="monospace" font-size="14">CORE INTEGRITY 42%</text>
+
+  <!-- Digital particles / Hexagons -->
+  <polygon points="960,120 985,135 985,165 960,180 935,165 935,135" fill="none" stroke="#00f3ff" stroke-width="1.5" opacity="0.5"/>
+  <polygon points="860,180 885,195 885,225 860,240 835,225 835,195" fill="none" stroke="#00f3ff" stroke-width="1.5" opacity="0.3"/>
+  <polygon points="1060,180 1085,195 1085,225 1060,240 1035,225 1035,195" fill="none" stroke="#00f3ff" stroke-width="1.5" opacity="0.3"/>
+</svg>
