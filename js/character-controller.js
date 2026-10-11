@@ -20,7 +20,7 @@ class CharacterController {
     this.isTalking = false;
     this.blinkTimer = null;
 
-    this.setupMouseTracking();
+    this.setupTracking();
   }
 
   show(charId, expression = 'normal', motion = null) {
@@ -50,29 +50,48 @@ class CharacterController {
   }
 
   renderCharacter(charId) {
-    let svgContent = '';
-    switch (charId) {
-      case 'eve':
-        svgContent = this.getEveSVG();
-        break;
-      case 'sakuma':
-        svgContent = this.getSakumaSVG();
-        break;
-      case 'shinohara':
-        svgContent = this.getShinoharaSVG();
-        break;
-      case 'kirishima':
-        svgContent = this.getKirishimaSVG();
-        break;
-      case 'iris':
-      default:
-        svgContent = this.getIrisSVG();
-        break;
+    let contentHtml = '';
+
+    // 高精細・クロマキー透過立ち絵画像アセット
+    const hiresImages = {
+      eve: 'assets/characters/eve.png',
+      iris: 'assets/characters/iris.png',
+      sakuma: 'assets/characters/sakuma.png',
+      shinohara: 'assets/characters/shinohara.png'
+    };
+
+    if (hiresImages[charId]) {
+      const isEve = (charId === 'eve');
+      const blendModeClass = isEve ? 'char-img-holo' : 'char-img-solid';
+      contentHtml = `
+        <div class="char-sprite-container ${blendModeClass}">
+          <img src="${hiresImages[charId]}" alt="${charId}" class="char-sprite-img" id="charSpriteImg">
+          ${isEve ? '<div class="holo-ring-fx"></div>' : ''}
+          <div class="char-voice-pulse" id="charVoicePulse"></div>
+        </div>
+      `;
+    } else {
+      // フォールバック: 精密SVGレンダラー
+      let svgContent = '';
+      switch (charId) {
+        case 'shinohara':
+          svgContent = this.getShinoharaSVG();
+          break;
+        case 'kirishima':
+          svgContent = this.getKirishimaSVG();
+          break;
+        default:
+          svgContent = this.getIrisSVG();
+          break;
+      }
+      contentHtml = svgContent;
     }
 
+    const holoClass = (charId === 'eve') ? 'holo-character' : '';
     this.container.innerHTML = `
-      <div class="live2d-character-wrapper char-${charId}" id="live2dWrapper">
-        ${svgContent}
+      <div class="live2d-character-wrapper char-${charId} ${holoClass}" id="live2dWrapper">
+        <div class="character-aura" id="charAura"></div>
+        ${contentHtml}
       </div>
     `;
   }
@@ -626,6 +645,12 @@ class CharacterController {
     this.currentExpression = expression;
     this.resetExpressionStyle();
 
+    const wrapper = this.container.querySelector('#live2dWrapper');
+    if (wrapper) {
+      wrapper.classList.remove('expr-normal', 'expr-smile', 'expr-shocked', 'expr-angry', 'expr-sad', 'expr-serious');
+      wrapper.classList.add(`expr-${expression}`);
+    }
+
     const eyesNormal = this.container.querySelector('#eyesNormal');
     const eyesSmile = this.container.querySelector('#eyesSmile');
     const eyesShocked = this.container.querySelector('#eyesShocked');
@@ -743,20 +768,38 @@ class CharacterController {
   }
 
   /* ========================================================
-     マウストラッキング (安全な微細チルト)
+     トラッキング (PCマウス & スマホタッチ/ジャイロ対応)
      ======================================================== */
-  setupMouseTracking() {
+  setupTracking() {
+    // 1. PC マウストラッキング
     window.addEventListener('mousemove', (e) => {
-      const partHead = this.container.querySelector('#partHead');
-      if (!partHead) return;
-
-      const centerX = window.innerWidth / 2;
-      const deltaX = (e.clientX - centerX) / centerX;
-
-      // 崩壊を防ぐため、頭部全体をごく自然に 1.2度 傾けるのみにする
-      partHead.style.transformOrigin = '250px 320px';
-      partHead.style.transform = `rotate(${deltaX * 1.5}deg)`;
+      this.applyTilt((e.clientX - window.innerWidth / 2) / (window.innerWidth / 2));
     });
+
+    // 2. スマホ タッチトラッキング
+    window.addEventListener('touchmove', (e) => {
+      if (e.touches && e.touches[0]) {
+        this.applyTilt((e.touches[0].clientX - window.innerWidth / 2) / (window.innerWidth / 2));
+      }
+    }, { passive: true });
+
+    // 3. スマホ ジャイロセンサー対応 (DeviceOrientation)
+    if (window.DeviceOrientationEvent) {
+      window.addEventListener('deviceorientation', (e) => {
+        if (e.gamma !== null) {
+          // gammaは左右の傾き (-90 〜 90)
+          const tilt = Math.max(-1, Math.min(1, e.gamma / 30));
+          this.applyTilt(tilt);
+        }
+      }, { passive: true });
+    }
+  }
+
+  applyTilt(deltaRatio) {
+    const partHead = this.container.querySelector('#partHead');
+    if (!partHead) return;
+    partHead.style.transformOrigin = '250px 320px';
+    partHead.style.transform = `rotate(${deltaRatio * 2.2}deg)`;
   }
 }
 

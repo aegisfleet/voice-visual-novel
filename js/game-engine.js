@@ -1,10 +1,10 @@
 /**
- * GameEngine (なぜなぜ分析・完全整合性版)
+ * GameEngine (モバイルファースト・WebGL ＆ Rive統合サイバーノベル)
  *
  * 証拠品データベース:
  * - ev_tool: 『侵入用サイバーツール』
- * - ev_jailbreak: 『自律医療MOD＆リミッター解除ログ』(母が施した医療侵襲制限解除)
- * - ev_broker: 『ブローカー取引ログ＆逆探知コード』(1億2000万円の罠と真犯人の逆探知)
+ * - ev_jailbreak: 『自律医療MOD＆改造ログ』
+ * - ev_broker: 『取引ログ＆逆探知コード』
  */
 
 const EVIDENCE_DATABASE = {
@@ -52,6 +52,14 @@ class GameEngine {
     this.audio = new AudioController();
     this.character = new CharacterController(document.getElementById('characterContainer'));
 
+    // WebGL シェーダー演出エンジン
+    const webglCanvas = document.getElementById('webglCanvas');
+    this.fx = webglCanvas ? new WebGLCyberFX(webglCanvas) : null;
+
+    // Rive HUD エンジン
+    const riveCanvas = document.getElementById('riveHudCanvas');
+    this.rive = riveCanvas ? new RiveManager(riveCanvas) : null;
+
     this.dom = {
       titleScreen: document.getElementById('titleScreen'),
       btnStart: document.getElementById('btnStart'),
@@ -75,12 +83,14 @@ class GameEngine {
       evidenceList: document.getElementById('evidenceList'),
       evidenceDetail: document.getElementById('evidenceDetail'),
       btnCloseEvidence: document.getElementById('btnCloseEvidence'),
+      btnBackEvidence: document.getElementById('btnBackEvidence'),
       evidencePopup: document.getElementById('evidencePopup'),
       evidencePopupText: document.getElementById('evidencePopupText'),
       objectionCutin: document.getElementById('objectionCutin'),
       logModal: document.getElementById('logModal'),
       logContent: document.getElementById('logContent'),
       btnCloseLog: document.getElementById('btnCloseLog'),
+      btnBackLog: document.getElementById('btnBackLog'),
       endingModal: document.getElementById('endingModal'),
       endingType: document.getElementById('endingType'),
       endingTitle: document.getElementById('endingTitle'),
@@ -103,7 +113,12 @@ class GameEngine {
   }
 
   bindEvents() {
+    // タイトル開始 (モバイル音声アンロック)
     this.dom.btnStart.addEventListener('click', () => {
+      this.audio.unlockAudio();
+      this.audio.playClickSound();
+      if (this.fx) this.fx.triggerFlash([0.0, 0.95, 1.0], 0.7, 300);
+
       this.checkReinvestigationStatus();
       this.dom.titleScreen.classList.add('hidden');
       this.dom.gameScreen.classList.remove('hidden');
@@ -113,13 +128,23 @@ class GameEngine {
       this.goToScene(this.scenario[0].id);
     });
 
-    this.dom.dialogBox.addEventListener('click', () => {
+    // モバイル全画面タップで進行 (操作パネルや選択肢、モーダル除外)
+    this.dom.gameScreen.addEventListener('click', (e) => {
+      if (e.target.closest('.controls-bar') ||
+          e.target.closest('.choices-overlay') ||
+          e.target.closest('.evidence-modal') ||
+          e.target.closest('.log-modal') ||
+          e.target.closest('.ending-modal')) {
+        return;
+      }
       if (this.dom.choicesOverlay.classList.contains('active')) return;
       this.handleUserAdvance();
     });
 
+    // AUTO トグル
     this.dom.btnAuto.addEventListener('click', (e) => {
       e.stopPropagation();
+      this.audio.playClickSound();
       this.isAutoMode = !this.isAutoMode;
       this.dom.btnAuto.classList.toggle('active', this.isAutoMode);
       if (this.isAutoMode) {
@@ -129,34 +154,54 @@ class GameEngine {
       }
     });
 
+    // ログモーダル
     this.dom.btnLog.addEventListener('click', (e) => {
       e.stopPropagation();
+      this.audio.playClickSound();
       this.showLog();
     });
-    this.dom.btnCloseLog.addEventListener('click', () => {
+    const closeLogAction = () => {
+      this.audio.playClickSound();
       this.dom.logModal.classList.add('hidden');
+    };
+    if (this.dom.btnCloseLog) this.dom.btnCloseLog.addEventListener('click', closeLogAction);
+    if (this.dom.btnBackLog) this.dom.btnBackLog.addEventListener('click', closeLogAction);
+    this.dom.logModal.addEventListener('click', (e) => {
+      if (e.target === this.dom.logModal) closeLogAction();
     });
 
+    // 証拠品手帳モーダル
     this.dom.btnEvidence.addEventListener('click', (e) => {
       e.stopPropagation();
+      this.audio.playClickSound();
       this.showEvidenceModal();
     });
-    this.dom.btnCloseEvidence.addEventListener('click', () => {
+    const closeEvidenceAction = () => {
+      this.audio.playClickSound();
       this.dom.evidenceModal.classList.add('hidden');
+    };
+    if (this.dom.btnCloseEvidence) this.dom.btnCloseEvidence.addEventListener('click', closeEvidenceAction);
+    if (this.dom.btnBackEvidence) this.dom.btnBackEvidence.addEventListener('click', closeEvidenceAction);
+    this.dom.evidenceModal.addEventListener('click', (e) => {
+      if (e.target === this.dom.evidenceModal) closeEvidenceAction();
     });
 
+    // タイトルへ戻る
     if (this.dom.btnTitle) {
       this.dom.btnTitle.addEventListener('click', (e) => {
         e.stopPropagation();
+        this.audio.playClickSound();
         this.returnToTitle();
       });
     }
 
     this.dom.btnReturnTitle.addEventListener('click', () => {
+      this.audio.playClickSound();
       this.dom.endingModal.classList.add('hidden');
       this.returnToTitle();
     });
 
+    // キーボード操作 (PC用)
     window.addEventListener('keydown', (e) => {
       if (e.code === 'Space' || e.code === 'Enter') {
         if (!this.dom.titleScreen.classList.contains('hidden')) {
@@ -183,22 +228,18 @@ class GameEngine {
     clearTimeout(this.autoTimer);
     if (!this.isAutoMode) return;
 
-    // タイピング中、または音声再生中の場合は次に進まない
     if (this.isTextTyping || this.audio.isPlaying) return;
 
     const currentEntry = this.scenarioMap.get(this.currentSceneId);
     if (!currentEntry) return;
     const scene = currentEntry.scene;
 
-    // 選択肢画面・証拠品つきつけ画面・エンディング画面では自動進行しない
     if ((scene.choices && scene.choices.length > 0) || scene.present || scene.ending) return;
 
-    // 音声終了後は聞き終えているので小気味よいテンポ感（600ms）で次へ！
-    // 音声が無いシーンのみ文字数に応じた読書待機（1.6秒〜3.2秒）
     let readingDelay = 600;
     if (!fromSpeechEnd) {
       const textLen = (scene.text || '').length;
-      readingDelay = Math.min(3200, Math.max(1600, textLen * 45));
+      readingDelay = Math.min(3000, Math.max(1400, textLen * 40));
     }
 
     this.autoTimer = setTimeout(() => {
@@ -253,33 +294,71 @@ class GameEngine {
     this.currentSceneId = sceneId;
     const scene = entry.scene;
 
+    // 証拠品入手
     if (scene.addEvidence && !this.collectedEvidence.has(scene.addEvidence)) {
       this.addEvidence(scene.addEvidence);
     }
 
+    // 異議あり！演出
     if (scene.objection) {
       this.triggerObjection();
     }
 
+    // ログ記録
     this.logHistory.push({
       speaker: scene.speaker || '状況',
       text: scene.text
     });
 
+    // 背景切り替え
     if (scene.background) {
       this.dom.bgLayer.style.backgroundImage = `url('${scene.background}')`;
     }
 
+    // キャラクター切り替え & モーション連動
     if (scene.character) {
+      const charId = scene.character.id;
+      const motion = scene.character.motion || null;
+
       this.character.show(
-        scene.character.id,
+        charId,
         scene.character.expression || 'normal',
-        scene.character.motion || null
+        motion
       );
+
+      // WebGLホログラムモード (イブ登場時)
+      if (this.fx) {
+        if (charId === 'eve') {
+          this.fx.setHologramMode(true, 0.8);
+        } else {
+          this.fx.setHologramMode(false);
+        }
+
+        // モーション連動シェイク
+        if (motion === 'desk-slam') {
+          this.fx.triggerShake(14, 450);
+          this.audio.playObjectionImpact();
+        } else if (motion === 'hop') {
+          this.fx.triggerShake(4, 250);
+        }
+      }
+
+      // Rive HUDアラートレベル連動
+      if (this.rive) {
+        if (scene.character.expression === 'angry') {
+          this.rive.setAlertLevel('critical');
+        } else if (scene.character.expression === 'shocked') {
+          this.rive.setAlertLevel('warning');
+        } else {
+          this.rive.setAlertLevel('normal');
+        }
+      }
     } else {
       this.character.hide();
+      if (this.fx) this.fx.setHologramMode(false);
     }
 
+    // 話者表示
     if (scene.speaker) {
       this.dom.speakerBox.style.display = 'block';
       this.dom.speakerName.textContent = scene.speaker;
@@ -288,8 +367,10 @@ class GameEngine {
       this.dom.speakerBox.style.display = 'none';
     }
 
+    // 音声再生
     this.audio.play(scene);
 
+    // テキストタイピング開始
     this.startTypewriter(scene.text, () => {
       if (scene.choices && scene.choices.length > 0) {
         this.showChoices(scene.choices);
@@ -323,11 +404,17 @@ class GameEngine {
     this.typingOnComplete = onComplete;
 
     let charIndex = 0;
-    const speed = 26;
+    const speed = 25;
 
     this.typewriterTimer = setInterval(() => {
       if (charIndex < fullText.length) {
         this.dom.messageText.textContent += fullText[charIndex];
+        
+        // 3文字に1回サイバータイプ音を再生
+        if (charIndex % 3 === 0) {
+          this.audio.playTypeSound();
+        }
+
         charIndex++;
         if (this.dom.messageText) {
           this.dom.messageText.scrollTop = this.dom.messageText.scrollHeight;
@@ -369,15 +456,15 @@ class GameEngine {
       btn.className = 'choice-button';
 
       if (choice.requiresReinvestigation) {
-        btn.innerHTML = `<span style="color:#2dd4bf; font-size:0.85rem; font-family:monospace;">【再捜査 FILE RE-OPEN】</span><br>${choice.text}`;
-        btn.style.borderColor = '#2dd4bf';
-        btn.style.boxShadow = '0 0 15px rgba(45, 212, 191, 0.4)';
+        btn.innerHTML = `<span class="reinvest-tag">【再捜査 FILE RE-OPEN】</span><br>${choice.text}`;
+        btn.classList.add('reinvest-choice');
       } else {
         btn.textContent = choice.text;
       }
 
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
+        this.audio.playClickSound();
         this.dom.choicesOverlay.classList.remove('active');
         this.goToScene(choice.jump);
       });
@@ -389,65 +476,105 @@ class GameEngine {
 
   showPresentMenu(presentConfig) {
     this.dom.choicesList.innerHTML = `
-      <div style="color: #f59e0b; font-weight: bold; margin-bottom: 12px; text-align: center;">
-        【 イブの自律逸脱と黒幕の罠を暴く証拠をつきつけろ！ 】
+      <div class="present-banner">
+        ⚡ 【証拠品をつきつけて真実を立証せよ！】 ⚡
       </div>
     `;
 
+    const successJump = presentConfig.correctJump || presentConfig.onSuccess;
+    const failJump = presentConfig.wrongJump || presentConfig.onFailure;
+    const giveUpJump = presentConfig.giveUpJump || failJump;
+
+    // 所持している証拠品ボタン
     this.collectedEvidence.forEach((evId) => {
       const ev = EVIDENCE_DATABASE[evId];
       if (!ev) return;
 
       const btn = document.createElement('button');
-      btn.className = 'choice-button evidence-choice-btn';
-      btn.innerHTML = `<span>${ev.icon} ${ev.title}</span> <small style="opacity:0.7;">[${ev.category}]</small>`;
+      btn.className = 'choice-button present-item';
+      btn.innerHTML = `
+        <span class="present-icon">${ev.icon}</span>
+        <div class="present-info">
+          <strong>${ev.title}</strong>
+          <small>${ev.category}</small>
+        </div>
+      `;
+
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
+        this.audio.playClickSound();
         this.dom.choicesOverlay.classList.remove('active');
 
         if (evId === presentConfig.correct) {
           this.triggerObjection();
           setTimeout(() => {
-            this.goToScene(presentConfig.correctJump);
-          }, 800);
+            this.goToScene(successJump);
+          }, 1100);
         } else {
-          this.goToScene(presentConfig.wrongJump);
+          if (this.fx) this.fx.triggerGlitch(0.6, 350);
+          this.audio.playGlitchSound();
+          this.goToScene(failJump);
         }
       });
+
       this.dom.choicesList.appendChild(btn);
     });
 
-    if (presentConfig.giveUpJump) {
-      const giveUpBtn = document.createElement('button');
-      giveUpBtn.className = 'choice-button choice-giveup';
-      giveUpBtn.textContent = '…反論の証拠がない（法と規則に従い初期化処分）';
-      giveUpBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        this.dom.choicesOverlay.classList.remove('active');
-        this.goToScene(presentConfig.giveUpJump);
-      });
-      this.dom.choicesList.appendChild(giveUpBtn);
-    }
+    // 「証拠はない…（反論をあきらめる）」ボタン（1周目および未所持時の必須選択肢）
+    const giveUpBtn = document.createElement('button');
+    giveUpBtn.className = 'choice-button give-up-item';
+    giveUpBtn.style.borderStyle = 'dashed';
+    giveUpBtn.style.borderColor = 'rgba(239, 68, 68, 0.6)';
+    giveUpBtn.innerHTML = `
+      <div style="text-align: center; color: #fca5a5; font-size: 0.92rem; padding: 4px;">
+        ⚠️ 「……サクマ警視を止める客観的証拠はない」（初期化を容認）
+      </div>
+    `;
+    giveUpBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.audio.playClickSound();
+      this.dom.choicesOverlay.classList.remove('active');
+      this.goToScene(giveUpJump);
+    });
+    this.dom.choicesList.appendChild(giveUpBtn);
 
     this.dom.choicesOverlay.classList.add('active');
   }
 
   triggerObjection() {
+    this.audio.playObjectionImpact();
+
+    if (this.fx) {
+      this.fx.triggerFlash([1.0, 0.1, 0.2], 1.0, 500);
+      this.fx.triggerGlitch(0.9, 600);
+      this.fx.triggerShake(16, 500);
+    }
+
+    if (this.rive) {
+      this.rive.setAlertLevel('critical');
+    }
+
     this.dom.objectionCutin.classList.remove('hidden');
     void this.dom.objectionCutin.offsetWidth;
-    this.dom.objectionCutin.classList.add('active');
+    this.dom.objectionCutin.classList.add('play');
 
     setTimeout(() => {
-      this.dom.objectionCutin.classList.remove('active');
+      this.dom.objectionCutin.classList.remove('play');
       this.dom.objectionCutin.classList.add('hidden');
-    }, 1100);
+    }, 1200);
   }
 
   addEvidence(evId) {
     const ev = EVIDENCE_DATABASE[evId];
     if (!ev) return;
+
     this.collectedEvidence.add(evId);
     this.updateEvidenceBadge();
+    this.audio.playEvidenceObtained();
+
+    if (this.fx) {
+      this.fx.triggerFlash([0.0, 0.95, 1.0], 0.6, 300);
+    }
 
     this.dom.evidencePopupText.textContent = `証拠品入手: ${ev.title}`;
     this.dom.evidencePopup.classList.remove('hidden');
@@ -468,7 +595,7 @@ class GameEngine {
   showEvidenceModal() {
     this.dom.evidenceList.innerHTML = '';
     if (this.collectedEvidence.size === 0) {
-      this.dom.evidenceList.innerHTML = '<p style="color:#94a3b8; padding:20px;">現在所持している証拠品はありません。</p>';
+      this.dom.evidenceList.innerHTML = '<p class="empty-notice">現在所持している証拠品はありません。</p>';
       this.dom.evidenceDetail.innerHTML = '';
     } else {
       let first = true;
@@ -478,6 +605,7 @@ class GameEngine {
         item.className = 'evidence-list-item';
         item.innerHTML = `<span class="ev-icon">${ev.icon}</span> <span>${ev.title}</span>`;
         item.addEventListener('click', () => {
+          this.audio.playClickSound();
           document.querySelectorAll('.evidence-list-item').forEach(el => el.classList.remove('selected'));
           item.classList.add('selected');
           this.showEvidenceDetail(ev);
@@ -496,15 +624,45 @@ class GameEngine {
 
   showEvidenceDetail(ev) {
     this.dom.evidenceDetail.innerHTML = `
-      <div class="ev-detail-header">
-        <span class="ev-detail-icon">${ev.icon}</span>
-        <div>
-          <h3>${ev.title}</h3>
-          <span class="ev-category">${ev.category}</span>
+      <div class="ev-detail-card" id="evCard">
+        <div class="ev-detail-header">
+          <span class="ev-detail-icon">${ev.icon}</span>
+          <div>
+            <h3>${ev.title}</h3>
+            <span class="ev-category">${ev.category}</span>
+          </div>
         </div>
+        <p class="ev-detail-body">${ev.desc}</p>
+        <div class="ev-security-badge">SECURITY LEVEL: TOP SECRET</div>
       </div>
-      <p class="ev-detail-body">${ev.desc}</p>
     `;
+
+    // 証拠品カードの3Dチルト効果 (PCマウス & スマホタッチ)
+    const card = document.getElementById('evCard');
+    if (card) {
+      const applyCardTilt = (clientX, clientY) => {
+        const rect = card.getBoundingClientRect();
+        const x = clientX - rect.left - rect.width / 2;
+        const y = clientY - rect.top - rect.height / 2;
+        const tiltX = -(y / (rect.height / 2)) * 14;
+        const tiltY = (x / (rect.width / 2)) * 14;
+        card.style.transform = `perspective(600px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) scale3d(1.02, 1.02, 1.02)`;
+      };
+
+      card.addEventListener('mousemove', (e) => applyCardTilt(e.clientX, e.clientY));
+      card.addEventListener('mouseleave', () => {
+        card.style.transform = 'perspective(600px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
+      });
+
+      card.addEventListener('touchmove', (e) => {
+        if (e.touches && e.touches[0]) {
+          applyCardTilt(e.touches[0].clientX, e.touches[0].clientY);
+        }
+      }, { passive: true });
+      card.addEventListener('touchend', () => {
+        card.style.transform = 'perspective(600px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
+      });
+    }
   }
 
   showEnding(ending) {
@@ -519,6 +677,15 @@ class GameEngine {
     this.dom.endingType.className = `ending-type-badge ending-${ending.type.toLowerCase()}`;
     this.dom.endingTitle.textContent = ending.title;
     this.dom.endingDesc.textContent = ending.description;
+
+    if (this.fx) {
+      if (ending.type === 'TRUE') {
+        this.fx.triggerFlash([0.0, 0.95, 1.0], 0.8, 600);
+      } else {
+        this.fx.triggerFlash([0.8, 0.1, 0.2], 0.8, 600);
+        this.fx.triggerGlitch(0.8, 800);
+      }
+    }
 
     this.dom.endingModal.classList.remove('hidden');
   }
@@ -554,9 +721,7 @@ class GameEngine {
           this.dom.reinvestigationBanner.style.display = 'none';
         }
       }
-    } catch {
-      // ignore
-    }
+    } catch {}
   }
 
   showLog() {

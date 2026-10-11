@@ -2,29 +2,51 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>PROJECT EVE: 家族のためのハッキング - 電脳サイバー捜査ノベル</title>
+  
+  <!-- Google Fonts: SFサイバーフォント & Noto Sans JP -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&family=Orbitron:wght@600;800;900&family=Rajdhani:wght@600;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+  
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-  <div id="gameViewport">
+  <div id="gameViewport" class="game-viewport">
+    <!-- WebGL 全画面ポストエフェクト Canvas (走査線、グリッチ、色収差、ホログラム波) -->
+    <canvas id="webglCanvas" class="webgl-canvas"></canvas>
+
     <!-- 1. タイトル画面 -->
     <div id="titleScreen" class="title-screen">
-      <div class="cyber-badge">CYBER INVESTIGATION NOVEL</div>
-      <h1 class="title-logo">PROJECT EVE</h1>
-      <p class="title-sub">〜 家族のためのハッキング 〜</p>
+      <div class="cyber-scan-grid"></div>
+      <div class="title-content">
+        <div class="cyber-badge">
+          <span class="badge-dot"></span>
+          CYBER FORENSICS INVESTIGATION OS
+        </div>
+        <h1 class="title-logo">
+          PROJECT<span class="logo-accent">EVE</span>
+        </h1>
+        <p class="title-sub">〜 家族のためのハッキング 〜</p>
 
-      <div class="endings-collection" id="endingsBadge"></div>
+        <div class="endings-collection" id="endingsBadge"></div>
 
-      <!-- 再捜査アンロック通知バナー -->
-      <div id="reinvestigationBanner" class="reinvestigation-banner" style="display: none;">
-        🔓 【FILE RE-OPEN】再捜査モード解放中！<br>
-        <small>初動捜査で新たな手掛かりを調査できるようになりました</small>
+        <!-- 再捜査アンロック通知バナー -->
+        <div id="reinvestigationBanner" class="reinvestigation-banner" style="display: none;">
+          🔓 【FILE RE-OPEN】再捜査モード解放中！<br>
+          <small>初動捜査で新たな手掛かりを調査可能になりました</small>
+        </div>
+
+        <button id="btnStart" class="start-btn">
+          <span class="btn-scanline"></span>
+          <span class="btn-text">事件の捜査を開始する</span>
+        </button>
+        <p class="start-notice">※スマートフォン最適化・フルボイス対応（3分〜5分）</p>
       </div>
-
-      <button id="btnStart" class="start-btn">事件の捜査を開始する</button>
-      <p class="start-notice">※フルボイス対応・プレイ時間目安：約3分〜5分</p>
     </div>
 
     <!-- 2. ゲーム画面 -->
@@ -32,32 +54,49 @@
       <!-- 背景レイヤー -->
       <div id="bgLayer" class="bg-layer"></div>
 
-      <!-- キャラクターレイヤー (Live2D風立ち絵) -->
+      <!-- キャラクターレイヤー (Live2D風SVG ＆ モバイル最適化) -->
       <div id="characterContainer" class="character-layer"></div>
 
       <!-- 証拠品入手ポップアップ通知 -->
       <div id="evidencePopup" class="evidence-popup hidden">
+        <div class="popup-glow"></div>
         <span class="popup-icon">💡</span>
-        <span id="evidencePopupText">証拠品を入手しました</span>
+        <span id="evidencePopupText" class="popup-text">証拠品を入手しました</span>
       </div>
 
       <!-- 異議あり！カットイン演出 -->
       <div id="objectionCutin" class="objection-cutin hidden">
         <div class="objection-flash"></div>
-        <div class="objection-text">異議あり！</div>
-        <div class="objection-sub">OBJECTION!</div>
+        <div class="objection-lightning"></div>
+        <div class="objection-box">
+          <div class="objection-text">異議あり！</div>
+          <div class="objection-sub">OBJECTION!</div>
+        </div>
       </div>
 
-      <!-- UIレイヤー -->
+      <!-- UIレイヤー (サイバーHUD) -->
       <div class="ui-layer">
-        <!-- 上部コントロールメニュー -->
+        <!-- 上部コントロールメニュー & RiveサイバーHUDスキャナー -->
         <div class="controls-bar">
-          <button id="btnEvidence" class="ctrl-btn evidence-btn">
-            📂 証拠品手帳 (<span id="evidenceBadgeCount">0</span>)
-          </button>
-          <button id="btnAuto" class="ctrl-btn">AUTO</button>
-          <button id="btnLog" class="ctrl-btn">LOG</button>
-          <button id="btnTitle" class="ctrl-btn">TITLE</button>
+          <div class="hud-left">
+            <button id="btnEvidence" class="ctrl-btn evidence-btn">
+              <span class="btn-icon">📁</span>
+              <span class="btn-label">証拠品</span>
+              <span class="evidence-badge" id="evidenceBadgeCount">0</span>
+            </button>
+          </div>
+
+          <!-- Rive / プロシージャルHUDスキャナー -->
+          <div class="hud-scanner-wrapper">
+            <canvas id="riveHudCanvas" class="rive-hud-canvas" width="60" height="60"></canvas>
+            <span class="hud-status-text">SECURE</span>
+          </div>
+
+          <div class="hud-right">
+            <button id="btnAuto" class="ctrl-btn">AUTO</button>
+            <button id="btnLog" class="ctrl-btn">LOG</button>
+            <button id="btnTitle" class="ctrl-btn">TITLE</button>
+          </div>
         </div>
 
         <!-- 選択肢 / つきつけるオーバーレイ -->
@@ -65,13 +104,18 @@
           <div id="choicesList" class="choices-list"></div>
         </div>
 
-        <!-- メッセージダイアログ -->
+        <!-- メッセージダイアログ (モバイル親指ファースト) -->
         <div id="dialogBox" class="dialog-box">
+          <div class="dialog-corner-tl"></div>
+          <div class="dialog-corner-br"></div>
           <div id="speakerBox" class="speaker-box">
+            <span class="speaker-deco">◆</span>
             <span id="speakerName">キャラクター名</span>
           </div>
           <div id="messageText" class="message-text"></div>
-          <div id="nextIndicator" class="next-indicator">▼</div>
+          <div id="nextIndicator" class="next-indicator">
+            <span class="indicator-arrow">▼</span>
+          </div>
         </div>
       </div>
     </div>
@@ -80,12 +124,16 @@
     <div id="evidenceModal" class="evidence-modal hidden">
       <div class="evidence-card">
         <div class="modal-header">
-          <span>📁 収集した電脳証拠品手帳 (Evidence)</span>
-          <button id="btnCloseEvidence" class="btn-close-modal">&times;</button>
+          <button id="btnBackEvidence" class="btn-back-header">◀ 戻る</button>
+          <span class="modal-title">📁 証拠品アーカイブ</span>
+          <div style="width: 50px;"></div>
         </div>
         <div class="evidence-body">
           <div class="evidence-list" id="evidenceList"></div>
           <div class="evidence-detail" id="evidenceDetail"></div>
+        </div>
+        <div class="modal-footer">
+          <button id="btnCloseEvidence" class="btn-modal-close-bottom">閉じる</button>
         </div>
       </div>
     </div>
@@ -102,15 +150,26 @@
 
     <!-- 5. バックログモーダル -->
     <div id="logModal" class="log-modal hidden">
-      <div class="log-header">
-        <span>捜査・調書ログ (Backlog)</span>
-        <button id="btnCloseLog" class="btn-close-log">&times;</button>
+      <div class="log-card">
+        <div class="modal-header">
+          <button id="btnBackLog" class="btn-back-header">◀ 戻る</button>
+          <span class="modal-title">捜査・調書ログ (Log)</span>
+          <div style="width: 50px;"></div>
+        </div>
+        <div id="logContent" class="log-content"></div>
+        <div class="modal-footer">
+          <button id="btnCloseLog" class="btn-modal-close-bottom">閉じる</button>
+        </div>
       </div>
-      <div id="logContent" class="log-content"></div>
     </div>
   </div>
 
-  <!-- スクリプト読み込み -->
+  <!-- Rive Web Runtime (@rive-app/canvas) -->
+  <script src="https://unpkg.com/@rive-app/canvas@2.24.0"></script>
+
+  <!-- ゲームスクリプト群 -->
+  <script src="js/webgl-fx.js"></script>
+  <script src="js/rive-manager.js"></script>
   <script src="js/audio-controller.js"></script>
   <script src="js/character-controller.js"></script>
   <script src="js/scenario.js"></script>
