@@ -48,6 +48,12 @@ class GameEngine {
     this.logHistory = [];
     this.collectedEvidence = new Set();
 
+    // 言語設定 (デフォルト: ja、localStorage で保持)
+    this.currentLang = localStorage.getItem('project_eve_lang') || 'ja';
+    if (typeof document !== 'undefined') {
+      document.documentElement.lang = this.currentLang;
+    }
+
     this.checkReinvestigationStatus();
 
     this.audio = new AudioController();
@@ -101,15 +107,195 @@ class GameEngine {
       btnReturnTitle: document.getElementById('btnReturnTitle'),
       extraSection: document.getElementById('extraSection'),
       extraLocked: document.getElementById('extraLocked'),
-      extraUnlocked: document.getElementById('extraUnlocked')
+      extraUnlocked: document.getElementById('extraUnlocked'),
+
+      // 言語切替 & 多言語対応用DOM要素
+      btnLangJa: document.getElementById('btnLangJa'),
+      btnLangEn: document.getElementById('btnLangEn'),
+      btnLangHud: document.getElementById('btnLangHud'),
+      titleSub: document.getElementById('titleSub'),
+      startNotice: document.getElementById('startNotice'),
+      portalLink: document.getElementById('portalLink'),
+      extraBanner: document.getElementById('extraBanner'),
+      btnExtraSamples: document.getElementById('btnExtraSamples'),
+      btnExtraNovel: document.getElementById('btnExtraNovel'),
+      evidenceModalTitle: document.getElementById('evidenceModalTitle'),
+      logModalTitle: document.getElementById('logModalTitle'),
+      endingExtraAnnounce: document.getElementById('endingExtraAnnounce'),
+      btnEndingExtraNovel: document.getElementById('btnEndingExtraNovel'),
+      btnEndingExtraSamples: document.getElementById('btnEndingExtraSamples')
     };
 
     this.updateEndingsBadge();
+    this.updateUILanguage();
     this.bindEvents();
     this.setupAudioSync();
     if (this.dom.btnAuto) {
       this.dom.btnAuto.classList.toggle('active', this.isAutoMode);
     }
+  }
+
+  /* ========================================================
+     多言語 (i18n) ヘルパーメソッド
+     ======================================================== */
+  getSceneText(scene) {
+    if (this.currentLang === 'en' && typeof window !== 'undefined' && window.I18N_DATA && window.I18N_DATA.scenes[scene.id]) {
+      return window.I18N_DATA.scenes[scene.id].textEn || scene.text;
+    }
+    return scene.text;
+  }
+
+  getSceneSpeaker(scene) {
+    if (!scene.speaker) return null;
+    if (this.currentLang === 'en' && typeof window !== 'undefined' && window.I18N_DATA && window.I18N_DATA.scenes[scene.id]) {
+      return window.I18N_DATA.scenes[scene.id].speakerEn || scene.speaker;
+    }
+    return scene.speaker;
+  }
+
+  getSceneVoice(scene) {
+    if (this.currentLang === 'en' && typeof window !== 'undefined' && window.I18N_DATA && window.I18N_DATA.scenes[scene.id]) {
+      return window.I18N_DATA.scenes[scene.id].voiceFileEn || scene.voiceFile;
+    }
+    return scene.voiceFile;
+  }
+
+  getEvidence(evId) {
+    const raw = EVIDENCE_DATABASE[evId];
+    if (!raw) return null;
+    if (this.currentLang === 'en' && typeof window !== 'undefined' && window.I18N_DATA && window.I18N_DATA.evidence[evId]) {
+      const en = window.I18N_DATA.evidence[evId];
+      return {
+        id: evId,
+        icon: raw.icon,
+        title: en.titleEn || raw.title,
+        category: en.categoryEn || raw.category,
+        desc: en.descEn || raw.desc
+      };
+    }
+    return raw;
+  }
+
+  getChoiceText(choice, sceneId, index) {
+    if (this.currentLang === 'en' && typeof window !== 'undefined' && window.I18N_DATA && window.I18N_DATA.choices[sceneId]) {
+      const list = window.I18N_DATA.choices[sceneId];
+      if (list && list[index] && list[index].textEn) {
+        return list[index].textEn;
+      }
+    }
+    return choice.text;
+  }
+
+  getEndingData(ending) {
+    if (!ending) return null;
+    if (this.currentLang === 'en' && typeof window !== 'undefined' && window.I18N_DATA && window.I18N_DATA.endings[ending.type]) {
+      const en = window.I18N_DATA.endings[ending.type];
+      return {
+        type: ending.type,
+        title: en.titleEn || ending.title,
+        description: en.descriptionEn || ending.description
+      };
+    }
+    return ending;
+  }
+
+  setLanguage(lang) {
+    if (this.currentLang === lang) return;
+    this.currentLang = lang;
+    try {
+      localStorage.setItem('project_eve_lang', lang);
+    } catch {}
+    if (typeof document !== 'undefined') {
+      document.documentElement.lang = lang;
+    }
+
+    this.updateUILanguage();
+
+    // ゲーム画面が表示中なら、現在のシーン表示を即座に更新
+    if (this.currentSceneId && !this.dom.gameScreen.classList.contains('hidden')) {
+      const currentEntry = this.scenarioMap.get(this.currentSceneId);
+      if (currentEntry) {
+        const scene = currentEntry.scene;
+        const newText = this.getSceneText(scene);
+        const newSpeaker = this.getSceneSpeaker(scene);
+
+        // 話者
+        if (newSpeaker) {
+          this.dom.speakerBox.style.display = 'block';
+          this.dom.speakerName.textContent = newSpeaker;
+        } else {
+          this.dom.speakerBox.style.display = 'none';
+        }
+
+        // テキスト更新
+        if (this.isTextTyping) {
+          this.startTypewriter(newText, this.typingOnComplete);
+        } else {
+          this.dom.messageText.textContent = newText;
+          this.currentFullText = newText;
+        }
+
+        // 選択肢表示中なら再描画
+        if (this.dom.choicesOverlay.classList.contains('active')) {
+          if (scene.choices && scene.choices.length > 0) {
+            this.showChoices(scene.choices);
+          } else if (scene.present) {
+            this.showPresentMenu(scene.present);
+          }
+        }
+      }
+    }
+  }
+
+  toggleLanguage() {
+    const nextLang = (this.currentLang === 'ja') ? 'en' : 'ja';
+    this.setLanguage(nextLang);
+  }
+
+  updateUILanguage() {
+    const isEn = (this.currentLang === 'en');
+    const t = (typeof window !== 'undefined' && window.I18N_DATA) ? (window.I18N_DATA.ui[this.currentLang] || window.I18N_DATA.ui.ja) : null;
+    if (!t) return;
+
+    // 言語ボタン状態
+    if (this.dom.btnLangJa) this.dom.btnLangJa.classList.toggle('active', !isEn);
+    if (this.dom.btnLangEn) this.dom.btnLangEn.classList.toggle('active', isEn);
+    if (this.dom.btnLangHud) this.dom.btnLangHud.textContent = isEn ? 'JP' : 'EN';
+
+    // タイトル画面
+    if (this.dom.titleSub) this.dom.titleSub.textContent = t.titleSub;
+    if (this.dom.btnStart) {
+      const btnText = this.dom.btnStart.querySelector('.btn-text');
+      if (btnText) btnText.textContent = t.startBtn;
+    }
+    if (this.dom.startNotice) this.dom.startNotice.innerHTML = t.startNotice;
+    if (this.dom.portalLink) this.dom.portalLink.textContent = t.portalLink;
+    if (this.dom.reinvestigationBanner) this.dom.reinvestigationBanner.innerHTML = t.reinvestBanner;
+    if (this.dom.extraLocked) this.dom.extraLocked.textContent = t.extraLocked;
+    if (this.dom.extraBanner) this.dom.extraBanner.textContent = t.extraUnlocked;
+    if (this.dom.btnExtraSamples) this.dom.btnExtraSamples.textContent = t.btnExtraSamples;
+    if (this.dom.btnExtraNovel) this.dom.btnExtraNovel.textContent = t.btnExtraNovel;
+
+    // HUD
+    if (this.dom.btnEvidence) {
+      const lbl = this.dom.btnEvidence.querySelector('.btn-label');
+      if (lbl) lbl.textContent = t.btnEvidence;
+    }
+
+    // モーダル
+    if (this.dom.evidenceModalTitle) this.dom.evidenceModalTitle.textContent = t.evidenceArchiveTitle;
+    if (this.dom.btnBackEvidence) this.dom.btnBackEvidence.textContent = t.btnBack;
+    if (this.dom.btnCloseEvidence) this.dom.btnCloseEvidence.textContent = t.btnClose;
+    if (this.dom.logModalTitle) this.dom.logModalTitle.textContent = t.logTitle;
+    if (this.dom.btnBackLog) this.dom.btnBackLog.textContent = t.btnBack;
+    if (this.dom.btnCloseLog) this.dom.btnCloseLog.textContent = t.btnClose;
+    if (this.dom.btnReturnTitle) this.dom.btnReturnTitle.textContent = t.btnReturnTitle;
+    if (this.dom.endingExtraAnnounce) this.dom.endingExtraAnnounce.textContent = t.endingExtraAnnounce;
+    if (this.dom.btnEndingExtraNovel) this.dom.btnEndingExtraNovel.textContent = t.endingExtraNovel;
+    if (this.dom.btnEndingExtraSamples) this.dom.btnEndingExtraSamples.textContent = t.endingExtraSamples;
+
+    // バッジ
+    this.updateEndingsBadge();
   }
 
   checkReinvestigationStatus() {
@@ -122,6 +308,29 @@ class GameEngine {
   }
 
   bindEvents() {
+    // 言語切替 (JP / EN)
+    if (this.dom.btnLangJa) {
+      this.dom.btnLangJa.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.audio.playClickSound();
+        this.setLanguage('ja');
+      });
+    }
+    if (this.dom.btnLangEn) {
+      this.dom.btnLangEn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.audio.playClickSound();
+        this.setLanguage('en');
+      });
+    }
+    if (this.dom.btnLangHud) {
+      this.dom.btnLangHud.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.audio.playClickSound();
+        this.toggleLanguage();
+      });
+    }
+
     // サウンド切替 (BGM/SE ミュート)
     if (this.dom.btnSound) {
       this.dom.btnSound.addEventListener('click', (e) => {
@@ -338,9 +547,14 @@ class GameEngine {
     }
 
     // ログ記録
+    const text = this.getSceneText(scene);
+    const speaker = this.getSceneSpeaker(scene);
+    const voiceFile = this.getSceneVoice(scene);
+
+    // ログ記録
     this.logHistory.push({
-      speaker: scene.speaker || '状況',
-      text: scene.text
+      speaker: speaker || (this.currentLang === 'en' ? 'Scene' : '状況'),
+      text: text
     });
 
     // BGM切り替え (Lyria 3 生成音源)
@@ -399,19 +613,24 @@ class GameEngine {
     }
 
     // 話者表示
-    if (scene.speaker) {
+    if (speaker) {
       this.dom.speakerBox.style.display = 'block';
-      this.dom.speakerName.textContent = scene.speaker;
-      this.updateSpeakerTheme(scene.speaker);
+      this.dom.speakerName.textContent = speaker;
+      this.updateSpeakerTheme(scene.speaker || speaker);
     } else {
       this.dom.speakerBox.style.display = 'none';
     }
 
-    // 音声再生
-    this.audio.play(scene);
+    // 音声再生 (言語に応じた音声ファイルまたはWeb Speech)
+    this.audio.play({
+      ...scene,
+      text: text,
+      voiceFile: voiceFile,
+      lang: this.currentLang
+    });
 
     // テキストタイピング開始
-    this.startTypewriter(scene.text, () => {
+    this.startTypewriter(text, () => {
       if (scene.choices && scene.choices.length > 0) {
         this.showChoices(scene.choices);
       } else if (scene.present) {
@@ -491,15 +710,19 @@ class GameEngine {
       return true;
     });
 
-    availableChoices.forEach((choice) => {
+    const reinvestTagText = (this.currentLang === 'en') ? '[FILE RE-OPEN]' : '【再捜査 FILE RE-OPEN】';
+
+    availableChoices.forEach((choice, index) => {
       const btn = document.createElement('button');
       btn.className = 'choice-button';
 
+      const choiceText = this.getChoiceText(choice, this.currentSceneId, index);
+
       if (choice.requiresReinvestigation) {
-        btn.innerHTML = `<span class="reinvest-tag">【再捜査 FILE RE-OPEN】</span><br>${choice.text}`;
+        btn.innerHTML = `<span class="reinvest-tag">${reinvestTagText}</span><br>${choiceText}`;
         btn.classList.add('reinvest-choice');
       } else {
-        btn.textContent = choice.text;
+        btn.textContent = choiceText;
       }
 
       btn.addEventListener('click', (e) => {
@@ -515,9 +738,13 @@ class GameEngine {
   }
 
   showPresentMenu(presentConfig) {
+    const t = (typeof window !== 'undefined' && window.I18N_DATA) ? (window.I18N_DATA.ui[this.currentLang] || window.I18N_DATA.ui.ja) : null;
+    const bannerText = t ? t.presentBanner : '⚡ 【証拠品をつきつけて真実を立証せよ！】 ⚡';
+    const giveUpText = t ? t.giveUpBtnText : '⚠️ 「……サクマ警視を止める客観的証拠はない」（初期化を容認）';
+
     this.dom.choicesList.innerHTML = `
       <div class="present-banner">
-        ⚡ 【証拠品をつきつけて真実を立証せよ！】 ⚡
+        ${bannerText}
       </div>
     `;
 
@@ -527,7 +754,7 @@ class GameEngine {
 
     // 所持している証拠品ボタン
     this.collectedEvidence.forEach((evId) => {
-      const ev = EVIDENCE_DATABASE[evId];
+      const ev = this.getEvidence(evId);
       if (!ev) return;
 
       const btn = document.createElement('button');
@@ -567,7 +794,7 @@ class GameEngine {
     giveUpBtn.style.borderColor = 'rgba(239, 68, 68, 0.6)';
     giveUpBtn.innerHTML = `
       <div style="text-align: center; color: #fca5a5; font-size: 0.92rem; padding: 4px;">
-        ⚠️ 「……サクマ警視を止める客観的証拠はない」（初期化を容認）
+        ${giveUpText}
       </div>
     `;
     giveUpBtn.addEventListener('click', (e) => {
@@ -605,7 +832,7 @@ class GameEngine {
   }
 
   addEvidence(evId) {
-    const ev = EVIDENCE_DATABASE[evId];
+    const ev = this.getEvidence(evId);
     if (!ev) return;
 
     this.collectedEvidence.add(evId);
@@ -616,7 +843,8 @@ class GameEngine {
       this.fx.triggerFlash([0.0, 0.95, 1.0], 0.6, 300);
     }
 
-    this.dom.evidencePopupText.textContent = `証拠品入手: ${ev.title}`;
+    const prefix = (this.currentLang === 'en') ? 'Evidence Obtained: ' : '証拠品入手: ';
+    this.dom.evidencePopupText.textContent = `${prefix}${ev.title}`;
     this.dom.evidencePopup.classList.remove('hidden');
     void this.dom.evidencePopup.offsetWidth;
     this.dom.evidencePopup.classList.add('show');
@@ -634,13 +862,16 @@ class GameEngine {
 
   showEvidenceModal() {
     this.dom.evidenceList.innerHTML = '';
+    const isEn = (this.currentLang === 'en');
     if (this.collectedEvidence.size === 0) {
-      this.dom.evidenceList.innerHTML = '<p class="empty-notice">現在所持している証拠品はありません。</p>';
+      const emptyMsg = isEn ? 'No evidence currently in possession.' : '現在所持している証拠品はありません。';
+      this.dom.evidenceList.innerHTML = `<p class="empty-notice">${emptyMsg}</p>`;
       this.dom.evidenceDetail.innerHTML = '';
     } else {
       let first = true;
       this.collectedEvidence.forEach((evId) => {
-        const ev = EVIDENCE_DATABASE[evId];
+        const ev = this.getEvidence(evId);
+        if (!ev) return;
         const item = document.createElement('div');
         item.className = 'evidence-list-item';
         item.innerHTML = `<span class="ev-icon">${ev.icon}</span> <span>${ev.title}</span>`;
@@ -713,10 +944,12 @@ class GameEngine {
     this.checkReinvestigationStatus();
     this.updateEndingsBadge();
 
+    const endingData = this.getEndingData(ending);
+
     this.dom.endingType.textContent = `${ending.type} END`;
     this.dom.endingType.className = `ending-type-badge ending-${ending.type.toLowerCase()}`;
-    this.dom.endingTitle.textContent = ending.title;
-    this.dom.endingDesc.textContent = ending.description;
+    this.dom.endingTitle.textContent = endingData.title;
+    this.dom.endingDesc.textContent = endingData.description;
 
     // TRUE END達成時の特典表示切り替え
     if (this.dom.endingExtraActions) {
@@ -751,12 +984,16 @@ class GameEngine {
     if (!this.dom.endingsBadge) return;
     try {
       const cleared = JSON.parse(localStorage.getItem('cleared_endings') || '[]');
+      const isEn = (this.currentLang === 'en');
       const bad = cleared.includes('BAD') ? 'cleared' : '';
       const trueEnd = cleared.includes('TRUE') ? 'cleared' : '';
 
+      const badStatus = cleared.includes('BAD') ? (isEn ? 'Cleared' : '達成済') : (isEn ? 'Incomplete' : '未達成');
+      const trueStatus = cleared.includes('TRUE') ? (isEn ? 'Cleared' : '達成済') : (isEn ? 'Incomplete' : '未達成');
+
       this.dom.endingsBadge.innerHTML = `
-        <span class="badge-item ${bad}">❌ BAD END: ${cleared.includes('BAD') ? '達成済' : '未達成'}</span>
-        <span class="badge-item ${trueEnd}">🌟 TRUE END: ${cleared.includes('TRUE') ? '達成済' : '未達成'}</span>
+        <span class="badge-item ${bad}">❌ BAD END: ${badStatus}</span>
+        <span class="badge-item ${trueEnd}">🌟 TRUE END: ${trueStatus}</span>
       `;
 
       if (this.dom.reinvestigationBanner) {

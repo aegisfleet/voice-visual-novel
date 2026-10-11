@@ -404,6 +404,23 @@ class AudioController {
     return jaVoices[0];
   }
 
+  getEnglishVoice(gender = 'female') {
+    if (!this.voices || this.voices.length === 0) {
+      this.voices = this.synth ? this.synth.getVoices() : [];
+    }
+    const enVoices = this.voices.filter(v => v.lang.startsWith('en'));
+    if (enVoices.length === 0) return null;
+
+    if (gender === 'female') {
+      const female = enVoices.find(v => /female|samantha|victoria|karen|zira|aria|jenny/i.test(v.name));
+      if (female) return female;
+    } else {
+      const male = enVoices.find(v => /male|daniel|alex|george|david|guy/i.test(v.name));
+      if (male) return male;
+    }
+    return enVoices[0];
+  }
+
   async checkAudioExists(url) {
     if (!url) return false;
     if (this.audioExistsCache.has(url)) {
@@ -518,11 +535,12 @@ class AudioController {
       const config = lineData.speechConfig || {};
       const utter = new SpeechSynthesisUtterance(text);
 
-      utter.lang = 'ja-JP';
-      utter.pitch = config.pitch !== undefined ? config.pitch : 1.1;
-      utter.rate = config.rate !== undefined ? config.rate : 1.05;
+      const isEnglish = (lineData.lang === 'en');
+      utter.lang = isEnglish ? 'en-US' : 'ja-JP';
+      utter.pitch = config.pitch !== undefined ? config.pitch : 1.0;
+      utter.rate = config.rate !== undefined ? config.rate : (isEnglish ? 1.0 : 1.05);
 
-      const voice = this.getJapaneseVoice(config.gender || 'female');
+      const voice = isEnglish ? this.getEnglishVoice(config.gender || 'female') : this.getJapaneseVoice(config.gender || 'female');
       if (voice) utter.voice = voice;
 
       window.__activeUtterance = utter;

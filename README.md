@@ -127,18 +127,23 @@ GOOGLE_CLOUD_LOCATION=global
 
 ### 4. 音声の一括生成コマンド
 ```bash
-# 全65シーンの音声を自動生成 ＆ MP3(128kbps)へ圧縮
+# 全65シーンの日本語音声を自動生成 ＆ MP3(128kbps)へ圧縮
 python scripts/generate_all_voices.py
+
+# 全65シーンの英語音声を自動生成 ＆ MP3(128kbps)へ圧縮
+python scripts/generate_all_voices_en.py
 
 # サンプル音声のみを生成する場合
 python scripts/generate_samples.py
 ```
 
 ### 💡 技術的ポイント（実装ノウハウ）
+* **日英バイリンガル・完全フルボイス対応**:  
+  全65シーンに対して日本語版・英語版のテキストと音声（全130トラック）を完備。タイトル画面およびゲームプレイ中のHUDからワンタップで即座にリアルタイム言語切り替え（JP / EN）が可能です。
 * **`SpeechMetadata` による指示文の分離**:  
   Gemini 3.8 Flash TTS では `text` に渡した文字列が一言一句そのまま読み上げられます。演技指示が台本として誤読されるのを防ぐため、本文は `text` に純粋なセリフのみを渡し、演技やトーンは `types.SpeechMetadata(style="...")` フィールドに完全分離しています。
 * **軽量MP3圧縮（128kbps）**:  
-  APIから返る24kHz生WAVデータを即座に `ffmpeg` で MP3 圧縮。全65シーン合わせても**総容量約 13.9 MB** に抑えられており、Webやモバイル通信でも一瞬でロードされます。
+  APIから返る24kHz生WAVデータを即座に `ffmpeg` で MP3 圧縮。全65シーン合わせても**総容量約 13.7 MB（日本語・英語それぞれ）** に抑えられており、Webやモバイル通信でも一瞬でロードされます。
 
 ---
 

@@ -24,14 +24,22 @@
     <div id="titleScreen" class="title-screen">
       <div class="cyber-scan-grid"></div>
       <div class="title-content">
-        <div class="cyber-badge">
+        <!-- 言語切替セレクター (JP / EN) -->
+        <div class="lang-switch-container">
+          <span class="lang-switch-label">LANG:</span>
+          <button id="btnLangJa" class="lang-toggle-btn active" data-lang="ja">日本語</button>
+          <span class="lang-divider">/</span>
+          <button id="btnLangEn" class="lang-toggle-btn" data-lang="en">English</button>
+        </div>
+
+        <div class="cyber-badge" id="cyberBadge">
           <span class="badge-dot"></span>
           CYBER FORENSICS INVESTIGATION OS
         </div>
-        <h1 class="title-logo">
+        <h1 class="title-logo" id="titleLogo">
           PROJECT<span class="logo-accent">EVE</span>
         </h1>
-        <p class="title-sub">〜 家族のためのハッキング 〜</p>
+        <p class="title-sub" id="titleSub">〜 家族のためのハッキング 〜</p>
 
         <div class="endings-collection" id="endingsBadge"></div>
 
@@ -43,7 +51,7 @@
 
         <!-- ポータルへのナビゲーションリンク -->
         <div style="margin-bottom: 16px;">
-          <a href="../" style="color: #94a3b8; font-size: 0.82rem; text-decoration: none; border-bottom: 1px dotted #64748b; padding-bottom: 2px; transition: color 0.2s;">
+          <a id="portalLink" href="../" style="color: #94a3b8; font-size: 0.82rem; text-decoration: none; border-bottom: 1px dotted #64748b; padding-bottom: 2px; transition: color 0.2s;">
             🏠 ゲームポータル（作品一覧）へ
           </a>
         </div>
@@ -52,7 +60,7 @@
           <span class="btn-scanline"></span>
           <span class="btn-text">事件の捜査を開始する</span>
         </button>
-        <p class="start-notice">
+        <p class="start-notice" id="startNotice">
           ※スマートフォン最適化・フルボイス＆シーン別BGM対応（3分〜5分）<br>
           <span style="display: inline-block; margin-top: 4px; font-size: 0.78rem; color: #94a3b8; letter-spacing: 0.02em;">※iPhone等で音が出ない場合は、本体側面の消音モード（マナーモード）をオフにしてください</span>
         </p>
@@ -63,10 +71,10 @@
             🔒 EXTRA: TRUE END到達でおまけ（試聴室・小説版）が解放
           </div>
           <div id="extraUnlocked" class="extra-unlocked" style="display: none;">
-            <div class="extra-banner">🎁 【CLEAR BONUS】EXTRAモード解放中！</div>
+            <div class="extra-banner" id="extraBanner">🎁 【CLEAR BONUS】EXTRAモード解放中！</div>
             <div class="extra-links">
-              <a href="samples.html" class="btn-extra-link">🎧 ボイス＆BGM試聴室</a>
-              <a href="novel.html" class="btn-extra-link">📖 トゥルーエンド小説版</a>
+              <a href="samples.html" class="btn-extra-link" id="btnExtraSamples">🎧 ボイス＆BGM試聴室</a>
+              <a href="novel.html" class="btn-extra-link" id="btnExtraNovel">📖 トゥルーエンド小説版</a>
             </div>
           </div>
         </div>
@@ -117,6 +125,7 @@
           </div>
 
           <div class="hud-right">
+            <button id="btnLangHud" class="ctrl-btn lang-hud-btn" title="Language / 言語切替">EN</button>
             <button id="btnSound" class="ctrl-btn sound-btn" title="サウンド切替">🔊</button>
             <button id="btnAuto" class="ctrl-btn">AUTO</button>
             <button id="btnLog" class="ctrl-btn">LOG</button>
@@ -150,7 +159,7 @@
       <div class="evidence-card">
         <div class="modal-header">
           <button id="btnBackEvidence" class="btn-back-header">◀ 戻る</button>
-          <span class="modal-title">📁 証拠品アーカイブ</span>
+          <span class="modal-title" id="evidenceModalTitle">📁 証拠品アーカイブ</span>
           <div style="width: 50px;"></div>
         </div>
         <div class="evidence-body">
@@ -172,10 +181,10 @@
 
         <!-- TRUE END達成時のみ表示される特典ブロック -->
         <div id="endingExtraActions" class="ending-extra-actions" style="display: none;">
-          <p class="extra-announce">🎉 クリア特典がアンロックされました！</p>
+          <p class="extra-announce" id="endingExtraAnnounce">🎉 クリア特典がアンロックされました！</p>
           <div class="ending-extra-btn-group">
-            <a href="novel.html" class="btn-ending-extra">📖 トゥルーエンド小説版を読む</a>
-            <a href="samples.html" class="btn-ending-extra">🎧 ボイス＆BGM試聴室へ</a>
+            <a href="novel.html" class="btn-ending-extra" id="btnEndingExtraNovel">📖 トゥルーエンド小説版を読む</a>
+            <a href="samples.html" class="btn-ending-extra" id="btnEndingExtraSamples">🎧 ボイス＆BGM試聴室へ</a>
           </div>
         </div>
 
@@ -188,7 +197,7 @@
       <div class="log-card">
         <div class="modal-header">
           <button id="btnBackLog" class="btn-back-header">◀ 戻る</button>
-          <span class="modal-title">捜査・調書ログ (Log)</span>
+          <span class="modal-title" id="logModalTitle">捜査・調書ログ (Log)</span>
           <div style="width: 50px;"></div>
         </div>
         <div id="logContent" class="log-content"></div>
@@ -207,6 +216,7 @@
   <script src="js/rive-manager.js"></script>
   <script src="js/audio-controller.js"></script>
   <script src="js/character-controller.js"></script>
+  <script src="js/i18n.js"></script>
   <script src="js/scenario.js"></script>
   <script src="js/game-engine.js"></script>
   <script>
