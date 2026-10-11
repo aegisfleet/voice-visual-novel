@@ -1292,3 +1292,124 @@ html, body {
     padding: 16px 12px 10px;
   }
 }
+
+/* ========================================================
+   12. EXTRA（おまけ）＆クリア特典 スタイル
+   ======================================================== */
+.extra-section {
+  width: 100%;
+  max-width: 360px;
+  margin: 16px auto 0;
+}
+
+.extra-locked {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px dashed rgba(148, 163, 184, 0.3);
+  color: #64748b;
+  font-size: 0.76rem;
+  padding: 8px 14px;
+  border-radius: 20px;
+  letter-spacing: 0.04em;
+  backdrop-filter: blur(4px);
+}
+
+.extra-unlocked {
+  background: linear-gradient(135deg, rgba(14, 165, 233, 0.15), rgba(45, 212, 191, 0.15));
+  border: 1.5px solid var(--neon-mint);
+  border-radius: 14px;
+  padding: 12px 14px;
+  box-shadow: 0 0 20px rgba(45, 212, 191, 0.3);
+  animation: pulseExtra 2.5s infinite alternate ease-in-out;
+}
+
+@keyframes pulseExtra {
+  0% { box-shadow: 0 0 10px rgba(45, 212, 191, 0.2); }
+  100% { box-shadow: 0 0 25px rgba(45, 212, 191, 0.45); }
+}
+
+.extra-banner {
+  font-family: var(--font-hud);
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--neon-mint);
+  letter-spacing: 0.05em;
+  margin-bottom: 10px;
+}
+
+.extra-links {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn-extra-link {
+  flex: 1;
+  min-width: 140px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: rgba(2, 6, 23, 0.7);
+  border: 1px solid var(--neon-cyan);
+  color: #e2e8f0;
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 8px 12px;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.btn-extra-link:hover, .btn-extra-link:active {
+  background: rgba(0, 243, 255, 0.2);
+  color: var(--neon-cyan);
+  border-color: var(--neon-cyan);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 243, 255, 0.3);
+}
+
+/* エンディングモーダル内の特典 */
+.ending-extra-actions {
+  margin: 16px 0 22px;
+  padding: 14px;
+  background: linear-gradient(135deg, rgba(45, 212, 191, 0.12), rgba(14, 165, 233, 0.12));
+  border: 1.5px solid var(--neon-mint);
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(45, 212, 191, 0.25);
+}
+
+.extra-announce {
+  font-family: var(--font-hud);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--neon-mint);
+  margin-bottom: 12px;
+  letter-spacing: 0.03em;
+}
+
+.ending-extra-btn-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.btn-ending-extra {
+  display: block;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid var(--neon-cyan);
+  color: #fff;
+  font-size: 0.88rem;
+  font-weight: 600;
+  padding: 10px 16px;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.btn-ending-extra:hover, .btn-ending-extra:active {
+  background: rgba(0, 243, 255, 0.25);
+  border-color: var(--neon-cyan);
+  transform: scale(1.02);
+  box-shadow: 0 0 15px rgba(0, 243, 255, 0.4);
+}

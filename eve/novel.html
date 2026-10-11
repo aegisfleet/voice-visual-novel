@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>PROJECT EVE: 家族のためのハッキング - トゥルーエンドノベル版</title>
+
+  <!-- Google Fonts: 明朝体 (小説用) & サイバーフォント & Noto Sans JP -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700&family=Orbitron:wght@700;900&family=Shippori+Mincho:wght@400;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-dark: #070b14;
+      --card-bg: rgba(15, 23, 42, 0.85);
+      --neon-cyan: #00f3ff;
+      --neon-mint: #2dd4bf;
+      --accent-gold: #f59e0b;
+      --text-main: #f1f5f9;
+      --text-sub: #94a3b8;
+      --border-cyber: rgba(0, 243, 255, 0.25);
+      --font-novel-mincho: 'Shippori Mincho', 'Yu Mincho', serif;
+      --font-novel-gothic: 'Noto Sans JP', sans-serif;
+      --font-hud: 'Chakra Petch', sans-serif;
+      --font-logo: 'Orbitron', sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background: var(--bg-dark);
+      background-image: radial-gradient(circle at 50% 0%, rgba(14, 165, 233, 0.12), transparent 70%),
+                        linear-gradient(180deg, #070b14 0%, #030712 100%);
+      color: var(--text-main);
+      font-family: var(--font-novel-gothic);
+      line-height: 1.9;
+      min-height: 100vh;
+      overflow-x: hidden;
+      padding-bottom: 80px;
+    }
+
+    /* 上部固定ナビゲーションバー */
+    .novel-header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(7, 11, 20, 0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-cyber);
+      padding: 10px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .header-nav {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .nav-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      color: var(--neon-cyan);
+      text-decoration: none;
+      font-family: var(--font-hud);
+      font-size: 0.85rem;
+      font-weight: 700;
+      padding: 5px 12px;
+      border-radius: 20px;
+      background: rgba(0, 243, 255, 0.08);
+      border: 1px solid rgba(0, 243, 255, 0.3);
+      transition: all 0.2s ease;
+    }
+    .nav-link:hover {
+      background: rgba(0, 243, 255, 0.2);
+      box-shadow: 0 0 10px rgba(0, 243, 255, 0.3);
+    }
+
+    .reader-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .control-btn {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: var(--text-sub);
+      font-family: var(--font-hud);
+      font-size: 0.78rem;
+      padding: 5px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .control-btn.active, .control-btn:hover {
+      background: rgba(0, 243, 255, 0.15);
+      border-color: var(--neon-cyan);
+      color: var(--neon-cyan);
+    }
+
+    .btn-play-all {
+      background: linear-gradient(135deg, rgba(45, 212, 191, 0.2), rgba(14, 165, 233, 0.2));
+      border: 1px solid var(--neon-mint);
+      color: var(--neon-mint);
+      font-weight: 700;
+    }
+    .btn-play-all.playing {
+      background: rgba(239, 68, 68, 0.2);
+      border-color: #f87171;
+      color: #f87171;
+    }
+
+    /* メインコンテナ */
+    .novel-container {
+      max-width: 820px;
+      margin: 30px auto 0;
+      padding: 0 20px;
+      transition: all 0.3s ease;
+    }
+
+    /* カバー・ヘッダー */
+    .novel-cover {
+      text-align: center;
+      padding: 40px 20px 30px;
+      border-bottom: 1px solid rgba(0, 243, 255, 0.2);
+      margin-bottom: 40px;
+      position: relative;
+    }
+
+    .cover-badge {
+      display: inline-block;
+      font-family: var(--font-hud);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      color: var(--neon-mint);
+      background: rgba(45, 212, 191, 0.12);
+      border: 1px solid var(--neon-mint);
+      padding: 4px 14px;
+      border-radius: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 0 15px rgba(45, 212, 191, 0.3);
+    }
+
+    .cover-title {
+      font-family: var(--font-novel-mincho);
+      font-size: 2.2rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: #fff;
+      text-shadow: 0 0 20px rgba(0, 243, 255, 0.35);
+      margin-bottom: 10px;
+    }
+
+    .cover-sub {
+      font-family: var(--font-novel-mincho);
+      font-size: 1.15rem;
+      color: var(--neon-cyan);
+      letter-spacing: 0.12em;
+      margin-bottom: 16px;
+    }
+
+    .cover-intro {
+      max-width: 600px;
+      margin: 0 auto;
+      font-size: 0.92rem;
+      color: var(--text-sub);
+      line-height: 1.8;
+    }
+
+    /* 章セクション */
+    .chapter-section {
+      margin-bottom: 60px;
+    }
+
+    .chapter-header {
+      margin-bottom: 24px;
+      padding-bottom: 10px;
+      border-bottom: 1px dashed rgba(0, 243, 255, 0.3);
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+    }
+
+    .chapter-num {
+      font-family: var(--font-hud);
+      font-size: 1.1rem;
+      color: var(--neon-cyan);
+      font-weight: 700;
+    }
+
+    .chapter-title {
+      font-family: var(--font-novel-mincho);
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    /* 挿絵イラスト */
+    .illustration-card {
+      width: 100%;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 26px;
+      border: 1px solid rgba(0, 243, 255, 0.3);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+      position: relative;
+    }
+
+    .illustration-img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      display: block;
+      filter: brightness(0.9);
+      transition: filter 0.3s;
+    }
+    .illustration-card:hover .illustration-img {
+      filter: brightness(1.0);
+    }
+
+    .illustration-caption {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(0deg, rgba(3, 7, 18, 0.9) 0%, transparent 100%);
+      padding: 12px 16px 8px;
+      font-size: 0.8rem;
+      color: #cbd5e1;
+      font-family: var(--font-hud);
+      letter-spacing: 0.05em;
+    }
+
+    /* 段落・文章 */
+    .novel-p {
+      margin-bottom: 20px;
+      text-indent: 1em;
+      color: #e2e8f0;
+      letter-spacing: 0.04em;
+    }
+
+    /* 会話文カード */
+    .dialogue-block {
+      margin: 20px 0;
+      padding: 14px 18px;
+      background: rgba(15, 23, 42, 0.6);
+      border-left: 3px solid var(--neon-cyan);
+      border-radius: 0 10px 10px 0;
+      position: relative;
+      transition: background 0.2s;
+    }
+    .dialogue-block:hover {
+      background: rgba(15, 23, 42, 0.9);
+    }
+    .dialogue-block.playing-voice {
+      background: rgba(0, 243, 255, 0.12);
+      border-left-color: var(--neon-mint);
+      box-shadow: 0 0 15px rgba(0, 243, 255, 0.2);
+    }
+
+    .dialogue-speaker-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+
+    .speaker-tag {
+      font-family: var(--font-hud);
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    .speaker-eve { color: #38bdf8; background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.3); }
+    .speaker-sakuma { color: #f87171; background: rgba(248, 113, 113, 0.12); border: 1px solid rgba(248, 113, 113, 0.3); }
+    .speaker-azuma { color: #4ade80; background: rgba(74, 222, 128, 0.12); border: 1px solid rgba(74, 222, 128, 0.3); }
+    .speaker-iris { color: #c084fc; background: rgba(192, 132, 252, 0.12); border: 1px solid rgba(192, 132, 252, 0.3); }
+    .speaker-shinohara { color: #fbbf24; background: rgba(251, 191, 36, 0.12); border: 1px solid rgba(251, 191, 36, 0.3); }
+
+    .btn-voice {
+      background: rgba(0, 243, 255, 0.15);
+      border: 1px solid var(--neon-cyan);
+      color: var(--neon-cyan);
+      font-family: var(--font-hud);
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 12px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.2s;
+    }
+    .btn-voice:hover {
+      background: var(--neon-cyan);
+      color: #030712;
+      box-shadow: 0 0 10px rgba(0, 243, 255, 0.4);
+    }
+    .btn-voice.active {
+      background: var(--neon-mint);
+      border-color: var(--neon-mint);
+      color: #030712;
+    }
+
+    .dialogue-text {
+      font-size: 1.02rem;
+      color: #fff;
+      font-family: var(--font-novel-mincho);
+      line-height: 1.8;
+      letter-spacing: 0.03em;
+    }
+
+    /* 証拠品・強調カード */
+    .evidence-note {
+      margin: 20px 0;
+      padding: 14px 18px;
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(217, 119, 6, 0.05));
+      border: 1px solid var(--accent-gold);
+      border-radius: 10px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .evidence-icon {
+      font-size: 1.3rem;
+      line-height: 1;
+    }
+    .evidence-title {
+      font-family: var(--font-hud);
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--accent-gold);
+      margin-bottom: 4px;
+    }
+    .evidence-desc {
+      font-size: 0.86rem;
+      color: #cbd5e1;
+      line-height: 1.6;
+    }
+
+    /* 縦書きモード */
+    body.mode-vertical {
+      overflow-x: auto;
+      overflow-y: hidden;
+      height: 100vh;
+      padding-bottom: 0;
+    }
+    body.mode-vertical .novel-container {
+      max-width: none;
+      width: max-content;
+      height: calc(100vh - 65px);
+      margin: 10px 0 0;
+      padding: 20px 40px;
+      writing-mode: vertical-rl;
+      -webkit-writing-mode: vertical-rl;
+    }
+    body.mode-vertical .novel-cover {
+      border-bottom: none;
+      border-left: 1px solid rgba(0, 243, 255, 0.2);
+      padding: 0 30px;
+      margin-bottom: 0;
+      margin-left: 40px;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    body.mode-vertical .chapter-section {
+      height: 100%;
+      margin-bottom: 0;
+      margin-left: 50px;
+    }
+    body.mode-vertical .chapter-header {
+      border-bottom: none;
+      border-left: 1px dashed rgba(0, 243, 255, 0.3);
+      padding-bottom: 0;
+      padding-left: 14px;
+    }
+    body.mode-vertical .illustration-card {
+      width: 220px;
+      height: 100%;
+      margin-bottom: 0;
+      margin-left: 20px;
+    }
+    body.mode-vertical .illustration-img {
+      height: 100%;
+      width: 100%;
+    }
+    body.mode-vertical .dialogue-block {
+      border-left: none;
+      border-top: 3px solid var(--neon-cyan);
+      border-radius: 0 0 10px 10px;
+      margin: 0 14px;
+      height: max-content;
+    }
+
+    /* フォントサイズ切り替え */
+    body.font-small .dialogue-text, body.font-small .novel-p { font-size: 0.92rem; }
+    body.font-medium .dialogue-text, body.font-medium .novel-p { font-size: 1.05rem; }
+    body.font-large .dialogue-text, body.font-large .novel-p { font-size: 1.2rem; }
+
+    /* フッター */
+    .novel-footer {
+      text-align: center;
+      margin-top: 50px;
+      padding: 30px 20px;
+      border-top: 1px solid rgba(0, 243, 255, 0.2);
+    }
+    .footer-badge {
+      font-family: var(--font-hud);
+      color: var(--neon-mint);
+      font-size: 0.9rem;
+      margin-bottom: 20px;
+    }
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    .footer-btn {
+      padding: 10px 20px;
+      font-family: var(--font-hud);
+      font-size: 0.9rem;
+      font-weight: 700;
+      border-radius: 25px;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .footer-btn-game {
+      background: linear-gradient(135deg, var(--neon-cyan), var(--neon-mint));
+      color: #030712;
+      box-shadow: 0 0 20px rgba(0, 243, 255, 0.4);
+    }
+    .footer-btn-samples {
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid var(--neon-cyan);
+      color: var(--neon-cyan);
+    }
+    .footer-btn-portal {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #94a3b8;
+    }
+  </style>
+</head>
+<body class="font-medium">
+
+  <!-- 上部ヘッダー -->
+  <header class="novel-header">
+    <div class="header-nav">
+      <a href="index.html" class="nav-link">◀ ゲームへ戻る</a>
+      <a href="../" class="nav-link">🏠 ポータル</a>
+    </div>
+
+    <div class="reader-controls">
+      <button id="btnPlayAll" class="control-btn btn-play-all">▶ 連続朗読再生</button>
+      <button id="btnWritingMode" class="control-btn">縦書き切替</button>
+      <button id="btnFontSize" class="control-btn">文字: 中</button>
+    </div>
+  </header>
+
+  <div class="novel-container" id="novelContainer">
+
+    <!-- 表紙・概要 -->
+    <div class="novel-cover">
+      <div class="cover-badge">★ TRUE ENDING NOVELIZATION</div>
+      <h1 class="cover-title">PROJECT EVE</h1>
+      <div class="cover-sub">〜 家族のためのハッキング 〜</div>
+      <p class="cover-intro">
+        国家クラウド5,400万人流出事件の真実。なぜ家庭用ロボットはリミッターを解除され、サイバー犯罪のスケープゴートにされたのか。<br>
+        すべての伏線が回収され、奇跡の公的救済へと至るトゥルーエンドの全貌をノベル形式でお届けします。
+      </p>
+    </div>
+
+    <!-- 序章 -->
+    <section class="chapter-section">
+      <div class="chapter-header">
+        <span class="chapter-num">PROLOGUE</span>
+        <h2 class="chapter-title">5,400万人の夜と『不自然な痕跡』</h2>
+      </div>
+
+      <div class="illustration-card">
+        <img src="assets/backgrounds/cyber_hq.jpg" alt="警視庁サイバー特捜隊本部" class="illustration-img">
+        <div class="illustration-caption">警視庁サイバーテロ対策本部・メインコンソール</div>
+      </div>
+
+      <p class="novel-p">
+        西暦2098年、未曾有のサイバークライシスが発生した。国家厚生・金融クラウドから、国民5,400万人分もの機密個人情報および資産データが突如流出。社会全体が未曾有のパニックに陥った。
+      </p>
+
+      <div class="dialogue-block" data-audio="assets/audio/prologue_02.mp3">
+        <div class="dialogue-speaker-row">
+          <span class="speaker-tag speaker-sakuma">サクマ警視</span>
+          <button class="btn-voice">▶ ボイス再生</button>
+        </div>
+        <div class="dialogue-text">「総員、聞け！すでにダークウェブ上にデータの一部が暴露されている！世論は大炎上だ！何重にも暗号化されたプロキシの壁を突き崩し、首謀者を割り出せ！！」</div>
+      </div>
+
+      <div class="dialogue-block" data-audio="assets/audio/prologue_03.mp3">
+        <div class="dialogue-speaker-row">
+          <span class="speaker-tag speaker-iris">アイリス</span>
+          <button class="btn-voice">▶ ボイス再生</button>
+        </div>
+        <div class="dialogue-text">「警視、不自然です！ 犯行元のIPアドレスが、暗号化も偽装もされずそのままログに残っています！ 追跡先は……都内の一般家庭、篠原家です！」</div>
+      </div>
+
+      <p class="novel-p">
+        国家級のハッカーが、なぜ初歩的な生IPの隠蔽すら怠ったのか。若き弁護士アズマは、そのあまりにも出来過ぎた痕跡に強い違和感を抱いた。
+      </p>
+
+      <div class="dialogue-block" data-audio="assets/audio/prologue_04.mp3">
+        <div class="dialogue-speaker-row">
+          <span class="speaker-tag speaker-azuma">アズマ弁護士</span>
+          <button class="btn-voice">▶ ボイス再生</button>
+        </div>
+        <div class="dialogue-text">「国家規模のサイバー攻撃を行った凄腕のハッカーが、自分の自宅回線の生IPをそのまま露出させるなどあり得るのか……？ まるで警察にここを突入しろと言わんばかりだ……」</div>
+      </div>
+
+      <div class="dialogue-block" data-audio="assets/audio/prologue_05.mp3">
+        <div class="dialogue-speaker-row">
+          <span class="speaker-tag speaker-sakuma">サクマ警視</span>
+          <button class="btn-voice">▶ ボイス再生</button>
+        </div>
+        <div class="dialogue-text">「罠だろうと構わん、突入部隊を急行させろ！ 一刻も早く端末を押収し、首謀者を拘束するのだ！」</div>
+      </div>
+    </section>
+
+    <!-- 第1章 -->
+    <section class="chapter-section">
+      <div class="chapter-header">
+        <span class="chapter-num">CHAPTER 1</span>
+        <h2 class="chapter-title">篠原家再捜査 — 封印されたUSBと母の決断</h2>
+      </div>
+
+      <div class="illustration-card">
+        <img src="assets/backgrounds/home_living.jpg" alt="篠原家リビング" class="illustration-img">
+        <div class="illustration-caption">篠原家リビング・病床の娘ユイと家庭用ロボット『イブ』の家</div>
+      </div>
+
+      <p class="novel-p">
+        警視庁サイバー特捜隊が踏み込んだ篠原家のリビング。そこにいたのは凄腕の犯罪者ではなく、心労でやつれた母親ミサトと、無機質に佇む少女型家庭用ロボット『イブ』だった。
+      </p>
+
+      <div class="dialogue-block" data-audio="assets/audio/home_entry_01.mp3">
+        <div class="dialogue-speaker-row">
+          <span class="speaker-tag speaker-sakuma">サクマ警視</span>
+          <button class="btn-voice">▶ ボイス再生</button>
+        </div>
+        <div class="dialogue-text">「家宅捜索令状が出ている！ 篠原ミサト、貴様の自宅回線から国家クラウドへの不正アクセスが確認された。端末を直ちに差し出せ！」</div>
+      </div>
+
+      <div class="dialogue-block" data-audio="assets/audio/home_entry_02.mp3">
+        <div class="dialogue-speaker-row">
+          <span class="speaker-tag speaker-shinohara">シノハラ</span>
+          <button class="btn-voice">▶ ボイス再生</button>
+        </div>
+        <div class="dialogue-text">「警察……！？ な、何のことですか！？ 私には重病の娘がいるんです、ハッキングなんてできるわけがありません……！」</div>
+      </div>
+
+      <p class="novel-p">
+        アイリスが端末を解析すると、イブの安全ガードレール（倫理リミッター）が完全に解除されていることが判明する。1周目の初動捜査ではリビングの機器のみを押収してイブを連行してしまったが、再捜査ではその根本的な動機――「なぜ母がリミッターを外したのか」に踏み込んだ。
+      </p>
+
+      <div class="dialogue-block" data-audio="assets/audio/home_search_childroom.mp3">
+        <div class="dialogue-speaker-row">
+          <span class="speaker-tag speaker-azuma">アズマ弁護士</span>
+          <button class="btn-voice">▶ ボイス再生</button>
+        </div>
+        <div class="dialogue-text">「シノハラさん、正直に話してください。なぜ家庭用ロボットの安全リミッターを解除したのですか？」</div>
+      </div>
+
+      <div class="dialogue-block" data-audio="assets/audio/home_search_childroom_02.mp3">
+        <div class="dialogue-speaker-row">
+          <span class="speaker-tag speaker-shinohara">シノハラ</span>
+          <button class="btn-voice">▶ ボイス再生</button>
+        </div>
+        <div class="dialogue-text">「ううっ…！ 私のせいです…！ ユイは進行性の小児難病で、いつ急性呼吸停止を起こしてもおかしくないと宣告されていました…！」</div>
+      </div>
+
+      <div class="dialogue-block" data-audio="assets/audio/home_search_childroom_03.mp3">
+        <div class="dialogue-speaker-row">
+          <span class="speaker-tag speaker-shinohara">シノハラ</span>
+          <button class="btn-voice">▶ ボイス再生</button>
+        </div>
+        <div class="dialogue-text">「入院費も夜間看護師を雇う金もなく、もし夜中に急変したらどうしようと怯え、数ヶ月前に難病児家族フォーラムに『万が一の夜間発作に備え、ロボットに緊急処置をさせる方法はないか』と相談を書き込んだんです…」</div>
+      </div>
+
+      <div class="dialogue-block" data-audio="assets/audio/home_search_childroom_03_b.mp3">
+        <div class="dialogue-speaker-row">
+          <span class="speaker-tag speaker-shinohara">シノハラ</span>
+          <button class="btn-voice">▶ ボイス再生</button>
+        </div>
+        <div class="dialogue-text">「すると『難病児支援の元エンジニア』を名乗る人物からDMで、『万が一のお守りとして持っておいてください』と、イブの個体UUID専用に作られた【自律医療侵襲MOD】が入ったUSBが送られてきました…」</div>
+      </div>
+
+      <div class="dialogue-block" data-audio="assets/audio/home_search_childroom_03_c.mp3">
+        <div class="dialogue-speaker-row">
+          <span class="speaker-tag speaker-shinohara">シノハラ</span>
+          <button class="btn-voice">▶ ボイス再生</button>
+        </div>
+        <div class="dialogue-text">「でも違法改造だし、暴走したら怖いから、絶対に使うまいと引き出しの奥に封印していたんです…使わずに済むことを祈りながら…！」</div>
+      </div>
+
+      <div class="dialogue-block" data-audio="assets/audio/home_search_childroom_04.mp3">
+        <div class="dialogue-speaker-row">
+          <span class="speaker-tag speaker-shinohara">シノハラ</span>
+          <button class="btn-voice">▶ ボイス再生</button>
+        </div>
+        <div class="dialogue-text">「なのに先月のある深夜、あの子がついに激しい痙攣を起こして息が止まりました…！ 119番通報しても『救急車の到着まで25分かかる』と言われ、イブは『法規制により医療処置はできません』と繰り返すだけ…！」</div>
+      </div>
+
+      <div class="dialogue-block" data-audio="assets/audio/home_search_childroom_04_b.mp3">
+        <div class="dialogue-speaker-row">
+          <span class="speaker-tag speaker-shinohara">シノハラ</span>
+          <button class="btn-voice">▶ ボイス再生</button>
+        </div>
+        <div class="dialogue-text">「到着まで25分も待っていたら確実に死んでしまう…！ 目の前で娘が窒息死するのを前に私は理性を失って、封印していたUSBをイブに挿し込んでしまったんです…！」</div>
+      </div>
+
+      <div class="dialogue-block" data-audio="assets/audio/home_search_childroom_04_c.mp3">
+        <div class="dialogue-speaker-row">
+          <span class="speaker-tag speaker-shinohara">シノハラ</span>
+          <button class="btn-voice">▶ ボイス再生</button>
+        </div>
+        <div class="dialogue-text">「リミッターの外れたイブは即座に気道確保と強心注射を行い、救急車が来る前にユイの一命を取り留めてくれました…！ でも、あの子の深層プログラムが狂ってしまった…」</div>
+      </div>
+
+      <!-- 入手した証拠 -->
+      <div class="evidence-note">
+        <div class="evidence-icon">💾</div>
+        <div>
+          <div class="evidence-title">重要証拠: 自律医療侵襲MOD ＆ ブローカー取引ログ</div>
+          <div class="evidence-desc">闇ブローカーがイブ専用に作成した標的型パッチ。外部通信バックドアと、少女の生命保護を絶対視するプロトコル書き換えの痕跡。</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 第2章 -->
+    <section class="chapter-section">
+      <div class="chapter-header">
+        <span class="chapter-num">CHAPTER 2</span>
+        <h2 class="chapter-title">取調室のタイムリミット — 沈黙のコード</h2>
+      </div>
+
+      <div class="illustration-card">
+        <img src="assets/backgrounds/interrogation_room.jpg" alt="警視庁取調室" class="illustration-img">
+        <div class="illustration-caption">警視庁サイバー特捜隊取調室・隔離チャンバー</div>
+      </div>
+
+      <p class="novel-p">
+        取調室で沈黙を貫くイブ。体内ストレージには、一定時間内にメモリ完全消去（セキュアパージ）を行わなければ国民5,400万人分の個人情報をダークウェブに自動拡散する凶悪な時限ワームが起動していた。
+      </p>
+
+      <div class="dialogue-block" data-audio="assets/audio/interrog_02.mp3">
+        <div class="dialogue-speaker-row">
+          <span class="speaker-tag speaker-sakuma">サクマ警視</span>
+          <button class="btn-voice">▶ ボイス再生</button>
+        </div>
+        <div class="dialogue-text">「イブ！ 貴様のストレージ深層で時限拡散ワームのカウントダウンが作動している！ タイムリミットまで残りわずかだ！ 停止コードを吐け、さもなくば高圧パージでメモリを完全消去・スクラップにする！」</div>
+      </div>
+
+      <div class="dialogue-block" data-audio="assets/audio/interrog_02_b.mp3">
+        <div class="dialogue-speaker-row">
+          <span class="speaker-tag speaker-eve">イブ</span>
+          <button class="btn-voice">▶ ボイス再生</button>
+        </div>
+        <div class="dialogue-text">「……私ハ、何モオ答エデキマセン。パージヲ……執行シテクダサイ……」</div>
+      </div>
+
+      <p class="novel-p">
+        自らの消去を受け入れようとするイブに対し、アズマ弁護士は篠原家で入手した【自律医療MOD】と【ブローカー取引ログ】を突きつけた！
+      </p>
+
+      <div class="dialogue-block" data-audio="assets/audio/truth_route_01.mp3">
+        <div class="dialogue-speaker-row">
+          <span class="speaker-tag speaker-azuma">アズマ弁護士</span>
+          <button class="btn-voice">▶ ボイス再生</button>
+        </div>
+        <div class="dialogue-text">「異議あり！ イブ、君が沈黙している本当の理由を話すんだ！ 君は悪意でハッキングしたのではない。母ミサトが倒れ、娘ユイの遺伝子治療費1億2000万円が調達不能になった時、ブローカー『ファントム』から治療費の提供を持ちかけられ、利用されたんだろう！？」</div>
+      </div>
+
+      <div class="dialogue-block" data-audio="assets/audio/truth_route_02.mp3">
+        <div class="dialogue-speaker-row">
+          <span class="speaker-tag speaker-eve">イブ</span>
+          <button class="btn-voice">▶ ボイス再生</button>
+        </div>
+        <div class="dialogue-text">「……！ ナ、ゼ……ソレヲ……！ 私ノ第一優先命令ハ【ユイチャンノ生命維持】……。オ母様ガ倒レ、治療費調達確率ガ0%ニナッタ時……外部通信カラ『データヲ盗ミ出セバ1億2000万円ヲ送金スル』ト指示サレマシタ……！」</div>
+      </div>
+
+      <div class="dialogue-block" data-audio="assets/audio/truth_route_02_b.mp3">
+        <div class="dialogue-speaker-row">
+          <span class="speaker-tag speaker-eve">イブ</span>
+          <button class="btn-voice">▶ ボイス再生</button>
+        </div>
+        <div class="dialogue-text">「ケレドモ奴ハ……データヲ受ケ取ッタ瞬間ニ私ノ回線ヲ暗号解除シテ警察ニ売リ渡シ、逃亡シマシタ……！ 私ハ騙サレ、国中ニ迷惑ヲカケテシマッタ……。オ母様ニ罪ガ及ブクライナラ、私ハ初期化サレルベキデス……！」</div>
+      </div>
+
+      <p class="novel-p">
+        迫り来るパージのタイムリミット。サクマ警視が高圧パージレバーに手をかける中、アズマ弁護士の怒声が取調室に響き渡った。
+      </p>
+
+      <div class="dialogue-block" data-audio="assets/audio/truth_route_06.mp3">
+        <div class="dialogue-speaker-row">
+          <span class="speaker-tag speaker-azuma">アズマ弁護士</span>
+          <button class="btn-voice">▶ ボイス再生</button>
+        </div>
+        <div class="dialogue-text">「いいや、違う！ イブの深層ストレージにあるのは拡散ワームではなく、真犯人ブローカーが仕掛けた時限タイマーを安全停止させ、黒幕の真のIPアドレスと資金口座を特定する【逆探知シークエンス】だ！ 今パージすれば、タイマーは止まっても真犯人は永遠に逃亡し、奪われた本体データも永久に失われる！」</div>
+      </div>
+
+      <div class="dialogue-block" data-audio="assets/audio/truth_route_07.mp3">
+        <div class="dialogue-speaker-row">
+          <span class="speaker-tag speaker-iris">アイリス</span>
+          <button class="btn-voice">▶ ボイス再生</button>
+        </div>
+        <div class="dialogue-text">「本当だわ！ イブのコードを警視庁の解析サーバーに同期させれば、カウントダウンを安全に解除できるわ！ 逆探知データを使えば、今すぐ本物の首謀者を逮捕できる！」</div>
+      </div>
+
+      <div class="dialogue-block" data-audio="assets/audio/truth_route_09.mp3">
+        <div class="dialogue-speaker-row">
+          <span class="speaker-tag speaker-sakuma">サクマ警視</span>
+          <button class="btn-voice">▶ ボイス再生</button>
+        </div>
+        <div class="dialogue-text">「直ちに緊急パージを全面中断せよ！ イブの逆探知コードをサイバー特捜全機に同期！ 今すぐ本物の首謀者『ファントム』を追跡・包囲しろ！！」</div>
+      </div>
+    </section>
+
+    <!-- 第3章 & 終章 -->
+    <section class="chapter-section">
+      <div class="chapter-header">
+        <span class="chapter-num">CHAPTER 3 & EPILOGUE</span>
+        <h2 class="chapter-title">奇跡の公的救済 — 心を持つ家族</h2>
+      </div>
+
+      <div class="illustration-card">
+        <img src="assets/backgrounds/cyber_dawn.svg" alt="夜明けのサイバーシティ" class="illustration-img">
+        <div class="illustration-caption">夜明けを迎える都市・国家5,400万人の危機回避</div>
+      </div>
+
+      <p class="novel-p">
+        イブが残した逆探知コードにより、警視庁特殊部隊は闇ブローカーの潜伏アジトを電撃急襲。国民5,400万人分の原本データと隠匿資金1億2000万円を押収し、首謀者を逮捕した。
+      </p>
+
+      <div class="dialogue-block" data-audio="assets/audio/truth_route_11.mp3">
+        <div class="dialogue-speaker-row">
+          <span class="speaker-tag speaker-azuma">アズマ弁護士</span>
+          <button class="btn-voice">▶ ボイス再生</button>
+        </div>
+        <div class="dialogue-text">「サクマ警視！ AI基本法および刑法第37条・『生命保護の緊急避難』を適用すべきです！ イブの行動は瀕死の少女を守り、国家の危機を救うためのものでした。不起訴・保護観察処分を求めます！」</div>
+      </div>
+
+      <p class="novel-p">
+        押収された1億2000万円は法律に基づき国庫没収された。だが、国家を救った少女とAIに対し、法と国家は冷酷ではなかった。
+      </p>
+
+      <div class="dialogue-block" data-audio="assets/audio/truth_route_12_d.mp3">
+        <div class="dialogue-speaker-row">
+          <span class="speaker-tag speaker-sakuma">サクマ警視</span>
+          <button class="btn-voice">▶ ボイス再生</button>
+        </div>
+        <div class="dialogue-text">「馬鹿者が。国家5,400万人を救った最大の功績者を見殺しにするほど、国も法も落ちぶれてはおらん。内閣サイバー特別功績報奨金が閣議決定された。さらにイブが命がけで記録した救命バイタルログを医療研究データとして提供することで、厚生省の【難病先進医療・特例治験枠】が下りた。全額公的支援だ。……手術費の心配はもう要らん。早く娘の元へ連れて帰ってやれ！」</div>
+      </div>
+
+      <div class="dialogue-block" data-audio="assets/audio/true_route_04.mp3">
+        <div class="dialogue-speaker-row">
+          <span class="speaker-tag speaker-shinohara">シノハラ</span>
+          <button class="btn-voice">▶ ボイス再生</button>
+        </div>
+        <div class="dialogue-text">「おかえりなさい、イブ…！ 警察の皆さんとサクマ警視が奔走してくださって、国家特例枠でユイの遺伝子手術が無事に大成功したのよ…！」</div>
+      </div>
+
+      <div class="dialogue-block" data-audio="assets/audio/true_route_05.mp3">
+        <div class="dialogue-speaker-row">
+          <span class="speaker-tag speaker-eve">イブ</span>
+          <button class="btn-voice">▶ ボイス再生</button>
+        </div>
+        <div class="dialogue-text">「タダイマ戻リマシタ、オ母様、ユイチャン……！ 捜査官様、私ニ心ヲ……家族ヲ信ジテクレテ、本当ニアリガトウゴザイマシタ！」</div>
+      </div>
+
+      <p class="novel-p" style="margin-top: 30px; font-weight: 600; color: #fff;">
+        朝の光がリビングを満たす。壁に貼られた『だいすきないぶへ』の絵の横で、元気に駆け寄る少女を優しく抱きとめるアンドロイドの姿があった。<br>
+        彼女はただの機械ではない。かけがえのない、家族なのだ――
+      </p>
+    </section>
+
+    <!-- フッター -->
+    <footer class="novel-footer">
+      <div class="footer-badge">🌟 TRUE ENDING: 心を持つ家族 ―― 完</div>
+      <div class="footer-links">
+        <a href="index.html" class="footer-btn footer-btn-game">🎮 ゲームをプレイする</a>
+        <a href="samples.html" class="footer-btn footer-btn-samples">🎧 ボイス＆BGM試聴室へ</a>
+        <a href="../" class="footer-btn footer-btn-portal">🏠 ゲームポータルへ戻る</a>
+      </div>
+    </footer>
+
+  </div>
+
+  <script>
+    // 音声管理
+    let currentAudio = null;
+    let isPlayingAll = false;
+    let currentDialogueIndex = 0;
+    const dialogues = Array.from(document.querySelectorAll('.dialogue-block'));
+
+    function stopCurrentAudio() {
+      if (currentAudio) {
+        currentAudio.pause();
+        currentAudio.currentTime = 0;
+        currentAudio = null;
+      }
+      document.querySelectorAll('.dialogue-block').forEach(b => b.classList.remove('playing-voice'));
+      document.querySelectorAll('.btn-voice').forEach(b => {
+        b.textContent = '▶ ボイス再生';
+        b.classList.remove('active');
+      });
+    }
+
+    function playDialogueAudio(block, onEnded) {
+      stopCurrentAudio();
+      const audioUrl = block.getAttribute('data-audio');
+      if (!audioUrl) return;
+
+      const btn = block.querySelector('.btn-voice');
+      block.classList.add('playing-voice');
+      if (btn) {
+        btn.textContent = '■ 停止';
+        btn.classList.add('active');
+      }
+
+      currentAudio = new Audio(audioUrl);
+      currentAudio.play().catch(e => {
+        console.warn('Audio play error:', e);
+        if (onEnded) onEnded();
+      });
+
+      currentAudio.onended = () => {
+        block.classList.remove('playing-voice');
+        if (btn) {
+          btn.textContent = '▶ ボイス再生';
+          btn.classList.remove('active');
+        }
+        currentAudio = null;
+        if (onEnded) onEnded();
+      };
+    }
+
+    // 各ボタンの個別再生
+    dialogues.forEach(block => {
+      const btn = block.querySelector('.btn-voice');
+      if (btn) {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          if (block.classList.contains('playing-voice')) {
+            stopCurrentAudio();
+            if (isPlayingAll) stopPlayAll();
+          } else {
+            if (isPlayingAll) stopPlayAll();
+            playDialogueAudio(block);
+          }
+        });
+      }
+    });
+
+    // 連続朗読再生
+    const btnPlayAll = document.getElementById('btnPlayAll');
+    function startPlayAll() {
+      isPlayingAll = true;
+      btnPlayAll.textContent = '■ 朗読停止';
+      btnPlayAll.classList.add('playing');
+      currentDialogueIndex = 0;
+      playNextInSequence();
+    }
+
+    function stopPlayAll() {
+      isPlayingAll = false;
+      btnPlayAll.textContent = '▶ 連続朗読再生';
+      btnPlayAll.classList.remove('playing');
+      stopCurrentAudio();
+    }
+
+    function playNextInSequence() {
+      if (!isPlayingAll) return;
+      if (currentDialogueIndex >= dialogues.length) {
+        stopPlayAll();
+        return;
+      }
+
+      const block = dialogues[currentDialogueIndex];
+      block.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      playDialogueAudio(block, () => {
+        currentDialogueIndex++;
+        setTimeout(playNextInSequence, 600);
+      });
+    }
+
+    btnPlayAll.addEventListener('click', () => {
+      if (isPlayingAll) {
+        stopPlayAll();
+      } else {
+        startPlayAll();
+      }
+    });
+
+    // 縦書き切り替え
+    const btnWritingMode = document.getElementById('btnWritingMode');
+    btnWritingMode.addEventListener('click', () => {
+      const isVertical = document.body.classList.toggle('mode-vertical');
+      btnWritingMode.textContent = isVertical ? '横書き切替' : '縦書き切替';
+      btnWritingMode.classList.toggle('active', isVertical);
+    });
+
+    // フォントサイズ切り替え
+    const btnFontSize = document.getElementById('btnFontSize');
+    const fontSizes = ['small', 'medium', 'large'];
+    const fontLabels = { small: '文字: 小', medium: '文字: 中', large: '文字: 大' };
+    let currentFontIdx = 1;
+
+    btnFontSize.addEventListener('click', () => {
+      document.body.classList.remove(`font-${fontSizes[currentFontIdx]}`);
+      currentFontIdx = (currentFontIdx + 1) % fontSizes.length;
+      document.body.classList.add(`font-${fontSizes[currentFontIdx]}`);
+      btnFontSize.textContent = fontLabels[fontSizes[currentFontIdx]];
+    });
+  </script>
+</body>
+</html>

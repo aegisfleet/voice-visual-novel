@@ -31,6 +31,31 @@
       max-width: 800px;
       width: 100%;
     }
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .top-nav a {
+      color: var(--primary);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: bold;
+      padding: 6px 14px;
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      border-radius: 20px;
+      transition: all 0.2s;
+    }
+    .top-nav a:hover {
+      background: rgba(56, 189, 248, 0.25);
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
+    }
     header {
       text-align: center;
       margin-bottom: 32px;
@@ -141,6 +166,15 @@
 </head>
 <body>
   <div class="container">
+    <div class="top-nav">
+      <div style="display: flex; gap: 8px;">
+        <a href="index.html">◀ ゲーム本編へ戻る</a>
+        <a href="novel.html">📖 トゥルーエンド小説版</a>
+      </div>
+      <div>
+        <a href="../">🏠 ゲームポータル</a>
+      </div>
+    </div>
     <header>
       <div class="badge">gemini-3.8-flash-tts</div>
       <h1>キャラクターボイス サンプル試聴</h1>
@@ -424,8 +458,10 @@
       </div>
     </div>
 
-    <div style="text-align: center; margin-top: 32px;">
-      <a href="index.html" class="back-link">← ゲーム本編へ戻る</a>
+    <div style="text-align: center; margin-top: 36px; display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
+      <a href="index.html" class="back-link">🎮 ゲーム本編をプレイ</a>
+      <a href="novel.html" class="back-link">📖 トゥルーエンド小説版</a>
+      <a href="../" class="back-link" style="border-color: rgba(255,255,255,0.2); color: #94a3b8;">🏠 ポータルへ戻る</a>
     </div>
   </div>
 

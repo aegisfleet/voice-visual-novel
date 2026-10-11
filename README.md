@@ -1,9 +1,12 @@
-# PROJECT EVE: 家族のためのハッキング (電脳サイバー捜査ノベル)
+# VOICE VISUAL NOVELS (電脳ビジュアルノベル アーカイブ)
 
-🎮 **オンラインで今すぐプレイ**: **[https://aegisfleet.github.io/voice-visual-novel/](https://aegisfleet.github.io/voice-visual-novel/)**
+🌐 **公式ポータル（作品一覧）**: **[https://aegisfleet.github.io/voice-visual-novel/](https://aegisfleet.github.io/voice-visual-novel/)**  
+🎮 **第1作『PROJECT EVE』を今すぐプレイ**: **[https://aegisfleet.github.io/voice-visual-novel/eve/](https://aegisfleet.github.io/voice-visual-novel/eve/)**  
+📖 **トゥルーエンド小説版**: **[https://aegisfleet.github.io/voice-visual-novel/eve/novel.html](https://aegisfleet.github.io/voice-visual-novel/eve/novel.html)**  
+🎧 **ボイス＆BGM試聴室**: **[https://aegisfleet.github.io/voice-visual-novel/eve/samples.html](https://aegisfleet.github.io/voice-visual-novel/eve/samples.html)**  
 
 ブラウザ上で動作するフルボイス・電脳サイバー捜査ノベルゲームです。  
-Web標準技術（HTML5 / CSS3 / JavaScript / Web Speech API）のみで構築されており、追加のサーバー環境やライブラリインストール不要でブラウザから即座に動作します。
+Web標準技術（HTML5 / CSS3 / JavaScript / Web Audio API）のみで構築されており、追加のサーバー環境やライブラリインストール不要でブラウザから即座に動作します。
 
 ---
 
@@ -92,7 +95,7 @@ Google の最新音声生成専用モデル **`gemini-3.8-flash-tts`**（Vertex 
 | **アズマ弁護士** (主人公) | `あなた` | `Puck` | 正義感と知性に満ちた若き青年弁護士。法廷劇にふさわしい明瞭で力強い声 |
 | **ナレーション** (System) | `None` | `Orus` | 重厚で落ち着きのあるシネマティック・サイバーSFナレーション |
 
-> 💡 **試聴ページ**: [samples.html](samples.html) をブラウザで開くことで、各キャラクターのボイスをその場で聞き比べできます。
+> 💡 **試聴ページ**: [eve/samples.html](eve/samples.html) をブラウザで開くことで、各キャラクターのボイスをその場で聞き比べできます。
 
 ---
 

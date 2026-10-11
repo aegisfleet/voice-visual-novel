@@ -97,7 +97,11 @@ class GameEngine {
       endingType: document.getElementById('endingType'),
       endingTitle: document.getElementById('endingTitle'),
       endingDesc: document.getElementById('endingDesc'),
-      btnReturnTitle: document.getElementById('btnReturnTitle')
+      endingExtraActions: document.getElementById('endingExtraActions'),
+      btnReturnTitle: document.getElementById('btnReturnTitle'),
+      extraSection: document.getElementById('extraSection'),
+      extraLocked: document.getElementById('extraLocked'),
+      extraUnlocked: document.getElementById('extraUnlocked')
     };
 
     this.updateEndingsBadge();
@@ -714,6 +718,11 @@ class GameEngine {
     this.dom.endingTitle.textContent = ending.title;
     this.dom.endingDesc.textContent = ending.description;
 
+    // TRUE END達成時の特典表示切り替え
+    if (this.dom.endingExtraActions) {
+      this.dom.endingExtraActions.style.display = (ending.type === 'TRUE') ? 'block' : 'none';
+    }
+
     if (this.fx) {
       if (ending.type === 'TRUE') {
         this.fx.triggerFlash([0.0, 0.95, 1.0], 0.8, 600);
@@ -755,6 +764,17 @@ class GameEngine {
           this.dom.reinvestigationBanner.style.display = 'block';
         } else {
           this.dom.reinvestigationBanner.style.display = 'none';
+        }
+      }
+
+      // TRUE ENDクリア後のおまけ（EXTRA）解放判定
+      if (this.dom.extraLocked && this.dom.extraUnlocked) {
+        if (cleared.includes('TRUE')) {
+          this.dom.extraLocked.style.display = 'none';
+          this.dom.extraUnlocked.style.display = 'block';
+        } else {
+          this.dom.extraLocked.style.display = 'block';
+          this.dom.extraUnlocked.style.display = 'none';
         }
       }
     } catch {}
