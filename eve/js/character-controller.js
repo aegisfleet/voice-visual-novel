@@ -19,8 +19,23 @@ class CharacterController {
     this.currentExpression = 'normal';
     this.isTalking = false;
     this.blinkTimer = null;
+    this.mouthTimer = null;
+    this.mouthSequence = [1, 2, 3, 2, 1, 0, 2, 3, 2, 0, 1, 3, 2, 1];
+    this.mouthSeqIndex = 0;
 
     this.setupTracking();
+    this.preloadAllDiffs();
+  }
+
+  preloadAllDiffs() {
+    const chars = ['eve', 'iris', 'sakuma', 'shinohara'];
+    const diffNames = ['eyes_closed.png', 'eyes_half.png', 'mouth_open.png', 'mouth_half.png', 'mouth_small.png'];
+    chars.forEach(charId => {
+      diffNames.forEach(diff => {
+        const img = new Image();
+        img.src = `assets/characters/diffs/${charId}/${diff}`;
+      });
+    });
   }
 
   show(charId, expression = 'normal', motion = null) {
@@ -47,6 +62,8 @@ class CharacterController {
     this.currentCharacterId = null;
     this.container.style.opacity = '0';
     clearTimeout(this.blinkTimer);
+    clearTimeout(this.mouthTimer);
+    this.resetMouthLayers();
   }
 
   renderCharacter(charId) {
@@ -65,7 +82,19 @@ class CharacterController {
       const blendModeClass = isEve ? 'char-img-holo' : 'char-img-solid';
       contentHtml = `
         <div class="char-sprite-container ${blendModeClass}">
-          <img src="${hiresImages[charId]}" alt="${charId}" class="char-sprite-img" id="charSpriteImg">
+          <div class="char-layers-wrapper" id="charLayersWrapper">
+            <!-- 1. ベース立ち絵 (768x1376) -->
+            <img src="${hiresImages[charId]}" alt="${charId}" class="char-sprite-img char-layer-base" id="charSpriteImg">
+
+            <!-- 2. 目パチ表情差分レイヤー (中割り半目・閉眼) -->
+            <img src="assets/characters/diffs/${charId}/eyes_half.png" alt="eyes_half" class="char-diff-layer char-eyes-layer" id="layerEyesHalf">
+            <img src="assets/characters/diffs/${charId}/eyes_closed.png" alt="eyes_closed" class="char-diff-layer char-eyes-layer" id="layerEyesClosed">
+
+            <!-- 3. 口パクリップシンク差分レイヤー (微開・半開・全開の多段階セル) -->
+            <img src="assets/characters/diffs/${charId}/mouth_small.png" alt="mouth_small" class="char-diff-layer char-mouth-layer" id="layerMouthSmall">
+            <img src="assets/characters/diffs/${charId}/mouth_half.png" alt="mouth_half" class="char-diff-layer char-mouth-layer" id="layerMouthHalf">
+            <img src="assets/characters/diffs/${charId}/mouth_open.png" alt="mouth_open" class="char-diff-layer char-mouth-layer" id="layerMouthOpen">
+          </div>
           ${isEve ? '<div class="holo-ring-fx"></div>' : ''}
           <div class="char-voice-pulse" id="charVoicePulse"></div>
         </div>
@@ -657,8 +686,14 @@ class CharacterController {
     const sweatDrop = this.container.querySelector('#sweatDrop');
     const blush = this.container.querySelector('#partBlush');
 
+    // 画像立ち絵レイヤー
+    const layerEyesClosed = this.container.querySelector('#layerEyesClosed');
+    const layerEyesHalf = this.container.querySelector('#layerEyesHalf');
+
     switch (expression) {
       case 'smile':
+        if (layerEyesClosed) layerEyesClosed.classList.add('active');
+        if (layerEyesHalf) layerEyesHalf.classList.remove('active');
         if (eyesNormal && eyesSmile) {
           eyesNormal.style.display = 'none';
           eyesSmile.style.display = 'block';
@@ -668,6 +703,8 @@ class CharacterController {
 
       case 'shocked':
       case 'surprised':
+        if (layerEyesClosed) layerEyesClosed.classList.remove('active');
+        if (layerEyesHalf) layerEyesHalf.classList.remove('active');
         if (eyesNormal && eyesShocked) {
           eyesNormal.style.display = 'none';
           eyesShocked.style.display = 'block';
@@ -677,6 +714,8 @@ class CharacterController {
 
       case 'worried':
       case 'sad':
+        if (layerEyesClosed) layerEyesClosed.classList.remove('active');
+        if (layerEyesHalf) layerEyesHalf.classList.remove('active');
         if (sweatDrop) sweatDrop.style.display = 'block';
         break;
 
@@ -684,7 +723,8 @@ class CharacterController {
       case 'serious':
       case 'normal':
       default:
-        // eyesNormal shows by default
+        if (layerEyesClosed) layerEyesClosed.classList.remove('active');
+        if (layerEyesHalf) layerEyesHalf.classList.remove('active');
         break;
     }
   }
@@ -696,6 +736,12 @@ class CharacterController {
     const sweatDrop = this.container.querySelector('#sweatDrop');
     const blush = this.container.querySelector('#partBlush');
 
+    const layerEyesClosed = this.container.querySelector('#layerEyesClosed');
+    const layerEyesHalf = this.container.querySelector('#layerEyesHalf');
+
+    if (layerEyesClosed) layerEyesClosed.classList.remove('active');
+    if (layerEyesHalf) layerEyesHalf.classList.remove('active');
+
     if (eyesNormal) eyesNormal.style.display = 'block';
     if (eyesSmile) eyesSmile.style.display = 'none';
     if (eyesShocked) eyesShocked.style.display = 'none';
@@ -704,23 +750,80 @@ class CharacterController {
   }
 
   /* ========================================================
-     リップシンク (音声連動口パク)
+     リップシンク (音声・発話連動 多段階口パク)
      ======================================================== */
   setTalking(isTalking) {
     this.isTalking = isTalking;
+    clearTimeout(this.mouthTimer);
+
     const wrapper = this.container.querySelector('#live2dWrapper');
+    if (wrapper) {
+      if (isTalking) wrapper.classList.add('is-talking');
+      else wrapper.classList.remove('is-talking');
+    }
+
+    // 1. 画像立ち絵 多段階口パクレイヤーの制御
+    const hasImageLayers = this.container.querySelector('#layerMouthOpen');
+    if (hasImageLayers) {
+      if (isTalking) {
+        this.mouthSeqIndex = 0;
+        const stepMouth = () => {
+          if (!this.isTalking) {
+            this.resetMouthLayers();
+            return;
+          }
+
+          const stage = this.mouthSequence[this.mouthSeqIndex % this.mouthSequence.length];
+          this.mouthSeqIndex++;
+          this.setMouthStage(stage);
+
+          // 自然な音素・発話リズムのゆらぎ (80ms 〜 130ms)
+          const duration = 85 + Math.floor(Math.random() * 45);
+          this.mouthTimer = setTimeout(stepMouth, duration);
+        };
+        stepMouth();
+      } else {
+        this.resetMouthLayers();
+      }
+      return;
+    }
+
+    // 2. SVGフォールバック
     const mouthClosed = this.container.querySelector('#mouthClosed');
     const mouthOpen = this.container.querySelector('#mouthOpen');
-
-    if (!wrapper || !mouthClosed || !mouthOpen) return;
-
-    if (isTalking) {
-      wrapper.classList.add('is-talking');
-    } else {
-      wrapper.classList.remove('is-talking');
-      mouthOpen.style.display = 'none';
-      mouthClosed.style.display = 'block';
+    if (mouthClosed && mouthOpen) {
+      if (isTalking) {
+        mouthClosed.style.display = 'none';
+        mouthOpen.style.display = 'block';
+      } else {
+        mouthOpen.style.display = 'none';
+        mouthClosed.style.display = 'block';
+      }
     }
+  }
+
+  setMouthStage(stage) {
+    const s = this.container.querySelector('#layerMouthSmall');
+    const m = this.container.querySelector('#layerMouthHalf');
+    const l = this.container.querySelector('#layerMouthOpen');
+    if (!s || !m || !l) return;
+
+    // 0: 閉口 (ベース画像そのまま)
+    // 1: 微開 (mouth_small)
+    // 2: 半開 (mouth_half)
+    // 3: 全開 (mouth_open)
+    s.classList.toggle('active', stage === 1);
+    m.classList.toggle('active', stage === 2);
+    l.classList.toggle('active', stage === 3);
+  }
+
+  resetMouthLayers() {
+    const s = this.container.querySelector('#layerMouthSmall');
+    const m = this.container.querySelector('#layerMouthHalf');
+    const l = this.container.querySelector('#layerMouthOpen');
+    if (s) s.classList.remove('active');
+    if (m) m.classList.remove('active');
+    if (l) l.classList.remove('active');
   }
 
   /* ========================================================
@@ -740,14 +843,57 @@ class CharacterController {
   }
 
   /* ========================================================
-     自動まばたき (瞬き時のパーツ切り替え)
+     自動まばたき (目パチ: 中割り半目・閉眼シーケンス)
      ======================================================== */
   startBlinking() {
     clearTimeout(this.blinkTimer);
+
     const doBlink = () => {
+      // 笑顔(`smile`)で目を閉じている時や、驚き時は瞬きを抑制
+      if (this.currentExpression === 'smile' || this.currentExpression === 'shocked') {
+        this.blinkTimer = setTimeout(doBlink, 2500);
+        return;
+      }
+
+      // 1. 画像立ち絵 目パチレイヤー
+      const eyesHalf = this.container.querySelector('#layerEyesHalf');
+      const eyesClosed = this.container.querySelector('#layerEyesClosed');
+
+      if (eyesHalf && eyesClosed) {
+        // Step 1: 半目 (40ms)
+        eyesHalf.classList.add('active');
+
+        setTimeout(() => {
+          // Step 2: 完全閉眼 (85ms)
+          eyesHalf.classList.remove('active');
+          eyesClosed.classList.add('active');
+
+          setTimeout(() => {
+            // Step 3: 中割り半目 (40ms)
+            eyesClosed.classList.remove('active');
+            eyesHalf.classList.add('active');
+
+            setTimeout(() => {
+              // Step 4: 完全開眼 (全非表示)
+              eyesHalf.classList.remove('active');
+
+              // 15%の確率で「二重瞬き（パチパチっ）」を連続実行
+              if (Math.random() < 0.15) {
+                setTimeout(doBlink, 120);
+                return;
+              }
+            }, 40);
+          }, 85);
+        }, 40);
+
+        const nextTime = 2600 + Math.random() * 3200;
+        this.blinkTimer = setTimeout(doBlink, nextTime);
+        return;
+      }
+
+      // 2. SVGフォールバック
       const eyesNormal = this.container.querySelector('#eyesNormal');
       const eyesSmile = this.container.querySelector('#eyesSmile');
-
       if (this.currentExpression === 'normal' && eyesNormal && eyesSmile) {
         eyesNormal.style.display = 'none';
         eyesSmile.style.display = 'block';
@@ -764,7 +910,7 @@ class CharacterController {
       this.blinkTimer = setTimeout(doBlink, nextTime);
     };
 
-    this.blinkTimer = setTimeout(doBlink, 2500);
+    this.blinkTimer = setTimeout(doBlink, 2200);
   }
 
   /* ========================================================

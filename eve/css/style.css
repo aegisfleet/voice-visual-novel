@@ -381,7 +381,7 @@ html, body {
   height: 100%;
 }
 
-/* 高精細立ち絵スプライト */
+/* 高精細立ち絵スプライト＆表情差分レイヤー */
 .char-sprite-container {
   position: relative;
   width: 100%;
@@ -391,15 +391,58 @@ html, body {
   align-items: flex-end;
 }
 
-.char-sprite-img {
+.char-layers-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+}
+
+.char-sprite-img,
+.char-diff-layer {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
   width: 100%;
   height: 100%;
   object-fit: contain;
   object-position: bottom center;
+  pointer-events: none;
 }
 
-/* イブ: 半透明ホログラムスクリーン合成 */
-.char-img-holo .char-sprite-img {
+.char-layer-base {
+  position: relative;
+  left: 0;
+  transform: none;
+  z-index: 1;
+}
+
+/* 目パチ・口パク差分レイヤー */
+.char-diff-layer {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.035s linear;
+  will-change: opacity;
+}
+
+.char-diff-layer.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.char-eyes-layer {
+  z-index: 2;
+}
+
+.char-mouth-layer {
+  z-index: 3;
+}
+
+/* イブ: 半透明ホログラムスクリーン合成（レイヤーラッパー全体に適用） */
+.char-img-holo .char-layers-wrapper {
   mix-blend-mode: screen;
   filter: drop-shadow(0 0 25px rgba(45, 212, 191, 0.85)) brightness(1.1);
   animation: holoJitter 4s ease-in-out infinite alternate;
@@ -410,10 +453,14 @@ html, body {
   100% { opacity: 0.92; filter: drop-shadow(0 0 20px rgba(45, 212, 191, 0.7)) brightness(1.08); }
 }
 
-/* アイリス・サクマ・シノハラ: 透過PNG立ち絵合成 */
-.char-img-solid .char-sprite-img {
+/* アイリス・サクマ・シノハラ: 透過PNG立ち絵合成（ラッパー全体にドロップシャドウを適用し、内部レイヤーの境界影を根絶） */
+.char-img-solid .char-layers-wrapper {
   filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.85)) drop-shadow(0 0 6px rgba(0, 243, 255, 0.2));
   transition: transform 0.3s ease;
+}
+
+.char-diff-layer {
+  filter: none !important;
 }
 
 /* イブの周囲を浮遊するホログラムリングエフェクト */
