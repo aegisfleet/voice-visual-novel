@@ -361,5 +361,20 @@
       <a href="index.html" class="back-link">← ゲーム本編へ戻る</a>
     </div>
   </div>
+
+  <script>
+    // 試聴音源の排他制御: いずれかの音声が再生されたら、他の再生中音声を停止・リセット
+    document.addEventListener('play', (e) => {
+      if (e.target && e.target.tagName === 'AUDIO') {
+        const allAudios = document.querySelectorAll('audio');
+        allAudios.forEach((audio) => {
+          if (audio !== e.target && !audio.paused) {
+            audio.pause();
+            audio.currentTime = 0;
+          }
+        });
+      }
+    }, true);
+  </script>
 </body>
 </html>

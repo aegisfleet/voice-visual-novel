@@ -27,7 +27,7 @@ class AudioController {
     // BGM管理
     this.currentBGM = null;
     this.currentBGMUrl = null;
-    this.bgmVolume = 0.28;
+    this.bgmVolume = 0.15;
     this.isMuted = false;
     this.pendingBGMUrl = null;
 
