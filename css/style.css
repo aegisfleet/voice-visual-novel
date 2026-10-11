@@ -1,0 +1,459 @@
+/* ========================================================
+   スタイルシート: フル音声Live2D風テキストノベルゲーム
+   ======================================================== */
+
+:root {
+  --primary-color: #ff6a88;
+  --secondary-color: #3a405a;
+  --dialog-bg: rgba(22, 27, 46, 0.88);
+  --dialog-border: rgba(255, 255, 255, 0.15);
+  --text-color: #ffffff;
+  --speaker-bg: linear-gradient(135deg, #ff9a8b 0%, #ff6a88 100%);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  user-select: none;
+}
+
+body {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background-color: #0b0c10;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* ゲームコンテナ (16:9比率を維持) */
+#gameViewport {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  max-width: 1920px;
+  max-height: 1080px;
+  overflow: hidden;
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);
+}
+
+/* ========================================================
+   タイトル画面
+   ======================================================== */
+.title-screen {
+  position: absolute;
+  inset: 0;
+  z-index: 100;
+  background: radial-gradient(circle at center, #2e1a38 0%, #0d0914 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  transition: opacity 0.5s ease;
+}
+
+.title-screen.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.title-logo {
+  font-size: 3rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  background: linear-gradient(135deg, #ff9a8b, #ff6a88, #ff99ac);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 12px;
+  text-shadow: 0 0 30px rgba(255, 106, 136, 0.4);
+}
+
+.title-sub {
+  font-size: 1.1rem;
+  color: #c9b1d6;
+  margin-bottom: 40px;
+}
+
+.start-btn {
+  padding: 16px 48px;
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #fff;
+  background: var(--speaker-bg);
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  box-shadow: 0 8px 25px rgba(255, 106, 136, 0.5);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.start-btn:hover {
+  transform: scale(1.06);
+  box-shadow: 0 12px 30px rgba(255, 106, 136, 0.7);
+}
+
+.start-notice {
+  margin-top: 25px;
+  font-size: 0.85rem;
+  color: #9a8ca6;
+}
+
+/* ========================================================
+   ゲーム画面
+   ======================================================== */
+.game-screen {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+}
+
+.game-screen.hidden {
+  display: none;
+}
+
+/* 背景レイヤー */
+.bg-layer {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  transition: background-image 0.8s ease-in-out;
+  z-index: 1;
+}
+
+/* キャラクター配置レイヤー */
+.character-layer {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  z-index: 5;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+/* Live2D風 キャラクターラッパー */
+.live2d-character-wrapper {
+  position: relative;
+  width: 540px;
+  height: 864px;
+  transform-origin: bottom center;
+  /* Live2Dアイドリング（呼吸モーション） */
+  animation: breathing 4.5s ease-in-out infinite;
+}
+
+.character-svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 15px 25px rgba(0, 0, 0, 0.4));
+}
+
+/* アイドリング呼吸アニメーション */
+@keyframes breathing {
+  0%, 100% {
+    transform: translateY(0px) scale(1, 1);
+  }
+  50% {
+    transform: translateY(-8px) scale(1.015, 1.01);
+  }
+}
+
+/* 呼吸時の体・頭の自然な連動 */
+.part-body {
+  transform-origin: 250px 480px;
+  animation: bodyBreathe 4.5s ease-in-out infinite;
+}
+@keyframes bodyBreathe {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(1.012); }
+}
+
+.hair-ahoge {
+  transform-origin: 250px 155px;
+  animation: ahogeSway 3s ease-in-out infinite;
+}
+@keyframes ahogeSway {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(4deg); }
+}
+
+/* まばたきアニメーション */
+.blink-active .eye-white,
+.blink-active .eye-iris,
+.blink-active .eye-pupil,
+.blink-active .eye-highlight1,
+.blink-active .eye-highlight2 {
+  transform-origin: 250px 245px;
+  transform: scaleY(0.08);
+}
+
+/* リップシンク（音声再生中の口開閉） */
+.is-talking #mouthClosed {
+  display: none !important;
+}
+.is-talking #mouthOpen {
+  display: block !important;
+  transform-origin: 250px 290px;
+  animation: lipSync 0.22s ease-in-out infinite alternate;
+}
+@keyframes lipSync {
+  0% { transform: scaleY(0.2) scaleX(0.85); }
+  100% { transform: scaleY(1.15) scaleX(1.05); }
+}
+
+/* モーションアクション */
+.motion-nod {
+  animation: motionNod 0.6s ease-in-out !important;
+}
+@keyframes motionNod {
+  0%, 100% { transform: translateY(0); }
+  40% { transform: translateY(22px); }
+  70% { transform: translateY(-5px); }
+}
+
+.motion-hop {
+  animation: motionHop 0.5s ease-out !important;
+}
+@keyframes motionHop {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-38px); }
+}
+
+.motion-tilt {
+  animation: motionTilt 0.8s ease-in-out !important;
+}
+@keyframes motionTilt {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(3.5deg) translateY(-8px); }
+}
+
+.motion-shake {
+  animation: motionShake 0.6s ease-in-out !important;
+}
+@keyframes motionShake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-14px) rotate(-1.5deg); }
+  75% { transform: translateX(14px) rotate(1.5deg); }
+}
+
+/* ========================================================
+   UIレイヤー (ダイアログ, コントロール)
+   ======================================================== */
+.ui-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  pointer-events: none;
+}
+
+/* 上部コントロールバー */
+.controls-bar {
+  position: absolute;
+  top: 20px;
+  right: 25px;
+  display: flex;
+  gap: 12px;
+  pointer-events: auto;
+}
+
+.ctrl-btn {
+  background: rgba(18, 22, 36, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  padding: 8px 18px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  transition: all 0.2s;
+}
+
+.ctrl-btn:hover {
+  background: rgba(255, 106, 136, 0.4);
+  border-color: rgba(255, 106, 136, 0.8);
+}
+
+.ctrl-btn.active {
+  background: var(--primary-color);
+  border-color: #fff;
+}
+
+/* メッセージウィンドウ (ダイアログボックス) */
+.dialog-box {
+  position: absolute;
+  bottom: 25px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 60px);
+  max-width: 1200px;
+  min-height: 180px;
+  background: var(--dialog-bg);
+  border: 2px solid var(--dialog-border);
+  border-radius: 18px;
+  padding: 30px 40px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(14px);
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.speaker-box {
+  position: absolute;
+  top: -24px;
+  left: 35px;
+  background: var(--speaker-bg);
+  padding: 8px 24px;
+  border-radius: 25px;
+  color: #fff;
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  box-shadow: 0 4px 15px rgba(255, 106, 136, 0.4);
+}
+
+.message-text {
+  font-size: 1.35rem;
+  line-height: 1.8;
+  color: var(--text-color);
+  min-height: 3.6em;
+  word-break: break-all;
+}
+
+/* 次送り矢印 */
+.next-indicator {
+  position: absolute;
+  bottom: 20px;
+  right: 35px;
+  font-size: 1.3rem;
+  color: var(--primary-color);
+  animation: bounce 1.2s infinite;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(6px); }
+}
+
+/* ========================================================
+   選択肢オーバーレイ
+   ======================================================== */
+.choices-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 40;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+
+.choices-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.choices-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  width: 90%;
+  max-width: 520px;
+}
+
+.choice-button {
+  padding: 16px 28px;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #fff;
+  background: rgba(26, 32, 53, 0.9);
+  border: 2px solid rgba(255, 154, 139, 0.5);
+  border-radius: 14px;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  transition: all 0.25s;
+}
+
+.choice-button:hover {
+  background: var(--speaker-bg);
+  border-color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 106, 136, 0.4);
+}
+
+/* ========================================================
+   バックログ モーダル
+   ======================================================== */
+.log-modal {
+  position: absolute;
+  inset: 0;
+  background: rgba(11, 12, 16, 0.92);
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  padding: 40px;
+  backdrop-filter: blur(16px);
+}
+
+.log-modal.hidden {
+  display: none;
+}
+
+.log-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #fff;
+  font-size: 1.5rem;
+  font-weight: bold;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 15px;
+  margin-bottom: 20px;
+}
+
+.btn-close-log {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1.8rem;
+  cursor: pointer;
+}
+
+.log-content {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.log-item {
+  background: rgba(255, 255, 255, 0.04);
+  padding: 16px 20px;
+  border-radius: 10px;
+  border-left: 4px solid var(--primary-color);
+}
+
+.log-speaker {
+  font-weight: bold;
+  color: var(--primary-color);
+  font-size: 1rem;
+  margin-bottom: 6px;
+}
+
+.log-text {
+  color: #e0e0e0;
+  font-size: 1.1rem;
+  line-height: 1.6;
+}

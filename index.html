@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Voice Visual Novel - Live2D Prototype</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <div id="gameViewport">
+    <!-- 1. タイトル画面 -->
+    <div id="titleScreen" class="title-screen">
+      <h1 class="title-logo">PROJECT VOICE NOVEL</h1>
+      <p class="title-sub">Web Speech API &amp; Live2D Prototype</p>
+      <button id="btnStart" class="start-btn">ゲームスタート</button>
+      <p class="start-notice">※クリックすると音声の読み上げが有効になります</p>
+    </div>
+
+    <!-- 2. ゲーム画面 -->
+    <div id="gameScreen" class="game-screen hidden">
+      <!-- 背景レイヤー -->
+      <div id="bgLayer" class="bg-layer"></div>
+
+      <!-- キャラクターレイヤー (Live2D風立ち絵) -->
+      <div id="characterContainer" class="character-layer"></div>
+
+      <!-- UIレイヤー -->
+      <div class="ui-layer">
+        <!-- 上部コントロールメニュー -->
+        <div class="controls-bar">
+          <button id="btnAuto" class="ctrl-btn">AUTO</button>
+          <button id="btnLog" class="ctrl-btn">LOG</button>
+        </div>
+
+        <!-- 選択肢オーバーレイ -->
+        <div id="choicesOverlay" class="choices-overlay">
+          <div id="choicesList" class="choices-list"></div>
+        </div>
+
+        <!-- メッセージダイアログ -->
+        <div id="dialogBox" class="dialog-box">
+          <div id="speakerBox" class="speaker-box">
+            <span id="speakerName">キャラクター名</span>
+          </div>
+          <div id="messageText" class="message-text"></div>
+          <div id="nextIndicator" class="next-indicator">▼</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. バックログモーダル -->
+    <div id="logModal" class="log-modal hidden">
+      <div class="log-header">
+        <span>バックログ</span>
+        <button id="btnCloseLog" class="btn-close-log">&times;</button>
+      </div>
+      <div id="logContent" class="log-content"></div>
+    </div>
+  </div>
+
+  <!-- スクリプト読み込み -->
+  <script src="js/audio-controller.js"></script>
+  <script src="js/character-controller.js"></script>
+  <script src="js/scenario.js"></script>
+  <script src="js/game-engine.js"></script>
+  <script>
+    // ゲーム初期化
+    window.addEventListener('DOMContentLoaded', () => {
+      window.game = new GameEngine(window.SCENARIO_DATA);
+    });
+  </script>
+</body>
+</html>
