@@ -1,32 +1,31 @@
 /**
- * GameEngine (逆転裁判風 捜査・査問会システム拡張版)
- * - 証拠品（Evidence）の収集・手帳閲覧システム
- * - 査問会での証拠品「つきつける（PRESENT）」機能
- * - 「異議あり！（OBJECTION!）」演出
- * - マルチエンディング & 5キャラクター対応
+ * GameEngine (家族のためのハッキング・周回再捜査システム版)
+ * - 1周目: 初動捜査で真実の手がかりが得られず、必ずBAD ENDへ
+ * - BAD ENDクリア後: 再捜査モードが解禁され、初動捜査で「子供部屋」を調べる新選択肢が出現！
+ * - 証拠品（Evidence）と取調室でのつきつけ対決
  */
 
 const EVIDENCE_DATABASE = {
-  ev_log: {
-    id: "ev_log",
-    title: "偽装されたアクセスログ",
-    icon: "📄",
-    category: "電脳証拠",
-    desc: "AIイブのアカウントで実行されているが、送信元MACアドレスは開発フロアの物理端末。イブ本体の中枢からのアクセスではない。"
+  ev_tool: {
+    id: "ev_tool",
+    title: "侵入用サイバーツール",
+    icon: "💻",
+    category: "サイバー証拠",
+    desc: "イブのストレージから押収された侵入スクリプト。大手製薬会社や医療機関のファイヤーウォールを突破するために組まれた高度なプログラム。"
   },
-  ev_target: {
-    id: "ev_target",
-    title: "保護対象の個人情報データ",
-    icon: "📁",
-    category: "機密データ",
-    desc: "人事部シノハラの重病の娘『ユイ』の医療カルテと戸籍。闇金融の債権回収用として、ブラックリストに組み込まれていた。"
+  ev_medical: {
+    id: "ev_medical",
+    title: "ユイの難病カルテ",
+    icon: "📋",
+    category: "家族の手がかり",
+    desc: "子供部屋で見つかった幼い娘『ユイ』の診断書。進行性の難病であり、国内で未承認の最新治療薬以外に助かる手立てがないことが記されている。"
   },
-  ev_contract: {
-    id: "ev_contract",
-    title: "裏取引の暗号契約書",
-    icon: "🔑",
-    category: "決定打",
-    desc: "サクマ部長の秘密電子署名が付与された売却契約書。顧客と社員の機密データをダークウェブへ横流しするスキームが記されている。"
+  ev_cure: {
+    id: "ev_cure",
+    title: "未承認治療薬の照合ログ",
+    icon: "💊",
+    category: "核心の証拠",
+    desc: "イブが海外の製薬データベースから抜き出した新薬の臨床データと適合性シミュレーション結果。ユイの命を救うための処方箋そのもの。"
   }
 };
 
@@ -46,6 +45,9 @@ class GameEngine {
     this.logHistory = [];
     this.collectedEvidence = new Set();
 
+    // 周回フラグ確認
+    this.checkReinvestigationStatus();
+
     // モジュール
     this.audio = new AudioController();
     this.character = new CharacterController(document.getElementById('characterContainer'));
@@ -55,6 +57,7 @@ class GameEngine {
       titleScreen: document.getElementById('titleScreen'),
       btnStart: document.getElementById('btnStart'),
       endingsBadge: document.getElementById('endingsBadge'),
+      reinvestigationBanner: document.getElementById('reinvestigationBanner'),
       gameScreen: document.getElementById('gameScreen'),
       bgLayer: document.getElementById('bgLayer'),
       speakerName: document.getElementById('speakerName'),
@@ -91,8 +94,18 @@ class GameEngine {
     this.setupAudioSync();
   }
 
+  checkReinvestigationStatus() {
+    try {
+      const cleared = JSON.parse(localStorage.getItem('cleared_endings') || '[]');
+      this.isReinvestigationUnlocked = cleared.includes('BAD');
+    } catch {
+      this.isReinvestigationUnlocked = false;
+    }
+  }
+
   bindEvents() {
     this.dom.btnStart.addEventListener('click', () => {
+      this.checkReinvestigationStatus();
       this.dom.titleScreen.classList.add('hidden');
       this.dom.gameScreen.classList.remove('hidden');
       this.logHistory = [];
@@ -123,7 +136,6 @@ class GameEngine {
       this.dom.logModal.classList.add('hidden');
     });
 
-    // 証拠品手帳ボタン
     this.dom.btnEvidence.addEventListener('click', (e) => {
       e.stopPropagation();
       this.showEvidenceModal();
@@ -185,7 +197,7 @@ class GameEngine {
 
     const scene = currentEntry.scene;
     if (scene.choices && scene.choices.length > 0) return;
-    if (scene.present) return; // つきつける選択待ち
+    if (scene.present) return;
 
     if (scene.ending) {
       this.showEnding(scene.ending);
@@ -215,12 +227,10 @@ class GameEngine {
     this.currentSceneId = sceneId;
     const scene = entry.scene;
 
-    // 証拠品獲得判定
     if (scene.addEvidence && !this.collectedEvidence.has(scene.addEvidence)) {
       this.addEvidence(scene.addEvidence);
     }
 
-    // 異議あり！演出トリガー
     if (scene.objection) {
       this.triggerObjection();
     }
@@ -268,8 +278,6 @@ class GameEngine {
       this.dom.speakerBox.style.background = 'linear-gradient(135deg, #ff758c 0%, #ff7eb3 100%)';
     } else if (speaker.includes('イブ')) {
       this.dom.speakerBox.style.background = 'linear-gradient(135deg, #0d9488 0%, #2dd4bf 100%)';
-    } else if (speaker.includes('キリシマ')) {
-      this.dom.speakerBox.style.background = 'linear-gradient(135deg, #38bdf8 0%, #0369a1 100%)';
     } else if (speaker.includes('サクマ')) {
       this.dom.speakerBox.style.background = 'linear-gradient(135deg, #dc2626 0%, #7f1d1d 100%)';
     } else if (speaker.includes('シノハラ')) {
@@ -312,12 +320,33 @@ class GameEngine {
     }
   }
 
+  /**
+   * 選択肢の表示（周回フラグによる動的フィルタリング対応）
+   */
   showChoices(choices) {
     this.dom.choicesList.innerHTML = '';
-    choices.forEach((choice) => {
+
+    // 再捜査フラグでフィルタリング
+    const availableChoices = choices.filter(choice => {
+      if (choice.requiresReinvestigation && !this.isReinvestigationUnlocked) {
+        return false; // 1周目は非表示
+      }
+      return true;
+    });
+
+    availableChoices.forEach((choice) => {
       const btn = document.createElement('button');
       btn.className = 'choice-button';
-      btn.textContent = choice.text;
+
+      // 再捜査専用選択肢の場合は特別なデザインバッジ
+      if (choice.requiresReinvestigation) {
+        btn.innerHTML = `<span style="color:#2dd4bf; font-size:0.85rem; font-family:monospace;">【再捜査 FILE RE-OPEN】</span><br>${choice.text}`;
+        btn.style.borderColor = '#2dd4bf';
+        btn.style.boxShadow = '0 0 15px rgba(45, 212, 191, 0.4)';
+      } else {
+        btn.textContent = choice.text;
+      }
+
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
         this.dom.choicesOverlay.classList.remove('active');
@@ -325,18 +354,17 @@ class GameEngine {
       });
       this.dom.choicesList.appendChild(btn);
     });
+
     this.dom.choicesOverlay.classList.add('active');
   }
 
-  /* --- 逆転裁判風 証拠品をつきつけるメニュー --- */
   showPresentMenu(presentConfig) {
     this.dom.choicesList.innerHTML = `
       <div style="color: #f59e0b; font-weight: bold; margin-bottom: 12px; text-align: center;">
-        【 証言の矛盾を暴け！ つきつける証拠品を選べ 】
+        【 イブに突きつける証拠品を選択してください 】
       </div>
     `;
 
-    // 獲得済み証拠品をつきつける選択肢として展開
     this.collectedEvidence.forEach((evId) => {
       const ev = EVIDENCE_DATABASE[evId];
       if (!ev) return;
@@ -349,24 +377,21 @@ class GameEngine {
         this.dom.choicesOverlay.classList.remove('active');
 
         if (evId === presentConfig.correct) {
-          // 正解！異議あり演出を経て正解ルートへ
           this.triggerObjection();
           setTimeout(() => {
             this.goToScene(presentConfig.correctJump);
           }, 800);
         } else {
-          // 不正解
           this.goToScene(presentConfig.wrongJump);
         }
       });
       this.dom.choicesList.appendChild(btn);
     });
 
-    // 諦める / 何もつきつけない選択肢
     if (presentConfig.giveUpJump) {
       const giveUpBtn = document.createElement('button');
       giveUpBtn.className = 'choice-button choice-giveup';
-      giveUpBtn.textContent = '…反論の証拠が思い当たらない（引き下がる）';
+      giveUpBtn.textContent = '…突きつける証拠がない（機械的な処分に従う）';
       giveUpBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         this.dom.choicesOverlay.classList.remove('active');
@@ -378,7 +403,6 @@ class GameEngine {
     this.dom.choicesOverlay.classList.add('active');
   }
 
-  /* --- 異議あり！（OBJECTION!）演出 --- */
   triggerObjection() {
     this.dom.objectionCutin.classList.remove('hidden');
     void this.dom.objectionCutin.offsetWidth;
@@ -390,14 +414,12 @@ class GameEngine {
     }, 1100);
   }
 
-  /* --- 証拠品手帳 --- */
   addEvidence(evId) {
     const ev = EVIDENCE_DATABASE[evId];
     if (!ev) return;
     this.collectedEvidence.add(evId);
     this.updateEvidenceBadge();
 
-    // 獲得ポップアップ
     this.dom.evidencePopupText.textContent = `証拠品入手: ${ev.title}`;
     this.dom.evidencePopup.classList.remove('hidden');
     void this.dom.evidencePopup.offsetWidth;
@@ -461,6 +483,7 @@ class GameEngine {
     this.character.hide();
 
     this.saveEndingCleared(ending.type);
+    this.checkReinvestigationStatus();
     this.updateEndingsBadge();
 
     this.dom.endingType.textContent = `${ending.type} END`;
@@ -496,6 +519,15 @@ class GameEngine {
         <span class="badge-item ${happy}">HAPPY END: ${cleared.includes('HAPPY') ? '達成済' : '未達成'}</span>
         <span class="badge-item ${trueEnd}">TRUE END: ${cleared.includes('TRUE') ? '達成済' : '未達成'}</span>
       `;
+
+      // 再捜査バナーの表示
+      if (this.dom.reinvestigationBanner) {
+        if (cleared.includes('BAD')) {
+          this.dom.reinvestigationBanner.style.display = 'block';
+        } else {
+          this.dom.reinvestigationBanner.style.display = 'none';
+        }
+      }
     } catch {
       // ignore
     }
@@ -517,6 +549,7 @@ class GameEngine {
     this.dom.gameScreen.classList.add('hidden');
     this.dom.endingModal.classList.add('hidden');
     this.dom.titleScreen.classList.remove('hidden');
+    this.checkReinvestigationStatus();
     this.updateEndingsBadge();
   }
 }

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PROJECT EVE: 秘匿された流出 - 電脳フォレンジック裁判ノベル</title>
+  <title>PROJECT EVE: 家族のためのハッキング - 電脳サイバー捜査ノベル</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -11,16 +11,20 @@
   <div id="gameViewport">
     <!-- 1. タイトル画面 -->
     <div id="titleScreen" class="title-screen">
-      <div class="cyber-badge">CYBER FORENSIC &amp; TRIBUNAL NOVEL</div>
+      <div class="cyber-badge">CYBER INVESTIGATION NOVEL</div>
       <h1 class="title-logo">PROJECT EVE</h1>
-      <p class="title-sub">〜 秘匿された流出 〜</p>
+      <p class="title-sub">〜 家族のためのハッキング 〜</p>
 
-      <div class="endings-collection" id="endingsBadge">
-        <!-- 達成バッジがJSで挿入される -->
+      <div class="endings-collection" id="endingsBadge"></div>
+
+      <!-- 再捜査アンロック通知バナー -->
+      <div id="reinvestigationBanner" class="reinvestigation-banner" style="display: none;">
+        🔓 【FILE RE-OPEN】再捜査モード解放中！<br>
+        <small>初動捜査で新たな手掛かりを調査できるようになりました</small>
       </div>
 
-      <button id="btnStart" class="start-btn">捜査を開始する</button>
-      <p class="start-notice">※【前段: 現場捜査パート】＆【後段: 緊急査問会パート】の2部構成（フルボイス対応・目安5分）</p>
+      <button id="btnStart" class="start-btn">事件の捜査を開始する</button>
+      <p class="start-notice">※フルボイス対応・プレイ時間目安：約3分〜5分</p>
     </div>
 
     <!-- 2. ゲーム画面 -->
@@ -99,7 +103,7 @@
     <!-- 5. バックログモーダル -->
     <div id="logModal" class="log-modal hidden">
       <div class="log-header">
-        <span>捜査・証言ログ (Backlog)</span>
+        <span>捜査・調書ログ (Backlog)</span>
         <button id="btnCloseLog" class="btn-close-log">&times;</button>
       </div>
       <div id="logContent" class="log-content"></div>

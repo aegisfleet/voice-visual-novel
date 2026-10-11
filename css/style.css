@@ -1,5 +1,5 @@
 /* ========================================================
-   スタイルシート: 電脳フォレンジック裁判ノベル 『PROJECT EVE』
+   スタイルシート: 電脳サイバー捜査ノベル 『PROJECT EVE』
    ======================================================== */
 
 :root {
@@ -88,13 +88,13 @@ body {
   font-size: 1.3rem;
   letter-spacing: 0.12em;
   color: #94a3b8;
-  margin-bottom: 30px;
+  margin-bottom: 25px;
 }
 
 .endings-collection {
   display: flex;
   gap: 12px;
-  margin-bottom: 35px;
+  margin-bottom: 20px;
 }
 
 .badge-item {
@@ -113,6 +113,24 @@ body {
   color: #00f3ff;
   font-weight: bold;
   box-shadow: 0 0 10px rgba(0, 243, 255, 0.3);
+}
+
+/* 再捜査バナー */
+.reinvestigation-banner {
+  background: rgba(45, 212, 191, 0.15);
+  border: 2px solid #2dd4bf;
+  color: #2dd4bf;
+  padding: 12px 28px;
+  border-radius: 12px;
+  margin-bottom: 25px;
+  font-weight: bold;
+  text-align: center;
+  box-shadow: 0 0 20px rgba(45, 212, 191, 0.4);
+  animation: pulseReinvest 2s infinite alternate;
+}
+@keyframes pulseReinvest {
+  0% { transform: scale(1); box-shadow: 0 0 15px rgba(45, 212, 191, 0.3); }
+  100% { transform: scale(1.02); box-shadow: 0 0 30px rgba(45, 212, 191, 0.7); }
 }
 
 .start-btn {
@@ -218,7 +236,6 @@ body {
   50% { transform: rotate(4deg); }
 }
 
-/* まばたき */
 .blink-active .eye-white,
 .blink-active .eye-iris,
 .blink-active .eye-pupil,
@@ -227,7 +244,6 @@ body {
   transform: scaleY(0.08);
 }
 
-/* リップシンク */
 .is-talking #mouthClosed {
   display: none !important;
 }
@@ -241,7 +257,6 @@ body {
   100% { transform: scaleY(1.15) scaleX(1.05); }
 }
 
-/* モーション */
 .motion-nod { animation: motionNod 0.6s ease-in-out !important; }
 @keyframes motionNod {
   0%, 100% { transform: translateY(0); }
