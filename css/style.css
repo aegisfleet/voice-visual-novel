@@ -539,6 +539,17 @@ html, body {
   box-shadow: 0 0 10px rgba(0, 243, 255, 0.4);
 }
 
+.sound-btn {
+  font-size: 0.95rem;
+  padding: 6px 10px;
+}
+
+.sound-btn.muted {
+  opacity: 0.6;
+  border-color: rgba(239, 68, 68, 0.5);
+  background: rgba(239, 68, 68, 0.15);
+}
+
 .evidence-btn {
   display: flex;
   align-items: center;

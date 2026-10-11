@@ -24,6 +24,13 @@ class AudioController {
     this.audioCtx = null;
     this.isAudioUnlocked = false;
 
+    // BGM管理
+    this.currentBGM = null;
+    this.currentBGMUrl = null;
+    this.bgmVolume = 0.28;
+    this.isMuted = false;
+    this.pendingBGMUrl = null;
+
     // 音声ファイルの自動検知・再生を有効化
     this.hasAudioFilesInstalled = true;
 
@@ -55,6 +62,12 @@ class AudioController {
     }
 
     this.isAudioUnlocked = true;
+
+    // 保留されていたBGMがあれば再生
+    if (this.pendingBGMUrl) {
+      this.playBGM(this.pendingBGMUrl);
+      this.pendingBGMUrl = null;
+    }
   }
 
   /**
@@ -418,6 +431,119 @@ class AudioController {
         this.synth.cancel();
       } catch (e) {}
     }
+  }
+
+  /* ========================================================
+     BGM再生・制御 (Lyria 3 生成トラック連動)
+     ======================================================== */
+
+  /**
+   * BGM再生 (同一トラックは継続、新トラックはスムーズにクロスフェード)
+   */
+  playBGM(url, loop = true) {
+    if (!url) return;
+    if (this.currentBGMUrl === url && this.currentBGM && !this.currentBGM.paused) {
+      return; // 既に同じ曲が再生中
+    }
+
+    const previousBGM = this.currentBGM;
+    this.currentBGMUrl = url;
+
+    // 前のBGMをスムーズにフェードアウト
+    if (previousBGM) {
+      let fadeOutVol = previousBGM.volume;
+      const fadeOutStep = fadeOutVol / 10;
+      const fadeOutTimer = setInterval(() => {
+        fadeOutVol = Math.max(0, fadeOutVol - fadeOutStep);
+        try {
+          previousBGM.volume = fadeOutVol;
+        } catch (e) {}
+        if (fadeOutVol <= 0.01) {
+          clearInterval(fadeOutTimer);
+          previousBGM.pause();
+          previousBGM.currentTime = 0;
+        }
+      }, 40);
+    }
+
+    const newBGM = new Audio(url);
+    newBGM.loop = loop;
+    const targetVol = this.isMuted ? 0 : this.bgmVolume;
+    newBGM.volume = 0; // フェードイン開始
+
+    this.currentBGM = newBGM;
+
+    const playPromise = newBGM.play();
+    if (playPromise !== undefined) {
+      playPromise.then(() => {
+        // フェードイン (約500ms)
+        let currentVol = 0;
+        const fadeInStep = Math.max(0.01, targetVol / 12);
+        const fadeInTimer = setInterval(() => {
+          currentVol = Math.min(targetVol, currentVol + fadeInStep);
+          try {
+            if (this.currentBGM === newBGM) {
+              newBGM.volume = this.isMuted ? 0 : currentVol;
+            }
+          } catch (e) {}
+          if (currentVol >= targetVol || this.currentBGM !== newBGM) {
+            clearInterval(fadeInTimer);
+          }
+        }, 40);
+      }).catch((err) => {
+        // ブラウザの自動再生ブロック時は保留
+        console.warn("BGM autoplay blocked or failed, pending unlock:", err);
+        this.pendingBGMUrl = url;
+      });
+    }
+  }
+
+  /**
+   * BGMフェードアウト停止
+   */
+  stopBGM(fadeDuration = 500) {
+    if (!this.currentBGM) return;
+    const bgm = this.currentBGM;
+    this.currentBGM = null;
+    this.currentBGMUrl = null;
+
+    let vol = bgm.volume;
+    const steps = 10;
+    const stepDuration = Math.max(20, Math.floor(fadeDuration / steps));
+    const volStep = vol / steps;
+
+    const timer = setInterval(() => {
+      vol = Math.max(0, vol - volStep);
+      try {
+        bgm.volume = vol;
+      } catch (e) {}
+      if (vol <= 0.01) {
+        clearInterval(timer);
+        bgm.pause();
+        bgm.currentTime = 0;
+      }
+    }, stepDuration);
+  }
+
+  /**
+   * BGM音量設定 (0.0 〜 1.0)
+   */
+  setBGMVolume(vol) {
+    this.bgmVolume = Math.max(0, Math.min(1, vol));
+    if (this.currentBGM && !this.isMuted) {
+      this.currentBGM.volume = this.bgmVolume;
+    }
+  }
+
+  /**
+   * ミュート切り替え (BGM・効果音)
+   */
+  toggleMute() {
+    this.isMuted = !this.isMuted;
+    if (this.currentBGM) {
+      this.currentBGM.volume = this.isMuted ? 0 : this.bgmVolume;
+    }
+    return this.isMuted;
   }
 }
 

@@ -79,6 +79,7 @@ class GameEngine {
       btnTitle: document.getElementById('btnTitle'),
       btnEvidence: document.getElementById('btnEvidence'),
       evidenceBadgeCount: document.getElementById('evidenceBadgeCount'),
+      btnSound: document.getElementById('btnSound'),
       evidenceModal: document.getElementById('evidenceModal'),
       evidenceList: document.getElementById('evidenceList'),
       evidenceDetail: document.getElementById('evidenceDetail'),
@@ -113,10 +114,21 @@ class GameEngine {
   }
 
   bindEvents() {
-    // タイトル開始 (モバイル音声アンロック)
+    // サウンド切替 (BGM/SE ミュート)
+    if (this.dom.btnSound) {
+      this.dom.btnSound.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isMuted = this.audio.toggleMute();
+        this.dom.btnSound.textContent = isMuted ? '🔇' : '🔊';
+        this.dom.btnSound.classList.toggle('muted', isMuted);
+      });
+    }
+
+    // タイトル開始 (モバイル音声アンロック ＆ BGM開始)
     this.dom.btnStart.addEventListener('click', () => {
       this.audio.unlockAudio();
       this.audio.playClickSound();
+      this.audio.playBGM("assets/audio/bgm_title.mp3");
       if (this.fx) this.fx.triggerFlash([0.0, 0.95, 1.0], 0.7, 300);
 
       this.checkReinvestigationStatus();
@@ -309,6 +321,13 @@ class GameEngine {
       speaker: scene.speaker || '状況',
       text: scene.text
     });
+
+    // BGM切り替え (Lyria 3 生成音源)
+    if (scene.bgm) {
+      this.audio.playBGM(scene.bgm);
+    } else if (scene.bgm === null || scene.bgm === 'stop') {
+      this.audio.stopBGM();
+    }
 
     // 背景切り替え
     if (scene.background) {
@@ -736,6 +755,7 @@ class GameEngine {
 
   returnToTitle() {
     this.audio.stop();
+    this.audio.playBGM("assets/audio/bgm_title.mp3");
     this.character.hide();
     this.dom.gameScreen.classList.add('hidden');
     this.dom.endingModal.classList.add('hidden');

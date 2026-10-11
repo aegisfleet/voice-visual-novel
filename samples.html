@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gemini 3.8 Flash TTS - キャラクターボイス試聴</title>
+  <title>PROJECT EVE - キャラクターボイス＆シーン別BGM試聴室</title>
   <style>
     :root {
       --bg: #0b0f19;
@@ -286,7 +286,78 @@
       </div>
     </div>
 
-    <div style="text-align: center;">
+    <!-- ============================================================
+         シーン別BGM試聴セクション (Vertex AI Lyria 3 生成音源)
+         ============================================================ -->
+    <header style="margin-top: 56px; margin-bottom: 24px;">
+      <div class="badge" style="background: rgba(168, 85, 247, 0.15); border-color: #a855f7; color: #c084fc;">Vertex AI (Google DeepMind Lyria 3)</div>
+      <h2 style="font-size: 24px; color: #c084fc; text-shadow: 0 0 20px rgba(168, 85, 247, 0.4); margin-bottom: 8px;">シーン別 オリジナルBGM試聴</h2>
+      <p class="desc">Vertex AI の最先端音楽生成モデル `lyria-3-clip-preview` を活用して自動生成したゲーム内サウンドトラック全4曲</p>
+    </header>
+
+    <div class="voice-list">
+      <!-- 1. メインタイトル＆プロローグ -->
+      <div class="voice-card" style="border-color: rgba(168, 85, 247, 0.35);">
+        <div class="card-header">
+          <div class="char-info">
+            <span class="char-name" style="color: #e9d5ff;">1. メインタイトル ＆ プロローグ</span>
+            <span class="voice-tag" style="color: #c084fc;">Track: bgm_title.mp3</span>
+          </div>
+        </div>
+        <p class="char-desc">重低音のアナログシンセとダークなサイバーパンクの夜景を想起させるミステリアスな旋律（90 BPM）</p>
+        <div class="dialogue-box" style="font-size: 13px; color: #cbd5e1; font-family: monospace;">
+          Prompt: A dark cyberpunk ambient synthwave instrumental track, slow pulsating analog synth bassline, futuristic city night, mysterious crime scene investigation tone, loopable, 90 BPM
+        </div>
+        <audio controls src="assets/audio/bgm_title.mp3"></audio>
+      </div>
+
+      <!-- 2. 現場捜査・推理パート -->
+      <div class="voice-card" style="border-color: rgba(56, 189, 248, 0.35);">
+        <div class="card-header">
+          <div class="char-info">
+            <span class="char-name" style="color: #bae6fd;">2. 現場捜査・推理パート</span>
+            <span class="voice-tag">Track: bgm_investigation.mp3</span>
+          </div>
+        </div>
+        <p class="char-desc">ミニマルな電子ビートと微細な時計の針の刻み音。電脳空間の痕跡を丹念に紐解くノワール調の集中BGM（95 BPM）</p>
+        <div class="dialogue-box" style="font-size: 13px; color: #cbd5e1; font-family: monospace;">
+          Prompt: A subtle electronic investigation theme, minimal technological beats, ticking clock motif, focused crime scene deduction, noir cyber atmosphere, soft synth pads, loopable, 95 BPM
+        </div>
+        <audio controls src="assets/audio/bgm_investigation.mp3"></audio>
+      </div>
+
+      <!-- 3. 取調室・カウントダウン危機・対決 -->
+      <div class="voice-card" style="border-color: rgba(244, 63, 94, 0.35);">
+        <div class="card-header">
+          <div class="char-info">
+            <span class="char-name" style="color: #fecdd3;">3. 取調室・カウントダウン危機・対決</span>
+            <span class="voice-tag" style="color: #f43f5e;">Track: bgm_crisis.mp3</span>
+          </div>
+        </div>
+        <p class="char-desc">疾走するシンセアルペジオとオーケストラハイブリッド。刻一刻と迫る強制初期化への緊迫感と逆転劇（128 BPM）</p>
+        <div class="dialogue-box" style="font-size: 13px; color: #cbd5e1; font-family: monospace;">
+          Prompt: An intense high-stakes cyberpunk orchestral hybrid track, driving fast synth bass arpeggio, urgent cinematic tension, countdown alarm rhythm, courtroom showdown climax, 128 BPM
+        </div>
+        <audio controls src="assets/audio/bgm_crisis.mp3"></audio>
+      </div>
+
+      <!-- 4. 真相解明・感動のトゥルーエンド -->
+      <div class="voice-card" style="border-color: rgba(52, 211, 153, 0.35);">
+        <div class="card-header">
+          <div class="char-info">
+            <span class="char-name" style="color: #a7f3d0;">4. 真相解明・感動のトゥルーエンド</span>
+            <span class="voice-tag" style="color: #34d399;">Track: bgm_truth.mp3</span>
+          </div>
+        </div>
+        <p class="char-desc">温かなアコースティックピアノとストリングス。少女とAIの絆、救われた家族の未来を優しく包む旋律（80 BPM）</p>
+        <div class="dialogue-box" style="font-size: 13px; color: #cbd5e1; font-family: monospace;">
+          Prompt: An emotional and hopeful cyberpunk cinematic piano theme with warm analog strings, gentle ambient synths, heartfelt and touching family resolution, bittersweet yet warm, loopable, 80 BPM
+        </div>
+        <audio controls src="assets/audio/bgm_truth.mp3"></audio>
+      </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 32px;">
       <a href="index.html" class="back-link">← ゲーム本編へ戻る</a>
     </div>
   </div>

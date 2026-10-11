@@ -42,6 +42,7 @@ const SCENARIO_DATA = [
   // ============================================================
   {
     id: "prologue_01",
+    bgm: "assets/audio/bgm_title.mp3",
     background: "assets/backgrounds/cyber_hq.jpg",
     speaker: null,
     character: null,
@@ -100,6 +101,7 @@ const SCENARIO_DATA = [
   // ============================================================
   {
     id: "home_entry_01",
+    bgm: "assets/audio/bgm_investigation.mp3",
     background: "assets/backgrounds/home_living.jpg",
     speaker: null,
     character: null,
@@ -350,6 +352,7 @@ const SCENARIO_DATA = [
   // ============================================================
   {
     id: "interrog_start",
+    bgm: "assets/audio/bgm_crisis.mp3",
     background: "assets/backgrounds/interrogation_room.jpg",
     speaker: null,
     character: null,
@@ -483,6 +486,7 @@ const SCENARIO_DATA = [
   // ============================================================
   {
     id: "truth_route_01",
+    bgm: "assets/audio/bgm_truth.mp3",
     background: "assets/backgrounds/interrogation_room.jpg",
     speaker: "あなた",
     character: null,
