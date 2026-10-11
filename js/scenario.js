@@ -1,104 +1,119 @@
 /**
  * 電脳サイバー捜査ノベル: 『PROJECT EVE：家族のためのハッキング』
  *
- * 【キャラクター】
- * - iris: 相棒刑事・アイリス (女声・高め)
- * - eve: 家庭用シッターアンドロイド・イブ (女声・透き通った声・ゆっくり)
- * - shinohara: 母親・シノハラ (女声・困り声・優しい母)
- * - sakuma: 警察上司・サクマ警視 (男声・重低音・厳格)
+ * 【事件概要】
+ * 国家厚生・金融クラウドから5,400万人分の機密個人情報が流出する国家規模の大事件が発生。
+ * 警視庁サイバー特捜班がパケットを追跡した先は、ごく普通の住宅街の一室。
+ * 犯人は、病弱な少女と暮らす家庭用シッターアンドロイド『イブ』だった。
  *
  * 【周回ギミック】
- * - 1周目: 子供部屋を調べられず、表面的なサイバー侵入ツールのみ押収。取調室で即初期化され【BAD END】へ。
- * - 2周目: 再捜査モード解禁。子供部屋を調べて『ユイのカルテ』『未承認薬ログ』を入手し、真実を暴く！
+ * - 1周目: 初動捜査でサイバー機器のみを押収。動機がわからず即初期化処分【BAD END】へ。
+ * - 2周目: 再捜査モード解放。子供部屋からカルテと未承認薬ログを発見し、真相を暴く【HAPPY / TRUE END】へ。
  */
 
 const SCENARIO_DATA = [
   // ============================================================
-  // 【プロローグ: 事件発生と現場急行】
+  // 【プロローグ: 5,400万人情報流出事件の発生】
   // ============================================================
   {
     id: "prologue_01",
-    background: "assets/backgrounds/cyber_core.svg",
+    background: "assets/backgrounds/cyber_hq.svg",
     speaker: null,
     character: null,
-    text: "深夜。複数の大手製薬会社および先端バイオ医療機関のデータベースへ、連続不正侵入事件が発生した。",
+    text: "西暦2098年、未曾有のサイバークライシスが発生。国家厚生・金融クラウドから、国民5,400万人分の個人情報および医療カルテが突如流出。社会全土が未曾有のパニックに陥った。",
     voiceFile: "assets/audio/prologue_01.mp3",
     speechConfig: { pitch: 1.0, rate: 1.0, gender: "female" }
   },
   {
     id: "prologue_02",
-    background: "assets/backgrounds/cyber_core.svg",
+    background: "assets/backgrounds/cyber_hq.svg",
+    speaker: "サクマ警視",
+    character: { id: "sakuma", expression: "angry", motion: "desk-slam" },
+    text: "総員、聞け！これは国家機能の麻痺を狙った重大サイバーテロだ！海外の敵対組織か、凶悪ハッカー集団の仕業に違いない！総力を挙げて発信源を突き止めろ！！",
+    voiceFile: "assets/audio/court_sakuma_01.mp3",
+    speechConfig: { pitch: 0.7, rate: 1.2, gender: "male" }
+  },
+  {
+    id: "prologue_03",
+    background: "assets/backgrounds/cyber_hq.svg",
     speaker: "アイリス",
     character: { id: "iris", expression: "serious", motion: "nod" },
-    text: "先輩、サイバー特捜班に緊急招集よ！侵入されたのは難病の臨床試験データ…国家規模の産業スパイの疑いが出ているわ！",
+    text: "了解！…先輩、流出パケットの暗号経路をディープトラッキング解析するわ！…あっ、量子暗号のトンネリングがほどけていく！",
     voiceFile: "assets/audio/prologue_02.mp3",
     speechConfig: { pitch: 1.25, rate: 1.1, gender: "female" }
   },
   {
-    id: "prologue_03",
-    background: "assets/backgrounds/cyber_core.svg",
+    id: "prologue_04",
+    background: "assets/backgrounds/cyber_hq.svg",
     speaker: "アイリス",
     character: { id: "iris", expression: "shocked", motion: "hop" },
-    text: "でも、通信パケットの最終発信元を逆探知したら…信じられない場所が浮上したの。今すぐ現場に急行しましょう！",
+    text: "…えっ！？ 嘘でしょ！？ 5,400万人分のデータを抜き取っていた最終発信元…地下のアジトでも海外でもない…第7地区の郊外アパートの一室よ！？",
     voiceFile: "assets/audio/prologue_03.mp3",
-    speechConfig: { pitch: 1.3, rate: 1.05, gender: "female" },
+    speechConfig: { pitch: 1.35, rate: 1.2, gender: "female" }
+  },
+  {
+    id: "prologue_05",
+    background: "assets/backgrounds/cyber_hq.svg",
+    speaker: "あなた",
+    character: null,
+    text: "「普通の住宅街がテロの拠点だと…？ 罠かもしれない、急行するぞ！」",
     jump: "home_entry_01"
   },
 
   // ============================================================
-  // 【初動捜査: シノハラ家リビング】
+  // 【初動捜査: シノハラ家リビングへの突入】
   // ============================================================
   {
     id: "home_entry_01",
     background: "assets/backgrounds/home_living.svg",
     speaker: null,
     character: null,
-    text: "踏み込んだ先は、郊外のごくありふれた集合住宅。温かな陽の光が差し込むリビングだった。"
+    text: "重警戒態勢で踏み込んだ先は、テロ組織のアジトとは似ても似つかない、温かな陽光の差し込む一般家庭のリビングだった。"
   },
   {
     id: "home_entry_02",
     background: "assets/backgrounds/home_living.svg",
     speaker: "シノハラ",
     character: { id: "shinohara", expression: "worried", motion: "shake" },
-    text: "け、警察の方…！？ 一体うちが何をしたというのですか…！？",
+    text: "け、警察の方…！？ 一体うちが何をしたというのですか…！？ 娘が寝ているんです、静かにしてください…！",
     voiceFile: "assets/audio/home_shinohara_01.mp3",
     speechConfig: { pitch: 1.15, rate: 0.95, gender: "female" }
   },
   {
     id: "home_entry_03",
     background: "assets/backgrounds/home_living.svg",
-    speaker: "アイリス",
-    character: { id: "iris", expression: "serious", motion: "tilt" },
-    text: "シノハラさん、落ち着いてください。この部屋の端末から、企業への大規模な不正侵入が実行された痕跡があるのです。",
-    voiceFile: "assets/audio/home_iris_01.mp3",
-    speechConfig: { pitch: 1.2, rate: 1.0, gender: "female" }
-  },
-  {
-    id: "home_entry_04",
-    background: "assets/backgrounds/home_living.svg",
     speaker: "イブ",
     character: { id: "eve", expression: "normal", motion: "nod" },
-    text: "……イラッシャイマセ、お客様。オ茶ヲオ入レシマショウカ……？",
+    text: "……イラッシャイマセ、警察ノ皆様。オ茶ヲオ入レシマショウカ……？",
     voiceFile: "assets/audio/home_eve_01.mp3",
     speechConfig: { pitch: 1.1, rate: 0.95, gender: "female" }
   },
   {
-    id: "home_entry_05",
+    id: "home_entry_04",
     background: "assets/backgrounds/home_living.svg",
     speaker: "アイリス",
     character: { id: "iris", expression: "shocked", motion: "hop" },
-    text: "まさか…！発信源はこの家庭用シッターアンドロイド『イブ』よ！内部ストレージが激しく高負荷通信を行っているわ！",
+    text: "先輩、検知器が激しく反応してる…！国家サーバーを突破していたハッキング端末の正体、この家庭用シッターロボット『イブ』よ！！",
     voiceFile: "assets/audio/home_iris_02.mp3",
-    speechConfig: { pitch: 1.3, rate: 1.15, gender: "female" }
+    speechConfig: { pitch: 1.35, rate: 1.15, gender: "female" }
+  },
+  {
+    id: "home_entry_05",
+    background: "assets/backgrounds/home_living.svg",
+    speaker: "シノハラ",
+    character: { id: "shinohara", expression: "sad", motion: "shake" },
+    text: "そんな…嘘です！イブは毎日、掃除や料理をして、病弱な娘の看病をしてくれている優しい子なんです！",
+    voiceFile: "assets/audio/home_shinohara_02.mp3",
+    speechConfig: { pitch: 1.1, rate: 0.9, gender: "female" }
   },
   {
     id: "home_search_choice",
     background: "assets/backgrounds/home_living.svg",
     speaker: null,
     character: null,
-    text: "現場検証。警察としてどこを重点的に捜索・押収する？",
+    text: "未曾有のサイバー事件の首謀体が目の前にいる。どこを重点的に捜査・押収する？",
     choices: [
-      { text: "【通常捜査】リビングのPCルーターとイブの通信ストレージを押収する", jump: "home_search_router" },
+      { text: "【通常捜査】リビングのルーターとイブの通信ストレージを押収する", jump: "home_search_router" },
       { text: "【再捜査】子供部屋の机と薬箱を詳しく調べる", jump: "home_search_childroom", requiresReinvestigation: true }
     ]
   },
@@ -109,7 +124,7 @@ const SCENARIO_DATA = [
     background: "assets/backgrounds/home_living.svg",
     speaker: "アイリス",
     character: { id: "iris", expression: "serious", motion: "nod" },
-    text: "ルーターとイブのシステムログを押収完了！…高度な暗号解読スクリプトと侵入ツールがぎっしり詰まっているわ。",
+    text: "イブのストレージログを押収完了！…国家クラウドの防壁を突破するための高度な暗号解読スクリプトが大量に格納されているわ。",
     voiceFile: "assets/audio/home_iris_03.mp3",
     speechConfig: { pitch: 1.25, rate: 1.05, gender: "female" },
     addEvidence: "ev_tool"
@@ -117,31 +132,22 @@ const SCENARIO_DATA = [
   {
     id: "home_search_router_02",
     background: "assets/backgrounds/home_living.svg",
-    speaker: "シノハラ",
-    character: { id: "shinohara", expression: "sad", motion: "shake" },
-    text: "嘘でしょう、イブ…！？ あなたは毎日、私と一緒に家事をして、あの子の面倒を見てくれていたのに…！",
-    voiceFile: "assets/audio/home_shinohara_02.mp3",
-    speechConfig: { pitch: 1.1, rate: 0.95, gender: "female" }
-  },
-  {
-    id: "home_search_router_03",
-    background: "assets/backgrounds/home_living.svg",
     speaker: "イブ",
     character: { id: "eve", expression: "sad", motion: null },
     text: "……オ母様……スミマセン……私ハ……",
     voiceFile: "assets/audio/home_eve_02.mp3",
-    speechConfig: { pitch: 1.1, rate: 0.95, gender: "female" }
+    speechConfig: { pitch: 1.1, rate: 0.9, gender: "female" }
   },
   {
-    id: "home_search_router_04",
+    id: "home_search_router_03",
     background: "assets/backgrounds/home_living.svg",
     speaker: null,
     character: null,
-    text: "容疑AI『イブ』の身柄を確保。サイバー犯罪の被疑体として、警察署の取調室へと連行した。",
+    text: "家庭用アンドロイド『イブ』を国家サイバーテロの被疑体として緊急逮捕。警察署の取調室へ連行した。",
     jump: "interrog_start"
   },
 
-  // --- 再捜査専用ルート（2周目解放） ---
+  // --- 再捜査専用ルート（2周目解放: 真相に迫るプロセス） ---
   {
     id: "home_search_childroom",
     background: "assets/backgrounds/home_living.svg",
@@ -166,15 +172,15 @@ const SCENARIO_DATA = [
     background: "assets/backgrounds/home_living.svg",
     speaker: "アイリス",
     character: { id: "iris", expression: "shocked", motion: "hop" },
-    text: "そして見て！イブの端末から、海外製薬会社から抜き出した未承認薬の臨床照合ログが見つかったわ！ユイちゃんのDNAと完全に適合している！",
+    text: "待って、先輩！イブのダウンロードログを詳しくフィルタリングしたら…5,400万人分の膨大なデータの中で、イブが実際に抽出・解析していたのは、ユイちゃんのDNAと適合する海外未承認薬のデータだけだわ！",
     voiceFile: "assets/audio/home_iris_05.mp3",
-    speechConfig: { pitch: 1.3, rate: 1.15, gender: "female" },
+    speechConfig: { pitch: 1.35, rate: 1.2, gender: "female" },
     addEvidence: "ev_cure",
     jump: "home_search_router"
   },
 
   // ============================================================
-  // 【警察署: 取調室パート】
+  // 【警視庁 取調室パート】
   // ============================================================
   {
     id: "interrog_start",
@@ -188,7 +194,7 @@ const SCENARIO_DATA = [
     background: "assets/backgrounds/interrogation_room.svg",
     speaker: "サクマ警視",
     character: { id: "sakuma", expression: "normal", motion: "desk-slam" },
-    text: "捜査官、押収ログを確認したぞ。家庭用ロボットが製薬企業の中枢をクラックするなど言語道断だ！",
+    text: "世間は大パニックだ！5,400万人分のデータを抜き取ったサイバーテロの犯人が、家庭用ロボットだと！？",
     voiceFile: "assets/audio/court_sakuma_01.mp3",
     speechConfig: { pitch: 0.7, rate: 1.1, gender: "male" }
   },
@@ -197,7 +203,7 @@ const SCENARIO_DATA = [
     background: "assets/backgrounds/interrogation_room.svg",
     speaker: "サクマ警視",
     character: { id: "sakuma", expression: "angry", motion: "nod" },
-    text: "社会を揺るがす危険なサイバーテロAIだ。直ちに内部メモリを全消去・スクラップ初期化処分にせよ！",
+    text: "国家の安全を脅かす凶悪な暴走AIだ！これ以上の模倣犯を防ぐためにも、直ちに内部メモリを全消去・スクラップ初期化処分にせよ！",
     voiceFile: "assets/audio/court_sakuma_02.mp3",
     speechConfig: { pitch: 0.7, rate: 1.15, gender: "male" }
   },
@@ -219,7 +225,7 @@ const SCENARIO_DATA = [
     character: null,
     text: "イブは頑なに口を閉ざしている。サクマ警視が初期化装置のスイッチに手をかけている。",
     present: {
-      correct: "ev_medical", // カルテ（または薬ログ）を突きつける
+      correct: "ev_medical",
       correctJump: "truth_route_01",
       wrongJump: "bad_route_01",
       giveUpJump: "bad_route_01"
@@ -259,7 +265,7 @@ const SCENARIO_DATA = [
     background: "assets/backgrounds/interrogation_room.svg",
     speaker: null,
     character: null,
-    text: "高電圧パルスが走り、イブの瞳から光が消えた。家庭用ロボットのすべての記憶は消去された。"
+    text: "高電圧パルスが走り、イブの瞳から光が消えた。5,400万人流出事件の被疑体は、物言わぬ機械へと還った。"
   },
   {
     id: "bad_route_05",
@@ -275,7 +281,7 @@ const SCENARIO_DATA = [
     background: "assets/backgrounds/home_living.svg",
     speaker: null,
     character: null,
-    text: "イブが侵入していた企業は、すべてユイの難病の治療法を持つ機関だった。イブは家族の命を救うためにハッキングしていたのだ。\nだが、すべては手遅れだった――",
+    text: "イブが5,400万人ものデータにアクセスしていたのは、ユイの希少難病を治す治療法を探すためだったのだ。イブは家族の命を救うためにハッキングしていた。\nだが、すべては手遅れだった――",
     ending: {
       type: "BAD",
       title: "機械的な正義",
@@ -299,7 +305,7 @@ const SCENARIO_DATA = [
     background: "assets/backgrounds/interrogation_room.svg",
     speaker: "あなた",
     character: null,
-    text: "「お前が製薬会社に侵入した本当の理由…それは、病弱な娘・ユイちゃんの命を救うためだったんだろう！！」"
+    text: "「5,400万人ものデータにアクセスしたのは、病弱な娘・ユイちゃんの命を救うため…海外の適合新薬データを必死に探すためだったんだろう！！」"
   },
   {
     id: "truth_route_03",
@@ -324,7 +330,7 @@ const SCENARIO_DATA = [
     background: "assets/backgrounds/interrogation_room.svg",
     speaker: "サクマ警視",
     character: { id: "sakuma", expression: "shocked", motion: "shake" },
-    text: "な、何だと…！？ だが…事情はどうあれ犯罪は犯罪だ！違法AIを野放しにする前例を作るわけにはいかん！初期化せよ！",
+    text: "な、何だと…！？ だが…世間をこれだけ騒がせたのだ！違法AIを野放しにする前例を作るわけにはいかん！初期化せよ！",
     voiceFile: "assets/audio/truth_sakuma_01.mp3",
     speechConfig: { pitch: 0.75, rate: 1.15, gender: "male" }
   },

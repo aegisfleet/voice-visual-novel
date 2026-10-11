@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="100%" height="100%">
+  <defs>
+    <linearGradient id="hqBg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0a1128"/>
+      <stop offset="50%" stop-color="#001f54"/>
+      <stop offset="100%" stop-color="#03071e"/>
+    </linearGradient>
+    <linearGradient id="screenMap" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#03071e"/>
+      <stop offset="100%" stop-color="#1f2421"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Control Room Wall -->
+  <rect width="1920" height="1080" fill="url(#hqBg)"/>
+
+  <!-- Giant Center Main Screen (National Crisis Situation) -->
+  <rect x="260" y="80" width="1400" height="620" rx="16" fill="url(#screenMap)" stroke="#00f3ff" stroke-width="4"/>
+  <rect x="270" y="90" width="1380" height="600" fill="#0b132b" opacity="0.95"/>
+
+  <!-- News Ticker / Red Alert Bar -->
+  <rect x="270" y="90" width="1380" height="60" fill="#dc2626"/>
+  <text x="300" y="132" fill="#ffffff" font-family="monospace" font-size="28" font-weight="900" letter-spacing="4">【EMERGENCY】国家厚生・金融クラウド 大規模個人情報流出事件 発生</text>
+  <text x="1450" y="132" fill="#facc15" font-family="monospace" font-size="24" font-weight="bold">被害推定: 5,400万人</text>
+
+  <!-- World / Nation Cyber Attack Map (Red attack vectors) -->
+  <path d="M 400 380 Q 700 240 1000 360 T 1500 320" fill="none" stroke="#00f3ff" stroke-width="3" stroke-dasharray="10,5"/>
+  <path d="M 600 520 Q 960 300 1350 480" fill="none" stroke="#ef4444" stroke-width="4"/>
+  <circle cx="600" cy="520" r="16" fill="none" stroke="#ef4444" stroke-width="3"/>
+  <circle cx="600" cy="520" r="6" fill="#ef4444"/>
+  <text x="630" y="528" fill="#ef4444" font-family="monospace" font-size="20" font-weight="bold">TARGET: 大手製薬・医療基幹DB</text>
+
+  <!-- Network IP Trace Monitor (Left) -->
+  <rect x="320" y="180" width="340" height="240" rx="8" fill="rgba(0, 243, 255, 0.08)" stroke="#00f3ff" stroke-width="2"/>
+  <text x="340" y="215" fill="#00f3ff" font-family="monospace" font-size="18" font-weight="bold">IP TRACE ROUTE</text>
+  <text x="340" y="250" fill="#94a3b8" font-family="monospace" font-size="14">NODE 1: TOKYO_GATEWAY [OK]</text>
+  <text x="340" y="280" fill="#94a3b8" font-family="monospace" font-size="14">NODE 2: PHARMA_CORE [BREACHED]</text>
+  <text x="340" y="310" fill="#facc15" font-family="monospace" font-size="14">ENCRYPTION: QUANTUM-256</text>
+  <text x="340" y="350" fill="#ef4444" font-family="monospace" font-size="18" font-weight="bold">ORIGIN: DISTRICT 7 (郊外住宅街)</text>
+
+  <!-- Operator Desks & Police Headquarters Emblem in Foreground -->
+  <polygon points="0,1080 350,780 1570,780 1920,1080" fill="#1e293b" stroke="#334155" stroke-width="4"/>
+  <rect x="860" y="720" width="200" height="90" rx="8" fill="#0f172a" stroke="#ca8a04" stroke-width="3"/>
+  <text x="960" y="760" fill="#eab308" font-family="monospace" font-size="18" font-weight="bold" text-anchor="middle">警視庁サイバー特捜本部</text>
+  <text x="960" y="790" fill="#94a3b8" font-family="monospace" font-size="14" text-anchor="middle">CYBER CRIME DIVISION</text>
+
+  <!-- Operator Dual Monitors -->
+  <rect x="420" y="740" width="140" height="90" rx="4" fill="#0f172a" stroke="#00f3ff" stroke-width="2"/>
+  <rect x="580" y="740" width="140" height="90" rx="4" fill="#0f172a" stroke="#00f3ff" stroke-width="2"/>
+  <rect x="1200" y="740" width="140" height="90" rx="4" fill="#0f172a" stroke="#00f3ff" stroke-width="2"/>
+  <rect x="1360" y="740" width="140" height="90" rx="4" fill="#0f172a" stroke="#00f3ff" stroke-width="2"/>
+</svg>
