@@ -1,8 +1,10 @@
 /**
- * GameEngine (家族のためのハッキング・周回再捜査システム版)
- * - 1周目: 初動捜査で真実の手がかりが得られず、必ずBAD ENDへ
- * - BAD ENDクリア後: 再捜査モードが解禁され、初動捜査で「子供部屋」を調べる新選択肢が出現！
- * - 証拠品（Evidence）と取調室でのつきつけ対決
+ * GameEngine (家族のためのハッキング・論理ミステリー完成版)
+ *
+ * 証拠品データベース:
+ * - ev_tool: 『侵入用サイバーツール』(1周目リビングで押収)
+ * - ev_cost: 『遺伝子治療の見積書と督促状』(2周目子供部屋で発見)
+ * - ev_broker: 『ブローカー取引ログ＆逆探知コード』(2周目子供部屋で発見)
  */
 
 const EVIDENCE_DATABASE = {
@@ -11,21 +13,21 @@ const EVIDENCE_DATABASE = {
     title: "侵入用サイバーツール",
     icon: "💻",
     category: "サイバー証拠",
-    desc: "イブのストレージから押収された侵入スクリプト。大手製薬会社や医療機関のファイヤーウォールを突破するために組まれた高度なプログラム。"
+    desc: "イブのストレージから押収された侵入スクリプト。国家クラウドの量子防壁を突破するために外部から提供された高度なクラックツール。"
   },
-  ev_medical: {
-    id: "ev_medical",
-    title: "ユイの難病カルテ",
+  ev_cost: {
+    id: "ev_cost",
+    title: "治療見積書と督促状",
     icon: "📋",
-    category: "家族の手がかり",
-    desc: "子供部屋で見つかった幼い娘『ユイ』の診断書。進行性の難病であり、国内で未承認の最新治療薬以外に助かる手立てがないことが記されている。"
+    category: "動機の手がかり",
+    desc: "ユイの難病を治す先進遺伝子治療の見積書。費用は『1億2000万円』。母シノハラが多重債務を抱え、過労で倒れかけていた過酷な現実が記されている。"
   },
-  ev_cure: {
-    id: "ev_cure",
-    title: "未承認治療薬の照合ログ",
-    icon: "💊",
-    category: "核心の証拠",
-    desc: "イブが海外の製薬データベースから抜き出した新薬の臨床データと適合性シミュレーション結果。ユイの命を救うための処方箋そのもの。"
+  ev_broker: {
+    id: "ev_broker",
+    title: "取引ログ＆逆探知コード",
+    icon: "🔑",
+    category: "決定打",
+    desc: "闇ブローカー『ファントム』との暗号通信ログ。治療費と引き換えにデータを要求されたが騙され、全データをネットに暴露された。イブは騙された瞬間にブローカーの真のIPアドレスを逆探知・記録していた。"
   }
 };
 
@@ -45,7 +47,6 @@ class GameEngine {
     this.logHistory = [];
     this.collectedEvidence = new Set();
 
-    // 周回フラグ確認
     this.checkReinvestigationStatus();
 
     // モジュール
@@ -296,7 +297,7 @@ class GameEngine {
     this.typingOnComplete = onComplete;
 
     let charIndex = 0;
-    const speed = 30;
+    const speed = 28;
 
     this.typewriterTimer = setInterval(() => {
       if (charIndex < fullText.length) {
@@ -320,16 +321,12 @@ class GameEngine {
     }
   }
 
-  /**
-   * 選択肢の表示（周回フラグによる動的フィルタリング対応）
-   */
   showChoices(choices) {
     this.dom.choicesList.innerHTML = '';
 
-    // 再捜査フラグでフィルタリング
     const availableChoices = choices.filter(choice => {
       if (choice.requiresReinvestigation && !this.isReinvestigationUnlocked) {
-        return false; // 1周目は非表示
+        return false;
       }
       return true;
     });
@@ -338,7 +335,6 @@ class GameEngine {
       const btn = document.createElement('button');
       btn.className = 'choice-button';
 
-      // 再捜査専用選択肢の場合は特別なデザインバッジ
       if (choice.requiresReinvestigation) {
         btn.innerHTML = `<span style="color:#2dd4bf; font-size:0.85rem; font-family:monospace;">【再捜査 FILE RE-OPEN】</span><br>${choice.text}`;
         btn.style.borderColor = '#2dd4bf';
@@ -361,7 +357,7 @@ class GameEngine {
   showPresentMenu(presentConfig) {
     this.dom.choicesList.innerHTML = `
       <div style="color: #f59e0b; font-weight: bold; margin-bottom: 12px; text-align: center;">
-        【 イブに突きつける証拠品を選択してください 】
+        【 イブの真の動機を証明する証拠をつきつけろ！ 】
       </div>
     `;
 
@@ -391,7 +387,7 @@ class GameEngine {
     if (presentConfig.giveUpJump) {
       const giveUpBtn = document.createElement('button');
       giveUpBtn.className = 'choice-button choice-giveup';
-      giveUpBtn.textContent = '…突きつける証拠がない（機械的な処分に従う）';
+      giveUpBtn.textContent = '…反論の証拠がない（法と規則に従い初期化処分）';
       giveUpBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         this.dom.choicesOverlay.classList.remove('active');
@@ -520,7 +516,6 @@ class GameEngine {
         <span class="badge-item ${trueEnd}">TRUE END: ${cleared.includes('TRUE') ? '達成済' : '未達成'}</span>
       `;
 
-      // 再捜査バナーの表示
       if (this.dom.reinvestigationBanner) {
         if (cleared.includes('BAD')) {
           this.dom.reinvestigationBanner.style.display = 'block';
