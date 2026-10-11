@@ -1,5 +1,7 @@
 # PROJECT EVE: 家族のためのハッキング (電脳サイバー捜査ノベル)
 
+🎮 **オンラインで今すぐプレイ**: **[https://aegisfleet.github.io/voice-visual-novel/](https://aegisfleet.github.io/voice-visual-novel/)**
+
 ブラウザ上で動作するフルボイス・電脳サイバー捜査ノベルゲームです。  
 Web標準技術（HTML5 / CSS3 / JavaScript / Web Speech API）のみで構築されており、追加のサーバー環境やライブラリインストール不要でブラウザから即座に動作します。
 
