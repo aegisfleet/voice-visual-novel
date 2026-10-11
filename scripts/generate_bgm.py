@@ -29,7 +29,7 @@ BGM_TRACKS = [
     {
         "file": "bgm_title.mp3",
         "title": "メインタイトル＆プロローグ",
-        "prompt": "A dark cyberpunk ambient synthwave instrumental track, slow pulsating analog synth bassline, futuristic city night, mysterious crime scene investigation tone, loopable, 90 BPM"
+        "prompt": "A harmonious and atmospheric cyberpunk noir ambient music, warm analog synth pads, clean beautiful minor key chord progression, gentle emotional electronic melody, peaceful yet mysterious futuristic city night, no harsh dissonance, steady 90 BPM"
     },
     {
         "file": "bgm_investigation.mp3",
@@ -49,17 +49,20 @@ BGM_TRACKS = [
 ]
 
 def main():
+    target_files = [arg for arg in sys.argv[1:] if arg.endswith('.mp3')]
+    tracks_to_generate = [t for t in BGM_TRACKS if not target_files or t["file"] in target_files]
+
     print("==================================================")
-    print("Vertex AI (Lyria 3): シーン別BGM一括生成")
+    print("Vertex AI (Lyria 3): シーン別BGM生成")
     print("==================================================")
 
-    for i, track in enumerate(BGM_TRACKS):
+    for i, track in enumerate(tracks_to_generate):
         filename = track["file"]
         title = track["title"]
         prompt = track["prompt"]
         final_path = output_dir / filename
 
-        print(f"\n[{i+1}/{len(BGM_TRACKS)}] 生成中: {title} -> {filename}")
+        print(f"\n[{i+1}/{len(tracks_to_generate)}] 生成中: {title} -> {filename}")
 
         try:
             inter = client.interactions.create(

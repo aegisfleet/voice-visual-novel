@@ -42,7 +42,7 @@ class GameEngine {
     this.currentSceneId = null;
     this.isTextTyping = false;
     this.typewriterTimer = null;
-    this.isAutoMode = false;
+    this.isAutoMode = true;
     this.autoTimer = null;
     this.logHistory = [];
     this.collectedEvidence = new Set();
@@ -102,6 +102,9 @@ class GameEngine {
     this.updateEndingsBadge();
     this.bindEvents();
     this.setupAudioSync();
+    if (this.dom.btnAuto) {
+      this.dom.btnAuto.classList.toggle('active', this.isAutoMode);
+    }
   }
 
   checkReinvestigationStatus() {
