@@ -24,7 +24,8 @@ voice-visual-novel/
 │   ├── backgrounds/             # 美麗背景画像（.jpg / .svg）
 │   └── characters/              # クロマキー透過キャラクター立ち絵（.png）
 └── docs/
-    ├── development-guide.md     # 本書（開発手順書）
+    ├── development-guide.md              # 本書（開発手順書）
+    ├── avatar-lip-sync-animation-guide.md # 表情差分（目パチ・口パク）完全実装＆再現ガイド
     └── scenario-consistency-framework.md # シナリオ整合性フレームワーク
 ```
 
@@ -94,6 +95,23 @@ def chroma_green(src_path, dest_path):
     data[:, :, 3] = (alpha * 255.0)
     Image.fromarray(data.astype(np.uint8), mode='RGBA').save(dest_path, format='PNG')
 ```
+
+---
+
+## 3.5 キャラクター表情差分（目パチ・口パク）と音声連動リップシンク
+
+1枚のベース立ち絵に、目パチ（2枚）および口パク（3枚）の部分差分レイヤーを重ね合わせ、Web Audio API のリアルタイム周波数解析によって発話音声の波形・音量と同期させる軽量アニメーションシステムである。
+
+- **自動ビルドスクリプト**: `scripts/build_avatar_diff_layers.py`
+  - 輪郭内部の完全塗りつぶし（Fill Holes）＋最外周1.2pxアンチエイリアスによる **完全不透明マスク（Solid Alpha 100%）** 生成
+  - 上唇固定・下顎リフトによる **解剖学的モーフィング（Anatomical Morphing）** 中割り生成
+- **最重要原則**:
+  1. ベース画像（平常時）は必ず「閉口・開眼」にする（開口ベースの上に小さい口を乗せると歯が二重になるため）。
+  2. 口差分レイヤーの CSS は `transition: none !important;` で即時切り替えにする（透過クロスフェードによる下の画像の透けを根絶）。
+  3. 最大音量持続時は音節フラップ変調（秒間約3.3拍）とデバウンス（90ms）で有機的なリズムを付与する。
+
+> 📖 **詳細な仕様・再現手順・完全なコード**:
+> [`docs/avatar-lip-sync-animation-guide.md`](file:///d:/Work/voice-visual-novel/docs/avatar-lip-sync-animation-guide.md) を参照のこと。
 
 ---
 
