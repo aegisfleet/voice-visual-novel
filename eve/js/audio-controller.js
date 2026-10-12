@@ -36,6 +36,11 @@ class AudioController {
     this.currentVoiceTrack = null;
     this.isAudioUnlocked = false;
 
+    // ボイスファイル再生用 (LINE内ブラウザ/iOS Safari自動再生制限対策・再利用Audio要素)
+    this.voiceAudio = null;
+    this.voiceSourceNode = null;
+    this.isVoiceAudioUnlocked = false;
+
     // BGM管理 (Web Audio API接続トラック)
     this.currentBGMTrack = null; // { audio, source, gain, url }
     this.currentBGMUrl = null;
@@ -142,13 +147,39 @@ class AudioController {
   }
 
   /**
-   * モバイル用: 初回タップ時のAudioContext & SpeechSynthesisアンロック
+   * ボイス再生用Audio要素の初期化 (単一要素の再利用)
+   */
+  _initVoiceAudio() {
+    if (this.voiceAudio) return;
+    if (typeof Audio === 'undefined') return;
+
+    try {
+      this.voiceAudio = new Audio();
+      this.voiceAudio.preload = 'auto';
+      this.voiceAudio.crossOrigin = 'anonymous';
+
+      if (this.audioCtx && this.voiceAnalyserNode) {
+        try {
+          this.voiceSourceNode = this.audioCtx.createMediaElementSource(this.voiceAudio);
+          this.voiceSourceNode.connect(this.voiceAnalyserNode);
+        } catch (e) {
+          console.warn("[AudioController] createMediaElementSource voice fallback:", e);
+        }
+      }
+    } catch (e) {
+      console.warn("[AudioController] Failed to init voiceAudio:", e);
+    }
+  }
+
+  /**
+   * モバイル用: 初回タップ時のAudioContext & SpeechSynthesis & ボイスAudio要素アンロック
    */
   unlockAudio() {
     this._initAudioContext();
     this._ensureAudioContextRunning();
+    this._initVoiceAudio();
 
-    // iOS Safari用のWeb Audio完全アンロック (無音バッファ再生)
+    // iOS Safari / LINE内ブラウザ用: Web Audio完全アンロック (無音バッファ再生)
     if (this.audioCtx && !this.isAudioUnlocked) {
       try {
         const buffer = this.audioCtx.createBuffer(1, 1, 22050);
@@ -156,6 +187,21 @@ class AudioController {
         source.buffer = buffer;
         source.connect(this.audioCtx.destination);
         source.start(0);
+      } catch (e) {}
+    }
+
+    // LINE内ブラウザ / iOS Safari用: ボイス専用Audio要素の先行アンロック (無音再生)
+    if (this.voiceAudio && !this.isVoiceAudioUnlocked) {
+      try {
+        this.voiceAudio.src = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA';
+        const p = this.voiceAudio.play();
+        if (p !== undefined) {
+          p.then(() => {
+            this.voiceAudio.pause();
+            this.voiceAudio.currentTime = 0;
+          }).catch(() => {});
+        }
+        this.isVoiceAudioUnlocked = true;
       } catch (e) {}
     }
 
@@ -494,21 +540,12 @@ class AudioController {
 
       this._initAudioContext();
       this._ensureAudioContextRunning();
+      this._initVoiceAudio();
 
-      const audio = new Audio(url);
+      // LINE内ブラウザ/iOS Safari対策: アンロック済みの単一Audio要素を再利用
+      const audio = this.voiceAudio || new Audio();
       audio.crossOrigin = 'anonymous';
       this.currentAudio = audio;
-
-      let sourceNode = null;
-      if (this.audioCtx && this.voiceAnalyserNode) {
-        try {
-          sourceNode = this.audioCtx.createMediaElementSource(audio);
-          sourceNode.connect(this.voiceAnalyserNode);
-        } catch (e) {
-          // すでに接続済みの場合やCORS制限時は通常のHTMLMediaElement再生
-          console.warn("[AudioController] createMediaElementSource voice fallback:", e);
-        }
-      }
 
       if (this.onSpeechStart && this.playSessionId === sessionId) {
         this.onSpeechStart();
@@ -536,6 +573,12 @@ class AudioController {
       audio.onended = finish;
       audio.onerror = finish;
 
+      // 同一要素のsrcを差し替えて頭出し
+      audio.src = url;
+      try {
+        audio.currentTime = 0;
+      } catch (e) {}
+
       const playPromise = audio.play();
       if (playPromise !== undefined) {
         playPromise.then(() => {
@@ -550,7 +593,8 @@ class AudioController {
           if (!hasFinished) {
             this._startVoiceAnalysis(sessionId);
           }
-        }).catch(() => {
+        }).catch((err) => {
+          console.warn("[AudioController] Voice play error:", err);
           if (this.playSessionId !== sessionId) {
             resolve();
             return;

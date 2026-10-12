@@ -404,6 +404,7 @@ class GameEngine {
     // AUTO トグル
     this.dom.btnAuto.addEventListener('click', (e) => {
       e.stopPropagation();
+      this.audio.unlockAudio();
       this.audio.playClickSound();
       this.isAutoMode = !this.isAutoMode;
       this.dom.btnAuto.classList.toggle('active', this.isAutoMode);

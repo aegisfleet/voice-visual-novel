@@ -943,8 +943,9 @@
 
   <script src="../assets/js/share.js"></script>
   <script>
-    // 音声管理
-    let currentAudio = null;
+    // 音声管理 (LINE内ブラウザ/iOS Safari自動再生制限対策・単一Audio再利用アーキテクチャ)
+    let sharedVoiceAudio = null;
+    let isAudioUnlocked = false;
     let isPlayingAll = false;
     let sequenceTimer = null;
     let lastPlayedIndex = 0;
@@ -952,13 +953,42 @@
     const dialogues = Array.from(document.querySelectorAll('.dialogue-block'));
     const btnPlayAll = document.getElementById('btnPlayAll');
 
+    function initSharedAudio() {
+      if (!sharedVoiceAudio && typeof Audio !== 'undefined') {
+        sharedVoiceAudio = new Audio();
+        sharedVoiceAudio.preload = 'auto';
+      }
+      return sharedVoiceAudio;
+    }
+
+    // 初回ユーザー操作時に無音WAVを再生してブラウザのAutoplayロックを完全解除
+    function unlockSharedAudio() {
+      const audio = initSharedAudio();
+      if (!audio || isAudioUnlocked) return;
+      isAudioUnlocked = true;
+      try {
+        audio.src = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA';
+        const p = audio.play();
+        if (p !== undefined) {
+          p.then(() => {
+            audio.pause();
+            audio.currentTime = 0;
+          }).catch(() => {});
+        }
+      } catch (e) {}
+    }
+
+    window.addEventListener('click', unlockSharedAudio, { once: true, capture: true });
+    window.addEventListener('touchstart', unlockSharedAudio, { once: true, capture: true });
+
     function stopCurrentAudio() {
-      if (currentAudio) {
-        currentAudio.onended = null;
-        currentAudio.onerror = null;
-        currentAudio.pause();
-        currentAudio.currentTime = 0;
-        currentAudio = null;
+      if (sharedVoiceAudio) {
+        sharedVoiceAudio.onended = null;
+        sharedVoiceAudio.onerror = null;
+        try {
+          sharedVoiceAudio.pause();
+          sharedVoiceAudio.currentTime = 0;
+        } catch (e) {}
       }
       document.querySelectorAll('.dialogue-block').forEach(b => b.classList.remove('playing-voice'));
       document.querySelectorAll('.btn-voice').forEach(b => {
@@ -968,9 +998,13 @@
     }
 
     function playDialogueAudio(block, onEnded) {
+      unlockSharedAudio();
       stopCurrentAudio();
       const audioUrl = block.getAttribute('data-audio');
       if (!audioUrl) return;
+
+      const audio = initSharedAudio();
+      if (!audio) return;
 
       const btn = block.querySelector('.btn-voice');
       block.classList.add('playing-voice');
@@ -979,31 +1013,62 @@
         btn.classList.add('active');
       }
 
-      currentAudio = new Audio(audioUrl);
-      currentAudio.onerror = (e) => {
-        console.warn('Audio error:', e);
-        block.classList.remove('playing-voice');
-        if (btn) {
-          btn.textContent = '▶ ボイス再生';
-          btn.classList.remove('active');
-        }
-        currentAudio = null;
-        if (onEnded) onEnded();
-      };
-      currentAudio.play().catch(e => {
-        console.warn('Audio play error:', e);
-        if (onEnded) onEnded();
-      });
+      let hasFinished = false;
+      const finish = () => {
+        if (hasFinished) return;
+        hasFinished = true;
+        audio.onended = null;
+        audio.onerror = null;
 
-      currentAudio.onended = () => {
         block.classList.remove('playing-voice');
         if (btn) {
           btn.textContent = '▶ ボイス再生';
           btn.classList.remove('active');
         }
-        currentAudio = null;
         if (onEnded) onEnded();
       };
+
+      audio.onended = finish;
+      audio.onerror = (e) => {
+        console.warn('Audio error:', e);
+        finish();
+      };
+
+      // 同一Audio要素のsrcを差し替えて頭出し再生 (LINE/iOS WebViewのAutoplay制限回避)
+      audio.src = audioUrl;
+      try {
+        audio.currentTime = 0;
+      } catch (e) {}
+
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(e => {
+          console.warn('Audio play error:', e);
+          // 自動再生制限 (NotAllowedErrorなど) 発生時は、
+          // 連鎖スキップ（次々と進むバグ）を絶対に防ぐため、即時onEndedを呼ばずに連続再生を安全に一時停止
+          block.classList.remove('playing-voice');
+          if (btn) {
+            btn.textContent = '▶ ボイス再生';
+            btn.classList.remove('active');
+          }
+          if (isPlayingAll) {
+            pausePlayAllOnRestriction();
+          }
+        });
+      }
+    }
+
+    function pausePlayAllOnRestriction() {
+      isPlayingAll = false;
+      if (sequenceTimer) {
+        clearTimeout(sequenceTimer);
+        sequenceTimer = null;
+      }
+      btnPlayAll.textContent = '▶ 朗読を再開';
+      btnPlayAll.classList.remove('playing');
+      if (window.CyberShare && window.CyberShare.showToast) {
+        window.CyberShare.showToast('ブラウザの自動再生制限により一時停止しました。「朗読を再開」をタップしてください', 'info');
+      }
     }
 
     // 各ボタンの個別再生 ＆ 連続再生中のジャンプ継続
@@ -1012,6 +1077,7 @@
       if (btn) {
         btn.addEventListener('click', (e) => {
           e.stopPropagation();
+          unlockSharedAudio();
           if (isPlayingAll) {
             if (block.classList.contains('playing-voice')) {
               // 連続再生中に現在再生中のセリフを押した場合は停止
@@ -1034,6 +1100,7 @@
 
     // 連続朗読再生
     function startPlayAll(startIndex = 0) {
+      unlockSharedAudio();
       if (startIndex < 0 || startIndex >= dialogues.length) {
         startIndex = 0;
       }
@@ -1072,12 +1139,18 @@
       const block = dialogues[currentDialogueIndex];
       block.scrollIntoView({ behavior: 'smooth', block: 'center' });
       playDialogueAudio(block, () => {
+        if (!isPlayingAll) return;
         currentDialogueIndex++;
-        sequenceTimer = setTimeout(playNextInSequence, 600);
+        // WebKit / LINE WebView では onended からダイレクトまたは極小ディレイで
+        // 同一要素を再生することでメディア再生セッションを維持する
+        sequenceTimer = setTimeout(() => {
+          if (isPlayingAll) playNextInSequence();
+        }, 150);
       });
     }
 
     btnPlayAll.addEventListener('click', () => {
+      unlockSharedAudio();
       if (isPlayingAll) {
         stopPlayAll();
       } else {
@@ -1085,6 +1158,16 @@
         startPlayAll(lastPlayedIndex);
       }
     });
+
+    // LINEアプリ内ブラウザ検知と案内
+    const isLineBrowser = /Line\//i.test(navigator.userAgent);
+    if (isLineBrowser) {
+      setTimeout(() => {
+        if (window.CyberShare && window.CyberShare.showToast) {
+          window.CyberShare.showToast('LINE内ブラウザをご利用中: 右上メニューから「他のアプリで開く」を選択すると、バックグラウンド再生や連続朗読がさらに安定します', 'info');
+        }
+      }, 1500);
+    }
 
         // 縦書き切り替え
     const btnWritingMode = document.getElementById('btnWritingMode');
