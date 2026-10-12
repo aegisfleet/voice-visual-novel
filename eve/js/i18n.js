@@ -367,7 +367,7 @@ const I18N_DATA = {
   },
   "truth_route_11": {
     "speakerEn": "You",
-    "textEn": "\"Inspector Sakuma! We must invoke Article 37 of the Penal Code—the emergency necessity defense for protecting human life! Eve acted to save a dying child and averted a national catastrophe. I demand all charges be dropped under protective supervision!\"",
+    "textEn": "\"Inspector Sakuma! We must apply the AI Framework Act and Penal Code Article 37: Emergency Evacuation for Life Protection! Eve acted solely to save a dying child and resolved a national crisis. I officially request non-indictment and protective supervision!\"",
     "voiceFileEn": "assets/audio/en/truth_route_11.mp3"
   },
   "truth_route_12": {

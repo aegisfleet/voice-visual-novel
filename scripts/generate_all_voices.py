@@ -22,8 +22,9 @@ client = genai.Client(
     location=location
 )
 
-output_dir = Path("assets/audio")
+output_dir = Path("eve/assets/audio") if Path("eve").exists() else Path("assets/audio")
 output_dir.mkdir(parents=True, exist_ok=True)
+output_dirs = [output_dir]
 
 # 話者ごとのボイス ＆ SpeechMetadata スタイル設定
 VOICE_PROFILES = {
@@ -45,7 +46,7 @@ VOICE_PROFILES = {
     },
     "あなた": {
         "voice": "Puck",
-        "style": "confident, passionate young defense attorney, courtroom drama, clear and determined"
+        "style": "confident, passionate young cyber investigator, investigation drama, clear and determined"
     },
     "default": {
         "voice": "Puck",
@@ -54,7 +55,8 @@ VOICE_PROFILES = {
 }
 
 def extract_scenes():
-    with open("js/scenario.js", "r", encoding="utf-8") as f:
+    scenario_path = Path("eve/js/scenario.js") if Path("eve/js/scenario.js").exists() else Path("js/scenario.js")
+    with open(scenario_path, "r", encoding="utf-8") as f:
         content = f.read()
 
     match = re.search(r'const\s+SCENARIO_DATA\s*=\s*\[(.*?)\];\s*(?:window\.|$)', content, re.DOTALL)
@@ -147,14 +149,16 @@ def generate_voice(scene, index, total):
         tmp_wav.write(audio_bytes)
 
     try:
-        cmd = [
-            "ffmpeg", "-y", "-i", tmp_wav_path,
-            "-codec:a", "libmp3lame",
-            "-b:a", "128k",
-            str(final_path)
-        ]
-        subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
-        print(f"-> 完了: {final_path.name} ({final_path.stat().st_size / 1024:.1f} KB)")
+        for out_d in output_dirs:
+            target_mp3 = out_d / filename
+            cmd = [
+                "ffmpeg", "-y", "-i", tmp_wav_path,
+                "-codec:a", "libmp3lame",
+                "-b:a", "128k",
+                str(target_mp3)
+            ]
+            subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
+            print(f"-> 完了: {target_mp3} ({target_mp3.stat().st_size / 1024:.1f} KB)")
     finally:
         if os.path.exists(tmp_wav_path):
             os.remove(tmp_wav_path)
@@ -165,7 +169,15 @@ def main():
 
     import sys
     narrator_only = "--narrator-only" in sys.argv
-    if narrator_only:
+    azuma_only = "--azuma" in sys.argv
+
+    if azuma_only:
+        scenes = [s for s in scenes if s["speaker"] == "あなた"]
+        total = len(scenes)
+        print("==================================================")
+        print(f"Vertex AI: アズマ捜査官（あなた）のみ ({total} シーン) 再生成開始")
+        print("==================================================")
+    elif narrator_only:
         scenes = [s for s in scenes if not s["speaker"]]
         total = len(scenes)
         print("==================================================")

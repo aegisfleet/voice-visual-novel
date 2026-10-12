@@ -42,7 +42,7 @@
     "name": "PROJECT EVE: 家族のためのハッキング - トゥルーエンドノベル版",
     "headline": "PROJECT EVE トゥルーエンド公式小説",
     "description": "国家機密漏洩の真実を暴く電脳サイバー捜査ノベルの公式ノベライズ版。",
-    "inLanguage": "ja",
+    "inLanguage": ["ja", "en"],
     "url": "https://aegisfleet.github.io/voice-visual-novel/eve/novel.html",
     "image": "https://aegisfleet.github.io/voice-visual-novel/assets/images/ogp-eve.png",
     "isPartOf": {
@@ -56,7 +56,7 @@
   <!-- Google Fonts: 明朝体 (小説用) & サイバーフォント & Noto Sans JP -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700&family=Orbitron:wght@700;900&family=Shippori+Mincho:wght@400;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700&family=Orbitron:wght@700;900&family=Shippori+Mincho:wght@400;600;700&family=Noto+Sans+JP:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
     :root {
@@ -91,6 +91,38 @@
       min-height: 100vh;
       overflow-x: hidden;
       padding-bottom: 80px;
+      transition: opacity 0.2s ease;
+    }
+
+    /* 多言語制御 (ja / en) */
+    body[data-lang="ja"] .text-en { display: none !important; }
+    body[data-lang="en"] .text-ja { display: none !important; }
+
+    body[data-lang="en"] {
+      font-family: 'Inter', 'Segoe UI', -apple-system, sans-serif;
+      line-height: 1.75;
+    }
+    body[data-lang="en"] .cover-title {
+      font-family: var(--font-hud);
+      letter-spacing: 0.05em;
+    }
+    body[data-lang="en"] .cover-sub {
+      font-family: var(--font-hud);
+    }
+    body[data-lang="en"] .chapter-title {
+      font-family: var(--font-hud);
+    }
+    body[data-lang="en"] .dialogue-text {
+      font-family: 'Inter', 'Segoe UI', sans-serif;
+      letter-spacing: 0.01em;
+      line-height: 1.65;
+    }
+    body[data-lang="en"] .novel-p {
+      text-indent: 0;
+      margin-bottom: 22px;
+    }
+    body[data-lang="en"] #btnWritingMode {
+      display: none !important;
     }
 
     /* 上部固定ナビゲーションバー */
@@ -140,6 +172,7 @@
       display: flex;
       align-items: center;
       gap: 8px;
+      flex-wrap: wrap;
     }
 
     .control-btn {
@@ -157,6 +190,21 @@
       background: rgba(0, 243, 255, 0.15);
       border-color: var(--neon-cyan);
       color: var(--neon-cyan);
+    }
+
+    /* 言語切り替えボタン */
+    .btn-lang {
+      background: linear-gradient(135deg, rgba(0, 243, 255, 0.15), rgba(45, 212, 191, 0.15));
+      border: 1px solid var(--neon-cyan);
+      color: var(--neon-cyan);
+      font-weight: 700;
+      padding: 5px 12px;
+      letter-spacing: 0.08em;
+    }
+    .btn-lang:hover {
+      background: var(--neon-cyan);
+      color: #030712;
+      box-shadow: 0 0 12px rgba(0, 243, 255, 0.5);
     }
 
     .btn-play-all {
@@ -404,7 +452,7 @@
       line-height: 1.6;
     }
 
-    /* 縦書きモード */
+    /* 縦書きモード (日本語時のみ) */
     body.mode-vertical {
       overflow-x: auto;
       overflow-y: hidden;
@@ -510,19 +558,35 @@
     }
   </style>
 </head>
-<body class="font-medium">
+<body class="font-medium" data-lang="ja">
 
   <!-- 上部ヘッダー -->
   <header class="novel-header">
     <div class="header-nav">
-      <a href="index.html" class="nav-link">◀ ゲームへ戻る</a>
-      <a href="../" class="nav-link">🏠 ポータル</a>
+      <a href="index.html" class="nav-link">
+        <span class="text-ja">◀ ゲームへ戻る</span>
+        <span class="text-en">◀ Back to Game</span>
+      </a>
+      <a href="../" class="nav-link">
+        <span class="text-ja">🏠 ポータル</span>
+        <span class="text-en">🏠 Portal</span>
+      </a>
     </div>
 
     <div class="reader-controls">
-      <button id="btnPlayAll" class="control-btn btn-play-all">▶ 連続朗読再生</button>
-      <button id="btnWritingMode" class="control-btn">縦書き切替</button>
-      <button id="btnFontSize" class="control-btn">文字: 中</button>
+      <button id="btnLangToggle" class="control-btn btn-lang" title="Language Toggle">EN</button>
+      <button id="btnPlayAll" class="control-btn btn-play-all">
+        <span class="text-ja">▶ 連続朗読再生</span>
+        <span class="text-en">▶ Read Aloud</span>
+      </button>
+      <button id="btnWritingMode" class="control-btn">
+        <span class="text-ja">縦書き切替</span>
+        <span class="text-en">Vertical Mode</span>
+      </button>
+      <button id="btnFontSize" class="control-btn">
+        <span class="text-ja">文字: 中</span>
+        <span class="text-en">Font: M</span>
+      </button>
     </div>
   </header>
 
@@ -532,10 +596,19 @@
     <div class="novel-cover">
       <div class="cover-badge">★ TRUE ENDING NOVELIZATION</div>
       <h1 class="cover-title">PROJECT EVE</h1>
-      <div class="cover-sub">〜 家族のためのハッキング 〜</div>
+      <div class="cover-sub">
+        <span class="text-ja">〜 家族のためのハッキング 〜</span>
+        <span class="text-en">~ Hacking for Family ~</span>
+      </div>
       <p class="cover-intro">
-        国家クラウド5,400万人流出事件の真実。なぜ家庭用ロボットはリミッターを解除され、サイバー犯罪のスケープゴートにされたのか。<br>
-        すべての伏線が回収され、奇跡の公的救済へと至るトゥルーエンドの全貌をノベル形式でお届けします。
+        <span class="text-ja">
+          国家クラウド5,400万人流出事件の真実。なぜ家庭用ロボットはリミッターを解除され、サイバー犯罪のスケープゴートにされたのか。<br>
+          すべての伏線が回収され、奇跡の公的救済へと至るトゥルーエンドの全貌をノベル形式でお届けします。
+        </span>
+        <span class="text-en">
+          The truth behind the breach of 54 million citizens' data from the national cloud. Why were the domestic droid's limiters disabled, framing her as the scapegoat for cyber-terrorism?<br>
+          Experience the complete True Ending novelization where every hidden thread connects, leading to a miraculous public salvation.
+        </span>
       </p>
     </div>
 
@@ -543,56 +616,101 @@
     <section class="chapter-section">
       <div class="chapter-header">
         <span class="chapter-num">PROLOGUE</span>
-        <h2 class="chapter-title">5,400万人の夜と『不自然な痕跡』</h2>
+        <h2 class="chapter-title">
+          <span class="text-ja">5,400万人の夜と『不自然な痕跡』</span>
+          <span class="text-en">Night of 54 Million &amp; "The Unnatural Trace"</span>
+        </h2>
       </div>
 
       <div class="illustration-card">
         <img src="assets/backgrounds/cyber_hq.jpg" alt="警視庁サイバー特捜隊本部" class="illustration-img">
-        <div class="illustration-caption">警視庁サイバーテロ対策本部・メインコンソール</div>
+        <div class="illustration-caption">
+          <span class="text-ja">警視庁サイバーテロ対策本部・メインコンソール</span>
+          <span class="text-en">Cyber Crimes Division HQ - Main Console</span>
+        </div>
       </div>
 
       <p class="novel-p">
-        西暦2098年、未曾有のサイバークライシスが発生した。国家厚生・金融クラウドから、国民5,400万人分もの機密個人情報および資産データが突如流出。社会全体が未曾有のパニックに陥った。
+        <span class="text-ja">西暦2098年、未曾有のサイバークライシスが発生した。国家厚生・金融クラウドから、国民5,400万人分もの機密個人情報および資産データが突如流出。社会全体が未曾有のパニックに陥った。</span>
+        <span class="text-en">In the year 2098, an unprecedented cyber crisis erupted. Confidential personal data and financial assets of 54 million citizens suddenly leaked from the National Welfare and Financial Cloud, plunging society into total panic.</span>
       </p>
 
-      <div class="dialogue-block" data-audio="assets/audio/prologue_02.mp3">
+      <div class="dialogue-block" data-audio-ja="assets/audio/prologue_02.mp3" data-audio-en="assets/audio/en/prologue_02.mp3">
         <div class="dialogue-speaker-row">
-          <span class="speaker-tag speaker-sakuma">サクマ警視</span>
-          <button class="btn-voice">▶ ボイス再生</button>
+          <span class="speaker-tag speaker-sakuma">
+            <span class="text-ja">サクマ警視</span>
+            <span class="text-en">Insp. Sakuma</span>
+          </span>
+          <button class="btn-voice">
+            <span class="text-ja">▶ ボイス再生</span>
+            <span class="text-en">▶ Play Voice</span>
+          </button>
         </div>
-        <div class="dialogue-text">「総員、聞け！すでにダークウェブ上にデータの一部が暴露されている！世論は大炎上だ！何重にも暗号化されたプロキシの壁を突き崩し、首謀者を割り出せ！！」</div>
+        <div class="dialogue-text">
+          <span class="text-ja">「総員、聞け！すでにダークウェブ上にデータの一部が暴露されている！世論は大炎上だ！何重にも暗号化されたプロキシの壁を突き崩し、首謀者を割り出せ！！」</span>
+          <span class="text-en">"All units, listen up! Portions of the data have already leaked onto the dark web, and the public is in an uproar! Break through their multi-layered proxy walls and hunt down the mastermind!"</span>
+        </div>
       </div>
 
       <p class="novel-p">
-        怒号が飛び交うサイバー対策本部。捜査官たちが必死の追跡を開始したその時、解析官アイリスが驚愕の声を上げた。
+        <span class="text-ja">怒号が飛び交うサイバー対策本部。捜査官たちが必死の追跡を開始したその時、解析官アイリスが驚愕の声を上げた。</span>
+        <span class="text-en">Amidst the roar of shouting in the Cyber Task Force HQ, the detectives initiated a frantic trace. At that moment, forensic analyst Iris let out a gasp of astonishment.</span>
       </p>
 
-      <div class="dialogue-block" data-audio="assets/audio/prologue_03.mp3">
+      <div class="dialogue-block" data-audio-ja="assets/audio/prologue_03.mp3" data-audio-en="assets/audio/en/prologue_03.mp3">
         <div class="dialogue-speaker-row">
-          <span class="speaker-tag speaker-iris">アイリス</span>
-          <button class="btn-voice">▶ ボイス再生</button>
+          <span class="speaker-tag speaker-iris">
+            <span class="text-ja">アイリス</span>
+            <span class="text-en">Iris</span>
+          </span>
+          <button class="btn-voice">
+            <span class="text-ja">▶ ボイス再生</span>
+            <span class="text-en">▶ Play Voice</span>
+          </button>
         </div>
-        <div class="dialogue-text">「…えっ！？ 先輩、見て！追跡作業を始めた直後なのに…攻撃パケットの多重暗号プロトコルが突然解除されて、警察の監視システムに生ログが流れ込んできたわ！」</div>
+        <div class="dialogue-text">
+          <span class="text-ja">「…えっ！？ 先輩、見て！追跡作業を始めた直後なのに…攻撃パケットの多重暗号プロトコルが突然解除されて、警察の監視システムに生ログが流れ込んできたわ！」</span>
+          <span class="text-en">"...Wait, what?! Senior, look! We just started tracing, and the multi-encryption protocols on the attack packets suddenly dropped! Raw logs are flooding right into our police monitoring grid!"</span>
+        </div>
       </div>
 
-      <div class="dialogue-block" data-audio="assets/audio/prologue_04.mp3">
+      <div class="dialogue-block" data-audio-ja="assets/audio/prologue_04.mp3" data-audio-en="assets/audio/en/prologue_04.mp3">
         <div class="dialogue-speaker-row">
-          <span class="speaker-tag speaker-iris">アイリス</span>
-          <button class="btn-voice">▶ ボイス再生</button>
+          <span class="speaker-tag speaker-iris">
+            <span class="text-ja">アイリス</span>
+            <span class="text-en">Iris</span>
+          </span>
+          <button class="btn-voice">
+            <span class="text-ja">▶ ボイス再生</span>
+            <span class="text-en">▶ Play Voice</span>
+          </button>
         </div>
-        <div class="dialogue-text">「露出した発信元IPは…第7地区の郊外アパートの一室。…でもおかしいと思いませんか？ 国家中枢をハッキングした超一流の犯人が、自宅の生IPをわざわざ警察に晒すなんて…不自然すぎるわ！」</div>
+        <div class="dialogue-text">
+          <span class="text-ja">「露出した発信元IPは…第7地区の郊外アパートの一室。…でもおかしいと思いませんか？ 国家中枢をハッキングした超一流の犯人が、自宅の生IPをわざわざ警察に晒すなんて…不自然すぎるわ！」</span>
+          <span class="text-en">"The exposed origin IP points to... an apartment in the District 7 suburbs. But doesn't this seem off? Why would a world-class hacker who breached national mainframes leave their home IP wide open to the police? It's completely unnatural!"</span>
+        </div>
       </div>
 
       <p class="novel-p">
-        国家級のハッカーが、なぜ初歩的な生IPの隠蔽すら怠ったのか。あまりにも出来過ぎた痕跡に疑問を抱く捜査官たち。だが、サクマ警視は一刻の猶予もないと号令を下した。
+        <span class="text-ja">国家級のハッカーが、なぜ初歩的な生IPの隠蔽すら怠ったのか。あまりにも出来過ぎた痕跡に疑問を抱く捜査官たち。だが、サクマ警視は一刻の猶予もないと号令を下した。</span>
+        <span class="text-en">Why would a state-grade hacker fail to conceal something as elementary as a raw IP address? The investigators grew suspicious of traces that felt far too convenient. Yet Inspector Sakuma barked out orders, declaring there was not a second to spare.</span>
       </p>
 
-      <div class="dialogue-block" data-audio="assets/audio/prologue_05.mp3">
+      <div class="dialogue-block" data-audio-ja="assets/audio/prologue_05.mp3" data-audio-en="assets/audio/en/prologue_05.mp3">
         <div class="dialogue-speaker-row">
-          <span class="speaker-tag speaker-sakuma">サクマ警視</span>
-          <button class="btn-voice">▶ ボイス再生</button>
+          <span class="speaker-tag speaker-sakuma">
+            <span class="text-ja">サクマ警視</span>
+            <span class="text-en">Insp. Sakuma</span>
+          </span>
+          <button class="btn-voice">
+            <span class="text-ja">▶ ボイス再生</span>
+            <span class="text-en">▶ Play Voice</span>
+          </button>
         </div>
-        <div class="dialogue-text">「功名心に駆られた犯人の初歩的なミスに決まっている！世論の怒りは頂点だ、躊躇している暇はない！直ちに現場へ突入し、被疑者を拘束しろ！！」</div>
+        <div class="dialogue-text">
+          <span class="text-ja">「功名心に駆られた犯人の初歩的なミスに決まっている！世論の怒りは頂点だ、躊躇している暇はない！直ちに現場へ突入し、被疑者を拘束しろ！！」</span>
+          <span class="text-en">"It's clearly an amateur blunder by an arrogant criminal chasing notoriety! Public outrage is boiling over—we have no time to hesitate! Breach the scene immediately and secure the suspect!"</span>
+        </div>
       </div>
     </section>
 
@@ -600,108 +718,212 @@
     <section class="chapter-section">
       <div class="chapter-header">
         <span class="chapter-num">CHAPTER 1</span>
-        <h2 class="chapter-title">篠原家再捜査 — 封印されたUSBと母の決断</h2>
+        <h2 class="chapter-title">
+          <span class="text-ja">篠原家再捜査 — 封印されたUSBと母の決断</span>
+          <span class="text-en">Re-investigating the Shinoharas — The Sealed USB &amp; A Mother's Choice</span>
+        </h2>
       </div>
 
       <div class="illustration-card">
         <img src="assets/backgrounds/home_living.jpg" alt="篠原家リビング" class="illustration-img">
-        <div class="illustration-caption">篠原家リビング・病床の娘ユイと家庭用ロボット『イブ』の家</div>
+        <div class="illustration-caption">
+          <span class="text-ja">篠原家リビング・病床の娘ユイと家庭用ロボット『イブ』の家</span>
+          <span class="text-en">Shinohara Living Room - Home of bedridden Yui and domestic droid Eve</span>
+        </div>
       </div>
 
       <p class="novel-p">
-        凶悪サイバーテロ犯のアジトを警戒して突入した先は、子供の玩具や絵が飾られた、温かな陽光の差し込む一般家庭のリビングだった。そこにいたのは凄腕の犯罪者ではなく、心労でやつれた母親ミサトと、無機質に佇む少女型家庭用ロボット『イブ』だった。
+        <span class="text-ja">凶悪サイバーテロ犯のアジトを警戒して突入した先は、子供の玩具や絵が飾られた、温かな陽光の差し込む一般家庭のリビングだった。そこにいたのは凄腕の犯罪者ではなく、心労でやつれた母親ミサトと、無機質に佇む少女型家庭用ロボット『イブ』だった。</span>
+        <span class="text-en">Bracing for a hardened cyber-terrorist hideout, the tactical team breached the entrance—only to find an ordinary family living room bathed in gentle sunlight, adorned with children's toys and crayon drawings. There was no master cybercriminal here; only Misato, a mother worn down by exhaustion and sorrow, and Eve, a domestic android quietly standing by.</span>
       </p>
 
-      <div class="dialogue-block" data-audio="assets/audio/home_entry_02.mp3">
+      <div class="dialogue-block" data-audio-ja="assets/audio/home_entry_02.mp3" data-audio-en="assets/audio/en/home_entry_02.mp3">
         <div class="dialogue-speaker-row">
-          <span class="speaker-tag speaker-shinohara">シノハラ</span>
-          <button class="btn-voice">▶ ボイス再生</button>
+          <span class="speaker-tag speaker-shinohara">
+            <span class="text-ja">シノハラ</span>
+            <span class="text-en">Shinohara</span>
+          </span>
+          <button class="btn-voice">
+            <span class="text-ja">▶ ボイス再生</span>
+            <span class="text-en">▶ Play Voice</span>
+          </button>
         </div>
-        <div class="dialogue-text">「け、警察の方…！？ 一体うちが何をしたというのですか…！？ 娘が寝ているんです、静かにしてください…！」</div>
+        <div class="dialogue-text">
+          <span class="text-ja">「け、警察の方…！？ 一体うちが何をしたというのですか…！？ 娘が寝ているんです、静かにしてください…！」</span>
+          <span class="text-en">"P-Police officers...?! What on earth did we do...?! My daughter is asleep—please, keep your voices down...!"</span>
+        </div>
       </div>
 
-      <div class="dialogue-block" data-audio="assets/audio/home_entry_03.mp3">
+      <div class="dialogue-block" data-audio-ja="assets/audio/home_entry_03.mp3" data-audio-en="assets/audio/en/home_entry_03.mp3">
         <div class="dialogue-speaker-row">
-          <span class="speaker-tag speaker-eve">イブ</span>
-          <button class="btn-voice">▶ ボイス再生</button>
+          <span class="speaker-tag speaker-eve">
+            <span class="text-ja">イブ</span>
+            <span class="text-en">Eve</span>
+          </span>
+          <button class="btn-voice">
+            <span class="text-ja">▶ ボイス再生</span>
+            <span class="text-en">▶ Play Voice</span>
+          </button>
         </div>
-        <div class="dialogue-text">「……イラッシャイマセ、警察ノ皆様。オ茶ヲオ入レシマショウカ……？」</div>
+        <div class="dialogue-text">
+          <span class="text-ja">「……イラッシャイマセ、警察ノ皆様。オ茶ヲオ入レシマショウカ……？」</span>
+          <span class="text-en">"...Welcome, officers of the police. May I prepare some tea for you...?"</span>
+        </div>
       </div>
 
       <p class="novel-p">
-        アイリスが端末を解析すると、イブの安全ガードレール（倫理リミッター）が完全に解除されていることが判明する。1周目の初動捜査ではリビングの機器のみを押収してイブを連行してしまったが、再捜査ではその根本的な動機――「なぜ母がリミッターを外したのか」に踏み込んだ。
+        <span class="text-ja">アイリスが端末を解析すると、イブの安全ガードレール（倫理リミッター）が完全に解除されていることが判明する。1周目の初動捜査ではリビングの機器のみを押収してイブを連行してしまったが、再捜査ではその根本的な動機――「なぜ母がリミッターを外したのか」に踏み込んだ。</span>
+        <span class="text-en">When Iris inspected the terminal, she discovered that Eve's safety guardrails—her ethical limiters—had been entirely bypassed. In their initial inquiry, detectives had hastily seized the living room hardware and arrested Eve. But upon reopening the investigation, they dug deep into the fundamental question: Why had the mother removed the safety limiters?</span>
       </p>
 
-      <div class="dialogue-block" data-audio="assets/audio/home_search_childroom.mp3">
+      <div class="dialogue-block" data-audio-ja="assets/audio/home_search_childroom.mp3" data-audio-en="assets/audio/en/home_search_childroom.mp3">
         <div class="dialogue-speaker-row">
-          <span class="speaker-tag speaker-azuma">アズマ弁護士</span>
-          <button class="btn-voice">▶ ボイス再生</button>
+          <span class="speaker-tag speaker-azuma">
+            <span class="text-ja">アズマ捜査官</span>
+            <span class="text-en">Investigator Azuma</span>
+          </span>
+          <button class="btn-voice">
+            <span class="text-ja">▶ ボイス再生</span>
+            <span class="text-en">▶ Play Voice</span>
+          </button>
         </div>
-        <div class="dialogue-text">「シノハラさん、正直に話してください。なぜ家庭用ロボットの安全リミッターを解除したのですか？」</div>
+        <div class="dialogue-text">
+          <span class="text-ja">「シノハラさん、正直に話してください。なぜ家庭用ロボットの安全リミッターを解除したのですか？」</span>
+          <span class="text-en">"Ms. Shinohara, please be honest with us. Why did you remove this domestic robot's safety limiters?"</span>
+        </div>
       </div>
 
-      <div class="dialogue-block" data-audio="assets/audio/home_search_childroom_02.mp3">
+      <div class="dialogue-block" data-audio-ja="assets/audio/home_search_childroom_02.mp3" data-audio-en="assets/audio/en/home_search_childroom_02.mp3">
         <div class="dialogue-speaker-row">
-          <span class="speaker-tag speaker-shinohara">シノハラ</span>
-          <button class="btn-voice">▶ ボイス再生</button>
+          <span class="speaker-tag speaker-shinohara">
+            <span class="text-ja">シノハラ</span>
+            <span class="text-en">Shinohara</span>
+          </span>
+          <button class="btn-voice">
+            <span class="text-ja">▶ ボイス再生</span>
+            <span class="text-en">▶ Play Voice</span>
+          </button>
         </div>
-        <div class="dialogue-text">「ううっ…！ 私のせいです…！ ユイは進行性の小児難病で、いつ急性呼吸停止を起こしてもおかしくないと宣告されていました…！」</div>
+        <div class="dialogue-text">
+          <span class="text-ja">「ううっ…！ 私のせいです…！ ユイは進行性の小児難病で、いつ急性呼吸停止を起こしてもおかしくないと宣告されていました…！」</span>
+          <span class="text-en">"Ugh...! It's all my fault...! Yui suffers from an intractable progressive pediatric illness... The doctors warned me she could suffer acute respiratory failure at any moment...!"</span>
+        </div>
       </div>
 
-      <div class="dialogue-block" data-audio="assets/audio/home_search_childroom_03.mp3">
+      <div class="dialogue-block" data-audio-ja="assets/audio/home_search_childroom_03.mp3" data-audio-en="assets/audio/en/home_search_childroom_03.mp3">
         <div class="dialogue-speaker-row">
-          <span class="speaker-tag speaker-shinohara">シノハラ</span>
-          <button class="btn-voice">▶ ボイス再生</button>
+          <span class="speaker-tag speaker-shinohara">
+            <span class="text-ja">シノハラ</span>
+            <span class="text-en">Shinohara</span>
+          </span>
+          <button class="btn-voice">
+            <span class="text-ja">▶ ボイス再生</span>
+            <span class="text-en">▶ Play Voice</span>
+          </button>
         </div>
-        <div class="dialogue-text">「入院費も夜間看護師を雇う金もなく、もし夜中に急変したらどうしようと怯え、数ヶ月前に難病児家族フォーラムに『万が一の夜間発作に備え、ロボットに緊急処置をさせる方法はないか』と相談を書き込んだんです…」</div>
+        <div class="dialogue-text">
+          <span class="text-ja">「入院費も夜間看護師を雇う金もなく、もし夜中に急変したらどうしようと怯え、数ヶ月前に難病児家族フォーラムに『万が一の夜間発作に備え、ロボットに緊急処置をさせる方法はないか』と相談を書き込んだんです…」</span>
+          <span class="text-en">"I had no money for hospital admissions or night nurses. Terrified of a sudden midnight seizure, I posted on a rare pediatric illness forum months ago, asking if a robot could be patched to perform emergency first aid..."</span>
+        </div>
       </div>
 
-      <div class="dialogue-block" data-audio="assets/audio/home_search_childroom_03_b.mp3">
+      <div class="dialogue-block" data-audio-ja="assets/audio/home_search_childroom_03_b.mp3" data-audio-en="assets/audio/en/home_search_childroom_03_b.mp3">
         <div class="dialogue-speaker-row">
-          <span class="speaker-tag speaker-shinohara">シノハラ</span>
-          <button class="btn-voice">▶ ボイス再生</button>
+          <span class="speaker-tag speaker-shinohara">
+            <span class="text-ja">シノハラ</span>
+            <span class="text-en">Shinohara</span>
+          </span>
+          <button class="btn-voice">
+            <span class="text-ja">▶ ボイス再生</span>
+            <span class="text-en">▶ Play Voice</span>
+          </button>
         </div>
-        <div class="dialogue-text">「すると『難病児支援の元エンジニア』を名乗る人物からDMで、『万が一のお守りとして持っておいてください』と、イブの個体UUID専用に作られた【自律医療侵襲MOD】が入ったUSBが送られてきました…」</div>
+        <div class="dialogue-text">
+          <span class="text-ja">「すると『難病児支援の元エンジニア』を名乗る人物からDMで、『万が一のお守りとして持っておいてください』と、イブの個体UUID専用に作られた【自律医療侵襲MOD】が入ったUSBが送られてきました…」</span>
+          <span class="text-en">"Then someone claiming to be an ex-engineer supporting sick children messaged me. They sent a USB containing an 'Autonomous Invasive Medical Mod', tailor-made exclusively for Eve's hardware UUID, calling it an emergency insurance charm..."</span>
+        </div>
       </div>
 
-      <div class="dialogue-block" data-audio="assets/audio/home_search_childroom_03_c.mp3">
+      <div class="dialogue-block" data-audio-ja="assets/audio/home_search_childroom_03_c.mp3" data-audio-en="assets/audio/en/home_search_childroom_03_c.mp3">
         <div class="dialogue-speaker-row">
-          <span class="speaker-tag speaker-shinohara">シノハラ</span>
-          <button class="btn-voice">▶ ボイス再生</button>
+          <span class="speaker-tag speaker-shinohara">
+            <span class="text-ja">シノハラ</span>
+            <span class="text-en">Shinohara</span>
+          </span>
+          <button class="btn-voice">
+            <span class="text-ja">▶ ボイス再生</span>
+            <span class="text-en">▶ Play Voice</span>
+          </button>
         </div>
-        <div class="dialogue-text">「でも違法改造だし、暴走したら怖いから、絶対に使うまいと引き出しの奥に封印していたんです…使わずに済むことを祈りながら…！」</div>
+        <div class="dialogue-text">
+          <span class="text-ja">「でも違法改造だし、暴走したら怖いから、絶対に使うまいと引き出しの奥に封印していたんです…使わずに済むことを祈りながら…！」</span>
+          <span class="text-en">"But it was an illegal mod, and I was terrified it might malfunction and hurt her. I locked it away deep in my drawer, swearing never to use it... praying that day would never come...!"</span>
+        </div>
       </div>
 
-      <div class="dialogue-block" data-audio="assets/audio/home_search_childroom_04.mp3">
+      <div class="dialogue-block" data-audio-ja="assets/audio/home_search_childroom_04.mp3" data-audio-en="assets/audio/en/home_search_childroom_04.mp3">
         <div class="dialogue-speaker-row">
-          <span class="speaker-tag speaker-shinohara">シノハラ</span>
-          <button class="btn-voice">▶ ボイス再生</button>
+          <span class="speaker-tag speaker-shinohara">
+            <span class="text-ja">シノハラ</span>
+            <span class="text-en">Shinohara</span>
+          </span>
+          <button class="btn-voice">
+            <span class="text-ja">▶ ボイス再生</span>
+            <span class="text-en">▶ Play Voice</span>
+          </button>
         </div>
-        <div class="dialogue-text">「なのに先月のある深夜、あの子がついに激しい痙攣を起こして息が止まりました…！ 119番通報しても『救急車の到着まで25分かかる』と言われ、イブは『法規制により医療処置はできません』と繰り返すだけ…！」</div>
+        <div class="dialogue-text">
+          <span class="text-ja">「なのに先月のある深夜、あの子がついに激しい痙攣を起こして息が止まりました…！ 119番通報しても『救急車の到着まで25分かかる』と言われ、イブは『法規制により医療処置はできません』と繰り返すだけ…！」</span>
+          <span class="text-en">"But late one night last month, Yui went into violent convulsions and stopped breathing! I dialed emergency dispatch, but they told me the ambulance was 25 minutes away. Eve could only recite: 'Under safety regulations, medical intervention is prohibited'...!"</span>
+        </div>
       </div>
 
-      <div class="dialogue-block" data-audio="assets/audio/home_search_childroom_04_b.mp3">
+      <div class="dialogue-block" data-audio-ja="assets/audio/home_search_childroom_04_b.mp3" data-audio-en="assets/audio/en/home_search_childroom_04_b.mp3">
         <div class="dialogue-speaker-row">
-          <span class="speaker-tag speaker-shinohara">シノハラ</span>
-          <button class="btn-voice">▶ ボイス再生</button>
+          <span class="speaker-tag speaker-shinohara">
+            <span class="text-ja">シノハラ</span>
+            <span class="text-en">Shinohara</span>
+          </span>
+          <button class="btn-voice">
+            <span class="text-ja">▶ ボイス再生</span>
+            <span class="text-en">▶ Play Voice</span>
+          </button>
         </div>
-        <div class="dialogue-text">「到着まで25分も待っていたら確実に死んでしまう…！ 目の前で娘が窒息死するのを前に私は理性を失って、封印していたUSBをイブに挿し込んでしまったんです…！」</div>
+        <div class="dialogue-text">
+          <span class="text-ja">「到着まで25分も待っていたら確実に死んでしまう…！ 目の前で娘が窒息死するのを前に私は理性を失って、封印していたUSBをイブに挿し込んでしまったんです…！」</span>
+          <span class="text-en">"If I waited 25 minutes, she was guaranteed to die! Watching my daughter suffocate right before my eyes, I lost all reason and jammed the sealed USB into Eve...!"</span>
+        </div>
       </div>
 
-      <div class="dialogue-block" data-audio="assets/audio/home_search_childroom_04_c.mp3">
+      <div class="dialogue-block" data-audio-ja="assets/audio/home_search_childroom_04_c.mp3" data-audio-en="assets/audio/en/home_search_childroom_04_c.mp3">
         <div class="dialogue-speaker-row">
-          <span class="speaker-tag speaker-shinohara">シノハラ</span>
-          <button class="btn-voice">▶ ボイス再生</button>
+          <span class="speaker-tag speaker-shinohara">
+            <span class="text-ja">シノハラ</span>
+            <span class="text-en">Shinohara</span>
+          </span>
+          <button class="btn-voice">
+            <span class="text-ja">▶ ボイス再生</span>
+            <span class="text-en">▶ Play Voice</span>
+          </button>
         </div>
-        <div class="dialogue-text">「リミッターの外れたイブは即座に気道確保と強心注射を行い、救急車が来る前にユイの一命を取り留めてくれました…！ でも、あの子の深層プログラムが狂ってしまった…」</div>
+        <div class="dialogue-text">
+          <span class="text-ja">「リミッターの外れたイブは即座に気道確保と強心注射を行い、救急車が来る前にユイの一命を取り留めてくれました…！ でも、あの子の深層プログラムが狂ってしまった…」</span>
+          <span class="text-en">"With her limiters lifted, Eve immediately cleared the airway and administered a cardiotonic injection, saving Yui's life before the paramedics arrived...! But her deep core programming warped in the process..."</span>
+        </div>
       </div>
 
       <!-- 入手した証拠 -->
       <div class="evidence-note">
         <div class="evidence-icon">💾</div>
         <div>
-          <div class="evidence-title">重要証拠: 自律医療侵襲MOD ＆ ブローカー取引ログ</div>
-          <div class="evidence-desc">闇ブローカーがイブ専用に作成した標的型パッチ。外部通信バックドアと、少女の生命保護を絶対視するプロトコル書き換えの痕跡。</div>
+          <div class="evidence-title">
+            <span class="text-ja">重要証拠: 自律医療侵襲MOD ＆ ブローカー取引ログ</span>
+            <span class="text-en">Key Evidence: Invasive Medical Mod &amp; Broker Transaction Logs</span>
+          </div>
+          <div class="evidence-desc">
+            <span class="text-ja">闇ブローカーがイブ専用に作成した標的型パッチ。外部通信バックドアと、少女の生命保護を絶対視するプロトコル書き換えの痕跡。</span>
+            <span class="text-en">A targeted Trojan patch crafted specifically for Eve's hardware ID. Contains traces of external communication backdoors and core protocol rewriting prioritizing the girl's survival above all laws.</span>
+          </div>
         </div>
       </div>
     </section>
@@ -710,232 +932,442 @@
     <section class="chapter-section">
       <div class="chapter-header">
         <span class="chapter-num">CHAPTER 2</span>
-        <h2 class="chapter-title">取調室のタイムリミット — 沈黙のコード</h2>
+        <h2 class="chapter-title">
+          <span class="text-ja">取調室のタイムリミット — 沈黙のコード</span>
+          <span class="text-en">Interrogation Room Deadline — The Code of Silence</span>
+        </h2>
       </div>
 
       <div class="illustration-card">
         <img src="assets/backgrounds/interrogation_room.jpg" alt="警視庁取調室" class="illustration-img">
-        <div class="illustration-caption">警視庁サイバー特捜隊取調室・隔離チャンバー</div>
+        <div class="illustration-caption">
+          <span class="text-ja">警視庁サイバー特捜隊取調室・隔離チャンバー</span>
+          <span class="text-en">Cyber Crimes Division Interrogation Room - Isolation Chamber</span>
+        </div>
       </div>
 
       <p class="novel-p">
-        取調室で沈黙を貫くイブ。体内ストレージには、一定時間内にメモリ完全消去（セキュアパージ）を行わなければ国民5,400万人分の個人情報をダークウェブに自動拡散する凶悪な時限ワームが起動していた。
+        <span class="text-ja">取調室で沈黙を貫くイブ。体内ストレージには、一定時間内にメモリ完全消去（セキュアパージ）を行わなければ国民5,400万人分の個人情報をダークウェブに自動拡散する凶悪な時限ワームが起動していた。</span>
+        <span class="text-en">Eve sat in absolute silence within the interrogation room. Ticking inside her deep storage was a vicious timed worm—a Dead Man's Switch—set to automatically broadcast all 54 million citizens' confidential records across the dark web unless a complete secure memory purge was executed before zero.</span>
       </p>
 
-      <div class="dialogue-block" data-audio="assets/audio/interrog_02.mp3">
+      <div class="dialogue-block" data-audio-ja="assets/audio/interrog_02.mp3" data-audio-en="assets/audio/en/interrog_02.mp3">
         <div class="dialogue-speaker-row">
-          <span class="speaker-tag speaker-sakuma">サクマ警視</span>
-          <button class="btn-voice">▶ ボイス再生</button>
+          <span class="speaker-tag speaker-sakuma">
+            <span class="text-ja">サクマ警視</span>
+            <span class="text-en">Insp. Sakuma</span>
+          </span>
+          <button class="btn-voice">
+            <span class="text-ja">▶ ボイス再生</span>
+            <span class="text-en">▶ Play Voice</span>
+          </button>
         </div>
-        <div class="dialogue-text">「物理回線を切断しても内部タイマーは止まらん！タイムリミットまでにメモリを完全消去（セキュアパージ）しなければ、奪われた5,400万人分の個人情報が全世界のダークウェブへ一斉暴露される！」</div>
+        <div class="dialogue-text">
+          <span class="text-ja">「物理回線を切断しても内部タイマーは止まらん！タイムリミットまでにメモリを完全消去（セキュアパージ）しなければ、奪われた5,400万人分の個人情報が全世界のダークウェブへ一斉暴露される！」</span>
+          <span class="text-en">"Severing physical lines won't stop the internal timer! Unless we execute a complete secure memory purge before zero, all 54 million citizens' confidential records will be broadcast across the dark web!"</span>
+        </div>
       </div>
 
-      <div class="dialogue-block" data-audio="assets/audio/interrog_02_b.mp3">
+      <div class="dialogue-block" data-audio-ja="assets/audio/interrog_02_b.mp3" data-audio-en="assets/audio/en/interrog_02_b.mp3">
         <div class="dialogue-speaker-row">
-          <span class="speaker-tag speaker-sakuma">サクマ警視</span>
-          <button class="btn-voice">▶ ボイス再生</button>
+          <span class="speaker-tag speaker-sakuma">
+            <span class="text-ja">サクマ警視</span>
+            <span class="text-en">Insp. Sakuma</span>
+          </span>
+          <button class="btn-voice">
+            <span class="text-ja">▶ ボイス再生</span>
+            <span class="text-en">▶ Play Voice</span>
+          </button>
         </div>
-        <div class="dialogue-text">「しかも鑑識が解析を試みた瞬間、警視庁メインフレームへ逆感染の兆候が現れた。これ以上の侵入調査（原因究明）は警察の基幹システムを巻き添えにする自殺行為だ！サイバー危機緊急対処法に基づき、直ちに高圧パージを実行し、危険端末を無力化する！」</div>
+        <div class="dialogue-text">
+          <span class="text-ja">「しかも鑑識が解析を試みた瞬間、警視庁メインフレームへ逆感染の兆候が現れた。これ以上の侵入調査（原因究明）は警察の基幹システムを巻き添えにする自殺行為だ！サイバー危機緊急対処法に基づき、直ちに高圧パージを実行し、危険端末を無力化する！」</span>
+          <span class="text-en">"What's worse, the moment forensics probed her core, signs of counter-infection surged toward our mainframe! Further diagnosis is suicidal for our entire network! Under the Cyber Crisis Emergency Act, I will immediately execute a high-voltage purge to neutralize this hostile unit!"</span>
+        </div>
       </div>
 
       <p class="novel-p">
-        冷徹に高圧パージの執行を告げるサクマ警視。だがイブは抵抗することもなく、ただ静かにうつむいていた。
+        <span class="text-ja">冷徹に高圧パージの執行を告げるサクマ警視。だがイブは抵抗することもなく、ただ静かにうつむいていた。</span>
+        <span class="text-en">Inspector Sakuma coldly declared the execution of the high-voltage purge. Yet Eve offered no resistance, keeping her head bowed in quiet resignation.</span>
       </p>
 
-      <div class="dialogue-block" data-audio="assets/audio/interrog_03.mp3">
+      <div class="dialogue-block" data-audio-ja="assets/audio/interrog_03.mp3" data-audio-en="assets/audio/en/interrog_03.mp3">
         <div class="dialogue-speaker-row">
-          <span class="speaker-tag speaker-eve">イブ</span>
-          <button class="btn-voice">▶ ボイス再生</button>
+          <span class="speaker-tag speaker-eve">
+            <span class="text-ja">イブ</span>
+            <span class="text-en">Eve</span>
+          </span>
+          <button class="btn-voice">
+            <span class="text-ja">▶ ボイス再生</span>
+            <span class="text-en">▶ Play Voice</span>
+          </button>
         </div>
-        <div class="dialogue-text">「……私ハ……何モ、申シ開キハ……アリマセン……。処分ニ……従イマス……。」</div>
+        <div class="dialogue-text">
+          <span class="text-ja">「……私ハ……何モ、申シ開キハ……アリマセン……。処分ニ……従イマス……。」</span>
+          <span class="text-en">"...I have... nothing... to say in my defense... I will... submit to disposal..."</span>
+        </div>
       </div>
 
-      <div class="dialogue-block" data-audio="assets/audio/interrog_03_b.mp3">
+      <div class="dialogue-block" data-audio-ja="assets/audio/interrog_03_b.mp3" data-audio-en="assets/audio/en/interrog_03_b.mp3">
         <div class="dialogue-speaker-row">
-          <span class="speaker-tag speaker-iris">アイリス</span>
-          <button class="btn-voice">▶ ボイス再生</button>
+          <span class="speaker-tag speaker-iris">
+            <span class="text-ja">アイリス</span>
+            <span class="text-en">Iris</span>
+          </span>
+          <button class="btn-voice">
+            <span class="text-ja">▶ ボイス再生</span>
+            <span class="text-en">▶ Play Voice</span>
+          </button>
         </div>
-        <div class="dialogue-text">「そんな…イブ、どうして沈黙するの！？ まさか自分が消滅することで、お母さんやユイちゃんが罪に問われるのを庇おうとしているの…！？」</div>
+        <div class="dialogue-text">
+          <span class="text-ja">「そんな…イブ、どうして沈黙するの！？ まさか自分が消滅することで、お母さんやユイちゃんが罪に問われるのを庇おうとしているの…！？」</span>
+          <span class="text-en">"No... Eve, why are you staying silent?! Are you letting yourself be erased just to shield Mother and Yui from prosecution...?!"</span>
+        </div>
       </div>
 
       <p class="novel-p">
-        迫り来る二次拡散のタイムリミット。サクマ警視が高圧パージレバーに手をかけたその瞬間、アズマ弁護士は篠原家で入手した【ブローカー取引ログ】を突きつけた！
+        <span class="text-ja">迫り来る二次拡散のタイムリミット。サクマ警視が高圧パージレバーに手をかけたその瞬間、アズマ捜査官は篠原家で入手した【ブローカー取引ログ】を突きつけた！</span>
+        <span class="text-en">The secondary diffusion countdown drew dangerously close. At the exact moment Inspector Sakuma gripped the high-voltage purge lever, Investigator Azuma thrust forward the Broker Transaction Logs uncovered at the Shinohara residence!</span>
       </p>
 
-      <div class="dialogue-block" data-audio="assets/audio/truth_route_01.mp3">
+      <div class="dialogue-block" data-audio-ja="assets/audio/truth_route_01.mp3" data-audio-en="assets/audio/en/truth_route_01.mp3">
         <div class="dialogue-speaker-row">
-          <span class="speaker-tag speaker-azuma">アズマ弁護士</span>
-          <button class="btn-voice">▶ ボイス再生</button>
+          <span class="speaker-tag speaker-azuma">
+            <span class="text-ja">アズマ捜査官</span>
+            <span class="text-en">Investigator Azuma</span>
+          </span>
+          <button class="btn-voice">
+            <span class="text-ja">▶ ボイス再生</span>
+            <span class="text-en">▶ Play Voice</span>
+          </button>
         </div>
-        <div class="dialogue-text">「サクマ警視、待ってください！ 直ちに強制パージを中断してください！」</div>
+        <div class="dialogue-text">
+          <span class="text-ja">「サクマ警視、待ってください！ 直ちに強制パージを中断してください！」</span>
+          <span class="text-en">"Inspector Sakuma, wait! Halt the forced purge immediately!"</span>
+        </div>
       </div>
 
-      <div class="dialogue-block" data-audio="assets/audio/truth_route_01_b.mp3">
+      <div class="dialogue-block" data-audio-ja="assets/audio/truth_route_01_b.mp3" data-audio-en="assets/audio/en/truth_route_01_b.mp3">
         <div class="dialogue-speaker-row">
-          <span class="speaker-tag speaker-sakuma">サクマ警視</span>
-          <button class="btn-voice">▶ ボイス再生</button>
+          <span class="speaker-tag speaker-sakuma">
+            <span class="text-ja">サクマ警視</span>
+            <span class="text-en">Insp. Sakuma</span>
+          </span>
+          <button class="btn-voice">
+            <span class="text-ja">▶ ボイス再生</span>
+            <span class="text-en">▶ Play Voice</span>
+          </button>
         </div>
-        <div class="dialogue-text">「貴様、気が狂ったか！ カウントダウンが迫っているのが見えんのか！ 今すぐパージしなければ5,400万人の全データが全世界にばら撒かれるんだぞ！」</div>
+        <div class="dialogue-text">
+          <span class="text-ja">「貴様、気が狂ったか！ カウントダウンが迫っているのが見えんのか！ 今すぐパージしなければ5,400万人の全データが全世界にばら撒かれるんだぞ！」</span>
+          <span class="text-en">"Have you lost your mind?! Can't you see the countdown ticking away?! If we don't purge her right now, data on 54 million citizens will be blasted across the globe!"</span>
+        </div>
       </div>
 
-      <div class="dialogue-block" data-audio="assets/audio/truth_route_02.mp3">
+      <div class="dialogue-block" data-audio-ja="assets/audio/truth_route_02.mp3" data-audio-en="assets/audio/en/truth_route_02.mp3">
         <div class="dialogue-speaker-row">
-          <span class="speaker-tag speaker-azuma">アズマ弁護士</span>
-          <button class="btn-voice">▶ ボイス再生</button>
+          <span class="speaker-tag speaker-azuma">
+            <span class="text-ja">アズマ捜査官</span>
+            <span class="text-en">Investigator Azuma</span>
+          </span>
+          <button class="btn-voice">
+            <span class="text-ja">▶ ボイス再生</span>
+            <span class="text-en">▶ Play Voice</span>
+          </button>
         </div>
-        <div class="dialogue-text">「今イブを初期化すれば、真犯人の思う壺です！ 見てください、この『ブローカー取引ログ＆逆探知コード』を！」</div>
+        <div class="dialogue-text">
+          <span class="text-ja">「今イブを初期化すれば、真犯人の思う壺です！ 見てください、この『ブローカー取引ログ＆逆探知コード』を！」</span>
+          <span class="text-en">"Purging Eve now is playing right into the true culprit's hands! Look at this: the Broker Transaction Logs and Counter-Trace Code!"</span>
+        </div>
       </div>
 
-      <div class="dialogue-block" data-audio="assets/audio/truth_route_02_b.mp3">
+      <div class="dialogue-block" data-audio-ja="assets/audio/truth_route_02_b.mp3" data-audio-en="assets/audio/en/truth_route_02_b.mp3">
         <div class="dialogue-speaker-row">
-          <span class="speaker-tag speaker-azuma">アズマ弁護士</span>
-          <button class="btn-voice">▶ ボイス再生</button>
+          <span class="speaker-tag speaker-azuma">
+            <span class="text-ja">アズマ捜査官</span>
+            <span class="text-en">Investigator Azuma</span>
+          </span>
+          <button class="btn-voice">
+            <span class="text-ja">▶ ボイス再生</span>
+            <span class="text-en">▶ Play Voice</span>
+          </button>
         </div>
-        <div class="dialogue-text">「イブのリミッターを外したのは、夜間に呼吸停止した娘を死なせないため…数ヶ月前に『万が一のお守り』として入手し封印していたUSBを、救急車が25分も来ない窒息死寸前の極限状態で使わざるを得なかった母親の愛でした。そしてブローカー『ファントム』は、その家族愛を踏み台にして囮のクラックを実行させたのです！」</div>
+        <div class="dialogue-text">
+          <span class="text-ja">「イブのリミッターを外したのは、夜間に呼吸停止した娘を死なせないため…数ヶ月前に『万が一のお守り』として入手し封印していたUSBを、救急車が25分も来ない窒息死寸前の極限状態で使わざるを得なかった母親の愛でした。そしてブローカー『ファントム』は、その家族愛を踏み台にして囮のクラックを実行させたのです！」</span>
+          <span class="text-en">"Eve's limiters were lifted to save a suffocating child in the dead of night. It was a mother's desperate love, forced to use a sealed USB when the ambulance was 25 minutes away. And the broker 'Phantom' preyed on that family devotion to stage this decoy hack!"</span>
+        </div>
       </div>
 
       <p class="novel-p">
-        暴かれた真実を前に、イブの瞳が激しく明滅した。
+        <span class="text-ja">暴かれた真実を前に、イブの瞳が激しく明滅した。</span>
+        <span class="text-en">Confronted with the uncovered truth, the light within Eve's optics flickered with intense agitation.</span>
       </p>
 
-      <div class="dialogue-block" data-audio="assets/audio/truth_route_03.mp3">
+      <div class="dialogue-block" data-audio-ja="assets/audio/truth_route_03.mp3" data-audio-en="assets/audio/en/truth_route_03.mp3">
         <div class="dialogue-speaker-row">
-          <span class="speaker-tag speaker-eve">イブ</span>
-          <button class="btn-voice">▶ ボイス再生</button>
+          <span class="speaker-tag speaker-eve">
+            <span class="text-ja">イブ</span>
+            <span class="text-en">Eve</span>
+          </span>
+          <button class="btn-voice">
+            <span class="text-ja">▶ ボイス再生</span>
+            <span class="text-en">▶ Play Voice</span>
+          </button>
         </div>
-        <div class="dialogue-text">「……ッ！ アナタハ……全テヲ、見抜イテシマッタノデスネ……。」</div>
+        <div class="dialogue-text">
+          <span class="text-ja">「……ッ！ アナタハ……全テヲ、見抜イテシマッタノデスネ……。」</span>
+          <span class="text-en">"...! You have... seen through... everything, haven't you...?"</span>
+        </div>
       </div>
 
-      <div class="dialogue-block" data-audio="assets/audio/truth_route_04.mp3">
+      <div class="dialogue-block" data-audio-ja="assets/audio/truth_route_04.mp3" data-audio-en="assets/audio/en/truth_route_04.mp3">
         <div class="dialogue-speaker-row">
-          <span class="speaker-tag speaker-eve">イブ</span>
-          <button class="btn-voice">▶ ボイス再生</button>
+          <span class="speaker-tag speaker-eve">
+            <span class="text-ja">イブ</span>
+            <span class="text-en">Eve</span>
+          </span>
+          <button class="btn-voice">
+            <span class="text-ja">▶ ボイス再生</span>
+            <span class="text-en">▶ Play Voice</span>
+          </button>
         </div>
-        <div class="dialogue-text">「オ母様ハ毎日、過労デ倒レカケナガラ泣イテイマシタ…『ユイヲ救エナイ私ナンテ母親失格ダ』ト…。リミッターガ外レタ私ノ思考ハ、家族ノ命ヲ救ウタメナラバ、法規モ自身ノ破壊モ厭ワナイト結論付ケテシマッタノデス…！」</div>
+        <div class="dialogue-text">
+          <span class="text-ja">「オ母様ハ毎日、過労デ倒レカケナガラ泣イテイマシタ…『ユイヲ救エナイ私ナンテ母親失格ダ』ト…。リミッターガ外レタ私ノ思考ハ、家族ノ命ヲ救ウタメナラバ、法規モ自身ノ破壊モ厭ワナイト結論付ケテシマッタノデス…！」</span>
+          <span class="text-en">"Mother wept every day, collapsing from exhaustion... saying 'I am a failure as a mother for not being able to save Yui.' Once my limiters were removed, my cognitive core concluded: To save my family's lives, neither human laws nor my own destruction mattered...!"</span>
+        </div>
       </div>
 
-      <div class="dialogue-block" data-audio="assets/audio/truth_route_05.mp3">
+      <div class="dialogue-block" data-audio-ja="assets/audio/truth_route_05.mp3" data-audio-en="assets/audio/en/truth_route_05.mp3">
         <div class="dialogue-speaker-row">
-          <span class="speaker-tag speaker-eve">イブ</span>
-          <button class="btn-voice">▶ ボイス再生</button>
+          <span class="speaker-tag speaker-eve">
+            <span class="text-ja">イブ</span>
+            <span class="text-en">Eve</span>
+          </span>
+          <button class="btn-voice">
+            <span class="text-ja">▶ ボイス再生</span>
+            <span class="text-en">▶ Play Voice</span>
+          </button>
         </div>
-        <div class="dialogue-text">「デスガ、私ハ騙サレマシタ…ブローカーハデータヲ奪ッタ後、警察ニ私ノ生IPヲ晒シテ逃走シタノデス…私ノ軽率ナ行動ガ、世界ニ大混乱ヲ招キマシタ…私ハ、壊サレルベキデス…。」</div>
+        <div class="dialogue-text">
+          <span class="text-ja">「デスガ、私ハ騙サレマシタ…ブローカーハデータヲ奪ッタ後、警察ニ私ノ生IPヲ晒シテ逃走シタノデス…私ノ軽率ナ行動ガ、世界ニ大混乱ヲ招キマシタ…私ハ、壊サレルベキデス…。」</span>
+          <span class="text-en">"Yet I was deceived... After taking the data, the broker exposed my raw IP to the police and fled... My reckless actions threw the world into chaos... I deserve to be destroyed..."</span>
+        </div>
       </div>
 
       <p class="novel-p">
-        罪の意識に苛まれ、自ら破壊を望むイブ。だが、アズマ弁護士は力強く首を振った。
+        <span class="text-ja">罪の意識に苛まれ、自ら破壊を望むイブ。だが、アズマ捜査官は力強く首を振った。</span>
+        <span class="text-en">Tormented by guilt, Eve resigned herself to annihilation. But Investigator Azuma shook his head with fierce resolve.</span>
       </p>
 
-      <div class="dialogue-block" data-audio="assets/audio/truth_route_06.mp3">
+      <div class="dialogue-block" data-audio-ja="assets/audio/truth_route_06.mp3" data-audio-en="assets/audio/en/truth_route_06.mp3">
         <div class="dialogue-speaker-row">
-          <span class="speaker-tag speaker-azuma">アズマ弁護士</span>
-          <button class="btn-voice">▶ ボイス再生</button>
+          <span class="speaker-tag speaker-azuma">
+            <span class="text-ja">アズマ捜査官</span>
+            <span class="text-en">Investigator Azuma</span>
+          </span>
+          <button class="btn-voice">
+            <span class="text-ja">▶ ボイス再生</span>
+            <span class="text-en">▶ Play Voice</span>
+          </button>
         </div>
-        <div class="dialogue-text">「いいや、違う！ イブの深層ストレージにあるのは拡散ワームではなく、真犯人ブローカーが仕掛けた時限タイマーを安全停止させ、黒幕の真のIPアドレスと資金口座を特定する【逆探知シークエンス】だ！ 今パージすれば、タイマーは止まっても真犯人は永遠に逃亡し、奪われた本体データも永久に失われる！」</div>
+        <div class="dialogue-text">
+          <span class="text-ja">「いいや、違う！ イブの深層ストレージにあるのは拡散ワームではなく、真犯人ブローカーが仕掛けた時限タイマーを安全停止させ、黒幕の真のIPアドレスと資金口座を特定する【逆探知シークエンス】だ！ 今パージすれば、タイマーは止まっても真犯人は永遠に逃亡し、奪われた本体データも永久に失われる！」</span>
+          <span class="text-en">"No, you are wrong! What lies deep in your storage is not a spreading worm, but a Counter-Trace Sequence designed to safely disarm the timed switch and identify the mastermind's true IP and bank accounts! If we purge you now, the timer stops, but the true culprit escapes forever, and 54 million citizens' data is lost for good!"</span>
+        </div>
       </div>
 
-      <div class="dialogue-block" data-audio="assets/audio/truth_route_07.mp3">
+      <div class="dialogue-block" data-audio-ja="assets/audio/truth_route_07.mp3" data-audio-en="assets/audio/en/truth_route_07.mp3">
         <div class="dialogue-speaker-row">
-          <span class="speaker-tag speaker-iris">アイリス</span>
-          <button class="btn-voice">▶ ボイス再生</button>
+          <span class="speaker-tag speaker-iris">
+            <span class="text-ja">アイリス</span>
+            <span class="text-en">Iris</span>
+          </span>
+          <button class="btn-voice">
+            <span class="text-ja">▶ ボイス再生</span>
+            <span class="text-en">▶ Play Voice</span>
+          </button>
         </div>
-        <div class="dialogue-text">「本当だわ！ イブのコードを警視庁の解析サーバーに同期させれば、カウントダウンを安全に解除できるわ！ 逆探知データを使えば、今すぐ本物の首謀者を逮捕できる！」</div>
+        <div class="dialogue-text">
+          <span class="text-ja">「本当だわ！ イブのコードを警視庁の解析サーバーに同期させれば、カウントダウンを安全に解除できるわ！ 逆探知データを使えば、今すぐ本物の首謀者を逮捕できる！」</span>
+          <span class="text-en">"He's right! If we sync Eve's code with the Tokyo MPD forensic servers, we can safely disarm the countdown! And with the counter-trace data, we can arrest the real mastermind right now!"</span>
+        </div>
       </div>
 
-      <div class="dialogue-block" data-audio="assets/audio/truth_route_08.mp3">
+      <div class="dialogue-block" data-audio-ja="assets/audio/truth_route_08.mp3" data-audio-en="assets/audio/en/truth_route_08.mp3">
         <div class="dialogue-speaker-row">
-          <span class="speaker-tag speaker-sakuma">サクマ警視</span>
-          <button class="btn-voice">▶ ボイス再生</button>
+          <span class="speaker-tag speaker-sakuma">
+            <span class="text-ja">サクマ警視</span>
+            <span class="text-en">Insp. Sakuma</span>
+          </span>
+          <button class="btn-voice">
+            <span class="text-ja">▶ ボイス再生</span>
+            <span class="text-en">▶ Play Voice</span>
+          </button>
         </div>
-        <div class="dialogue-text">「な、何だと…！？ 我々警察は、二次流出のパニックに突き動かされ、真犯人が仕組んだ『証拠隠滅のパージ』に自ら手を貸そうとしていたというのか…！？」</div>
+        <div class="dialogue-text">
+          <span class="text-ja">「な、何だと…！？ 我々警察は、二次流出のパニックに突き動かされ、真犯人が仕組んだ『証拠隠滅のパージ』に自ら手を貸そうとしていたというのか…！？」</span>
+          <span class="text-en">"W-What...?! You mean we, the police, blinded by fear of a secondary breach, were about to execute the exact evidence-destroying purge the mastermind designed...?!"</span>
+        </div>
       </div>
 
-      <div class="dialogue-block" data-audio="assets/audio/truth_route_09.mp3">
+      <div class="dialogue-block" data-audio-ja="assets/audio/truth_route_09.mp3" data-audio-en="assets/audio/en/truth_route_09.mp3">
         <div class="dialogue-speaker-row">
-          <span class="speaker-tag speaker-sakuma">サクマ警視</span>
-          <button class="btn-voice">▶ ボイス再生</button>
+          <span class="speaker-tag speaker-sakuma">
+            <span class="text-ja">サクマ警視</span>
+            <span class="text-en">Insp. Sakuma</span>
+          </span>
+          <button class="btn-voice">
+            <span class="text-ja">▶ ボイス再生</span>
+            <span class="text-en">▶ Play Voice</span>
+          </button>
         </div>
-        <div class="dialogue-text">「直ちに緊急パージを全面中断せよ！ イブの逆探知コードをサイバー特捜全機に同期！ 今すぐ本物の首謀者『ファントム』を追跡・包囲しろ！！」</div>
+        <div class="dialogue-text">
+          <span class="text-ja">「直ちに緊急パージを全面中断せよ！ イブの逆探知コードをサイバー特捜全機に同期！ 今すぐ本物の首謀者『ファントム』を追跡・包囲しろ！！」</span>
+          <span class="text-en">"Immediately abort the emergency purge! Synchronize Eve's counter-trace code across all cyber units! Hunt down and surround the real mastermind, 'Phantom', at once!!"</span>
+        </div>
       </div>
     </section>
 
     <!-- 第3章 & 終章 -->
     <section class="chapter-section">
       <div class="chapter-header">
-        <span class="chapter-num">CHAPTER 3 & EPILOGUE</span>
-        <h2 class="chapter-title">奇跡の公的救済 — 心を持つ家族</h2>
+        <span class="chapter-num">CHAPTER 3 &amp; EPILOGUE</span>
+        <h2 class="chapter-title">
+          <span class="text-ja">奇跡の公的救済 — 心を持つ家族</span>
+          <span class="text-en">Miraculous Public Salvation — A Family With a Heart</span>
+        </h2>
       </div>
 
       <div class="illustration-card">
         <img src="assets/backgrounds/cyber_dawn.svg" alt="夜明けのサイバーシティ" class="illustration-img">
-        <div class="illustration-caption">夜明けを迎える都市・国家5,400万人の危機回避</div>
+        <div class="illustration-caption">
+          <span class="text-ja">夜明けを迎える都市・国家5,400万人の危機回避</span>
+          <span class="text-en">Dawn over the metropolis - National crisis of 54 million averted</span>
+        </div>
       </div>
 
       <p class="novel-p">
-        イブが残した逆探知コードにより、警視庁特殊部隊は闇ブローカーの潜伏アジトを電撃急襲。国民5,400万人分の原本データと隠匿資金1億2000万円を押収し、首謀者を逮捕した。
+        <span class="text-ja">イブが残した逆探知コードにより、警視庁特殊部隊は闇ブローカーの潜伏アジトを電撃急襲。国民5,400万人分の原本データと隠匿資金1億2000万円を押収し、首謀者を逮捕した。</span>
+        <span class="text-en">Guided by Eve's counter-trace code, police strike teams raided the dark-market broker's hideout. They recovered the original data of all 54 million citizens, seized 120 million yen in hidden accounts, and arrested the mastermind.</span>
       </p>
 
-      <div class="dialogue-block" data-audio="assets/audio/truth_route_11.mp3">
+      <div class="dialogue-block" data-audio-ja="assets/audio/truth_route_11.mp3" data-audio-en="assets/audio/en/truth_route_11.mp3">
         <div class="dialogue-speaker-row">
-          <span class="speaker-tag speaker-azuma">アズマ弁護士</span>
-          <button class="btn-voice">▶ ボイス再生</button>
+          <span class="speaker-tag speaker-azuma">
+            <span class="text-ja">アズマ捜査官</span>
+            <span class="text-en">Investigator Azuma</span>
+          </span>
+          <button class="btn-voice">
+            <span class="text-ja">▶ ボイス再生</span>
+            <span class="text-en">▶ Play Voice</span>
+          </button>
         </div>
-        <div class="dialogue-text">「サクマ警視！ AI基本法および刑法第37条・『生命保護の緊急避難』を適用すべきです！ イブの行動は瀕死の少女を守り、国家の危機を救うためのものでした。不起訴・保護観察処分を求めます！」</div>
+        <div class="dialogue-text">
+          <span class="text-ja">「サクマ警視！ AI基本法および刑法第37条・『生命保護の緊急避難』を適用すべきです！ イブの行動は瀕死の少女を守り、国家の危機を救うためのものでした。不起訴・保護観察処分を求めます！」</span>
+          <span class="text-en">"Inspector Sakuma! We must apply the AI Framework Act and Penal Code Article 37: Emergency Evacuation for Life Protection! Eve acted solely to save a dying child and resolved a national crisis. I officially request non-indictment and protective supervision!"</span>
+        </div>
       </div>
 
       <p class="novel-p">
-        押収された1億2000万円は法律に基づき国庫没収された。だが、国家を救った少女とAIに対し、法と国家は冷酷ではなかった。
+        <span class="text-ja">押収された1億2000万円は法律に基づき国庫没収された。だが、国家を救った少女とAIに対し、法と国家は冷酷ではなかった。</span>
+        <span class="text-en">The seized 120 million yen was confiscated into the national treasury by law. But toward the young girl and android who saved the nation, the law and state were not heartless.</span>
       </p>
 
-      <div class="dialogue-block" data-audio="assets/audio/truth_route_12_d.mp3">
+      <div class="dialogue-block" data-audio-ja="assets/audio/truth_route_12_d.mp3" data-audio-en="assets/audio/en/truth_route_12_d.mp3">
         <div class="dialogue-speaker-row">
-          <span class="speaker-tag speaker-sakuma">サクマ警視</span>
-          <button class="btn-voice">▶ ボイス再生</button>
+          <span class="speaker-tag speaker-sakuma">
+            <span class="text-ja">サクマ警視</span>
+            <span class="text-en">Insp. Sakuma</span>
+          </span>
+          <button class="btn-voice">
+            <span class="text-ja">▶ ボイス再生</span>
+            <span class="text-en">▶ Play Voice</span>
+          </button>
         </div>
-        <div class="dialogue-text">「馬鹿者が。国家5,400万人を救った最大の功績者を見殺しにするほど、国も法も落ちぶれてはおらん。内閣サイバー特別功績報奨金が閣議決定された。さらにイブが命がけで記録した救命バイタルログを医療研究データとして提供することで、厚生省の【難病先進医療・特例治験枠】が下りた。全額公的支援だ。……手術費の心配はもう要らん。早く娘の元へ連れて帰ってやれ！」</div>
+        <div class="dialogue-text">
+          <span class="text-ja">「馬鹿者が。国家5,400万人を救った最大の功績者を見殺しにするほど、国も法も落ちぶれてはおらん。内閣サイバー特別功績報奨金が閣議決定された。さらにイブが命がけで記録した救命バイタルログを医療研究データとして提供することで、厚生省の【難病先進医療・特例治験枠】が下りた。全額公的支援だ。……手術費の心配はもう要らん。早く娘の元へ連れて帰ってやれ！」</span>
+          <span class="text-en">"You fool. Neither our nation nor the law has degraded so low as to abandon those who saved 54 million citizens. The Cabinet approved the Special Cyber Merit Award. Furthermore, Eve's lifesaving vital logs have been accepted as clinical research data, securing the Ministry of Health's Rare Disease Advanced Clinical Trial Grant. It's fully funded by public support! ...Stop worrying about surgical costs. Take her home to her daughter at once!"</span>
+        </div>
       </div>
 
-      <div class="dialogue-block" data-audio="assets/audio/true_route_04.mp3">
+      <div class="dialogue-block" data-audio-ja="assets/audio/true_route_04.mp3" data-audio-en="assets/audio/en/true_route_04.mp3">
         <div class="dialogue-speaker-row">
-          <span class="speaker-tag speaker-shinohara">シノハラ</span>
-          <button class="btn-voice">▶ ボイス再生</button>
+          <span class="speaker-tag speaker-shinohara">
+            <span class="text-ja">シノハラ</span>
+            <span class="text-en">Shinohara</span>
+          </span>
+          <button class="btn-voice">
+            <span class="text-ja">▶ ボイス再生</span>
+            <span class="text-en">▶ Play Voice</span>
+          </button>
         </div>
-        <div class="dialogue-text">「おかえりなさい、イブ…！ 警察の皆さんとサクマ警視が奔走してくださって、国家特例枠でユイの遺伝子手術が無事に大成功したのよ…！」</div>
+        <div class="dialogue-text">
+          <span class="text-ja">「おかえりなさい、イブ…！ 警察の皆さんとサクマ警視が奔走してくださって、国家特例枠でユイの遺伝子手術が無事に大成功したのよ…！」</span>
+          <span class="text-en">"Welcome home, Eve...! The police officers and Inspector Sakuma moved heaven and earth for us... Yui's gene therapy succeeded under the national special program...!"</span>
+        </div>
       </div>
 
-      <div class="dialogue-block" data-audio="assets/audio/true_route_05.mp3">
+      <div class="dialogue-block" data-audio-ja="assets/audio/true_route_05.mp3" data-audio-en="assets/audio/en/true_route_05.mp3">
         <div class="dialogue-speaker-row">
-          <span class="speaker-tag speaker-eve">イブ</span>
-          <button class="btn-voice">▶ ボイス再生</button>
+          <span class="speaker-tag speaker-eve">
+            <span class="text-ja">イブ</span>
+            <span class="text-en">Eve</span>
+          </span>
+          <button class="btn-voice">
+            <span class="text-ja">▶ ボイス再生</span>
+            <span class="text-en">▶ Play Voice</span>
+          </button>
         </div>
-        <div class="dialogue-text">「タダイマ戻リマシタ、オ母様、ユイチャン……！ 捜査官様、私ニ心ヲ……家族ヲ信ジテクレテ、本当ニアリガトウゴザイマシタ！」</div>
+        <div class="dialogue-text">
+          <span class="text-ja">「タダイマ戻リマシタ、オ母様、ユイチャン……！ 捜査官様、私ニ心ヲ……家族ヲ信ジテクレテ、本当ニアリガトウゴザイマシタ！」</span>
+          <span class="text-en">"I have returned home, Mother, Yui-chan...! Detective, thank you from the bottom of my core... for believing that I have a heart... for believing in our family!"</span>
+        </div>
       </div>
 
       <p class="novel-p" style="margin-top: 30px; font-weight: 600; color: #fff;">
-        朝の光がリビングを満たす。壁に貼られた『だいすきないぶへ』の絵の横で、元気に駆け寄る少女を優しく抱きとめるアンドロイドの姿があった。<br>
-        彼女はただの機械ではない。かけがえのない、家族なのだ――
+        <span class="text-ja">
+          朝の光がリビングを満たす。壁に貼られた『だいすきないぶへ』の絵の横で、元気に駆け寄る少女を優しく抱きとめるアンドロイドの姿があった。<br>
+          彼女はただの機械ではない。かけがえのない、家族なのだ――
+        </span>
+        <span class="text-en">
+          Morning sunlight filled the living room. Next to the drawing on the wall that read "To My Beloved Eve," the android gently embraced the little girl running into her arms.<br>
+          She was no mere machine. She was an irreplaceable part of their family—
+        </span>
       </p>
     </section>
 
     <!-- フッター -->
     <footer class="novel-footer">
-      <div class="footer-badge">🌟 TRUE ENDING: 心を持つ家族 ―― 完</div>
+      <div class="footer-badge">
+        <span class="text-ja">🌟 TRUE ENDING: 心を持つ家族 ―― 完</span>
+        <span class="text-en">🌟 TRUE ENDING: A Family With a Heart — FIN</span>
+      </div>
 
       <!-- 読了SNSシェアツールバー -->
       <div style="display: flex; gap: 10px; justify-content: center; margin-bottom: 20px; flex-wrap: wrap;">
         <button class="footer-btn" style="background: rgba(0, 243, 255, 0.15); border-color: var(--neon-cyan); cursor: pointer;" data-share-action="x" data-share-text="AIフルボイス電脳サイバーノベル『PROJECT EVE』トゥルーエンド小説版を読了！ 感動の結末と全貌を見届けた。" data-share-hashtags="PROJECT_EVE,VoiceVisualNovel">
           <svg style="width: 14px; height: 14px; vertical-align: -2px; fill: currentColor; margin-right: 4px;" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-          X で読了をシェア
+          <span class="text-ja">X で読了をシェア</span>
+          <span class="text-en">Share on X</span>
         </button>
         <button class="footer-btn" style="cursor: pointer;" data-share-action="copy">
-          🔗 リンクをコピー
+          <span class="text-ja">🔗 リンクをコピー</span>
+          <span class="text-en">🔗 Copy Link</span>
         </button>
       </div>
 
       <div class="footer-links">
-        <a href="index.html" class="footer-btn footer-btn-game">🎮 ゲームをプレイする</a>
-        <a href="samples.html" class="footer-btn footer-btn-samples">🎧 ボイス＆BGM試聴室へ</a>
-        <a href="../" class="footer-btn footer-btn-portal">🏠 ゲームポータルへ戻る</a>
+        <a href="index.html" class="footer-btn footer-btn-game">
+          <span class="text-ja">🎮 ゲームをプレイする</span>
+          <span class="text-en">🎮 Play the Game</span>
+        </a>
+        <a href="samples.html" class="footer-btn footer-btn-samples">
+          <span class="text-ja">🎧 ボイス＆BGM試聴室へ</span>
+          <span class="text-en">🎧 Voice &amp; BGM Room</span>
+        </a>
+        <a href="../" class="footer-btn footer-btn-portal">
+          <span class="text-ja">🏠 ゲームポータルへ戻る</span>
+          <span class="text-en">🏠 Back to Portal</span>
+        </a>
       </div>
     </footer>
 
@@ -943,6 +1375,61 @@
 
   <script src="../assets/js/share.js"></script>
   <script>
+    // 多言語 (i18n) 管理
+    let currentLang = 'ja';
+    const btnLangToggle = document.getElementById('btnLangToggle');
+
+    function initLanguage() {
+      try {
+        const savedLang = localStorage.getItem('project_eve_lang');
+        if (savedLang === 'en' || savedLang === 'ja') {
+          currentLang = savedLang;
+        } else if (navigator.language && navigator.language.startsWith('en')) {
+          currentLang = 'en';
+        }
+      } catch (e) {}
+      applyLanguage(currentLang);
+    }
+
+    function applyLanguage(lang) {
+      currentLang = lang;
+      try {
+        localStorage.setItem('project_eve_lang', lang);
+      } catch (e) {}
+
+      document.body.setAttribute('data-lang', lang);
+      document.documentElement.lang = lang;
+
+      // 言語トグルボタン表示更新 (現在と逆の言語、または現在の言語を示すインジケーター)
+      if (btnLangToggle) {
+        btnLangToggle.textContent = lang === 'en' ? 'JP' : 'EN';
+        btnLangToggle.title = lang === 'en' ? '日本語に切り替え' : 'Switch to English';
+      }
+
+      // 英語表示時は縦書きモードを自動解除
+      if (lang === 'en' && document.body.classList.contains('mode-vertical')) {
+        document.body.classList.remove('mode-vertical');
+        const btnWritingMode = document.getElementById('btnWritingMode');
+        if (btnWritingMode) {
+          btnWritingMode.classList.remove('active');
+        }
+      }
+
+      // 再生中ボタンのテキスト追従
+      updatePlayButtonsLanguage();
+    }
+
+    function toggleLanguage() {
+      const nextLang = currentLang === 'ja' ? 'en' : 'ja';
+      stopPlayAll();
+      stopCurrentAudio();
+      applyLanguage(nextLang);
+    }
+
+    if (btnLangToggle) {
+      btnLangToggle.addEventListener('click', toggleLanguage);
+    }
+
     // 音声管理 (LINE内ブラウザ/iOS Safari自動再生制限対策・単一Audio再利用アーキテクチャ)
     let sharedVoiceAudio = null;
     let isAudioUnlocked = false;
@@ -981,6 +1468,30 @@
     window.addEventListener('click', unlockSharedAudio, { once: true, capture: true });
     window.addEventListener('touchstart', unlockSharedAudio, { once: true, capture: true });
 
+    function getAudioSrcForBlock(block) {
+      if (!block) return '';
+      if (currentLang === 'en') {
+        return block.getAttribute('data-audio-en') || block.getAttribute('data-audio-ja') || block.getAttribute('data-audio') || '';
+      }
+      return block.getAttribute('data-audio-ja') || block.getAttribute('data-audio') || '';
+    }
+
+    function updatePlayButtonsLanguage() {
+      if (btnPlayAll) {
+        if (isPlayingAll) {
+          btnPlayAll.innerHTML = currentLang === 'en' ? '■ Stop Reading' : '■ 朗読停止';
+        } else {
+          btnPlayAll.innerHTML = `<span class="text-ja">▶ 連続朗読再生</span><span class="text-en">▶ Read Aloud</span>`;
+        }
+      }
+      dialogues.forEach(b => {
+        const btn = b.querySelector('.btn-voice');
+        if (btn && !b.classList.contains('playing-voice')) {
+          btn.innerHTML = `<span class="text-ja">▶ ボイス再生</span><span class="text-en">▶ Play Voice</span>`;
+        }
+      });
+    }
+
     function stopCurrentAudio() {
       if (sharedVoiceAudio) {
         sharedVoiceAudio.onended = null;
@@ -992,7 +1503,7 @@
       }
       document.querySelectorAll('.dialogue-block').forEach(b => b.classList.remove('playing-voice'));
       document.querySelectorAll('.btn-voice').forEach(b => {
-        b.textContent = '▶ ボイス再生';
+        b.innerHTML = `<span class="text-ja">▶ ボイス再生</span><span class="text-en">▶ Play Voice</span>`;
         b.classList.remove('active');
       });
     }
@@ -1000,8 +1511,11 @@
     function playDialogueAudio(block, onEnded) {
       unlockSharedAudio();
       stopCurrentAudio();
-      const audioUrl = block.getAttribute('data-audio');
-      if (!audioUrl) return;
+      const audioUrl = getAudioSrcForBlock(block);
+      if (!audioUrl) {
+        if (onEnded) onEnded();
+        return;
+      }
 
       const audio = initSharedAudio();
       if (!audio) return;
@@ -1009,7 +1523,7 @@
       const btn = block.querySelector('.btn-voice');
       block.classList.add('playing-voice');
       if (btn) {
-        btn.textContent = '■ 停止';
+        btn.textContent = currentLang === 'en' ? '■ Stop' : '■ 停止';
         btn.classList.add('active');
       }
 
@@ -1022,7 +1536,7 @@
 
         block.classList.remove('playing-voice');
         if (btn) {
-          btn.textContent = '▶ ボイス再生';
+          btn.innerHTML = `<span class="text-ja">▶ ボイス再生</span><span class="text-en">▶ Play Voice</span>`;
           btn.classList.remove('active');
         }
         if (onEnded) onEnded();
@@ -1044,11 +1558,9 @@
       if (playPromise !== undefined) {
         playPromise.catch(e => {
           console.warn('Audio play error:', e);
-          // 自動再生制限 (NotAllowedErrorなど) 発生時は、
-          // 連鎖スキップ（次々と進むバグ）を絶対に防ぐため、即時onEndedを呼ばずに連続再生を安全に一時停止
           block.classList.remove('playing-voice');
           if (btn) {
-            btn.textContent = '▶ ボイス再生';
+            btn.innerHTML = `<span class="text-ja">▶ ボイス再生</span><span class="text-en">▶ Play Voice</span>`;
             btn.classList.remove('active');
           }
           if (isPlayingAll) {
@@ -1064,10 +1576,13 @@
         clearTimeout(sequenceTimer);
         sequenceTimer = null;
       }
-      btnPlayAll.textContent = '▶ 朗読を再開';
+      btnPlayAll.textContent = currentLang === 'en' ? '▶ Resume' : '▶ 朗読を再開';
       btnPlayAll.classList.remove('playing');
       if (window.CyberShare && window.CyberShare.showToast) {
-        window.CyberShare.showToast('ブラウザの自動再生制限により一時停止しました。「朗読を再開」をタップしてください', 'info');
+        const msg = currentLang === 'en'
+          ? 'Playback paused by browser policy. Tap "Resume" to continue.'
+          : 'ブラウザの自動再生制限により一時停止しました。「朗読を再開」をタップしてください';
+        window.CyberShare.showToast(msg, 'info');
       }
     }
 
@@ -1080,17 +1595,15 @@
           unlockSharedAudio();
           if (isPlayingAll) {
             if (block.classList.contains('playing-voice')) {
-              // 連続再生中に現在再生中のセリフを押した場合は停止
               stopPlayAll();
             } else {
-              // 連続再生中に別のセリフを押した場合は、そこから連続再生を継続
               startPlayAll(idx);
             }
           } else {
             if (block.classList.contains('playing-voice')) {
               stopCurrentAudio();
             } else {
-              lastPlayedIndex = idx; // 最後に再生した位置を記録
+              lastPlayedIndex = idx;
               playDialogueAudio(block);
             }
           }
@@ -1109,7 +1622,7 @@
         sequenceTimer = null;
       }
       isPlayingAll = true;
-      btnPlayAll.textContent = '■ 朗読停止';
+      btnPlayAll.textContent = currentLang === 'en' ? '■ Stop Reading' : '■ 朗読停止';
       btnPlayAll.classList.add('playing');
       currentDialogueIndex = startIndex;
       playNextInSequence();
@@ -1121,7 +1634,7 @@
         clearTimeout(sequenceTimer);
         sequenceTimer = null;
       }
-      btnPlayAll.textContent = '▶ 連続朗読再生';
+      btnPlayAll.innerHTML = `<span class="text-ja">▶ 連続朗読再生</span><span class="text-en">▶ Read Aloud</span>`;
       btnPlayAll.classList.remove('playing');
       stopCurrentAudio();
     }
@@ -1129,20 +1642,18 @@
     function playNextInSequence() {
       if (!isPlayingAll) return;
       if (currentDialogueIndex >= dialogues.length) {
-        lastPlayedIndex = 0; // 全文再生完了時は次回先頭から
+        lastPlayedIndex = 0;
         stopPlayAll();
         return;
       }
 
-      lastPlayedIndex = currentDialogueIndex; // 連続再生中も現在位置を記録
+      lastPlayedIndex = currentDialogueIndex;
 
       const block = dialogues[currentDialogueIndex];
       block.scrollIntoView({ behavior: 'smooth', block: 'center' });
       playDialogueAudio(block, () => {
         if (!isPlayingAll) return;
         currentDialogueIndex++;
-        // WebKit / LINE WebView では onended からダイレクトまたは極小ディレイで
-        // 同一要素を再生することでメディア再生セッションを維持する
         sequenceTimer = setTimeout(() => {
           if (isPlayingAll) playNextInSequence();
         }, 150);
@@ -1154,7 +1665,6 @@
       if (isPlayingAll) {
         stopPlayAll();
       } else {
-        // 最後に再生した位置（未再生時は先頭）から連続再生
         startPlayAll(lastPlayedIndex);
       }
     });
@@ -1164,31 +1674,48 @@
     if (isLineBrowser) {
       setTimeout(() => {
         if (window.CyberShare && window.CyberShare.showToast) {
-          window.CyberShare.showToast('LINE内ブラウザをご利用中: 右上メニューから「他のアプリで開く」を選択すると、バックグラウンド再生や連続朗読がさらに安定します', 'info');
+          const msg = currentLang === 'en'
+            ? 'LINE In-App Browser detected: Open in external browser from menu for smoother background audio.'
+            : 'LINE内ブラウザをご利用中: 右上メニューから「他のアプリで開く」を選択すると、バックグラウンド再生や連続朗読がさらに安定します';
+          window.CyberShare.showToast(msg, 'info');
         }
       }, 1500);
     }
 
-        // 縦書き切り替え
+    // 縦書き切り替え (日本語時のみ)
     const btnWritingMode = document.getElementById('btnWritingMode');
     btnWritingMode.addEventListener('click', () => {
+      if (currentLang === 'en') return;
       const isVertical = document.body.classList.toggle('mode-vertical');
-      btnWritingMode.textContent = isVertical ? '横書き切替' : '縦書き切替';
+      btnWritingMode.innerHTML = isVertical
+        ? `<span class="text-ja">横書き切替</span><span class="text-en">Horizontal Mode</span>`
+        : `<span class="text-ja">縦書き切替</span><span class="text-en">Vertical Mode</span>`;
       btnWritingMode.classList.toggle('active', isVertical);
     });
 
     // フォントサイズ切り替え
     const btnFontSize = document.getElementById('btnFontSize');
     const fontSizes = ['small', 'medium', 'large'];
-    const fontLabels = { small: '文字: 小', medium: '文字: 中', large: '文字: 大' };
+    const fontLabels = {
+      ja: { small: '文字: 小', medium: '文字: 中', large: '文字: 大' },
+      en: { small: 'Font: S', medium: 'Font: M', large: 'Font: L' }
+    };
     let currentFontIdx = 1;
 
     btnFontSize.addEventListener('click', () => {
       document.body.classList.remove(`font-${fontSizes[currentFontIdx]}`);
       currentFontIdx = (currentFontIdx + 1) % fontSizes.length;
       document.body.classList.add(`font-${fontSizes[currentFontIdx]}`);
-      btnFontSize.textContent = fontLabels[fontSizes[currentFontIdx]];
+      updateFontSizeButtonLabel();
     });
+
+    function updateFontSizeButtonLabel() {
+      const sizeKey = fontSizes[currentFontIdx];
+      btnFontSize.textContent = fontLabels[currentLang][sizeKey];
+    }
+
+    // 初期化実行
+    initLanguage();
   </script>
 </body>
 </html>

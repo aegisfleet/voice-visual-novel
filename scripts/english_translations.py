@@ -51,7 +51,7 @@ ENGLISH_SCENES = [
         "speaker": "あなた",
         "speakerEn": "You",
         "voice": "Puck",
-        "style": "confident, intellectual young defense attorney, calm and determined",
+        "style": "confident, intellectual young cyber investigator (senior detective), calm and determined",
         "textEn": "\"Something feels completely off, as if someone deliberately exposed this IP... But our only choice is to inspect the scene firsthand!\""
     },
 
@@ -133,7 +133,7 @@ ENGLISH_SCENES = [
         "speaker": "あなた",
         "speakerEn": "You",
         "voice": "Puck",
-        "style": "firm, calm, professional questioning tone of an attorney",
+        "style": "firm, calm, professional questioning tone of a lead cyber investigator",
         "textEn": "\"Ms. Shinohara, Eve. Please explain why this domestic robot's safety guardrails were removed.\""
     },
     {
@@ -477,15 +477,15 @@ ENGLISH_SCENES = [
         "speaker": "あなた",
         "speakerEn": "You",
         "voice": "Puck",
-        "style": "resounding courtroom drama plea, impassioned defense",
-        "textEn": "\"Inspector Sakuma! We must invoke Article 37 of the Penal Code—the emergency necessity defense for protecting human life! Eve acted to save a dying child and averted a national catastrophe. I demand all charges be dropped under protective supervision!\""
+        "style": "impassioned plea by a lead investigator, appealing to law and humanity",
+        "textEn": "\"Inspector Sakuma! We must apply the AI Framework Act and Penal Code Article 37: Emergency Evacuation for Life Protection! Eve acted solely to save a dying child and resolved a national crisis. I officially request non-indictment and protective supervision!\""
     },
     {
         "id": "truth_route_12",
         "speaker": "サクマ警視",
         "speakerEn": "Insp. Sakuma",
         "voice": "Charon",
-        "style": "gruff affection, respect for the young attorney, acknowledging defeat",
+        "style": "gruff affection, respect for the young investigator, acknowledging defeat",
         "textEn": "...Hmph, you insolent rookie. You caught the true criminal and recovered all the damages—how could I object? I'll report this to the Commissioner under the Special Crisis Investigation Protocol."
     },
     {

@@ -18,8 +18,11 @@ client = genai.Client(
     location=location
 )
 
-output_dir = Path("assets/audio/samples")
+import sys
+
+output_dir = Path("eve/assets/audio/samples") if Path("eve").exists() else Path("assets/audio/samples")
 output_dir.mkdir(parents=True, exist_ok=True)
+output_dirs = [output_dir]
 
 CHARACTER_SAMPLES = [
     {
@@ -45,10 +48,10 @@ CHARACTER_SAMPLES = [
     },
     {
         "id": "sample_azuma",
-        "name": "アズマ弁護士 (主人公)",
+        "name": "アズマ捜査官 (主人公/先輩)",
         "voice": "Puck",
-        "style": "confident, passionate young defense attorney, courtroom drama, loud and clear objection",
-        "text": "異議あり！被告AIの行動ログには、明らかな外部遠隔介入の痕跡が存在します！真の首謀者は他にいる！"
+        "style": "confident, passionate young cyber investigator, investigation drama, loud and clear objection",
+        "text": "待ってください！被疑者AIの行動ログには、明らかな外部遠隔介入の痕跡が存在します！真の首謀者は他にいる！"
     },
     {
         "id": "sample_narrator",
@@ -60,13 +63,25 @@ CHARACTER_SAMPLES = [
 ]
 
 def main():
+    target_id = None
+    if "--id" in sys.argv:
+        idx = sys.argv.index("--id")
+        if idx + 1 < len(sys.argv):
+            target_id = sys.argv[idx + 1]
+
     print("==================================================")
     print("SpeechMetadata方式によるキャラクターサンプル再生成")
     print("（指示文の読み上げ混入を100%防止）")
+    if target_id:
+        print(f"対象ID: {target_id}")
     print("==================================================")
 
-    for char in CHARACTER_SAMPLES:
-        output_path = output_dir / f"{char['id']}.wav"
+    targets = [c for c in CHARACTER_SAMPLES if not target_id or c["id"] == target_id]
+    if not targets:
+        print(f"エラー: 指定されたID '{target_id}' が見つかりません。")
+        return
+
+    for char in targets:
         print(f"\n生成中: {char['name']} (Voice: {char['voice']})")
         print(f"セリフ: 「{char['text']}」")
 
@@ -94,11 +109,13 @@ def main():
         )
 
         audio_bytes = resp.candidates[0].content.parts[0].inline_data.data
-        with open(output_path, "wb") as f:
-            f.write(audio_bytes)
-        print(f"-> 成功: {output_path} ({len(audio_bytes)} bytes)")
+        for out_d in output_dirs:
+            output_path = out_d / f"{char['id']}.wav"
+            with open(output_path, "wb") as f:
+                f.write(audio_bytes)
+            print(f"-> 保存成功: {output_path} ({len(audio_bytes)} bytes)")
 
-    print("\n全サンプルの再生成が完了しました！")
+    print("\nサンプルの再生成が完了しました！")
 
 if __name__ == "__main__":
     main()
