@@ -25,6 +25,7 @@ voice-visual-novel/
 │   └── characters/              # クロマキー透過キャラクター立ち絵（.png）
 └── docs/
     ├── development-guide.md              # 本書（開発手順書）
+    ├── ogp-image-guide.md                # OGP画像・サイトアセット生成＆改変ガイド
     ├── avatar-lip-sync-animation-guide.md # 表情差分（目パチ・口パク）完全実装＆再現ガイド
     └── scenario-consistency-framework.md # シナリオ整合性フレームワーク
 ```
