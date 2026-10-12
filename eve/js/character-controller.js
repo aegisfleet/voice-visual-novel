@@ -20,7 +20,14 @@ class CharacterController {
     this.isTalking = false;
     this.blinkTimer = null;
     this.mouthTimer = null;
-    this.mouthSequence = [1, 2, 3, 2, 1, 0, 2, 3, 2, 0, 1, 3, 2, 1];
+    // 自然な発話音素シーケンス (母音ホールド・子音・文節の息継ぎを含む有機的リズム)
+    this.mouthSequence = [
+      1, 2, 3, 3, 2, 1, // 開いて母音ホールド
+      0, 1, 2, 2, 1,    // 軽やかな中間発音
+      0, 0,             // 文節の短い間・子音
+      1, 2, 3, 2, 1,    // 会話の流れ
+      2, 3, 3, 2, 1, 0  // 結び
+    ];
     this.mouthSeqIndex = 0;
 
     this.setupTracking();
@@ -777,8 +784,16 @@ class CharacterController {
           this.mouthSeqIndex++;
           this.setMouthStage(stage);
 
-          // 自然な音素・発話リズムのゆらぎ (80ms 〜 130ms)
-          const duration = 85 + Math.floor(Math.random() * 45);
+          // 自然な発話テンポ (160ms 〜 230ms)
+          // 全開(3)や半開(2)の母音発声時はしっかり響かせるためにやや長め、微開(1)や閉口(0)は軽やかに遷移
+          let duration = 175;
+          if (stage === 3 || stage === 2) {
+            duration = 190 + Math.floor(Math.random() * 45); // 190ms 〜 235ms
+          } else if (stage === 1) {
+            duration = 160 + Math.floor(Math.random() * 35); // 160ms 〜 195ms
+          } else {
+            duration = 150 + Math.floor(Math.random() * 30); // 150ms 〜 180ms
+          }
           this.mouthTimer = setTimeout(stepMouth, duration);
         };
         stepMouth();
