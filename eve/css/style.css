@@ -96,11 +96,31 @@ html, body {
               url('../assets/backgrounds/title_bg.jpg') center/cover no-repeat;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
-  padding: calc(var(--safe-top) + 20px) 24px calc(var(--safe-bottom) + 20px);
+  padding: calc(var(--safe-top) + 16px) 20px calc(var(--safe-bottom) + 36px);
   text-align: center;
   transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+  touch-action: pan-y;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 243, 255, 0.35) transparent;
+}
+
+.title-screen::-webkit-scrollbar {
+  width: 4px;
+}
+.title-screen::-webkit-scrollbar-track {
+  background: transparent;
+}
+.title-screen::-webkit-scrollbar-thumb {
+  background: rgba(0, 243, 255, 0.35);
+  border-radius: 4px;
+}
+.title-screen::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 243, 255, 0.7);
 }
 
 .title-screen.hidden {
@@ -111,6 +131,8 @@ html, body {
 .cyber-scan-grid {
   position: absolute;
   inset: 0;
+  min-height: 100%;
+  pointer-events: none;
   background-image: 
     linear-gradient(rgba(0, 243, 255, 0.05) 1px, transparent 1px),
     linear-gradient(90deg, rgba(0, 243, 255, 0.05) 1px, transparent 1px);
@@ -131,6 +153,7 @@ html, body {
   flex-direction: column;
   align-items: center;
   width: 100%;
+  margin: auto 0;
 }
 
 /* 言語切替セレクター */

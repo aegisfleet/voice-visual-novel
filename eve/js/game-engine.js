@@ -1311,6 +1311,7 @@ class GameEngine {
       this.fx.setHologramMode(false);
     }
 
+    this.dom.titleScreen.scrollTop = 0;
     this.dom.titleScreen.classList.remove('hidden');
     this.checkReinvestigationStatus();
     this.updateEndingsBadge();
