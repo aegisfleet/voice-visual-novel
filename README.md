@@ -252,4 +252,6 @@ npm run format
 npm run check
 ```
 
+GitHub Actions（CI）により PR/Push 時に Biome 解析およびシナリオ整合性テストが自動実行され、**Dependabot** によって npm パッケージおよび GitHub Actions の依存関係が週次（毎週月曜 09:00 JST）で自動更新されます。
+
 
