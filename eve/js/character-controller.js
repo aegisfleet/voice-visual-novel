@@ -823,16 +823,24 @@ class CharacterController {
       this.audioSmoothVolume = this.audioSmoothVolume * 0.74;
     }
 
-    // 音量に応じた多段階口パク切り替え
+    // 音量に応じた多段階口パク切り替え + 音節フラップ変調 (Syllable Flap Modulation)
+    // 最大音量・大音量が継続している時でも、開きっぱなしにならず自然な発話リズム(約165ms周期)で開閉する
     let stage = 0;
-    if (this.audioSmoothVolume >= 0.28) {
-      stage = 3; // 全開 (mouth_open)
-    } else if (this.audioSmoothVolume >= 0.12) {
-      stage = 2; // 半開 (mouth_half)
-    } else if (this.audioSmoothVolume >= 0.04) {
+    const now = performance.now();
+
+    if (this.audioSmoothVolume >= 0.22) {
+      // 大音量持続時: 約165ms周期で 3(全開) と 2(半開) をリズミカルに行き来
+      // 日本語の自然な発話速度(秒間約6拍)に合わせたサイン波モジュレーション
+      const flapPhase = Math.sin(now * 0.038); // 周期約 165ms
+      stage = flapPhase > -0.25 ? 3 : 2;
+    } else if (this.audioSmoothVolume >= 0.09) {
+      // 中音量持続時: 2(半開) と 1(微開) の間を行き来
+      const flapPhase = Math.sin(now * 0.042);
+      stage = flapPhase > 0 ? 2 : 1;
+    } else if (this.audioSmoothVolume >= 0.035) {
       stage = 1; // 微開 (mouth_small)
     } else {
-      stage = 0; // 閉口
+      stage = 0; // 閉口 (base)
     }
     this.setMouthStage(stage);
 
