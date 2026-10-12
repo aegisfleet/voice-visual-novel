@@ -3,7 +3,49 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0b0f19">
+  <meta name="color-scheme" content="dark">
   <title>PROJECT EVE - キャラクターボイス＆シーン別BGM試聴室</title>
+  <meta name="description" content="AIフルボイス電脳サイバー捜査ノベル『PROJECT EVE』キャラクターボイス＆シーン別BGM試聴室。全キャラクターの主要ボイスサンプルと重厚なサイバーBGMを試聴可能。">
+  <link rel="canonical" href="https://aegisfleet.github.io/voice-visual-novel/eve/samples.html">
+
+  <!-- Favicon & Icons -->
+  <link rel="icon" type="image/svg+xml" href="../assets/icons/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="../assets/icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../assets/icons/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="../assets/icons/apple-touch-icon.png">
+  <link rel="manifest" href="site.webmanifest">
+
+  <!-- Open Graph Protocol (OGP) -->
+  <meta property="og:type" content="music.playlist">
+  <meta property="og:site_name" content="VOICE VISUAL NOVELS">
+  <meta property="og:url" content="https://aegisfleet.github.io/voice-visual-novel/eve/samples.html">
+  <meta property="og:title" content="PROJECT EVE - キャラクターボイス＆シーン別BGM試聴室">
+  <meta property="og:description" content="AIフルボイス電脳サイバー捜査ノベル『PROJECT EVE』キャラクターボイス＆シーン別BGM試聴室。">
+  <meta property="og:image" content="https://aegisfleet.github.io/voice-visual-novel/assets/images/ogp-eve.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:locale" content="ja_JP">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="https://aegisfleet.github.io/voice-visual-novel/eve/samples.html">
+  <meta name="twitter:title" content="PROJECT EVE - キャラクターボイス＆シーン別BGM試聴室">
+  <meta name="twitter:description" content="AIフルボイス電脳サイバー捜査ノベル『PROJECT EVE』キャラクターボイス＆シーン別BGM試聴室。">
+  <meta name="twitter:image" content="https://aegisfleet.github.io/voice-visual-novel/assets/images/ogp-eve.png">
+
+  <!-- 構造化データ (JSON-LD) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "MusicPlaylist",
+    "name": "PROJECT EVE サウンドトラック＆ボイスアーカイブ",
+    "description": "PROJECT EVE のキャラクターボイスおよびシネマティック劇中BGM試聴室",
+    "url": "https://aegisfleet.github.io/voice-visual-novel/eve/samples.html",
+    "image": "https://aegisfleet.github.io/voice-visual-novel/assets/images/ogp-eve.png",
+    "numTracks": 10
+  }
+  </script>
   <style>
     :root {
       --bg: #0b0f19;
@@ -458,13 +500,25 @@
       </div>
     </div>
 
-    <div style="text-align: center; margin-top: 36px; display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
+    <!-- SNSシェアツールバー -->
+    <div style="text-align: center; margin-top: 36px; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
+      <button class="back-link" style="background: rgba(56, 189, 248, 0.15); border-color: var(--primary); color: #fff; cursor: pointer;" data-share-action="x" data-share-text="AIフルボイス電脳サイバーノベル『PROJECT EVE』ボイス＆劇中BGM試聴室をチェック！" data-share-hashtags="PROJECT_EVE,VoiceVisualNovel">
+        <svg style="width: 13px; height: 13px; vertical-align: -2px; fill: currentColor; margin-right: 4px;" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        X でシェア
+      </button>
+      <button class="back-link" style="cursor: pointer;" data-share-action="copy">
+        🔗 リンクをコピー
+      </button>
+    </div>
+
+    <div style="text-align: center; margin-top: 18px; display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
       <a href="index.html" class="back-link">🎮 ゲーム本編をプレイ</a>
       <a href="novel.html" class="back-link">📖 トゥルーエンド小説版</a>
       <a href="../" class="back-link" style="border-color: rgba(255,255,255,0.2); color: #94a3b8;">🏠 ポータルへ戻る</a>
     </div>
   </div>
 
+  <script src="../assets/js/share.js"></script>
   <script>
     // 試聴音源の排他制御: いずれかの音声が再生されたら、他の再生中音声を停止・リセット
     document.addEventListener('play', (e) => {

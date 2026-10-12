@@ -5,8 +5,65 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#030712">
+  <meta name="color-scheme" content="dark">
   <title>PROJECT EVE: 家族のためのハッキング - 電脳サイバー捜査ノベル</title>
-  
+  <meta name="description" content="国民5400万人の個人情報流出事件。被疑者は1台の少女型ロボットだった。電子証拠を分析し、自律逸脱の深層論理を暴け。ブラウザで今すぐ遊べるAIフルボイス電脳サイバー捜査ノベルゲーム。">
+  <link rel="canonical" href="https://aegisfleet.github.io/voice-visual-novel/eve/">
+
+  <!-- Favicon & Icons -->
+  <link rel="icon" type="image/svg+xml" href="../assets/icons/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="../assets/icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../assets/icons/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="../assets/icons/apple-touch-icon.png">
+  <link rel="manifest" href="site.webmanifest">
+
+  <!-- Open Graph Protocol (OGP) -->
+  <meta property="og:type" content="game">
+  <meta property="og:site_name" content="VOICE VISUAL NOVELS">
+  <meta property="og:url" content="https://aegisfleet.github.io/voice-visual-novel/eve/">
+  <meta property="og:title" content="PROJECT EVE: 家族のためのハッキング - 電脳サイバー捜査ノベル">
+  <meta property="og:description" content="国民5400万人の個人情報流出事件。被疑者は1台の少女型ロボットだった。電子証拠を分析し、自律逸脱の深層論理を暴け。ブラウザで遊べるAIフルボイス捜査ノベル。">
+  <meta property="og:image" content="https://aegisfleet.github.io/voice-visual-novel/assets/images/ogp-eve.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="PROJECT EVE キービジュアル">
+  <meta property="og:locale" content="ja_JP">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="https://aegisfleet.github.io/voice-visual-novel/eve/">
+  <meta name="twitter:title" content="PROJECT EVE: 家族のためのハッキング - 電脳サイバー捜査ノベル">
+  <meta name="twitter:description" content="国民5400万人の個人情報流出事件。被疑者は1台の少女型ロボットだった。電子証拠を分析し、自律逸脱の深層論理を暴け。ブラウザで遊べるAIフルボイス捜査ノベル。">
+  <meta name="twitter:image" content="https://aegisfleet.github.io/voice-visual-novel/assets/images/ogp-eve.png">
+
+  <!-- 構造化データ (JSON-LD: VideoGame) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "VideoGame",
+    "name": "PROJECT EVE: 家族のためのハッキング",
+    "description": "国家機密漏洩の真実を暴く、ブラウザ動作型AIフルボイス電脳サイバー捜査ノベルゲーム。",
+    "genre": ["Visual Novel", "Cyberpunk", "Mystery", "Interactive Fiction"],
+    "gamePlatform": ["Web Browser"],
+    "operatingSystem": "All modern browsers (iOS Safari, Android Chrome, Edge, Safari, Firefox)",
+    "applicationCategory": "Game",
+    "url": "https://aegisfleet.github.io/voice-visual-novel/eve/",
+    "image": "https://aegisfleet.github.io/voice-visual-novel/assets/images/ogp-eve.png",
+    "inLanguage": ["ja", "en"],
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "JPY",
+      "availability": "https://schema.org/InStock"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "AEGIS FLEET / CYBER NOVEL STUDIOS"
+    }
+  }
+  </script>
+
   <!-- Google Fonts: SFサイバーフォント & Noto Sans JP -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -77,6 +134,17 @@
               <a href="novel.html" class="btn-extra-link" id="btnExtraNovel">📖 トゥルーエンド小説版</a>
             </div>
           </div>
+        </div>
+
+        <!-- タイトル画面 SNSシェアツールバー -->
+        <div class="title-share-bar">
+          <button class="btn-game-share" data-share-action="x" data-share-text="AIフルボイス電脳サイバー捜査ノベル『PROJECT EVE: 家族のためのハッキング』ブラウザで今すぐ無料プレイ！" data-share-hashtags="PROJECT_EVE,VoiceVisualNovel">
+            <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            X でシェア
+          </button>
+          <button class="btn-game-share" data-share-action="copy">
+            🔗 リンクをコピー
+          </button>
         </div>
       </div>
     </div>
@@ -188,6 +256,20 @@
           </div>
         </div>
 
+        <!-- エンディングSNSシェアブロック -->
+        <div class="ending-share-container">
+          <div class="ending-share-title">⚡ 捜査結果を報告・シェア</div>
+          <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
+            <button id="btnShareEndingX" class="btn-game-share">
+              <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+              X で結果をポスト
+            </button>
+            <button id="btnShareEndingCopy" class="btn-game-share">
+              🔗 リンクをコピー
+            </button>
+          </div>
+        </div>
+
         <button id="btnReturnTitle" class="btn-return-title">タイトルへ戻る</button>
       </div>
     </div>
@@ -208,6 +290,9 @@
     </div>
   </div>
 
+  <!-- 共有ユーティリティ (Share & Toast) -->
+  <script src="../assets/js/share.js"></script>
+
   <!-- Rive Web Runtime (@rive-app/canvas) -->
   <script src="https://unpkg.com/@rive-app/canvas@2.24.0"></script>
 
@@ -222,6 +307,28 @@
   <script>
     window.addEventListener('DOMContentLoaded', () => {
       window.game = new GameEngine(window.SCENARIO_DATA);
+
+      // エンディング画面のシェアボタン連携
+      const btnShareEndingX = document.getElementById('btnShareEndingX');
+      const btnShareEndingCopy = document.getElementById('btnShareEndingCopy');
+      
+      if (btnShareEndingX) {
+        btnShareEndingX.addEventListener('click', () => {
+          const endingTitle = document.getElementById('endingTitle')?.innerText || 'ENDING';
+          const postText = `AIフルボイス電脳サイバーノベル『PROJECT EVE』をクリア！到達エンド: 【${endingTitle}】 #PROJECT_EVE #VoiceVisualNovel`;
+          if (window.CyberShare) {
+            window.CyberShare.shareOnX({ text: postText, url: window.location.href, hashtags: 'PROJECT_EVE,VoiceVisualNovel' });
+          }
+        });
+      }
+
+      if (btnShareEndingCopy) {
+        btnShareEndingCopy.addEventListener('click', () => {
+          if (window.CyberShare) {
+            window.CyberShare.copyLink(window.location.href, 'ゲームURLをコピーしました！');
+          }
+        });
+      }
     });
   </script>
 </body>

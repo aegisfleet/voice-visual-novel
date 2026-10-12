@@ -1,0 +1,30 @@
+{
+  "name": "VOICE VISUAL NOVELS - 電脳ビジュアルノベル",
+  "short_name": "VVN Portal",
+  "description": "AIフルボイス・Webビジュアルノベルゲームのポータルサイト。ブラウザで今すぐ遊べるサイバーSF推理ノベル『PROJECT EVE』他を掲載。",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#030712",
+  "theme_color": "#030712",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "assets/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/icons/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ],
+  "categories": ["games", "entertainment"]
+}

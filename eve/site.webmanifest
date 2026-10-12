@@ -1,0 +1,30 @@
+{
+  "name": "PROJECT EVE: 家族のためのハッキング",
+  "short_name": "PROJECT EVE",
+  "description": "国家機密漏洩の真実を暴け。ブラウザで遊べるAIフルボイス電脳サイバー捜査ノベル。",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#030712",
+  "theme_color": "#030712",
+  "orientation": "landscape-primary",
+  "icons": [
+    {
+      "src": "../assets/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../assets/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../assets/icons/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ],
+  "categories": ["games", "entertainment"]
+}
