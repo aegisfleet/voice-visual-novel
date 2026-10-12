@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ひだまりベンチ占拠事件 〜消えたクッションとボス猫の秘密〜</title>
+  <meta name="description" content="ポメラニアンが主人公のほのぼの系推理ノベルゲーム。公園をお散歩して証拠を集め、猫集会で真相を暴こう！マルチエンディング対応。">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div id="game-container">
+    <!-- 上部ヘッダー / HUD -->
+    <header id="hud" class="hud hidden">
+      <div class="hud-left">
+        <span id="hud-location-badge" class="badge">ひだまり公園</span>
+        <span id="hud-loop-badge" class="badge loop-badge">1周目</span>
+      </div>
+      <div class="hud-center">
+        <!-- 立証パート用のライフ -->
+        <div id="hud-life-container" class="life-container hidden">
+          <span class="life-label">ハート:</span>
+          <span id="hud-hearts" class="hearts">❤️❤️❤️</span>
+        </div>
+      </div>
+      <div class="hud-right">
+        <button id="btn-evidence-bag" class="hud-btn" title="集めた証拠手帳">
+          🎒 証拠品 (<span id="evidence-count">0</span>)
+        </button>
+        <button id="btn-toggle-voice" class="hud-btn toggle-btn" title="心の声の音声読み上げ切替">
+          🗣️ 音声: ON
+        </button>
+        <button id="btn-toggle-se" class="hud-btn toggle-btn" title="効果音切替">
+          🔔 SE: ON
+        </button>
+        <button id="btn-toggle-bgm" class="hud-btn toggle-btn" title="BGM切替">
+          🎵 BGM: ON
+        </button>
+      </div>
+    </header>
+
+    <!-- メイン画面ビューポート -->
+    <main id="viewport">
+      <!-- 1. タイトル画面 -->
+      <section id="screen-title" class="screen active">
+        <div class="title-sky-decor">
+          <div class="cloud cloud-1"></div>
+          <div class="cloud cloud-2"></div>
+          <div class="sun"></div>
+        </div>
+        <div class="title-content">
+          <div class="title-badge-top">🐾 ポメラニアン名探偵のほのぼの推理ノベル</div>
+          <h1 class="game-title">
+            ひだまりベンチ占拠事件
+            <span class="sub-title">〜消えたクッションとボス猫の秘密〜</span>
+          </h1>
+
+          <div class="title-hero-art">
+            <!-- ポメラニアンのSVGアート -->
+            <div class="pome-hero-wrapper bounce-idle">
+              <svg class="character-svg pome-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                <!-- しっぽ -->
+                <ellipse cx="45" cy="115" rx="32" ry="32" fill="#fffaf0" stroke="#f0e6d2" stroke-width="3" />
+                <path d="M 25 110 Q 15 90 35 85 Q 45 100 35 125 Z" fill="#fff5e6" />
+                <!-- 体（もふもふ） -->
+                <ellipse cx="100" cy="130" rx="65" ry="55" fill="#ffffff" stroke="#f0e6d2" stroke-width="3" />
+                <circle cx="65" cy="130" r="28" fill="#fffcf5" />
+                <circle cx="135" cy="130" r="28" fill="#fffcf5" />
+                <circle cx="100" cy="155" r="25" fill="#fffcf5" />
+                <!-- 前足 -->
+                <ellipse cx="78" cy="172" rx="14" ry="12" fill="#ffffff" stroke="#f0e6d2" stroke-width="2" />
+                <ellipse cx="122" cy="172" rx="14" ry="12" fill="#ffffff" stroke="#f0e6d2" stroke-width="2" />
+                <!-- 耳 -->
+                <polygon points="62,55 78,15 95,58" fill="#fceadc" stroke="#f0e6d2" stroke-width="3" />
+                <polygon points="68,50 78,25 90,52" fill="#ffccd5" />
+                <polygon points="105,58 122,15 138,55" fill="#fceadc" stroke="#f0e6d2" stroke-width="3" />
+                <polygon points="110,52 122,25 132,50" fill="#ffccd5" />
+                <!-- 頭のもふもふ -->
+                <circle cx="100" cy="85" r="50" fill="#ffffff" stroke="#f0e6d2" stroke-width="3" />
+                <circle cx="60" cy="85" r="22" fill="#ffffff" />
+                <circle cx="140" cy="85" r="22" fill="#ffffff" />
+                <circle cx="100" cy="50" r="20" fill="#ffffff" />
+                <!-- ほっぺ -->
+                <circle cx="75" cy="98" r="10" fill="#ffccd5" opacity="0.6" />
+                <circle cx="125" cy="98" r="10" fill="#ffccd5" opacity="0.6" />
+                <!-- 目 -->
+                <ellipse cx="78" cy="82" rx="7" ry="9" fill="#2d1c14" />
+                <circle cx="76" cy="79" r="3" fill="#ffffff" />
+                <ellipse cx="122" cy="82" rx="7" ry="9" fill="#2d1c14" />
+                <circle cx="120" cy="79" r="3" fill="#ffffff" />
+                <!-- 鼻と口 -->
+                <ellipse cx="100" cy="96" rx="6" ry="5" fill="#2d1c14" />
+                <path d="M 95 102 Q 100 106 105 102" stroke="#2d1c14" stroke-width="2.5" fill="none" stroke-linecap="round" />
+                <ellipse cx="100" cy="107" rx="5" ry="4" fill="#ff85a1" />
+              </svg>
+            </div>
+            <!-- トラ吉のSVGアート -->
+            <div id="title-torakichi" class="tora-hero-wrapper bounce-idle-alt">
+              <svg class="character-svg tora-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                <!-- 体 -->
+                <ellipse cx="100" cy="130" rx="55" ry="50" fill="#e69d45" stroke="#ba681b" stroke-width="3" />
+                <!-- トラ縞 -->
+                <path d="M 70 120 L 85 125 L 72 135" stroke="#68390d" stroke-width="4" stroke-linecap="round" fill="none" />
+                <path d="M 130 120 L 115 125 L 128 135" stroke="#68390d" stroke-width="4" stroke-linecap="round" fill="none" />
+                <!-- 耳 -->
+                <polygon points="55,50 65,15 88,48" fill="#e69d45" stroke="#ba681b" stroke-width="3" />
+                <polygon points="62,45 68,24 82,44" fill="#d47979" />
+                <polygon points="112,48 135,15 145,50" fill="#e69d45" stroke="#ba681b" stroke-width="3" />
+                <polygon points="118,44 132,24 138,45" fill="#d47979" />
+                <!-- 頭 -->
+                <ellipse cx="100" cy="80" rx="46" ry="40" fill="#e69d45" stroke="#ba681b" stroke-width="3" />
+                <!-- 額の縞模様 -->
+                <path d="M 94 48 L 100 60 L 106 48" stroke="#68390d" stroke-width="4" stroke-linecap="round" fill="none" />
+                <!-- 目（キリッ） -->
+                <polygon points="72,75 88,78 75,86" fill="#ffe066" stroke="#2d1c14" stroke-width="2" />
+                <ellipse cx="80" cy="80" rx="2.5" ry="5" fill="#2d1c14" />
+                <polygon points="128,75 112,78 125,86" fill="#ffe066" stroke="#2d1c14" stroke-width="2" />
+                <ellipse cx="120" cy="80" rx="2.5" ry="5" fill="#2d1c14" />
+                <!-- 鼻と口 -->
+                <polygon points="97,90 103,90 100,95" fill="#ff9999" />
+                <path d="M 94 98 Q 100 102 106 98" stroke="#2d1c14" stroke-width="2" fill="none" />
+                <!-- ヒゲ -->
+                <line x1="60" y1="88" x2="42" y2="85" stroke="#2d1c14" stroke-width="2" />
+                <line x1="60" y1="94" x2="40" y2="96" stroke="#2d1c14" stroke-width="2" />
+                <line x1="140" y1="88" x2="158" y2="85" stroke="#2d1c14" stroke-width="2" />
+                <line x1="140" y1="94" x2="160" y2="96" stroke="#2d1c14" stroke-width="2" />
+                <!-- 赤いバンダナ -->
+                <polygon points="75,115 125,115 100,138" fill="#e63946" stroke="#ba1826" stroke-width="2" />
+              </svg>
+            </div>
+          </div>
+
+          <div class="title-meta-box">
+            <div id="title-loop-info" class="loop-info-text">
+              ✨ はじめての捜査（1周目）
+            </div>
+            <div id="title-clear-badge" class="clear-badge-text hidden">
+              🏆 全エンディング到達！真の名誉ボス犬
+            </div>
+          </div>
+
+          <div class="title-buttons">
+            <button id="btn-start-game" class="main-btn play-btn pulse-glow">
+              🐾 お散歩に出発する（ゲーム開始）
+            </button>
+            <button id="btn-reset-save" class="sub-btn">
+              🔄 データを初期化する
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. 探索パート画面（公園マップ・クリック探索） -->
+      <section id="screen-explore" class="screen">
+        <div class="park-map" id="park-map">
+          <!-- 背景装飾 -->
+          <div class="park-sky">
+            <div class="park-sun"></div>
+            <div class="park-cloud p-cloud-1"></div>
+            <div class="park-cloud p-cloud-2"></div>
+          </div>
+          <div class="park-grass"></div>
+          <div class="park-path"></div>
+
+          <!-- インタラクティブ・スポット（HTML/CSS） -->
+          <!-- 1. ベンチ -->
+          <div class="spot-object spot-bench" id="spot_bench" data-spot="spot_bench">
+            <div class="spot-marker">🔍 調査</div>
+            <div class="bench-graphic">
+              <div class="bench-back"></div>
+              <div class="bench-seat"></div>
+              <div class="bench-leg leg-1"></div>
+              <div class="bench-leg leg-2"></div>
+              <div class="cushion-missing-mark" title="座布団がなくなっている跡">❓</div>
+            </div>
+            <span class="spot-label">ひだまりベンチ</span>
+          </div>
+
+          <!-- 2. 花壇 -->
+          <div class="spot-object spot-flowerbed" id="spot_flowerbed" data-spot="spot_flowerbed">
+            <div class="spot-marker">🔍 調査</div>
+            <div class="flowerbed-graphic">
+              <div class="flower f1">🌷</div>
+              <div class="flower f2">🌼</div>
+              <div class="flower f3">🌷</div>
+              <div class="soil"></div>
+            </div>
+            <span class="spot-label">レンガの花壇</span>
+          </div>
+
+          <!-- 3. ケヤキの木 -->
+          <div class="spot-object spot-tree" id="spot_tree" data-spot="spot_tree">
+            <div class="spot-marker">🔍 調査</div>
+            <div class="tree-graphic">
+              <div class="tree-leaves"></div>
+              <div class="tree-trunk">
+                <div class="tree-hole" title="幹の穴（ウロ）">
+                  <span class="hole-sparkle">✨</span>
+                </div>
+              </div>
+            </div>
+            <span class="spot-label">大きなケヤキ</span>
+          </div>
+
+          <!-- 4. ベンチ裏の植え込み（2周目限定・隠しスポット） -->
+          <div class="spot-object spot-hidden hidden" id="spot_hidden" data-spot="spot_hidden">
+            <div class="spot-marker secret-marker">✨ 気になるにおい！</div>
+            <div class="bush-graphic">
+              <div class="bush-shrub"></div>
+              <div class="secret-glimmer">🎀</div>
+            </div>
+            <span class="spot-label">ベンチ裏の奥</span>
+          </div>
+
+          <!-- お遊びスポット: 落ち葉の山 -->
+          <div class="spot-object spot-leaves" id="spot_leaves" data-spot="spot_leaves">
+            <div class="spot-marker">🍂</div>
+            <div class="leaves-graphic">🍂🍁🍂</div>
+            <span class="spot-label">落ち葉の山</span>
+          </div>
+
+          <!-- お遊びスポット: 水飲み場 -->
+          <div class="spot-object spot-fountain" id="spot_fountain" data-spot="spot_fountain">
+            <div class="spot-marker">🚰</div>
+            <div class="fountain-graphic">🚰</div>
+            <span class="spot-label">水飲み場</span>
+          </div>
+
+          <!-- 画面上を歩くポメのミニスプライト -->
+          <div id="pome-walker" class="pome-walker">
+            <div class="pome-walker-body">🐾 白ポメ</div>
+          </div>
+        </div>
+
+        <!-- 探索下部ステータスバー -->
+        <div class="explore-footer">
+          <div class="explore-hint">
+            <span class="hint-icon">💡</span>
+            <span id="explore-status-text">公園の気になる場所をクリック（タップ）して調査しよう！</span>
+          </div>
+          <div class="explore-action-box">
+            <div class="collected-count">
+              集めた証拠: <strong id="evidence-needed-counter">0 / 3</strong>
+            </div>
+            <button id="btn-go-to-debate" class="main-btn debate-ready-btn hidden pulse-glow">
+              🔥 証拠が揃った！猫集会へ乗り込む！
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. 立証パート画面（猫集会・論戦対決） -->
+      <section id="screen-debate" class="screen">
+        <div class="debate-arena">
+          <!-- スピード線（クライマックス用演出） -->
+          <div id="debate-speedlines" class="speedlines hidden"></div>
+
+          <!-- 対立グラフィック -->
+          <div class="debate-stage">
+            <!-- 相手（トラ吉） -->
+            <div class="stage-actor opponent-actor">
+              <div class="actor-card tora-card">
+                <div class="actor-avatar-box">
+                  <div id="debate-tora-avatar" class="avatar-holder">
+                    <!-- トラ吉の動的表情 -->
+                  </div>
+                </div>
+                <div class="actor-info">
+                  <span class="actor-name">ボス猫 トラ吉</span>
+                  <span id="opponent-status" class="actor-mood">威嚇中 😾</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- VS マーク -->
+            <div class="vs-badge-container">
+              <div class="vs-badge">VS</div>
+            </div>
+
+            <!-- 主人公（ポメ） -->
+            <div class="stage-actor player-actor">
+              <div class="actor-card pome-card">
+                <div class="actor-avatar-box">
+                  <div id="debate-pome-avatar" class="avatar-holder">
+                    <!-- ポメの動的表情 -->
+                  </div>
+                </div>
+                <div class="actor-info">
+                  <span class="actor-name">名探偵 ポメ</span>
+                  <span class="actor-mood">真実を追及 🐶</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- トラ吉の言い分・追及カード -->
+          <div class="debate-question-box">
+            <div class="question-header">
+              <span id="debate-turn-label" class="badge">問答 1 / 3</span>
+              <span class="question-title">トラ吉の言いがかり:</span>
+            </div>
+            <div id="debate-opponent-speech" class="opponent-speech-bubble">
+              「犬がベンチからクッションをくわえて持ち去ったんじゃないって証拠はあるのかニャ！？」
+            </div>
+          </div>
+
+          <!-- 証拠品スロット（プレイヤーの選択肢） -->
+          <div class="debate-tray-container">
+            <div class="tray-title">突きつける証拠を1つ選んでください：</div>
+            <div id="debate-evidence-list" class="debate-evidence-list">
+              <!-- JSで所持証拠カードを動的生成 -->
+            </div>
+            <div class="tray-action">
+              <button id="btn-present-evidence" class="main-btn shout-btn" disabled>
+                👉 証拠を突きつける！（ワン！）
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. 会話・ノベルウィンドウ（プロローグ・イベント・エンディング兼用） -->
+      <div id="novel-window" class="novel-window hidden">
+        <div class="dialogue-box">
+          <div class="speaker-tag" id="dialogue-speaker">ポメ（心の声）</div>
+          <div class="dialogue-text" id="dialogue-text">……</div>
+          <div class="dialogue-prompt">タップして次へ ▶</div>
+        </div>
+      </div>
+
+      <!-- 5. カットイン・オーバーレイ演出（「ワン！」異議あり風） -->
+      <div id="overlay-cutin" class="cutin-overlay hidden">
+        <div class="cutin-speedline"></div>
+        <div class="cutin-content">
+          <div class="cutin-pome-face">🐶</div>
+          <div class="cutin-text">ワンッ！！！</div>
+          <div class="cutin-sub">（バウッ！ 異議あり！）</div>
+        </div>
+      </div>
+
+      <!-- 6. エンディング演出オーバーレイ -->
+      <div id="screen-ending" class="screen ending-overlay hidden">
+        <div class="ending-card">
+          <div id="ending-icon" class="ending-icon">🎉</div>
+          <h2 id="ending-title" class="ending-title">HAPPY END</h2>
+          <div id="ending-sub" class="ending-sub">ひだまりの和解</div>
+          <div id="ending-desc" class="ending-desc">
+            みんな仲良くベンチで日向ぼっこ！
+          </div>
+          <div id="ending-unlocked-banner" class="ending-banner hidden">
+            ✨ 【2周目：名探偵モード】が解放されました！公園の奥で新たな真実が……！？
+          </div>
+          <div class="ending-buttons">
+            <button id="btn-ending-next" class="main-btn pulse-glow">
+              🐾 次へ進む
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- 証拠品手帳モーダル -->
+    <div id="modal-evidence" class="modal hidden">
+      <div class="modal-backdrop"></div>
+      <div class="modal-window">
+        <div class="modal-header">
+          <h3>🎒 集めた証拠手帳</h3>
+          <button id="btn-close-modal" class="close-btn">&times;</button>
+        </div>
+        <div class="modal-body" id="modal-evidence-list">
+          <!-- 動的挿入 -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- スクリプトの読み込み -->
+  <script src="js/audio.js"></script>
+  <script src="js/state.js"></script>
+  <script src="js/scenario.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
