@@ -217,6 +217,7 @@ window.SCENARIO_DATA = {
     {
       id: 'spot_secret_bush',
       name: 'ベンチ裏の暗い隙間',
+      area: 'plaza',
       coords: { x: 38, y: 46 },
       icon: '✨',
       evidenceId: 'kitten_ribbon',
@@ -226,6 +227,21 @@ window.SCENARIO_DATA = {
         { speaker: 'ポメ（心の声）', text: '（ベンチの真裏、ダンボールで囲まれた隙間をホリホリしてみよう……あ！！）' },
         { speaker: 'ポメ（心の声）', text: '（泥で汚れた小さな毛糸のリボンだ！鈴がついてる……それに、生まれたての子猫のミルクのにおいがするぞ！）' },
         { speaker: 'ナレーション', text: '【真実の手がかり】『泥の鈴リボンとミルクの残り香』を手に入れた！トラ吉が必死に隠していた秘密の鍵だ。' }
+      ]
+    },
+
+    // 9. 公園の水飲み場（ケヤキの森エリア環境スポット）
+    {
+      id: 'spot_fountain',
+      name: '公園の水飲み場',
+      area: 'grove',
+      coords: { x: 30, y: 62 },
+      icon: '🚰',
+      evidenceId: null,
+      inspectText: [
+        { speaker: 'ポメ（心の声）', text: '（公園の水飲み場だ！蛇口から冷たい水がちょろちょろ流れているワン。）' },
+        { speaker: 'ポメ（心の声）', text: '（ぺろぺろ……ふぅ、喉がうるおった！捜査の合間の水分補給は大事だね！）' },
+        { speaker: 'ポメ（心の声）', text: '（すぐ近くの枝にハトのポッポ師匠がいるぞ。空から何か見ていなかったか聞いてみよう！）' }
       ]
     }
   ],

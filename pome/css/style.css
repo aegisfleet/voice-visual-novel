@@ -425,6 +425,50 @@ body {
   flex-direction: column;
 }
 
+/* 探索エリア切替ナビゲーションバー */
+.area-nav-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 8px 14px;
+  background: var(--color-surface-glass);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-bottom: 2px solid var(--color-border);
+  z-index: 35;
+}
+
+.area-nav-btn {
+  font-family: var(--font-main);
+  font-size: 13px;
+  font-weight: 900;
+  padding: 6px 16px;
+  background: #ffffff;
+  color: var(--color-text-main);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all var(--transition-fast);
+  box-shadow: var(--shadow-sm);
+}
+
+.area-nav-btn:hover {
+  border-color: var(--color-primary);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.area-nav-btn.active {
+  background: linear-gradient(135deg, var(--color-primary) 0%, #f4a261 100%);
+  color: #ffffff;
+  border-color: var(--color-primary);
+  box-shadow: 0 4px 12px rgba(231, 111, 81, 0.35);
+}
+
 .park-map {
   flex: 1;
   position: relative;
@@ -432,6 +476,82 @@ body {
   cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><text y="18" font-size="18">🐾</text></svg>'), auto;
 }
 
+/* エリアコンテナ（切り替えレイヤー） */
+.park-area {
+  position: absolute;
+  inset: 0;
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+.park-area.hidden {
+  display: none;
+  opacity: 0;
+  pointer-events: none;
+}
+.park-area.active {
+  display: block;
+  opacity: 1;
+  animation: area-fade-in 0.35s ease;
+}
+@keyframes area-fade-in {
+  0% { opacity: 0; transform: scale(0.98); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+/* エリア移動ポータル（案内板看板） */
+.area-portal {
+  position: absolute;
+  z-index: 25;
+  cursor: pointer;
+  transition: transform var(--transition-fast);
+}
+.area-portal:hover {
+  transform: scale(1.1);
+}
+
+.portal-sign {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #eed971;
+  border: 3px solid #8d5b2d;
+  color: #5c3815;
+  font-weight: 900;
+  font-size: 13px;
+  padding: 8px 14px;
+  border-radius: var(--radius-md);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+}
+.portal-sign::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 8px;
+  height: 12px;
+  background: #8d5b2d;
+  border-radius: 2px;
+  z-index: -1;
+}
+
+.bounce-x {
+  animation: bounce-x-anim 1.5s infinite ease-in-out;
+}
+@keyframes bounce-x-anim {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(6px); }
+}
+
+.bounce-x-left {
+  animation: bounce-x-left-anim 1.5s infinite ease-in-out;
+}
+@keyframes bounce-x-left-anim {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(-6px); }
+}
+
+/* --- エリア1: ひだまり広場 背景 --- */
 .park-sky {
   position: absolute;
   top: 0;
@@ -480,6 +600,88 @@ body {
   background: var(--path-color);
   border-radius: 50% 50% 0 0 / 22px 22px 0 0;
   border-top: 4px dashed rgba(160, 100, 40, 0.2);
+}
+
+/* --- エリア2: ケヤキの森 背景 --- */
+.grove-sky {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 40%;
+  background: linear-gradient(180deg, #74c0fc 0%, #a5d8ff 60%, #d8f5a2 100%);
+}
+
+.grove-sunbeam {
+  position: absolute;
+  top: 0;
+  right: 15%;
+  width: 120px;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 70%);
+  transform: skewX(-25deg);
+  pointer-events: none;
+}
+
+.grove-trees-back {
+  position: absolute;
+  top: 25%;
+  left: 0;
+  width: 100%;
+  height: 35%;
+  background: radial-gradient(circle at 10% 80%, #38b000 0%, #208b3a 70%),
+              radial-gradient(circle at 45% 90%, #2dc653 0%, #155d27 80%),
+              radial-gradient(circle at 85% 75%, #40916c 0%, #1b4332 80%);
+  opacity: 0.85;
+}
+
+.grove-grass {
+  position: absolute;
+  top: 44%;
+  left: 0;
+  width: 100%;
+  height: 56%;
+  background: linear-gradient(180deg, #40916c 0%, #2d6a4f 60%, #1b4332 100%);
+}
+
+.grove-path {
+  position: absolute;
+  bottom: 0;
+  left: -5%;
+  width: 110%;
+  height: 32%;
+  background: #e9d8a6;
+  border-radius: 40% 60% 0 0 / 18px 24px 0 0;
+  border-top: 4px dashed rgba(110, 70, 30, 0.25);
+}
+
+/* 水飲み場グラフィック */
+.fountain-graphic {
+  font-size: 38px;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.25));
+  animation: float-marker 2.5s infinite ease-in-out;
+}
+
+/* ケヤキの大木（森エリア用に大きく表示） */
+.large-tree {
+  width: 140px !important;
+  height: 190px !important;
+}
+.large-tree .tree-leaves {
+  width: 130px !important;
+  height: 110px !important;
+  background: radial-gradient(circle, #74c69d 0%, #2d6a4f 100%) !important;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.3) !important;
+}
+.large-tree .tree-trunk {
+  width: 38px !important;
+  height: 95px !important;
+}
+.large-tree .tree-hole {
+  width: 22px !important;
+  height: 28px !important;
+  top: 22px !important;
+  left: 8px !important;
 }
 
 /* 調査スポット共通 */
@@ -847,17 +1049,235 @@ body {
 @keyframes speed-pulse { 0%, 100% { opacity: 0.8; } 50% { opacity: 0.3; } }
 
 /* --------------------------------------
-   4. 会話・ノベルウィンドウ（選択肢対応）
+   4. 会話ステージ＆センターキャラクターレイヤー（eveスタイル）
+-------------------------------------- */
+/* 会話中の背景フォーカス（暗転＆ビネット効果） */
+.dialogue-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 50% 30%, rgba(0, 0, 0, 0.15) 0%, rgba(0, 0, 0, 0.42) 100%);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  z-index: 52;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+.dialogue-backdrop.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* センターキャラクター表示ステージ */
+.dialogue-stage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  padding-bottom: 175px; /* ダイアログボックスの上端に接地 */
+  z-index: 55;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+.dialogue-stage.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+.dialogue-stage.visible {
+  opacity: 1;
+}
+
+.character-stage {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  width: 100%;
+}
+
+/* 立ち絵キャラクターラッパー */
+.char-wrapper {
+  position: relative;
+  width: min(80vw, 340px);
+  height: min(58vh, 380px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.25s ease;
+}
+
+/* 足元の丸い影 */
+.char-ground-shadow {
+  position: absolute;
+  bottom: 0px;
+  width: 70%;
+  height: 22px;
+  background: radial-gradient(ellipse at center, rgba(30, 20, 10, 0.35) 0%, rgba(30, 20, 10, 0) 70%);
+  border-radius: 50%;
+  z-index: 1;
+}
+
+.char-svg-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  animation: char-breathe 3.6s infinite ease-in-out;
+}
+
+.char-svg {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.16));
+}
+
+/* 生き生きとした呼吸アニメーション */
+@keyframes char-breathe {
+  0%, 100% {
+    transform: translateY(0) scale(1, 1);
+  }
+  50% {
+    transform: translateY(-5px) scale(1.015, 1.02);
+  }
+}
+
+/* 発話中（リップシンク＆小刻みバウンス） */
+.char-wrapper.is-talking .char-svg-container {
+  animation: char-talk-bounce 0.26s infinite ease-in-out alternate;
+}
+@keyframes char-talk-bounce {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-4px) scale(1.01, 1.01); }
+}
+
+/* キャラクターモーション定義 */
+.motion-enter {
+  animation: char-enter 0.35s cubic-bezier(0.18, 0.89, 0.32, 1.28) both;
+}
+@keyframes char-enter {
+  0% {
+    opacity: 0;
+    transform: translateY(30px) scale(0.92);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.motion-bounce {
+  animation: char-bounce 0.4s ease-in-out;
+}
+@keyframes char-bounce {
+  0%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-16px) scale(1.03, 0.97); }
+  70% { transform: translateY(4px) scale(0.98, 1.02); }
+}
+
+.motion-jump {
+  animation: char-jump 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+}
+@keyframes char-jump {
+  0%, 100% { transform: translateY(0); }
+  45% { transform: translateY(-28px) scale(1.05, 0.95); }
+  75% { transform: translateY(6px) scale(0.95, 1.04); }
+}
+
+.motion-shake {
+  animation: char-shake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+@keyframes char-shake {
+  10%, 90% { transform: translate3d(-4px, 0, 0); }
+  20%, 80% { transform: translate3d(6px, 0, 0); }
+  30%, 50%, 70% { transform: translate3d(-8px, 0, 0); }
+  40%, 60% { transform: translate3d(8px, 0, 0); }
+}
+
+.motion-nod {
+  animation: char-nod 0.35s ease-in-out;
+}
+@keyframes char-nod {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(12px) scale(0.98, 1.02); }
+}
+
+.motion-drop {
+  animation: char-drop 0.45s cubic-bezier(0.25, 1, 0.5, 1) both;
+}
+@keyframes char-drop {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(18px) scale(0.96, 1.04); }
+  100% { transform: translateY(10px) scale(0.98, 1.02); }
+}
+
+/* 頭上のエモーション吹き出しポップアップ */
+.emotion-bubble {
+  position: absolute;
+  top: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #ffffff;
+  border: 2.5px solid var(--color-primary);
+  border-radius: var(--radius-full);
+  padding: 6px 14px;
+  font-size: 26px;
+  line-height: 1;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+  z-index: 58;
+  pointer-events: none;
+  animation: bubble-pop 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28) both;
+}
+.emotion-bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -9px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 9px 8px 0;
+  border-style: solid;
+  border-color: var(--color-primary) transparent transparent;
+  display: block;
+  width: 0;
+}
+.emotion-bubble.hidden {
+  display: none;
+}
+@keyframes bubble-pop {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(14px) scale(0.5);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+}
+
+/* --------------------------------------
+   5. 会話・ノベルウィンドウ（選択肢＆コントロール付き）
 -------------------------------------- */
 .novel-window {
   position: absolute;
-  bottom: 14px;
-  left: 18px;
-  right: 18px;
+  bottom: 12px;
+  left: 16px;
+  right: 16px;
   z-index: 60;
   cursor: pointer;
 }
-.novel-window.hidden { display: none; }
+.novel-window.hidden {
+  display: none;
+}
 
 .dialogue-box {
   background: var(--color-surface-trans);
@@ -865,33 +1285,111 @@ body {
   -webkit-backdrop-filter: blur(14px);
   border: 2.5px solid var(--color-border);
   border-radius: var(--radius-md);
-  padding: 16px 20px;
-  box-shadow: var(--shadow-lg);
-  min-height: 110px;
+  padding: 14px 18px 12px;
+  box-shadow: var(--shadow-lg), 0 0 25px rgba(231, 111, 81, 0.15);
+  min-height: 142px;
   position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 上部コントロールバー（AUTO, SKIP, LOG） */
+.dialogue-controls {
+  position: absolute;
+  top: -34px;
+  right: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  z-index: 65;
+}
+
+.novel-ctrl-btn {
+  font-family: var(--font-main);
+  font-size: 11px;
+  font-weight: 900;
+  padding: 4px 10px;
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-full);
+  color: var(--color-text-main);
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-fast);
+}
+.novel-ctrl-btn:hover {
+  background: var(--color-primary);
+  color: #ffffff;
+  border-color: var(--color-primary);
+  transform: translateY(-2px);
+}
+.novel-ctrl-btn.active {
+  background: var(--color-primary);
+  color: #ffffff;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 10px rgba(231, 111, 81, 0.5);
+}
+
+/* 話者ヘッダー */
+.dialogue-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.speaker-icon {
+  font-size: 18px;
+  background: #ffffff;
+  border: 1.5px solid var(--color-border);
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-sm);
 }
 
 .speaker-tag {
-  display: inline-block;
-  padding: 4px 14px;
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 14px;
   font-size: 13px;
   font-weight: 900;
   color: #ffffff;
   background: linear-gradient(135deg, var(--color-primary) 0%, #f4a261 100%);
   border-radius: var(--radius-full);
-  margin-bottom: 6px;
   box-shadow: var(--shadow-sm);
+  letter-spacing: 0.03em;
 }
-.speaker-tag.tora-speaker { background: linear-gradient(135deg, #ba681b 0%, #e69d45 100%); }
-.speaker-tag.narrator-speaker { background: #6c757d; }
-.speaker-tag.npc-speaker { background: linear-gradient(135deg, #2a9d8f 0%, #52b788 100%); }
+.speaker-tag.pome-speaker {
+  background: linear-gradient(135deg, #e76f51 0%, #f4a261 100%);
+}
+.speaker-tag.tora-speaker {
+  background: linear-gradient(135deg, #ba681b 0%, #e69d45 100%);
+}
+.speaker-tag.narrator-speaker {
+  background: #6c757d;
+}
+.speaker-tag.npc-speaker {
+  background: linear-gradient(135deg, #2a9d8f 0%, #52b788 100%);
+}
+.speaker-tag.kuro-speaker {
+  background: linear-gradient(135deg, #343a40 0%, #495057 100%);
+}
+
+.dialogue-body {
+  flex: 1;
+  min-height: 54px;
+}
 
 .dialogue-text {
   font-size: 15px;
-  line-height: 1.6;
+  line-height: 1.65;
   font-weight: 700;
   color: var(--color-text-main);
-  min-height: 48px;
+  word-break: break-word;
 }
 
 /* 選択肢ボタンコンテナ */
@@ -901,7 +1399,9 @@ body {
   gap: 8px;
   margin-top: 10px;
 }
-.dialogue-choices.hidden { display: none; }
+.dialogue-choices.hidden {
+  display: none;
+}
 
 .dialogue-choice-btn {
   font-family: var(--font-main);
@@ -916,24 +1416,79 @@ body {
   text-align: left;
   transition: all var(--transition-fast);
   box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.dialogue-choice-btn::before {
+  content: '🐾';
+  font-size: 13px;
 }
 .dialogue-choice-btn:hover {
   background: var(--color-primary);
   color: #ffffff;
-  transform: translateX(4px);
+  transform: translateX(5px);
+  box-shadow: var(--shadow-md);
 }
 
+/* 次へインジケーター */
 .dialogue-prompt {
-  position: absolute;
-  bottom: 8px;
-  right: 16px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  align-self: flex-end;
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 900;
   color: var(--color-primary);
-  animation: blink 1.2s infinite;
+  margin-top: 4px;
 }
-.dialogue-prompt.hidden { display: none; }
-@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+.dialogue-prompt.hidden {
+  display: none;
+}
+.prompt-icon {
+  animation: prompt-paw-bounce 0.9s infinite alternate ease-in-out;
+}
+@keyframes prompt-paw-bounce {
+  0% { transform: translateY(0) scale(1); }
+  100% { transform: translateY(-4px) scale(1.15); }
+}
+
+/* --------------------------------------
+   バックログモーダルスタイル
+-------------------------------------- */
+.backlog-window {
+  max-width: 620px !important;
+  max-height: 82% !important;
+  display: flex;
+  flex-direction: column;
+}
+.backlog-window .modal-body {
+  overflow-y: auto;
+  max-height: 55vh;
+  padding-right: 6px;
+}
+
+.backlog-item {
+  padding: 10px 12px;
+  border-bottom: 1px dashed var(--color-border);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.backlog-item:last-child {
+  border-bottom: none;
+}
+.backlog-item-speaker {
+  font-size: 12px;
+  font-weight: 900;
+  color: var(--color-primary);
+}
+.backlog-item-text {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--color-text-main);
+  font-weight: 600;
+}
 
 /* --------------------------------------
    5. カットイン・オーバーレイ演出
@@ -1048,3 +1603,58 @@ body {
   30%, 50%, 70% { transform: translate3d(-6px, 0, 0); }
   40%, 60% { transform: translate3d(6px, 0, 0); }
 }
+
+/* --------------------------------------
+   8. モバイル・画面最適化レスポンシブスタイル
+-------------------------------------- */
+@media (max-width: 680px) {
+  .hud {
+    padding: 0 10px;
+    height: 50px;
+  }
+  .hud-btn {
+    padding: 4px 8px;
+    font-size: 11px;
+  }
+  .hud-left .badge {
+    padding: 3px 8px;
+    font-size: 11px;
+  }
+
+  .dialogue-stage {
+    padding-bottom: 160px;
+  }
+  .char-wrapper {
+    width: min(85vw, 290px);
+    height: min(52vh, 310px);
+  }
+  .dialogue-box {
+    padding: 12px 14px 10px;
+    min-height: 135px;
+  }
+  .dialogue-text {
+    font-size: 14px;
+    line-height: 1.55;
+  }
+  .novel-ctrl-btn {
+    font-size: 10px;
+    padding: 3px 8px;
+  }
+}
+
+@media (max-height: 600px) {
+  .dialogue-stage {
+    padding-bottom: 135px;
+  }
+  .char-wrapper {
+    height: min(50vh, 250px);
+  }
+  .dialogue-box {
+    min-height: 115px;
+    padding: 10px 14px;
+  }
+  .dialogue-body {
+    min-height: 42px;
+  }
+}
+

@@ -6,11 +6,27 @@ class GameApp {
     this.state = window.gameState;
     this.scenario = window.SCENARIO_DATA;
 
-    // 現在進行中のノベル会話キュー
+    // キャラクター立ち絵コントローラー (eveスタイル)
+    this.character = new PomeCharacterController(
+      document.getElementById('character-stage'),
+      document.getElementById('emotion-bubble')
+    );
+
+    // 現在進行中のノベル会話キュー＆状態
     this.dialogueQueue = [];
     this.currentDialogueCallback = null;
     this.selectedEvidenceId = null;
     this.isChoiceActive = false;
+
+    // タイピング表示・AUTO・SKIP・バックログ管理
+    this.backlog = [];
+    this.isAutoMode = false;
+    this.isSkipMode = false;
+    this.autoTimer = null;
+    this.typewriterTimer = null;
+    this.isTyping = false;
+    this.currentFullText = '';
+    this.currentSpeaker = '';
 
     // DOM要素のキャッシュ
     this.dom = {
@@ -37,7 +53,13 @@ class GameApp {
       btnStartGame: document.getElementById('btn-start-game'),
       btnResetSave: document.getElementById('btn-reset-save'),
 
-      // 探索
+      // 探索・2エリアシステム
+      areaNavPlaza: document.getElementById('btn-area-plaza'),
+      areaNavGrove: document.getElementById('btn-area-grove'),
+      areaPlaza: document.getElementById('area-plaza'),
+      areaGrove: document.getElementById('area-grove'),
+      portalToGrove: document.getElementById('portal-to-grove'),
+      portalToPlaza: document.getElementById('portal-to-plaza'),
       parkMap: document.getElementById('park-map'),
       spotSecretBush: document.getElementById('spot_secret_bush'),
       pomeWalker: document.getElementById('pome-walker'),
@@ -57,12 +79,20 @@ class GameApp {
       btnPresentEvidence: document.getElementById('btn-present-evidence'),
       debateSpeedlines: document.getElementById('debate-speedlines'),
 
-      // 会話ウィンドウ
+      // 会話ステージ＆ノベルウィンドウ
+      dialogueBackdrop: document.getElementById('dialogue-backdrop'),
+      dialogueStage: document.getElementById('dialogue-stage'),
+      characterStage: document.getElementById('character-stage'),
+      emotionBubble: document.getElementById('emotion-bubble'),
       novelWindow: document.getElementById('novel-window'),
+      dialogueSpeakerIcon: document.getElementById('dialogue-speaker-icon'),
       dialogueSpeaker: document.getElementById('dialogue-speaker'),
       dialogueText: document.getElementById('dialogue-text'),
       dialogueChoices: document.getElementById('dialogue-choices'),
       dialoguePrompt: document.getElementById('dialogue-prompt'),
+      btnDialogueAuto: document.getElementById('btn-dialogue-auto'),
+      btnDialogueSkip: document.getElementById('btn-dialogue-skip'),
+      btnDialogueLog: document.getElementById('btn-dialogue-log'),
 
       // カットイン
       overlayCutin: document.getElementById('overlay-cutin'),
@@ -78,8 +108,16 @@ class GameApp {
       // モーダル
       modalEvidence: document.getElementById('modal-evidence'),
       modalEvidenceList: document.getElementById('modal-evidence-list'),
-      btnCloseModal: document.getElementById('btn-close-modal')
+      btnCloseModal: document.getElementById('btn-close-modal'),
+
+      // バックログモーダル
+      modalBacklog: document.getElementById('modal-backlog'),
+      modalBacklogList: document.getElementById('modal-backlog-list'),
+      btnCloseBacklog: document.getElementById('btn-close-backlog'),
+      backdropBacklog: document.getElementById('backdrop-backlog')
     };
+
+    this.currentArea = 'plaza';
 
     this.bindEvents();
     this.updateTitleView();
@@ -123,6 +161,20 @@ class GameApp {
       this.dom.btnToggleBgm.textContent = active ? '🎵 BGM: ON' : '🎵 BGM: OFF';
     });
 
+    // 2エリア切り替えナビゲーション
+    if (this.dom.areaNavPlaza) {
+      this.dom.areaNavPlaza.addEventListener('click', () => this.switchArea('plaza'));
+    }
+    if (this.dom.areaNavGrove) {
+      this.dom.areaNavGrove.addEventListener('click', () => this.switchArea('grove'));
+    }
+    if (this.dom.portalToGrove) {
+      this.dom.portalToGrove.addEventListener('click', () => this.switchArea('grove'));
+    }
+    if (this.dom.portalToPlaza) {
+      this.dom.portalToPlaza.addEventListener('click', () => this.switchArea('plaza'));
+    }
+
     // 証拠手帳モーダル
     this.dom.btnEvidenceBag.addEventListener('click', () => {
       this.audio.playClick();
@@ -133,10 +185,44 @@ class GameApp {
       this.dom.modalEvidence.classList.add('hidden');
     });
 
-    // 会話ウィンドウクリック
+    // 会話コントロールボタン
+    this.dom.btnDialogueAuto.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.audio.playClick();
+      this.toggleAutoMode();
+    });
+
+    this.dom.btnDialogueSkip.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.audio.playClick();
+      this.toggleSkipMode();
+    });
+
+    this.dom.btnDialogueLog.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.audio.playClick();
+      this.openBacklogModal();
+    });
+
+    // バックログモーダルを閉じる
+    this.dom.btnCloseBacklog.addEventListener('click', () => {
+      this.audio.playClick();
+      this.closeBacklogModal();
+    });
+    this.dom.backdropBacklog.addEventListener('click', () => {
+      this.closeBacklogModal();
+    });
+
+    // 会話ウィンドウクリック（タイピング中なら即時完了、完了後なら次へ）
     this.dom.novelWindow.addEventListener('click', (e) => {
       if (this.isChoiceActive) return; // 選択肢表示中はクリック送り不可
-      this.advanceDialogue();
+      if (e.target.closest('.novel-ctrl-btn') || e.target.closest('.dialogue-choice-btn')) return;
+
+      if (this.isTyping) {
+        this.finishTyping();
+      } else {
+        this.advanceDialogue();
+      }
     });
 
     // 探索スポットクリック
@@ -212,7 +298,7 @@ class GameApp {
   }
 
   // --------------------------------------
-  // 会話・ノベルウィンドウ制御
+  // 会話・ノベルウィンドウ制御 (eveスタイル・センター立ち絵連動)
   // --------------------------------------
   playDialogueQueue(queue, callback) {
     this.dialogueQueue = [...queue];
@@ -220,43 +306,220 @@ class GameApp {
     this.isChoiceActive = false;
     this.dom.dialogueChoices.classList.add('hidden');
     this.dom.dialoguePrompt.classList.remove('hidden');
+
+    // 背景ビネット＆センターステージを表示
+    this.dom.dialogueBackdrop.classList.remove('hidden');
+    this.dom.dialogueStage.classList.remove('hidden');
     this.dom.novelWindow.classList.remove('hidden');
+
     this.advanceDialogue();
   }
 
   advanceDialogue() {
+    clearTimeout(this.typewriterTimer);
+    clearTimeout(this.autoTimer);
+
     if (this.dialogueQueue.length === 0) {
-      this.dom.novelWindow.classList.add('hidden');
       this.audio.stopSpeech();
+      this.stopAutoMode();
+
+      // コールバックがある場合（選択肢や次の会話へ続く場合）はウィンドウを閉じずに処理を引き継ぐ
       if (this.currentDialogueCallback) {
         const cb = this.currentDialogueCallback;
         this.currentDialogueCallback = null;
         cb();
+        return;
       }
+
+      // コールバックがない場合のみ完全クローズ
+      this.character.hide();
+      this.dom.dialogueBackdrop.classList.add('hidden');
+      this.dom.dialogueStage.classList.add('hidden');
+      this.dom.novelWindow.classList.add('hidden');
       return;
     }
 
     const current = this.dialogueQueue.shift();
-    this.audio.playTextBlip();
+    this.currentSpeaker = current.speaker;
+    this.currentFullText = current.text;
 
-    this.dom.dialogueSpeaker.textContent = current.speaker;
-    if (current.speaker.includes('トラ吉')) {
-      this.dom.dialogueSpeaker.className = 'speaker-tag tora-speaker';
-    } else if (current.speaker.includes('ナレーション')) {
-      this.dom.dialogueSpeaker.className = 'speaker-tag narrator-speaker';
-    } else if (current.speaker.includes('管理人') || current.speaker.includes('ポッポ') || current.speaker.includes('クロ')) {
-      this.dom.dialogueSpeaker.className = 'speaker-tag npc-speaker';
-    } else {
-      this.dom.dialogueSpeaker.className = 'speaker-tag';
+    // 1. キャラクターをセンターに表示（表情・エモーション連動）
+    this.character.showForDialogue(current);
+
+    // 2. 話者アイコンとスピーカータグの更新
+    this.updateSpeakerDisplay(current.speaker);
+
+    // 3. バックログに記録
+    this.backlog.push({ speaker: current.speaker, text: current.text });
+
+    // 4. 音声読み上げ
+    this.audio.speak(current.speaker, current.text);
+
+    // 5. タイピング演出開始
+    this.startTypewriter(current.text);
+  }
+
+  // タイピング表示（一文字ずつ表示、口パク連動）
+  startTypewriter(text) {
+    clearTimeout(this.typewriterTimer);
+    clearTimeout(this.autoTimer);
+    this.isTyping = true;
+    this.character.startTalking();
+
+    if (this.isSkipMode) {
+      this.finishTyping();
+      return;
     }
 
-    this.dom.dialogueText.textContent = current.text;
-    this.audio.speak(current.speaker, current.text);
+    this.dom.dialogueText.textContent = '';
+    let index = 0;
+    const speed = 24; // 1文字あたりのミリ秒
+
+    const typeChar = () => {
+      if (!this.isTyping) return;
+      if (index < text.length) {
+        this.dom.dialogueText.textContent += text.charAt(index);
+        index++;
+        if (index % 3 === 0) {
+          this.audio.playTextBlip();
+        }
+        this.typewriterTimer = setTimeout(typeChar, speed);
+      } else {
+        this.finishTyping();
+      }
+    };
+
+    typeChar();
+  }
+
+  // タイピング即時完了
+  finishTyping() {
+    clearTimeout(this.typewriterTimer);
+    this.isTyping = false;
+    this.dom.dialogueText.textContent = this.currentFullText;
+    this.character.stopTalking();
+
+    // AUTOモード時の自動次へ処理
+    if (this.isAutoMode && !this.isChoiceActive) {
+      const readingDelay = Math.min(3400, Math.max(1400, this.currentFullText.length * 68));
+      this.autoTimer = setTimeout(() => {
+        this.advanceDialogue();
+      }, readingDelay);
+    } else if (this.isSkipMode && !this.isChoiceActive) {
+      setTimeout(() => {
+        this.advanceDialogue();
+      }, 70);
+    }
+  }
+
+  // 話者表示（アイコン＆スタイル）の更新
+  updateSpeakerDisplay(speaker) {
+    this.dom.dialogueSpeaker.textContent = speaker;
+    let icon = '🐾';
+    let tagClass = 'speaker-tag';
+
+    if (speaker.includes('ポメ')) {
+      icon = '🐶';
+      tagClass = 'speaker-tag pome-speaker';
+    } else if (speaker.includes('トラ吉')) {
+      icon = '😼';
+      tagClass = 'speaker-tag tora-speaker';
+    } else if (speaker.includes('管理人')) {
+      icon = '👴';
+      tagClass = 'speaker-tag npc-speaker';
+    } else if (speaker.includes('ポッポ')) {
+      icon = '🕊️';
+      tagClass = 'speaker-tag npc-speaker';
+    } else if (speaker.includes('クロ')) {
+      icon = '🐈‍⬛';
+      tagClass = 'speaker-tag kuro-speaker';
+    } else if (speaker.includes('シマリス') || speaker.includes('チビ')) {
+      icon = '🐿️';
+      tagClass = 'speaker-tag npc-speaker';
+    } else if (speaker.includes('子猫')) {
+      icon = '🐱';
+      tagClass = 'speaker-tag npc-speaker';
+    } else if (speaker.includes('ナレーション')) {
+      icon = '📖';
+      tagClass = 'speaker-tag narrator-speaker';
+    }
+
+    this.dom.dialogueSpeakerIcon.textContent = icon;
+    this.dom.dialogueSpeaker.className = tagClass;
+  }
+
+  // AUTOモード切替
+  toggleAutoMode() {
+    this.isAutoMode = !this.isAutoMode;
+    if (this.isAutoMode) {
+      this.isSkipMode = false;
+      this.dom.btnDialogueSkip.classList.remove('active');
+    }
+    this.dom.btnDialogueAuto.classList.toggle('active', this.isAutoMode);
+
+    if (this.isAutoMode && !this.isTyping && !this.isChoiceActive) {
+      this.advanceDialogue();
+    }
+  }
+
+  // SKIPモード切替
+  toggleSkipMode() {
+    this.isSkipMode = !this.isSkipMode;
+    if (this.isSkipMode) {
+      this.isAutoMode = false;
+      this.dom.btnDialogueAuto.classList.remove('active');
+    }
+    this.dom.btnDialogueSkip.classList.toggle('active', this.isSkipMode);
+
+    if (this.isSkipMode) {
+      this.finishTyping();
+      if (!this.isChoiceActive) {
+        this.advanceDialogue();
+      }
+    }
+  }
+
+  stopAutoMode() {
+    clearTimeout(this.autoTimer);
+    this.isAutoMode = false;
+    this.isSkipMode = false;
+    this.dom.btnDialogueAuto.classList.remove('active');
+    this.dom.btnDialogueSkip.classList.remove('active');
+  }
+
+  // バックログモーダルの表示
+  openBacklogModal() {
+    this.dom.modalBacklogList.innerHTML = '';
+    if (this.backlog.length === 0) {
+      this.dom.modalBacklogList.innerHTML = '<p style="text-align:center; color:#79665c; padding:20px;">まだ会話履歴はありません。</p>';
+    } else {
+      this.backlog.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'backlog-item';
+        div.innerHTML = `
+          <span class="backlog-item-speaker">${item.speaker}</span>
+          <span class="backlog-item-text">${item.text}</span>
+        `;
+        this.dom.modalBacklogList.appendChild(div);
+      });
+      // 一番下までスクロール
+      setTimeout(() => {
+        this.dom.modalBacklogList.scrollTop = this.dom.modalBacklogList.scrollHeight;
+      }, 50);
+    }
+    this.dom.modalBacklog.classList.remove('hidden');
+  }
+
+  closeBacklogModal() {
+    this.dom.modalBacklog.classList.add('hidden');
   }
 
   // 選択肢の表示
   showChoices(choices, onSelect) {
     this.isChoiceActive = true;
+    this.dom.dialogueBackdrop.classList.remove('hidden');
+    this.dom.dialogueStage.classList.remove('hidden');
+    this.dom.novelWindow.classList.remove('hidden');
     this.dom.dialoguePrompt.classList.add('hidden');
     this.dom.dialogueChoices.innerHTML = '';
     this.dom.dialogueChoices.classList.remove('hidden');
@@ -293,17 +556,50 @@ class GameApp {
   }
 
   // --------------------------------------
-  // 探索パート
+  // 探索パート（2エリア行き来システム）
   // --------------------------------------
   startExploration() {
     this.state.currentPhase = 'EXPLORATION';
     this.showScreen('screenExplore');
+    this.switchArea('plaza');
 
     // 2周目以降なら隠しスポットを表示
     if (this.state.isSecondLoopOrLater()) {
       this.dom.spotSecretBush.classList.remove('hidden');
     } else {
       this.dom.spotSecretBush.classList.add('hidden');
+    }
+
+    this.updateExplorationUi();
+  }
+
+  // エリア切り替え（ひだまり広場 ⇔ ケヤキの森）
+  switchArea(areaKey) {
+    this.currentArea = areaKey;
+    this.audio.playClick();
+
+    const isPlaza = (areaKey === 'plaza');
+    if (this.dom.areaPlaza) {
+      this.dom.areaPlaza.classList.toggle('active', isPlaza);
+      this.dom.areaPlaza.classList.toggle('hidden', !isPlaza);
+    }
+    if (this.dom.areaGrove) {
+      this.dom.areaGrove.classList.toggle('active', !isPlaza);
+      this.dom.areaGrove.classList.toggle('hidden', isPlaza);
+    }
+
+    if (this.dom.areaNavPlaza) this.dom.areaNavPlaza.classList.toggle('active', isPlaza);
+    if (this.dom.areaNavGrove) this.dom.areaNavGrove.classList.toggle('active', !isPlaza);
+
+    const locationBadge = document.getElementById('hud-location-badge');
+    if (locationBadge) {
+      locationBadge.textContent = isPlaza ? '🐾 ひだまり広場' : '🌲 ケヤキの森';
+    }
+
+    // ポメの位置をエリア移動に合わせて自然に初期化
+    if (this.dom.pomeWalker) {
+      this.dom.pomeWalker.style.left = isPlaza ? '22%' : '30%';
+      this.dom.pomeWalker.style.top = isPlaza ? '68%' : '66%';
     }
 
     this.updateExplorationUi();
@@ -382,7 +678,11 @@ class GameApp {
       this.dom.exploreStatusText.style.color = '#e76f51';
     } else {
       this.dom.btnGoToDebate.classList.add('hidden');
-      this.dom.exploreStatusText.textContent = '現場を調べたり、動物たちから話を聞いて、確実な手がかりを集めよう！';
+      if (this.currentArea === 'plaza') {
+        this.dom.exploreStatusText.textContent = '【ひだまり広場】ベンチ周辺や花壇、ゴミ箱を調査したり、管理人さんやクロに話を聞こう！';
+      } else {
+        this.dom.exploreStatusText.textContent = '【ケヤキの森】高くそびえるケヤキの木や水飲み場を調査したり、ポッポ師匠に話を聞こう！';
+      }
       this.dom.exploreStatusText.style.color = '#332722';
     }
   }

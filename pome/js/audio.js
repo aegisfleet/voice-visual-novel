@@ -74,6 +74,15 @@ class AudioManager {
     } else if (speaker.includes('トラ吉')) {
       utterance.pitch = 0.75; // 低めでドスが利いたボス猫の声
       utterance.rate = 0.95;
+    } else if (speaker.includes('クロ')) {
+      utterance.pitch = 0.95; // 少し尖ったすばしっこい見張り猫の声
+      utterance.rate = 1.15;
+    } else if (speaker.includes('ポッポ')) {
+      utterance.pitch = 0.85; // 落ち着いた長老鳩の声
+      utterance.rate = 0.95;
+    } else if (speaker.includes('管理人')) {
+      utterance.pitch = 0.8;  // 温和なおじいさんの声
+      utterance.rate = 0.95;
     } else if (speaker.includes('ミケ') || speaker.includes('チビ')) {
       utterance.pitch = 1.45; // 高音のすばしっこい声
       utterance.rate = 1.2;

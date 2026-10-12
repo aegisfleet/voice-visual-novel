@@ -135,115 +135,169 @@
         </div>
       </section>
 
-      <!-- 2. 探索パート画面（公園マップ・クリック＆NPC対話探索） -->
+      <!-- 2. 探索パート画面（公園マップ・2エリア探索システム） -->
       <section id="screen-explore" class="screen">
+        <!-- エリア切替ナビゲーションバー -->
+        <div class="area-nav-bar" id="area-nav-bar">
+          <button type="button" id="btn-area-plaza" class="area-nav-btn active" title="ベンチ前の事件現場エリア">
+            <span class="nav-icon">🪑</span>
+            <span class="nav-text">ひだまり広場（ベンチ前）</span>
+          </button>
+          <button type="button" id="btn-area-grove" class="area-nav-btn" title="ケヤキの大木と水飲み場エリア">
+            <span class="nav-icon">🌲</span>
+            <span class="nav-text">ケヤキの森＆水飲み場</span>
+          </button>
+        </div>
+
         <div class="park-map" id="park-map">
-          <!-- 背景装飾 -->
-          <div class="park-sky">
-            <div class="park-sun"></div>
-            <div class="park-cloud p-cloud-1"></div>
-            <div class="park-cloud p-cloud-2"></div>
-          </div>
-          <div class="park-fence"></div>
-          <div class="park-grass"></div>
-          <div class="park-path"></div>
-
-          <!-- ====== 調査スポット ====== -->
-          <!-- 1. ベンチの板の隙間（正解①） -->
-          <div class="spot-object spot-bench-gap" id="spot_bench_gap" data-spot="spot_bench_gap" style="top: 48%; left: 26%;">
-            <div class="spot-marker">🔍 隙間</div>
-            <div class="bench-graphic">
-              <div class="bench-back"></div>
-              <div class="bench-seat"><span class="gap-sparkle">✨</span></div>
-              <div class="bench-leg leg-1"></div>
-              <div class="bench-leg leg-2"></div>
+          <!-- ==============================================
+               エリア 1: ひだまり広場（ベンチ・花壇・ゴミ箱）
+               ============================================== -->
+          <div class="park-area active" id="area-plaza">
+            <!-- 背景装飾 -->
+            <div class="park-sky">
+              <div class="park-sun"></div>
+              <div class="park-cloud p-cloud-1"></div>
+              <div class="park-cloud p-cloud-2"></div>
             </div>
-            <span class="spot-label">ベンチの隙間</span>
-          </div>
+            <div class="park-fence"></div>
+            <div class="park-grass"></div>
+            <div class="park-path"></div>
 
-          <!-- 2. ベンチの真下（囮①） -->
-          <div class="spot-object spot-bench-under" id="spot_bench_under" data-spot="spot_bench_under" style="top: 65%; left: 32%;">
-            <div class="spot-marker marker-trap">❓ ベンチ下</div>
-            <div class="item-graphic">🦴</div>
-            <span class="spot-label">ベンチの真下</span>
-          </div>
-
-          <!-- 3. 花壇の隅（正解②） -->
-          <div class="spot-object spot-flower-corner" id="spot_flowerbed_corner" data-spot="spot_flowerbed_corner" style="top: 66%; left: 6%;">
-            <div class="spot-marker">🔍 足跡</div>
-            <div class="flower-brick-graphic">
-              <div class="flower f1">🌷</div>
-              <div class="footprint-mini">🐾🌰</div>
+            <!-- 1. ベンチの板の隙間（正解①） -->
+            <div class="spot-object spot-bench-gap" id="spot_bench_gap" data-spot="spot_bench_gap" style="top: 48%; left: 34%;">
+              <div class="spot-marker">🔍 隙間</div>
+              <div class="bench-graphic">
+                <div class="bench-back"></div>
+                <div class="bench-seat"><span class="gap-sparkle">✨</span></div>
+                <div class="bench-leg leg-1"></div>
+                <div class="bench-leg leg-2"></div>
+              </div>
+              <span class="spot-label">ベンチの隙間</span>
             </div>
-            <span class="spot-label">花壇の隅のレンガ</span>
-          </div>
 
-          <!-- 4. 花壇の中央の大穴（囮②） -->
-          <div class="spot-object spot-flower-hole" id="spot_flowerbed_center" data-spot="spot_flowerbed_center" style="top: 76%; left: 16%;">
-            <div class="spot-marker marker-trap">❓ 大穴</div>
-            <div class="hole-graphic">🕳️</div>
-            <span class="spot-label">花壇の中央の大穴</span>
-          </div>
+            <!-- 2. ベンチの真下（囮①） -->
+            <div class="spot-object spot-bench-under" id="spot_bench_under" data-spot="spot_bench_under" style="top: 66%; left: 40%;">
+              <div class="spot-marker marker-trap">❓ ベンチ下</div>
+              <div class="item-graphic">🦴</div>
+              <span class="spot-label">ベンチの真下</span>
+            </div>
 
-          <!-- 5. ケヤキの幹（上方・正解③） -->
-          <div class="spot-object spot-tree-top" id="spot_tree_top" data-spot="spot_tree_top" style="top: 22%; right: 8%;">
-            <div class="spot-marker">🔍 高い穴</div>
-            <div class="tree-graphic">
-              <div class="tree-leaves"></div>
-              <div class="tree-trunk">
-                <div class="tree-hole"><span class="hole-sparkle">✨</span></div>
+            <!-- 3. 花壇の隅（正解②） -->
+            <div class="spot-object spot-flower-corner" id="spot_flowerbed_corner" data-spot="spot_flowerbed_corner" style="top: 64%; left: 8%;">
+              <div class="spot-marker">🔍 足跡</div>
+              <div class="flower-brick-graphic">
+                <div class="flower f1">🌷</div>
+                <div class="footprint-mini">🐾🌰</div>
+              </div>
+              <span class="spot-label">花壇の隅のレンガ</span>
+            </div>
+
+            <!-- 4. 花壇の中央の大穴（囮②） -->
+            <div class="spot-object spot-flower-hole" id="spot_flowerbed_center" data-spot="spot_flowerbed_center" style="top: 76%; left: 18%;">
+              <div class="spot-marker marker-trap">❓ 大穴</div>
+              <div class="hole-graphic">🕳️</div>
+              <span class="spot-label">花壇の中央の大穴</span>
+            </div>
+
+            <!-- 5. 広場のゴミ箱（囮④） -->
+            <div class="spot-object spot-trash" id="spot_trash" data-spot="spot_trash" style="top: 72%; left: 60%;">
+              <div class="spot-marker marker-trap">❓ ゴミ箱</div>
+              <div class="trash-graphic">🗑️</div>
+              <span class="spot-label">広場のゴミ箱</span>
+            </div>
+
+            <!-- 6. ベンチ裏の暗い隙間（2周目限定真実） -->
+            <div class="spot-object spot-hidden hidden" id="spot_secret_bush" data-spot="spot_secret_bush" style="top: 40%; left: 45%;">
+              <div class="spot-marker secret-marker">✨ 気になるにおい！</div>
+              <div class="bush-graphic">
+                <div class="bush-shrub"></div>
+                <div class="secret-glimmer">🎀</div>
+              </div>
+              <span class="spot-label">ベンチ裏のダンボール</span>
+            </div>
+
+            <!-- NPC 1: 管理人のおじいさん -->
+            <div class="npc-actor npc-caretaker" id="npc_caretaker" data-npc="npc_caretaker" style="top: 50%; left: 16%;">
+              <div class="npc-marker">💬 話す</div>
+              <div class="npc-body">👴</div>
+              <span class="npc-label">管理人さん</span>
+            </div>
+
+            <!-- NPC 3: 見張り猫クロ -->
+            <div class="npc-actor npc-kuro" id="npc_kuro" data-npc="npc_kuro" style="top: 32%; left: 52%;">
+              <div class="npc-marker">💬 話す</div>
+              <div class="npc-body">🐈‍⬛</div>
+              <span class="npc-label">見張り猫クロ</span>
+            </div>
+
+            <!-- エリア移動ポータル（右側：ケヤキの森へ） -->
+            <div class="area-portal portal-to-grove" id="portal-to-grove" style="top: 54%; right: 3%;">
+              <div class="portal-sign bounce-x">
+                <span class="portal-arrow">🌲</span>
+                <span class="portal-text">ケヤキの森へ ▶</span>
               </div>
             </div>
-            <span class="spot-label">ケヤキのウロ(地上2.2m)</span>
           </div>
 
-          <!-- 6. ケヤキの根元（囮③） -->
-          <div class="spot-object spot-tree-bottom" id="spot_tree_bottom" data-spot="spot_tree_bottom" style="top: 72%; right: 18%;">
-            <div class="spot-marker marker-trap">❓ 木の根元</div>
-            <div class="ball-graphic">🎾</div>
-            <span class="spot-label">木の根元</span>
-          </div>
-
-          <!-- 7. 広場のゴミ箱（囮④） -->
-          <div class="spot-object spot-trash" id="spot_trash" data-spot="spot_trash" style="top: 74%; left: 46%;">
-            <div class="spot-marker marker-trap">❓ ゴミ箱</div>
-            <div class="trash-graphic">🗑️</div>
-            <span class="spot-label">広場のゴミ箱</span>
-          </div>
-
-          <!-- 8. ベンチ裏の暗い隙間（2周目限定真実） -->
-          <div class="spot-object spot-hidden hidden" id="spot_secret_bush" data-spot="spot_secret_bush" style="top: 42%; left: 38%;">
-            <div class="spot-marker secret-marker">✨ 気になるにおい！</div>
-            <div class="bush-graphic">
-              <div class="bush-shrub"></div>
-              <div class="secret-glimmer">🎀</div>
+          <!-- ==============================================
+               エリア 2: ケヤキの森＆水飲み場（大木・高木ウロ・ポッポ師匠）
+               ============================================== -->
+          <div class="park-area hidden" id="area-grove">
+            <!-- 森の背景装飾 -->
+            <div class="grove-sky">
+              <div class="grove-sunbeam"></div>
+              <div class="grove-cloud g-cloud-1"></div>
             </div>
-            <span class="spot-label">ベンチ裏のダンボール</span>
+            <div class="grove-trees-back"></div>
+            <div class="grove-grass"></div>
+            <div class="grove-path"></div>
+
+            <!-- 7. ケヤキの幹（上方・正解③） -->
+            <div class="spot-object spot-tree-top" id="spot_tree_top" data-spot="spot_tree_top" style="top: 20%; right: 20%;">
+              <div class="spot-marker">🔍 高い穴</div>
+              <div class="tree-graphic large-tree">
+                <div class="tree-leaves"></div>
+                <div class="tree-trunk">
+                  <div class="tree-hole"><span class="hole-sparkle">✨</span></div>
+                </div>
+              </div>
+              <span class="spot-label">ケヤキのウロ(地上2.2m)</span>
+            </div>
+
+            <!-- 8. ケヤキの根元（囮③） -->
+            <div class="spot-object spot-tree-bottom" id="spot_tree_bottom" data-spot="spot_tree_bottom" style="top: 70%; right: 26%;">
+              <div class="spot-marker marker-trap">❓ 木の根元</div>
+              <div class="ball-graphic">🎾</div>
+              <span class="spot-label">木の根元</span>
+            </div>
+
+            <!-- 9. 水飲み場（環境スポット） -->
+            <div class="spot-object spot-fountain" id="spot_fountain" data-spot="spot_fountain" style="top: 60%; left: 24%;">
+              <div class="spot-marker">🚰 お水</div>
+              <div class="fountain-graphic">
+                <div class="fountain-basin">⛲</div>
+              </div>
+              <span class="spot-label">公園の水飲み場</span>
+            </div>
+
+            <!-- NPC 2: ハトのポッポ師匠 -->
+            <div class="npc-actor npc-poppo" id="npc_poppo" data-npc="npc_poppo" style="top: 56%; left: 40%;">
+              <div class="npc-marker">💬 話す</div>
+              <div class="npc-body">🕊️</div>
+              <span class="npc-label">ポッポ師匠</span>
+            </div>
+
+            <!-- エリア移動ポータル（左側：ひだまり広場へ） -->
+            <div class="area-portal portal-to-plaza" id="portal-to-plaza" style="top: 54%; left: 3%;">
+              <div class="portal-sign bounce-x-left">
+                <span class="portal-arrow">◀ 🪑</span>
+                <span class="portal-text">ひだまり広場へ</span>
+              </div>
+            </div>
           </div>
 
-          <!-- ====== NPC キャラクター ====== -->
-          <!-- NPC 1: 管理人のおじいさん -->
-          <div class="npc-actor npc-caretaker" id="npc_caretaker" data-npc="npc_caretaker" style="top: 50%; left: 16%;">
-            <div class="npc-marker">💬 話す</div>
-            <div class="npc-body">👴</div>
-            <span class="npc-label">管理人さん</span>
-          </div>
-
-          <!-- NPC 2: ハトのポッポ師匠 -->
-          <div class="npc-actor npc-poppo" id="npc_poppo" data-npc="npc_poppo" style="top: 60%; left: 58%;">
-            <div class="npc-marker">💬 話す</div>
-            <div class="npc-body">🕊️</div>
-            <span class="npc-label">ポッポ師匠</span>
-          </div>
-
-          <!-- NPC 3: 見張り猫クロ -->
-          <div class="npc-actor npc-kuro" id="npc_kuro" data-npc="npc_kuro" style="top: 34%; left: 48%;">
-            <div class="npc-marker">💬 話す</div>
-            <div class="npc-body">🐈‍⬛</div>
-            <span class="npc-label">見張り猫クロ</span>
-          </div>
-
-          <!-- 画面上を歩くポメのミニスプライト -->
+          <!-- 画面上を歩くポメのミニスプライト（マップ共通） -->
           <div id="pome-walker" class="pome-walker">
             <div class="pome-walker-body">🐾 白ポメ</div>
           </div>
@@ -332,18 +386,49 @@
         </div>
       </section>
 
-      <!-- 4. 会話・ノベルウィンドウ（選択肢コンテナ付き） -->
+      <!-- 4. 会話ステージ＆センターキャラクターレイヤー（eveスタイル） -->
+      <div id="dialogue-backdrop" class="dialogue-backdrop hidden"></div>
+      <div id="dialogue-stage" class="dialogue-stage hidden">
+        <div id="emotion-bubble" class="emotion-bubble hidden">💡</div>
+        <div id="character-stage" class="character-stage">
+          <!-- JSでセンターキャラクター立ち絵を動的レンダリング -->
+        </div>
+      </div>
+
+      <!-- 会話・ノベルウィンドウ（選択肢＆コントロール付き） -->
       <div id="novel-window" class="novel-window hidden">
         <div class="dialogue-box">
-          <div class="speaker-tag" id="dialogue-speaker">ポメ（心の声）</div>
-          <div class="dialogue-text" id="dialogue-text">……</div>
+          <!-- 上部コントロールバー（AUTO, SKIP, LOG） -->
+          <div class="dialogue-controls">
+            <button type="button" id="btn-dialogue-auto" class="novel-ctrl-btn" title="オート送り切替">
+              ▶ AUTO
+            </button>
+            <button type="button" id="btn-dialogue-skip" class="novel-ctrl-btn" title="スキップ">
+              ⏩ SKIP
+            </button>
+            <button type="button" id="btn-dialogue-log" class="novel-ctrl-btn" title="会話ログ">
+              📜 ログ
+            </button>
+          </div>
+
+          <div class="dialogue-header">
+            <span class="speaker-icon" id="dialogue-speaker-icon">🐶</span>
+            <div class="speaker-tag" id="dialogue-speaker">ポメ（心の声）</div>
+          </div>
+          
+          <div class="dialogue-body">
+            <div class="dialogue-text" id="dialogue-text">……</div>
+          </div>
           
           <!-- NPC対話などの選択肢ボタン群 -->
           <div id="dialogue-choices" class="dialogue-choices hidden">
             <!-- 動的挿入 -->
           </div>
 
-          <div class="dialogue-prompt" id="dialogue-prompt">タップして次へ ▶</div>
+          <div class="dialogue-prompt" id="dialogue-prompt">
+            <span class="prompt-icon">🐾</span>
+            <span class="prompt-text">タップして次へ</span>
+          </div>
         </div>
       </div>
 
@@ -391,10 +476,25 @@
         </div>
       </div>
     </div>
+
+    <!-- 会話バックログモーダル -->
+    <div id="modal-backlog" class="modal hidden">
+      <div class="modal-backdrop" id="backdrop-backlog"></div>
+      <div class="modal-window backlog-window">
+        <div class="modal-header">
+          <h3>📜 会話ログ (Log)</h3>
+          <button id="btn-close-backlog" class="close-btn">&times;</button>
+        </div>
+        <div class="modal-body" id="modal-backlog-list">
+          <!-- 会話ログ動的挿入 -->
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- スクリプトの読み込み -->
   <script src="js/audio.js"></script>
+  <script src="js/character.js"></script>
   <script src="js/state.js"></script>
   <script src="js/scenario.js"></script>
   <script src="js/app.js"></script>
