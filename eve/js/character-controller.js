@@ -35,6 +35,8 @@ class CharacterController {
     this.audioSmoothVolume = 0.0;
     this.hasBlinkedInCurrentPause = false;
     this.lastBlinkTime = 0;
+    this.currentMouthStage = 0;
+    this.lastMouthStageChangeTime = 0;
 
     this.setupTracking();
     this.preloadAllDiffs();
@@ -816,33 +818,43 @@ class CharacterController {
     this.isAudioDriven = true;
 
     // 1. 音量連動リップシンク (Audio-Driven Lip Sync)
-    // 音量上昇は即座に反応、減衰は滑らかにディケイ
+    // 音量上昇は即座に反応、減衰は滑らかにディケイ (0.80)
     if (volume > this.audioSmoothVolume) {
       this.audioSmoothVolume = volume;
     } else {
-      this.audioSmoothVolume = this.audioSmoothVolume * 0.74;
+      this.audioSmoothVolume = this.audioSmoothVolume * 0.80;
     }
 
-    // 音量に応じた多段階口パク切り替え + 音節フラップ変調 (Syllable Flap Modulation)
-    // 最大音量・大音量が継続している時でも、開きっぱなしにならず自然な発話リズム(約165ms周期)で開閉する
-    let stage = 0;
+    // 音量に応じた多段階口パク切り替え + ゆったりとした音節フラップ変調
+    // 周期約 300ms (秒間約3.3拍) の落ち着いた自然なアニメーションテンポ
+    let targetStage = 0;
     const now = performance.now();
 
     if (this.audioSmoothVolume >= 0.22) {
-      // 大音量持続時: 約165ms周期で 3(全開) と 2(半開) をリズミカルに行き来
-      // 日本語の自然な発話速度(秒間約6拍)に合わせたサイン波モジュレーション
-      const flapPhase = Math.sin(now * 0.038); // 周期約 165ms
-      stage = flapPhase > -0.25 ? 3 : 2;
+      // 大音量持続時: 周期約 300ms (0.021 rad/ms)
+      // 全開(3)を約65%の時間ゆったりホールドし、半開(2)を約35%の時間挟んで自然に開閉
+      const flapPhase = Math.sin(now * 0.021);
+      targetStage = flapPhase > -0.3 ? 3 : 2;
     } else if (this.audioSmoothVolume >= 0.09) {
-      // 中音量持続時: 2(半開) と 1(微開) の間を行き来
-      const flapPhase = Math.sin(now * 0.042);
-      stage = flapPhase > 0 ? 2 : 1;
+      // 中音量持続時: 周期約 300ms
+      const flapPhase = Math.sin(now * 0.021);
+      targetStage = flapPhase > 0 ? 2 : 1;
     } else if (this.audioSmoothVolume >= 0.035) {
-      stage = 1; // 微開 (mouth_small)
+      targetStage = 1; // 微開 (mouth_small)
     } else {
-      stage = 0; // 閉口 (base)
+      targetStage = 0; // 閉口 (base)
     }
-    this.setMouthStage(stage);
+
+    // チャタリング・チラつき防止: ステージ変更後は最低 90ms 維持して落ち着いたコマ送りに
+    // ただし無音(0)への復帰は切れ味よく即座に反映
+    if (targetStage !== this.currentMouthStage) {
+      const timeSinceChange = now - this.lastMouthStageChangeTime;
+      if (targetStage === 0 || timeSinceChange >= 90) {
+        this.currentMouthStage = targetStage;
+        this.lastMouthStageChangeTime = now;
+        this.setMouthStage(targetStage);
+      }
+    }
 
     // 2. 音声連動目パチ (息継ぎ・読点ポーズの自動瞬き)
     if (!isSilence) {
@@ -906,6 +918,7 @@ class CharacterController {
   }
 
   resetMouthLayers() {
+    this.currentMouthStage = 0;
     const s = this.container.querySelector('#layerMouthSmall');
     const m = this.container.querySelector('#layerMouthHalf');
     const l = this.container.querySelector('#layerMouthOpen');
