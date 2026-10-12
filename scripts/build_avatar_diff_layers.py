@@ -34,7 +34,6 @@ CONFIGS = {
         "mouth_center": (183, 285),
         "mouth_rx_ry": (36, 23),
         "mouth_offset": (0, 0),
-        "max_dx_right": 24, # マイクヘッド(x > 207)への巻き込みを完全遮断
         "upper_offset_y": -7,
         "lower_offset_y": 14,
     },
@@ -164,24 +163,31 @@ def process_character(char_id: str, cfg: dict, output_base: Path):
     diff = cv2.absdiff(mouth_crop, base_crop_bgr)
     diff_gray = cv2.cvtColor(diff, cv2.COLOR_BGR2GRAY)
 
-    window = np.zeros((crop_h, crop_w), dtype=np.float32)
-    cv2.ellipse(window, (mcx, mcy + 2), (rx, ry + 4), 0, 0, 360, 1.0, -1)
-    if "max_dx_right" in cfg:
-        window[:, mcx + cfg["max_dx_right"]:] = 0.0
+    window = np.zeros((crop_h, crop_w), dtype=np.uint8)
+    cv2.ellipse(window, (mcx, mcy + 2), (rx, ry + 4), 0, 0, 360, 255, -1)
 
     _, bin_mask = cv2.threshold(diff_gray, 11, 255, cv2.THRESH_BINARY)
-    bin_mask = cv2.bitwise_and(bin_mask, (window * 255).astype(np.uint8))
+    bin_mask = cv2.bitwise_and(bin_mask, window)
     kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
     bin_mask = cv2.morphologyEx(bin_mask, cv2.MORPH_CLOSE, kernel)
 
-    # 最大面積の連結成分（口の内部・唇）のみを保持し、マイクや周囲の微小ゴミを100%完全排除
+    # 最大面積の連結成分（口の内部・唇）のみを保持し、周囲の微小ゴミを100%完全排除
     num_labels, labels, stats, _ = cv2.connectedComponentsWithStats(bin_mask)
     if num_labels > 1:
         largest_label = 1 + np.argmax(stats[1:, cv2.CC_STAT_AREA])
         bin_mask = np.where(labels == largest_label, 255, 0).astype(np.uint8)
 
-    alpha_base = cv2.GaussianBlur(bin_mask.astype(np.float32) / 255.0, (5, 5), 1.0)
-    alpha_base = np.clip(alpha_base, 0.0, 1.0)
+    # 輪郭内部を完全塗りつぶし（Fill Holes）して口内部の半透明・穴あきを100%根絶
+    contours, _ = cv2.findContours(bin_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    solid_mask = np.zeros_like(bin_mask)
+    if contours:
+        largest = max(contours, key=cv2.contourArea)
+        cv2.drawContours(solid_mask, [largest], -1, 255, -1)
+
+    # 口内部は100% Solid（不透明=255）、最外周1.2pxのみ滑らかなアンチエイリアスを適用
+    # （下のベース画像が透ける原因だった広域ガウシアンブラーを完全排除）
+    dist = cv2.distanceTransform(solid_mask, cv2.DIST_L2, 3)
+    alpha_base = np.clip(dist / 1.2, 0.0, 1.0)
 
     upper_y = mcy + cfg["upper_offset_y"]
     lower_y = mcy + cfg["lower_offset_y"]

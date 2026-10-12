@@ -439,6 +439,8 @@ html, body {
 
 .char-mouth-layer {
   z-index: 3;
+  /* 口パクはフレーム切り替え時の半透明クロスフェードを排除し即時切り替え */
+  transition: none !important;
 }
 
 /* イブ: 半透明ホログラムスクリーン合成（レイヤーラッパー全体に適用） */
