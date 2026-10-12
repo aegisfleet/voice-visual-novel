@@ -157,11 +157,14 @@
       <!-- キャラクターレイヤー (Live2D風SVG ＆ モバイル最適化) -->
       <div id="characterContainer" class="character-layer"></div>
 
-      <!-- 証拠品入手ポップアップ通知 -->
+      <!-- 証拠品入手ポップアップ通知 (サイバーHUDバナー) -->
       <div id="evidencePopup" class="evidence-popup hidden">
         <div class="popup-glow"></div>
         <span class="popup-icon">💡</span>
-        <span id="evidencePopupText" class="popup-text">証拠品を入手しました</span>
+        <div class="popup-body">
+          <span id="evidencePopupBadge" class="popup-badge">証拠品入手</span>
+          <span id="evidencePopupText" class="popup-text">証拠品を入手しました</span>
+        </div>
       </div>
 
       <!-- 異議あり！カットイン演出 -->

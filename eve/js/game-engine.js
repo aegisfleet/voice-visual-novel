@@ -52,6 +52,10 @@ class GameEngine {
     this.currentLang = localStorage.getItem('project_eve_lang') || 'ja';
     if (typeof document !== 'undefined') {
       document.documentElement.lang = this.currentLang;
+      if (document.body) {
+        document.body.classList.toggle('lang-en', this.currentLang === 'en');
+        document.body.classList.toggle('lang-ja', this.currentLang === 'ja');
+      }
     }
 
     this.checkReinvestigationStatus();
@@ -93,6 +97,7 @@ class GameEngine {
       btnCloseEvidence: document.getElementById('btnCloseEvidence'),
       btnBackEvidence: document.getElementById('btnBackEvidence'),
       evidencePopup: document.getElementById('evidencePopup'),
+      evidencePopupBadge: document.getElementById('evidencePopupBadge'),
       evidencePopupText: document.getElementById('evidencePopupText'),
       objectionCutin: document.getElementById('objectionCutin'),
       logModal: document.getElementById('logModal'),
@@ -207,6 +212,10 @@ class GameEngine {
     } catch {}
     if (typeof document !== 'undefined') {
       document.documentElement.lang = lang;
+      if (document.body) {
+        document.body.classList.toggle('lang-en', lang === 'en');
+        document.body.classList.toggle('lang-ja', lang === 'ja');
+      }
     }
 
     this.updateUILanguage();
@@ -289,6 +298,10 @@ class GameEngine {
     if (!t) return;
 
     // 言語ボタン状態
+    if (document.body) {
+      document.body.classList.toggle('lang-en', isEn);
+      document.body.classList.toggle('lang-ja', !isEn);
+    }
     if (this.dom.btnLangJa) this.dom.btnLangJa.classList.toggle('active', !isEn);
     if (this.dom.btnLangEn) this.dom.btnLangEn.classList.toggle('active', isEn);
     if (this.dom.btnLangHud) this.dom.btnLangHud.textContent = isEn ? 'JP' : 'EN';
@@ -951,8 +964,15 @@ class GameEngine {
       this.fx.triggerFlash([0.0, 0.95, 1.0], 0.6, 300);
     }
 
-    const prefix = (this.currentLang === 'en') ? 'Evidence Obtained: ' : '証拠品入手: ';
-    this.dom.evidencePopupText.textContent = `${prefix}${ev.title}`;
+    const isEn = (this.currentLang === 'en');
+    const badgeText = isEn ? 'EVIDENCE OBTAINED' : '証拠品入手';
+    if (this.dom.evidencePopupBadge) {
+      this.dom.evidencePopupBadge.textContent = badgeText;
+      this.dom.evidencePopupText.textContent = ev.title;
+    } else {
+      const prefix = isEn ? 'Evidence Obtained: ' : '証拠品入手: ';
+      this.dom.evidencePopupText.textContent = `${prefix}${ev.title}`;
+    }
     this.dom.evidencePopup.classList.remove('hidden');
     void this.dom.evidencePopup.offsetWidth;
     this.dom.evidencePopup.classList.add('show');
