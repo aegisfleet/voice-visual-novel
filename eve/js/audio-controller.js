@@ -539,7 +539,15 @@ class AudioController {
       const playPromise = audio.play();
       if (playPromise !== undefined) {
         playPromise.then(() => {
-          if (this.playSessionId === sessionId && !hasFinished) {
+          if (this.playSessionId !== sessionId) {
+            try {
+              audio.pause();
+              audio.currentTime = 0;
+            } catch (e) {}
+            resolve();
+            return;
+          }
+          if (!hasFinished) {
             this._startVoiceAnalysis(sessionId);
           }
         }).catch(() => {
@@ -697,6 +705,7 @@ class AudioController {
   stop() {
     this.playSessionId++; // 世代を進めて過去の非同期待機・コールバックを全て無効化
     this.isPlaying = false;
+    this._stopVoiceAnalysis();
 
     if (this.currentAudio) {
       const audio = this.currentAudio;

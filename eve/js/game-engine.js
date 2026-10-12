@@ -211,20 +211,32 @@ class GameEngine {
 
     this.updateUILanguage();
 
-    // ゲーム画面が表示中なら、現在のシーン表示を即座に更新
+    // ゲーム画面が表示中なら、現在のシーン表示および音声を即座に更新
     if (this.currentSceneId && !this.dom.gameScreen.classList.contains('hidden')) {
       const currentEntry = this.scenarioMap.get(this.currentSceneId);
       if (currentEntry) {
         const scene = currentEntry.scene;
         const newText = this.getSceneText(scene);
         const newSpeaker = this.getSceneSpeaker(scene);
+        const newVoiceFile = this.getSceneVoice(scene);
 
         // 話者
         if (newSpeaker) {
           this.dom.speakerBox.style.display = 'block';
           this.dom.speakerName.textContent = newSpeaker;
+          this.updateSpeakerTheme(scene.speaker || newSpeaker);
         } else {
           this.dom.speakerBox.style.display = 'none';
+        }
+
+        // 選択肢表示中なら再描画
+        const isChoicesOpen = this.dom.choicesOverlay.classList.contains('active');
+        if (isChoicesOpen) {
+          if (scene.choices && scene.choices.length > 0) {
+            this.showChoices(scene.choices);
+          } else if (scene.present) {
+            this.showPresentMenu(scene.present);
+          }
         }
 
         // テキスト更新
@@ -235,15 +247,34 @@ class GameEngine {
           this.currentFullText = newText;
         }
 
-        // 選択肢表示中なら再描画
-        if (this.dom.choicesOverlay.classList.contains('active')) {
-          if (scene.choices && scene.choices.length > 0) {
-            this.showChoices(scene.choices);
-          } else if (scene.present) {
-            this.showPresentMenu(scene.present);
-          }
+        // 音声の切り替え (選択肢選択中でなければ、新言語の音声で再再生)
+        if (!isChoicesOpen) {
+          this.audio.stop();
+          this.audio.play({
+            ...scene,
+            text: newText,
+            voiceFile: newVoiceFile,
+            lang: this.currentLang
+          });
         }
       }
+    }
+
+    // ログモーダルが表示中なら現在の言語で即座に再描画
+    if (this.dom.logModal && !this.dom.logModal.classList.contains('hidden')) {
+      this.showLog();
+    }
+
+    // 証拠品モーダルが表示中なら現在の言語で即座に再描画
+    if (this.dom.evidenceModal && !this.dom.evidenceModal.classList.contains('hidden')) {
+      this.showEvidenceModal();
+    }
+
+    // エンディングモーダルが表示中なら現在の言語で即座に再描画
+    if (this.currentEnding && this.dom.endingModal && !this.dom.endingModal.classList.contains('hidden')) {
+      const endingData = this.getEndingData(this.currentEnding);
+      this.dom.endingTitle.textContent = endingData.title;
+      this.dom.endingDesc.textContent = endingData.description;
     }
   }
 
@@ -435,7 +466,7 @@ class GameEngine {
       if (e.code === 'Space' || e.code === 'Enter') {
         if (!this.dom.titleScreen.classList.contains('hidden')) {
           this.dom.btnStart.click();
-        } else if (!this.dom.choicesOverlay.classList.contains('active')) {
+        } else if (!this.dom.gameScreen.classList.contains('hidden') && !this.dom.choicesOverlay.classList.contains('active')) {
           this.handleUserAdvance();
         }
       }
@@ -444,12 +475,16 @@ class GameEngine {
 
   setupAudioSync() {
     this.audio.onSpeechStart = () => {
-      this.character.setTalking(true);
+      if (this.currentSceneId && !this.dom.gameScreen.classList.contains('hidden')) {
+        this.character.setTalking(true);
+      }
     };
 
     this.audio.onSpeechEnd = () => {
       this.character.setTalking(false);
-      this.checkAutoAdvance(true);
+      if (this.currentSceneId && !this.dom.gameScreen.classList.contains('hidden')) {
+        this.checkAutoAdvance(true);
+      }
     };
 
     // 音声波形・音量リアルタイムフレーム同期 (口パク & 息継ぎ目パチ)
@@ -462,7 +497,13 @@ class GameEngine {
 
   checkAutoAdvance(fromSpeechEnd = false) {
     clearTimeout(this.autoTimer);
+    this.autoTimer = null;
     if (!this.isAutoMode) return;
+
+    // タイトル画面表示中またはゲーム画面非表示の場合は自動進行を即座に停止
+    if (!this.currentSceneId || !this.dom.gameScreen || this.dom.gameScreen.classList.contains('hidden')) {
+      return;
+    }
 
     if (this.isTextTyping || this.audio.isPlaying) return;
 
@@ -474,18 +515,25 @@ class GameEngine {
 
     let readingDelay = 600;
     if (!fromSpeechEnd) {
-      const textLen = (scene.text || '').length;
-      readingDelay = Math.min(3000, Math.max(1400, textLen * 40));
+      const curText = this.getSceneText(scene) || '';
+      const textLen = curText.length;
+      readingDelay = (this.currentLang === 'en')
+        ? Math.min(3600, Math.max(1600, textLen * 28))
+        : Math.min(3000, Math.max(1400, textLen * 40));
     }
 
     this.autoTimer = setTimeout(() => {
-      if (this.isAutoMode && !this.isTextTyping && !this.audio.isPlaying) {
+      if (this.isAutoMode && !this.isTextTyping && !this.audio.isPlaying && this.currentSceneId && !this.dom.gameScreen.classList.contains('hidden')) {
         this.advanceNext();
       }
     }, readingDelay);
   }
 
   handleUserAdvance() {
+    if (!this.currentSceneId || !this.dom.gameScreen || this.dom.gameScreen.classList.contains('hidden')) {
+      return;
+    }
+
     // 連続タップによる短時間の多重進行を防止（180ms デバウンス）
     const now = Date.now();
     if (this.lastAdvanceTime && (now - this.lastAdvanceTime < 180)) {
@@ -494,6 +542,7 @@ class GameEngine {
     this.lastAdvanceTime = now;
 
     clearTimeout(this.autoTimer);
+    this.autoTimer = null;
 
     if (this.isTextTyping) {
       this.completeTyping();
@@ -504,6 +553,12 @@ class GameEngine {
 
   advanceNext() {
     clearTimeout(this.autoTimer);
+    this.autoTimer = null;
+
+    if (!this.currentSceneId || !this.dom.gameScreen || this.dom.gameScreen.classList.contains('hidden')) {
+      return;
+    }
+
     const currentEntry = this.scenarioMap.get(this.currentSceneId);
     if (!currentEntry) return;
 
@@ -560,7 +615,9 @@ class GameEngine {
 
     // ログ記録
     this.logHistory.push({
-      speaker: speaker || (this.currentLang === 'en' ? 'Scene' : '状況'),
+      sceneId: scene.id,
+      scene: scene,
+      speaker: speaker,
       text: text
     });
 
@@ -647,13 +704,15 @@ class GameEngine {
   }
 
   updateSpeakerTheme(speaker) {
-    if (speaker.includes('アイリス')) {
+    if (!speaker) return;
+    const s = speaker.toLowerCase();
+    if (speaker.includes('アイリス') || s.includes('iris')) {
       this.dom.speakerBox.style.background = 'linear-gradient(135deg, #ff758c 0%, #ff7eb3 100%)';
-    } else if (speaker.includes('イブ')) {
+    } else if (speaker.includes('イブ') || s.includes('eve')) {
       this.dom.speakerBox.style.background = 'linear-gradient(135deg, #0d9488 0%, #2dd4bf 100%)';
-    } else if (speaker.includes('サクマ')) {
+    } else if (speaker.includes('サクマ') || s.includes('sakuma')) {
       this.dom.speakerBox.style.background = 'linear-gradient(135deg, #dc2626 0%, #7f1d1d 100%)';
-    } else if (speaker.includes('シノハラ')) {
+    } else if (speaker.includes('シノハラ') || s.includes('shinohara')) {
       this.dom.speakerBox.style.background = 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)';
     } else {
       this.dom.speakerBox.style.background = 'linear-gradient(135deg, #00f3ff 0%, #0077ff 100%)';
@@ -944,6 +1003,7 @@ class GameEngine {
   }
 
   showEnding(ending) {
+    this.currentEnding = ending;
     this.audio.stop();
     this.character.hide();
 
@@ -1024,22 +1084,69 @@ class GameEngine {
     } catch {}
   }
 
+  getLogItem(entry) {
+    const scene = entry.scene || (entry.sceneId ? this.scenarioMap.get(entry.sceneId)?.scene : null);
+    if (scene) {
+      const spk = this.getSceneSpeaker(scene);
+      const txt = this.getSceneText(scene);
+      const defaultSpeaker = (this.currentLang === 'en') ? 'Scene' : '状況';
+      return {
+        speaker: spk || defaultSpeaker,
+        text: txt
+      };
+    }
+    return {
+      speaker: entry.speaker || ((this.currentLang === 'en') ? 'Scene' : '状況'),
+      text: entry.text || ''
+    };
+  }
+
   showLog() {
-    this.dom.logContent.innerHTML = this.logHistory.map(entry => `
-      <div class="log-item">
-        <div class="log-speaker">${entry.speaker}</div>
-        <div class="log-text">${entry.text}</div>
-      </div>
-    `).join('');
+    this.dom.logContent.innerHTML = this.logHistory.map(entry => {
+      const item = this.getLogItem(entry);
+      return `
+        <div class="log-item">
+          <div class="log-speaker">${item.speaker}</div>
+          <div class="log-text">${item.text}</div>
+        </div>
+      `;
+    }).join('');
     this.dom.logModal.classList.remove('hidden');
+    this.dom.logContent.scrollTop = this.dom.logContent.scrollHeight;
   }
 
   returnToTitle() {
+    clearTimeout(this.autoTimer);
+    this.autoTimer = null;
+    clearInterval(this.typewriterTimer);
+    this.typewriterTimer = null;
+    this.isTextTyping = false;
+    this.currentSceneId = null;
+
     this.audio.stop();
     this.audio.playBGM("assets/audio/bgm_title.mp3");
+
     this.character.hide();
+    this.character.setTalking(false);
+
     this.dom.gameScreen.classList.add('hidden');
     this.dom.endingModal.classList.add('hidden');
+    this.dom.choicesOverlay.classList.remove('active');
+    this.dom.evidenceModal.classList.add('hidden');
+    this.dom.logModal.classList.add('hidden');
+
+    if (this.dom.evidencePopup) {
+      this.dom.evidencePopup.classList.remove('show');
+      this.dom.evidencePopup.classList.add('hidden');
+    }
+    if (this.dom.objectionCutin) {
+      this.dom.objectionCutin.classList.remove('play');
+      this.dom.objectionCutin.classList.add('hidden');
+    }
+    if (this.fx) {
+      this.fx.setHologramMode(false);
+    }
+
     this.dom.titleScreen.classList.remove('hidden');
     this.checkReinvestigationStatus();
     this.updateEndingsBadge();
