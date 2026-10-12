@@ -22,12 +22,18 @@ class AudioController {
     // リップシンク等のイベントリスナー
     this.onSpeechStart = null;
     this.onSpeechEnd = null;
+    this.onAudioFrame = null; // 波形・音量同期コールバック: (volume, isSilence, silenceDuration) => void
 
     // Web Audio API ノードグラフ
     this.audioCtx = null;
     this.masterGainNode = null;
     this.bgmGainNode = null;
     this.sfxGainNode = null;
+    this.voiceGainNode = null;
+    this.voiceAnalyserNode = null;
+    this.analyserDataArray = null;
+    this.analyserRafId = null;
+    this.currentVoiceTrack = null;
     this.isAudioUnlocked = false;
 
     // BGM管理 (Web Audio API接続トラック)
@@ -81,6 +87,17 @@ class AudioController {
       this.sfxGainNode = this.audioCtx.createGain();
       this.sfxGainNode.gain.setValueAtTime(1.0, this.audioCtx.currentTime);
       this.sfxGainNode.connect(this.masterGainNode);
+
+      // 4. ボイスゲイン & アナライザー (波形・音量同期リップシンク & 息継ぎ目パチ用)
+      this.voiceGainNode = this.audioCtx.createGain();
+      this.voiceGainNode.gain.setValueAtTime(1.0, this.audioCtx.currentTime);
+      this.voiceGainNode.connect(this.masterGainNode);
+
+      this.voiceAnalyserNode = this.audioCtx.createAnalyser();
+      this.voiceAnalyserNode.fftSize = 128; // 低レイテンシ (64 bins)
+      this.voiceAnalyserNode.smoothingTimeConstant = 0.25; // 声の立ち上がりに素早く追従
+      this.voiceAnalyserNode.connect(this.voiceGainNode);
+      this.analyserDataArray = new Uint8Array(this.voiceAnalyserNode.frequencyBinCount);
     } catch (e) {
       console.warn("[AudioController] Failed to initialize AudioContext:", e);
     }
@@ -475,9 +492,23 @@ class AudioController {
         return;
       }
 
+      this._initAudioContext();
+      this._ensureAudioContextRunning();
+
       const audio = new Audio(url);
       audio.crossOrigin = 'anonymous';
       this.currentAudio = audio;
+
+      let sourceNode = null;
+      if (this.audioCtx && this.voiceAnalyserNode) {
+        try {
+          sourceNode = this.audioCtx.createMediaElementSource(audio);
+          sourceNode.connect(this.voiceAnalyserNode);
+        } catch (e) {
+          // すでに接続済みの場合やCORS制限時は通常のHTMLMediaElement再生
+          console.warn("[AudioController] createMediaElementSource voice fallback:", e);
+        }
+      }
 
       if (this.onSpeechStart && this.playSessionId === sessionId) {
         this.onSpeechStart();
@@ -489,6 +520,8 @@ class AudioController {
         hasFinished = true;
         audio.onended = null;
         audio.onerror = null;
+
+        this._stopVoiceAnalysis();
 
         if (this.playSessionId === sessionId) {
           if (this.currentAudio === audio) {
@@ -505,7 +538,11 @@ class AudioController {
 
       const playPromise = audio.play();
       if (playPromise !== undefined) {
-        playPromise.catch(() => {
+        playPromise.then(() => {
+          if (this.playSessionId === sessionId && !hasFinished) {
+            this._startVoiceAnalysis(sessionId);
+          }
+        }).catch(() => {
           if (this.playSessionId !== sessionId) {
             resolve();
             return;
@@ -514,6 +551,62 @@ class AudioController {
         });
       }
     });
+  }
+
+  /**
+   * ボイス再生中の波形・音量リアルタイム解析ループ
+   */
+  _startVoiceAnalysis(sessionId) {
+    this._stopVoiceAnalysis();
+    if (!this.voiceAnalyserNode || !this.analyserDataArray) return;
+
+    let silenceStart = null;
+
+    const analyzeLoop = () => {
+      if (this.playSessionId !== sessionId || !this.isPlaying) {
+        this._stopVoiceAnalysis();
+        return;
+      }
+
+      this.voiceAnalyserNode.getByteFrequencyData(this.analyserDataArray);
+
+      // 人声主要帯域 (bins 2〜36 付近: 約250Hz〜4500Hz) の実効音量を算出
+      let sum = 0;
+      const binCount = Math.min(36, this.analyserDataArray.length);
+      for (let i = 2; i < binCount; i++) {
+        sum += this.analyserDataArray[i];
+      }
+      const avg = sum / Math.max(1, binCount - 2); // 0 〜 255
+      const volume = Math.min(1.0, avg / 110.0); // 0.0 〜 1.0 に正規化
+
+      const isSilence = volume < 0.07;
+      const now = performance.now();
+      let silenceDuration = 0;
+      if (isSilence) {
+        if (!silenceStart) silenceStart = now;
+        silenceDuration = now - silenceStart;
+      } else {
+        silenceStart = null;
+      }
+
+      if (this.onAudioFrame) {
+        this.onAudioFrame(volume, isSilence, silenceDuration);
+      }
+
+      this.analyserRafId = requestAnimationFrame(analyzeLoop);
+    };
+
+    this.analyserRafId = requestAnimationFrame(analyzeLoop);
+  }
+
+  _stopVoiceAnalysis() {
+    if (this.analyserRafId) {
+      cancelAnimationFrame(this.analyserRafId);
+      this.analyserRafId = null;
+    }
+    if (this.onAudioFrame) {
+      this.onAudioFrame(0, true, 0);
+    }
   }
 
   _playWebSpeech(lineData, sessionId) {

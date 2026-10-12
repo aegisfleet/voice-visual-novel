@@ -451,6 +451,13 @@ class GameEngine {
       this.character.setTalking(false);
       this.checkAutoAdvance(true);
     };
+
+    // 音声波形・音量リアルタイムフレーム同期 (口パク & 息継ぎ目パチ)
+    this.audio.onAudioFrame = (volume, isSilence, silenceDuration) => {
+      if (this.character && typeof this.character.onAudioFrame === 'function') {
+        this.character.onAudioFrame(volume, isSilence, silenceDuration);
+      }
+    };
   }
 
   checkAutoAdvance(fromSpeechEnd = false) {

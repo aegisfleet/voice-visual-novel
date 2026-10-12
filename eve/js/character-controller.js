@@ -30,6 +30,12 @@ class CharacterController {
     ];
     this.mouthSeqIndex = 0;
 
+    // 波形連動・音声同期ステート
+    this.isAudioDriven = false;
+    this.audioSmoothVolume = 0.0;
+    this.hasBlinkedInCurrentPause = false;
+    this.lastBlinkTime = 0;
+
     this.setupTracking();
     this.preloadAllDiffs();
   }
@@ -769,52 +775,111 @@ class CharacterController {
       else wrapper.classList.remove('is-talking');
     }
 
-    // 1. 画像立ち絵 多段階口パクレイヤーの制御
-    const hasImageLayers = this.container.querySelector('#layerMouthOpen');
-    if (hasImageLayers) {
-      if (isTalking) {
-        this.mouthSeqIndex = 0;
-        const stepMouth = () => {
+    if (!isTalking) {
+      this.isAudioDriven = false;
+      this.audioSmoothVolume = 0.0;
+      this.resetMouthLayers();
+
+      // 発話終了時: セリフを言い切った直後（160ms後）に自然な息抜きとして1回瞬き
+      const now = performance.now();
+      if (now - this.lastBlinkTime > 1200) {
+        setTimeout(() => {
           if (!this.isTalking) {
-            this.resetMouthLayers();
-            return;
+            this.triggerSingleBlink();
           }
-
-          const stage = this.mouthSequence[this.mouthSeqIndex % this.mouthSequence.length];
-          this.mouthSeqIndex++;
-          this.setMouthStage(stage);
-
-          // 自然な発話テンポ (160ms 〜 230ms)
-          // 全開(3)や半開(2)の母音発声時はしっかり響かせるためにやや長め、微開(1)や閉口(0)は軽やかに遷移
-          let duration = 175;
-          if (stage === 3 || stage === 2) {
-            duration = 190 + Math.floor(Math.random() * 45); // 190ms 〜 235ms
-          } else if (stage === 1) {
-            duration = 160 + Math.floor(Math.random() * 35); // 160ms 〜 195ms
-          } else {
-            duration = 150 + Math.floor(Math.random() * 30); // 150ms 〜 180ms
-          }
-          this.mouthTimer = setTimeout(stepMouth, duration);
-        };
-        stepMouth();
-      } else {
-        this.resetMouthLayers();
+        }, 160);
       }
       return;
     }
 
-    // 2. SVGフォールバック
-    const mouthClosed = this.container.querySelector('#mouthClosed');
-    const mouthOpen = this.container.querySelector('#mouthOpen');
-    if (mouthClosed && mouthOpen) {
-      if (isTalking) {
-        mouthClosed.style.display = 'none';
-        mouthOpen.style.display = 'block';
-      } else {
-        mouthOpen.style.display = 'none';
-        mouthClosed.style.display = 'block';
+    // 発話開始時: 音声波形フレーム待ち
+    this.isAudioDriven = false;
+    this.audioSmoothVolume = 0.0;
+    this.hasBlinkedInCurrentPause = false;
+
+    // 波形データが来ない環境（Web Speech APIやフォールバック時）の安全ネット
+    setTimeout(() => {
+      if (this.isTalking && !this.isAudioDriven) {
+        this._startFallbackMouthTimer();
+      }
+    }, 250);
+  }
+
+  /**
+   * 音声波形解析フレーム連動 (Web Audio API から毎フレーム呼び出し)
+   * @param {number} volume - 0.0 〜 1.0 (正規化実効音量)
+   * @param {boolean} isSilence - 無音区間フラグ
+   * @param {number} silenceDuration - 無音の継続時間 (ms)
+   */
+  onAudioFrame(volume, isSilence, silenceDuration) {
+    if (!this.isTalking) return;
+    this.isAudioDriven = true;
+
+    // 1. 音量連動リップシンク (Audio-Driven Lip Sync)
+    // 音量上昇は即座に反応、減衰は滑らかにディケイ
+    if (volume > this.audioSmoothVolume) {
+      this.audioSmoothVolume = volume;
+    } else {
+      this.audioSmoothVolume = this.audioSmoothVolume * 0.74;
+    }
+
+    // 音量に応じた多段階口パク切り替え
+    let stage = 0;
+    if (this.audioSmoothVolume >= 0.28) {
+      stage = 3; // 全開 (mouth_open)
+    } else if (this.audioSmoothVolume >= 0.12) {
+      stage = 2; // 半開 (mouth_half)
+    } else if (this.audioSmoothVolume >= 0.04) {
+      stage = 1; // 微開 (mouth_small)
+    } else {
+      stage = 0; // 閉口
+    }
+    this.setMouthStage(stage);
+
+    // 2. 音声連動目パチ (息継ぎ・読点ポーズの自動瞬き)
+    if (!isSilence) {
+      // 発声中: 息継ぎフラグをリセット
+      this.hasBlinkedInCurrentPause = false;
+    } else {
+      // 無音区間が 220ms 以上継続した場合（息継ぎ・読点ポーズ）
+      const now = performance.now();
+      if (silenceDuration >= 220 && !this.hasBlinkedInCurrentPause && (now - this.lastBlinkTime > 1800)) {
+        this.hasBlinkedInCurrentPause = true;
+        this.triggerSingleBlink();
       }
     }
+  }
+
+  /**
+   * 音声波形データが取得できない環境用のフォールバックタイマー
+   */
+  _startFallbackMouthTimer() {
+    clearTimeout(this.mouthTimer);
+    const hasImageLayers = this.container.querySelector('#layerMouthOpen');
+    if (!hasImageLayers) return;
+
+    this.mouthSeqIndex = 0;
+    const stepMouth = () => {
+      if (!this.isTalking || this.isAudioDriven) {
+        if (!this.isTalking) this.resetMouthLayers();
+        return;
+      }
+
+      const stage = this.mouthSequence[this.mouthSeqIndex % this.mouthSequence.length];
+      this.mouthSeqIndex++;
+      this.setMouthStage(stage);
+
+      let duration = 175;
+      if (stage === 3 || stage === 2) {
+        duration = 190 + Math.floor(Math.random() * 45);
+      } else if (stage === 1) {
+        duration = 160 + Math.floor(Math.random() * 35);
+      } else {
+        duration = 150 + Math.floor(Math.random() * 30);
+      }
+      this.mouthTimer = setTimeout(stepMouth, duration);
+    };
+    stepMouth();
   }
 
   setMouthStage(stage) {
@@ -860,72 +925,83 @@ class CharacterController {
   /* ========================================================
      自動まばたき (目パチ: 中割り半目・閉眼シーケンス)
      ======================================================== */
+  triggerSingleBlink(callback) {
+    if (this.currentExpression === 'smile' || this.currentExpression === 'shocked') {
+      if (callback) callback();
+      return;
+    }
+
+    this.lastBlinkTime = performance.now();
+
+    // 1. 画像立ち絵 目パチレイヤー
+    const eyesHalf = this.container.querySelector('#layerEyesHalf');
+    const eyesClosed = this.container.querySelector('#layerEyesClosed');
+    if (eyesHalf && eyesClosed) {
+      // 自然なアニメーション瞬き (中割り 35ms -> 閉眼 55ms -> 中割り 35ms -> 開眼)
+      eyesHalf.classList.add('active');
+
+      setTimeout(() => {
+        eyesHalf.classList.remove('active');
+        eyesClosed.classList.add('active');
+
+        setTimeout(() => {
+          eyesClosed.classList.remove('active');
+          eyesHalf.classList.add('active');
+
+          setTimeout(() => {
+            eyesHalf.classList.remove('active');
+            if (callback) callback();
+          }, 35);
+        }, 55);
+      }, 35);
+      return;
+    }
+
+    // 2. SVGフォールバック
+    const eyesNormal = this.container.querySelector('#eyesNormal');
+    const eyesSmile = this.container.querySelector('#eyesSmile');
+    if (this.currentExpression === 'normal' && eyesNormal && eyesSmile) {
+      eyesNormal.style.display = 'none';
+      eyesSmile.style.display = 'block';
+
+      setTimeout(() => {
+        if (this.currentExpression === 'normal' && eyesNormal && eyesSmile) {
+          eyesNormal.style.display = 'block';
+          eyesSmile.style.display = 'none';
+        }
+        if (callback) callback();
+      }, 120);
+      return;
+    }
+
+    if (callback) callback();
+  }
+
   startBlinking() {
     clearTimeout(this.blinkTimer);
 
-    const doBlink = () => {
-      // 笑顔(`smile`)で目を閉じている時や、驚き時は瞬きを抑制
+    const scheduleNext = () => {
+      // 発話中 (isTalking) は定期目パチを休止し、音声波形の息継ぎ・文末トリガーに委ねる
+      if (this.isTalking) {
+        this.blinkTimer = setTimeout(scheduleNext, 1200);
+        return;
+      }
+
+      // 笑顔・驚き時は抑制
       if (this.currentExpression === 'smile' || this.currentExpression === 'shocked') {
-        this.blinkTimer = setTimeout(doBlink, 2500);
+        this.blinkTimer = setTimeout(scheduleNext, 2500);
         return;
       }
 
-      // 1. 画像立ち絵 目パチレイヤー
-      const eyesHalf = this.container.querySelector('#layerEyesHalf');
-      const eyesClosed = this.container.querySelector('#layerEyesClosed');
-
-      if (eyesHalf && eyesClosed) {
-        // Step 1: 半目 (40ms)
-        eyesHalf.classList.add('active');
-
-        setTimeout(() => {
-          // Step 2: 完全閉眼 (85ms)
-          eyesHalf.classList.remove('active');
-          eyesClosed.classList.add('active');
-
-          setTimeout(() => {
-            // Step 3: 中割り半目 (40ms)
-            eyesClosed.classList.remove('active');
-            eyesHalf.classList.add('active');
-
-            setTimeout(() => {
-              // Step 4: 完全開眼 (全非表示)
-              eyesHalf.classList.remove('active');
-
-              // 15%の確率で「二重瞬き（パチパチっ）」を連続実行
-              if (Math.random() < 0.15) {
-                setTimeout(doBlink, 120);
-                return;
-              }
-            }, 40);
-          }, 85);
-        }, 40);
-
-        const nextTime = 2600 + Math.random() * 3200;
-        this.blinkTimer = setTimeout(doBlink, nextTime);
-        return;
-      }
-
-      // 2. SVGフォールバック
-      const eyesNormal = this.container.querySelector('#eyesNormal');
-      const eyesSmile = this.container.querySelector('#eyesSmile');
-      if (this.currentExpression === 'normal' && eyesNormal && eyesSmile) {
-        eyesNormal.style.display = 'none';
-        eyesSmile.style.display = 'block';
-
-        setTimeout(() => {
-          if (this.currentExpression === 'normal' && eyesNormal && eyesSmile) {
-            eyesNormal.style.display = 'block';
-            eyesSmile.style.display = 'none';
-          }
-        }, 150);
-      }
-
-      const nextTime = 2600 + Math.random() * 3000;
-      this.blinkTimer = setTimeout(doBlink, nextTime);
+      this.triggerSingleBlink(() => {
+        // 非発話時の待機まばたき: 穏やかな 3.2秒 〜 5.6秒
+        const nextTime = 3200 + Math.random() * 2400;
+        this.blinkTimer = setTimeout(scheduleNext, nextTime);
+      });
     };
 
-    this.blinkTimer = setTimeout(doBlink, 2200);
+    const initialTime = 2500 + Math.random() * 2000;
+    this.blinkTimer = setTimeout(scheduleNext, initialTime);
   }
 
   /* ========================================================
