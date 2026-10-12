@@ -1,8 +1,8 @@
-// state.js - ゲーム状態と永続化（localStorage）の管理
+// state.js - ゲーム状態と永続化（localStorage）の管理（本格ミステリー版）
 
 class GameState {
   constructor() {
-    this.STORAGE_KEY = 'vvn_pomeranian_save_v1';
+    this.STORAGE_KEY = 'vvn_pomeranian_save_v2';
     this.resetTransientState();
     this.loadPersistentState();
   }
@@ -12,8 +12,8 @@ class GameState {
     this.currentPhase = 'TITLE'; // 'TITLE', 'PROLOGUE', 'EXPLORATION', 'DEBATE', 'ENDING'
     this.life = 3;               // 立証パートのライフ (最大3)
     this.currentDebateStep = 0;  // 立証パートの問答番号
-    this.evidence = [];          // 所持している証拠IDリスト (['cotton', 'nuts', 'tree', 'ribbon'])
-    this.examinedSpots = [];     // 調査済みスポットIDリスト
+    this.evidence = [];          // 所持している証拠IDリスト
+    this.examinedSpots = [];     // 調査済みスポット・NPCリスト
     this.endingType = null;      // 'BAD', 'HAPPY', 'TRUE'
   }
 
@@ -91,12 +91,19 @@ class GameState {
     return this.examinedSpots.includes(id);
   }
 
-  // 必要な証拠が揃ったか判定
-  // 通常：cotton, nuts, tree の3つ
-  // 2周目でTRUE ENDを目指す場合：さらに ribbon が必要
+  // 立証パートに進む準備ができたか判定
+  // 3つの論点それぞれについて、少なくとも1つずつ正解の証拠（物的または証言）を持っているか判定
   isReadyForDebate() {
-    const basicReady = this.hasEvidence('cotton') && this.hasEvidence('nuts') && this.hasEvidence('tree');
-    return basicReady;
+    // 論点1（手口）：cotton_micro
+    const hasPoint1 = this.hasEvidence('cotton_micro');
+
+    // 論点2（時間・犯人）：flower_footprint または caretaker_alibi
+    const hasPoint2 = this.hasEvidence('flower_footprint') || this.hasEvidence('caretaker_alibi');
+
+    // 論点3（到達点・樹上）：tree_nest または poppo_eyewitness
+    const hasPoint3 = this.hasEvidence('tree_nest') || this.hasEvidence('poppo_eyewitness');
+
+    return hasPoint1 && hasPoint2 && hasPoint3;
   }
 
   // クリア記録
@@ -114,7 +121,7 @@ class GameState {
     this.savePersistentState();
   }
 
-  // 完全リセット（最初からやり直したい時）
+  // 完全リセット
   resetAllData() {
     localStorage.removeItem(this.STORAGE_KEY);
     this.loadPersistentState();

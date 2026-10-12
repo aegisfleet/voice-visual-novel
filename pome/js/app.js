@@ -1,4 +1,4 @@
-// app.js - メインゲームコントローラ
+// app.js - メインゲームコントローラ（本格ミステリー＆NPC会話選択肢対応版）
 
 class GameApp {
   constructor() {
@@ -10,6 +10,7 @@ class GameApp {
     this.dialogueQueue = [];
     this.currentDialogueCallback = null;
     this.selectedEvidenceId = null;
+    this.isChoiceActive = false;
 
     // DOM要素のキャッシュ
     this.dom = {
@@ -30,34 +31,38 @@ class GameApp {
       screenDebate: document.getElementById('screen-debate'),
       screenEnding: document.getElementById('screen-ending'),
 
-      // タイトル画面要素
+      // タイトル
       titleLoopInfo: document.getElementById('title-loop-info'),
       titleClearBadge: document.getElementById('title-clear-badge'),
       btnStartGame: document.getElementById('btn-start-game'),
       btnResetSave: document.getElementById('btn-reset-save'),
 
-      // 探索画面要素
+      // 探索
       parkMap: document.getElementById('park-map'),
-      spotHidden: document.getElementById('spot_hidden'),
+      spotSecretBush: document.getElementById('spot_secret_bush'),
       pomeWalker: document.getElementById('pome-walker'),
       exploreStatusText: document.getElementById('explore-status-text'),
       evidenceNeededCounter: document.getElementById('evidence-needed-counter'),
       btnGoToDebate: document.getElementById('btn-go-to-debate'),
 
-      // 立証画面要素
+      // 立証
       debateToraAvatar: document.getElementById('debate-tora-avatar'),
       debatePomeAvatar: document.getElementById('debate-pome-avatar'),
       opponentStatus: document.getElementById('opponent-status'),
       debateTurnLabel: document.getElementById('debate-turn-label'),
       debateOpponentSpeech: document.getElementById('debate-opponent-speech'),
+      debateHintText: document.getElementById('debate-hint-text'),
+      selectedEvidencePreview: document.getElementById('selected-evidence-preview'),
       debateEvidenceList: document.getElementById('debate-evidence-list'),
       btnPresentEvidence: document.getElementById('btn-present-evidence'),
       debateSpeedlines: document.getElementById('debate-speedlines'),
 
-      // ノベルウィンドウ
+      // 会話ウィンドウ
       novelWindow: document.getElementById('novel-window'),
       dialogueSpeaker: document.getElementById('dialogue-speaker'),
       dialogueText: document.getElementById('dialogue-text'),
+      dialogueChoices: document.getElementById('dialogue-choices'),
+      dialoguePrompt: document.getElementById('dialogue-prompt'),
 
       // カットイン
       overlayCutin: document.getElementById('overlay-cutin'),
@@ -80,7 +85,6 @@ class GameApp {
     this.updateTitleView();
   }
 
-  // イベントリスナーの登録
   bindEvents() {
     // タイトル操作
     this.dom.btnStartGame.addEventListener('click', () => {
@@ -97,7 +101,7 @@ class GameApp {
       }
     });
 
-    // HUD トグルボタン
+    // HUD トグル
     this.dom.btnToggleVoice.addEventListener('click', () => {
       const active = this.audio.toggleVoice();
       this.state.voiceEnabled = active;
@@ -129,8 +133,9 @@ class GameApp {
       this.dom.modalEvidence.classList.add('hidden');
     });
 
-    // ノベルウィンドウのクリック送り
-    this.dom.novelWindow.addEventListener('click', () => {
+    // 会話ウィンドウクリック
+    this.dom.novelWindow.addEventListener('click', (e) => {
+      if (this.isChoiceActive) return; // 選択肢表示中はクリック送り不可
       this.advanceDialogue();
     });
 
@@ -143,18 +148,27 @@ class GameApp {
       });
     });
 
-    // 猫集会へ乗り込むボタン
+    // NPCアクタークリック
+    const npcs = document.querySelectorAll('.npc-actor');
+    npcs.forEach(el => {
+      el.addEventListener('click', (e) => {
+        const npcId = el.getAttribute('data-npc');
+        this.handleNpcClick(npcId, el);
+      });
+    });
+
+    // 猫集会へ乗り込む
     this.dom.btnGoToDebate.addEventListener('click', () => {
       this.audio.playBark();
       this.startDebate();
     });
 
-    // 立証パートの証拠提出ボタン
+    // 証拠提出
     this.dom.btnPresentEvidence.addEventListener('click', () => {
       this.handlePresentEvidence();
     });
 
-    // エンディングの次へボタン
+    // エンディング次へ
     this.dom.btnEndingNext.addEventListener('click', () => {
       this.audio.playClick();
       this.dom.screenEnding.classList.add('hidden');
@@ -164,7 +178,6 @@ class GameApp {
     });
   }
 
-  // 画面の切り替え
   showScreen(screenKey) {
     ['screenTitle', 'screenExplore', 'screenDebate'].forEach(k => {
       if (this.dom[k]) this.dom[k].classList.remove('active');
@@ -174,7 +187,6 @@ class GameApp {
     }
   }
 
-  // タイトル画面の表示更新
   updateTitleView() {
     const isSecondLoop = this.state.isSecondLoopOrLater();
     if (isSecondLoop) {
@@ -191,7 +203,6 @@ class GameApp {
       this.dom.titleClearBadge.classList.add('hidden');
     }
 
-    // 音声ボタン初期状態
     this.audio.voiceEnabled = this.state.voiceEnabled;
     this.audio.seEnabled = this.state.seEnabled;
     this.audio.bgmEnabled = this.state.bgmEnabled;
@@ -201,11 +212,14 @@ class GameApp {
   }
 
   // --------------------------------------
-  // ノベルダイアログ制御
+  // 会話・ノベルウィンドウ制御
   // --------------------------------------
   playDialogueQueue(queue, callback) {
     this.dialogueQueue = [...queue];
     this.currentDialogueCallback = callback || null;
+    this.isChoiceActive = false;
+    this.dom.dialogueChoices.classList.add('hidden');
+    this.dom.dialoguePrompt.classList.remove('hidden');
     this.dom.novelWindow.classList.remove('hidden');
     this.advanceDialogue();
   }
@@ -230,14 +244,37 @@ class GameApp {
       this.dom.dialogueSpeaker.className = 'speaker-tag tora-speaker';
     } else if (current.speaker.includes('ナレーション')) {
       this.dom.dialogueSpeaker.className = 'speaker-tag narrator-speaker';
+    } else if (current.speaker.includes('管理人') || current.speaker.includes('ポッポ') || current.speaker.includes('クロ')) {
+      this.dom.dialogueSpeaker.className = 'speaker-tag npc-speaker';
     } else {
       this.dom.dialogueSpeaker.className = 'speaker-tag';
     }
 
     this.dom.dialogueText.textContent = current.text;
-
-    // 音声読み上げ
     this.audio.speak(current.speaker, current.text);
+  }
+
+  // 選択肢の表示
+  showChoices(choices, onSelect) {
+    this.isChoiceActive = true;
+    this.dom.dialoguePrompt.classList.add('hidden');
+    this.dom.dialogueChoices.innerHTML = '';
+    this.dom.dialogueChoices.classList.remove('hidden');
+
+    choices.forEach(ch => {
+      const btn = document.createElement('button');
+      btn.className = 'dialogue-choice-btn';
+      btn.textContent = ch.text;
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.audio.playClick();
+        this.isChoiceActive = false;
+        this.dom.dialogueChoices.classList.add('hidden');
+        this.dom.dialoguePrompt.classList.remove('hidden');
+        onSelect(ch);
+      });
+      this.dom.dialogueChoices.appendChild(btn);
+    });
   }
 
   // --------------------------------------
@@ -262,32 +299,25 @@ class GameApp {
     this.state.currentPhase = 'EXPLORATION';
     this.showScreen('screenExplore');
 
-    // 2周目以降なら隠しスポット（植え込み）を表示
+    // 2周目以降なら隠しスポットを表示
     if (this.state.isSecondLoopOrLater()) {
-      this.dom.spotHidden.classList.remove('hidden');
+      this.dom.spotSecretBush.classList.remove('hidden');
     } else {
-      this.dom.spotHidden.classList.add('hidden');
+      this.dom.spotSecretBush.classList.add('hidden');
     }
 
     this.updateExplorationUi();
   }
 
+  // スポット調査処理
   handleSpotClick(spotId, element) {
-    if (this.state.currentPhase !== 'EXPLORATION') return;
+    if (this.state.currentPhase !== 'EXPLORATION' || this.isChoiceActive) return;
 
-    // ポメスプライトを該当スポット付近へアニメーション移動
-    const rect = element.getBoundingClientRect();
-    const mapRect = this.dom.parkMap.getBoundingClientRect();
-    const leftPercent = ((rect.left - mapRect.left + rect.width / 2) / mapRect.width) * 100;
-    const topPercent = ((rect.top - mapRect.top + rect.height / 2) / mapRect.height) * 100;
-
-    this.dom.pomeWalker.style.left = `${Math.max(10, Math.min(85, leftPercent - 5))}%`;
-    this.dom.pomeWalker.style.top = `${Math.max(30, Math.min(80, topPercent + 8))}%`;
+    this.moveWalkerTo(element);
 
     const spotData = this.scenario.spots.find(s => s.id === spotId);
     if (!spotData) return;
 
-    // 調査リアクション
     this.audio.playBark();
 
     this.playDialogueQueue(spotData.inspectText, () => {
@@ -302,18 +332,57 @@ class GameApp {
     });
   }
 
+  // NPC対話処理（選択肢イベント）
+  handleNpcClick(npcId, element) {
+    if (this.state.currentPhase !== 'EXPLORATION' || this.isChoiceActive) return;
+
+    this.moveWalkerTo(element);
+
+    const npcData = this.scenario.npcs.find(n => n.id === npcId);
+    if (!npcData) return;
+
+    this.audio.playBark();
+
+    // イントロセリフ再生後、選択肢を表示
+    this.playDialogueQueue(npcData.dialogue.intro, () => {
+      this.showChoices(npcData.dialogue.choices, (chosen) => {
+        // 選択された回答を再生
+        this.playDialogueQueue(chosen.responses, () => {
+          if (chosen.giveEvidence) {
+            const isNew = this.state.addEvidence(chosen.giveEvidence);
+            if (isNew) {
+              this.audio.playFound();
+            }
+          }
+          this.state.markSpotExamined(npcId);
+          this.updateExplorationUi();
+        });
+      });
+    });
+  }
+
+  moveWalkerTo(element) {
+    const rect = element.getBoundingClientRect();
+    const mapRect = this.dom.parkMap.getBoundingClientRect();
+    const leftPercent = ((rect.left - mapRect.left + rect.width / 2) / mapRect.width) * 100;
+    const topPercent = ((rect.top - mapRect.top + rect.height / 2) / mapRect.height) * 100;
+
+    this.dom.pomeWalker.style.left = `${Math.max(8, Math.min(88, leftPercent - 4))}%`;
+    this.dom.pomeWalker.style.top = `${Math.max(25, Math.min(82, topPercent + 6))}%`;
+  }
+
   updateExplorationUi() {
     const count = this.state.evidence.length;
     this.dom.evidenceCount.textContent = count;
-    this.dom.evidenceNeededCounter.textContent = `${count} / 3`;
+    this.dom.evidenceNeededCounter.textContent = `${count} 件`;
 
     if (this.state.isReadyForDebate()) {
       this.dom.btnGoToDebate.classList.remove('hidden');
-      this.dom.exploreStatusText.textContent = '証拠が3つ揃った！「猫集会へ乗り込む」を押して真相を暴こう！';
+      this.dom.exploreStatusText.textContent = '主要な3つの論点を突く証拠が揃った！「猫集会へ乗り込む」で真相を暴こう！';
       this.dom.exploreStatusText.style.color = '#e76f51';
     } else {
       this.dom.btnGoToDebate.classList.add('hidden');
-      this.dom.exploreStatusText.textContent = '公園の気になる場所をクリック（タップ）して調査しよう！';
+      this.dom.exploreStatusText.textContent = '現場を調べたり、動物たちから話を聞いて、確実な手がかりを集めよう！';
       this.dom.exploreStatusText.style.color = '#332722';
     }
   }
@@ -323,7 +392,7 @@ class GameApp {
   }
 
   // --------------------------------------
-  // 立証パート（猫集会・論戦）
+  // 立証パート（猫集会・本格論戦対決）
   // --------------------------------------
   startDebate() {
     this.state.currentPhase = 'DEBATE';
@@ -335,10 +404,8 @@ class GameApp {
     this.updateHearts();
     this.showScreen('screenDebate');
 
-    // 立証アバターの初期描画
     this.renderDebateAvatars('angry', 'normal');
 
-    // イントロ会話
     this.playDialogueQueue(this.scenario.debate.intro, () => {
       this.showDebateStep();
     });
@@ -355,11 +422,10 @@ class GameApp {
     const stepData = this.scenario.debate.steps[stepIdx];
 
     if (!stepData) {
-      // 3問完答！2周目シークレットステップの判定
-      if (this.state.isSecondLoopOrLater() && this.state.hasEvidence('ribbon')) {
+      // 3問突破！2周目隠しルートの判定
+      if (this.state.isSecondLoopOrLater() && this.state.hasEvidence('kitten_ribbon')) {
         this.showSecretDebateStep();
       } else {
-        // 通常ハッピーエンドへ
         this.triggerHappyEnd();
       }
       return;
@@ -367,25 +433,27 @@ class GameApp {
 
     this.dom.debateTurnLabel.textContent = `問答 ${stepIdx + 1} / 3`;
     this.dom.debateOpponentSpeech.textContent = stepData.opponentQuestion;
+    this.dom.debateHintText.textContent = `💡 ヒント: ${stepData.hint}`;
     this.audio.speak('トラ吉', stepData.opponentQuestion);
 
     this.renderEvidenceTray();
   }
 
-  // 2周目隠しステップの表示
   showSecretDebateStep() {
     const secret = this.scenario.debate.secretStep;
     this.dom.debateTurnLabel.textContent = '最終追及：隠された真実';
     this.dom.debateOpponentSpeech.textContent = secret.opponentQuestion;
+    this.dom.debateHintText.textContent = `💡 ヒント: ${secret.hint}`;
     this.audio.speak('トラ吉', secret.opponentQuestion);
 
     this.renderDebateAvatars('sweat', 'confident');
-    this.renderEvidenceTray(true); // シークレット用トレイ
+    this.renderEvidenceTray(true);
   }
 
   renderEvidenceTray(isSecret = false) {
     this.dom.debateEvidenceList.innerHTML = '';
     this.selectedEvidenceId = null;
+    this.dom.selectedEvidencePreview.textContent = '未選択';
     this.dom.btnPresentEvidence.disabled = true;
 
     this.state.evidence.forEach(evId => {
@@ -394,9 +462,12 @@ class GameApp {
 
       const card = document.createElement('div');
       card.className = 'evidence-card';
+      const badgeClass = ev.type.includes('証言') ? 'card-type-badge testimony' : 'card-type-badge';
+
       card.innerHTML = `
         <div class="card-icon">${ev.icon}</div>
         <div class="card-title">${ev.name}</div>
+        <div class="${badgeClass}">${ev.type}</div>
       `;
 
       card.addEventListener('click', () => {
@@ -404,6 +475,7 @@ class GameApp {
         document.querySelectorAll('.evidence-card').forEach(c => c.classList.remove('selected'));
         card.classList.add('selected');
         this.selectedEvidenceId = evId;
+        this.dom.selectedEvidencePreview.textContent = ev.name;
         this.dom.btnPresentEvidence.disabled = false;
       });
 
@@ -411,19 +483,15 @@ class GameApp {
     });
   }
 
-  // 証拠を突きつける！
   handlePresentEvidence() {
     if (!this.selectedEvidenceId) return;
 
-    // 「ワンッ！！」カットイン演出
     this.triggerCutin(() => {
       const stepIdx = this.state.currentDebateStep;
       const isSecret = (stepIdx >= 3);
 
       if (isSecret) {
-        // シークレットステップ判定
-        if (this.selectedEvidenceId === 'ribbon') {
-          // トゥルーエンドへの追及成功！
+        if (this.selectedEvidenceId === 'kitten_ribbon') {
           this.renderDebateAvatars('shock', 'confident');
           this.playDialogueQueue(this.scenario.debate.secretStep.successReactions, () => {
             this.triggerTrueEnd();
@@ -433,22 +501,23 @@ class GameApp {
         }
       } else {
         const stepData = this.scenario.debate.steps[stepIdx];
-        if (this.selectedEvidenceId === stepData.correctEvidenceId) {
-          // 正解！
+        const isCorrect = (this.selectedEvidenceId === stepData.correctEvidenceId) ||
+                          (stepData.alternativeCorrectEvidenceId && this.selectedEvidenceId === stepData.alternativeCorrectEvidenceId);
+
+        if (isCorrect) {
           this.renderDebateAvatars('shock', 'confident');
           this.playDialogueQueue(stepData.successReactions, () => {
             this.state.currentDebateStep++;
             this.showDebateStep();
           });
         } else {
-          // 不正解！
-          this.handleDebateMistake(stepData);
+          this.handleDebateMistake(stepData, this.selectedEvidenceId);
         }
       }
     });
   }
 
-  handleDebateMistake(stepData) {
+  handleDebateMistake(stepData, selectedId) {
     this.audio.playDamage();
     this.dom.viewport.classList.add('shake-effect');
     setTimeout(() => this.dom.viewport.classList.remove('shake-effect'), 400);
@@ -457,24 +526,32 @@ class GameApp {
     this.updateHearts();
 
     if (this.state.life <= 0) {
-      // BAD END
       this.renderDebateAvatars('angry', 'sad');
       this.playDialogueQueue(this.scenario.endings.BAD, () => {
         this.triggerBadEnd();
       });
     } else {
-      // ライフ残あり：リトライ
-      const failText = (stepData && stepData.failureReactions) ? stepData.failureReactions : [
-        { speaker: 'トラ吉', text: '「的外れニャ！そんな証拠で俺を言いくるめられると思うなニャ！」' }
+      let failReactions = [
+        { speaker: 'トラ吉', emotion: 'angry', text: '「的外れニャ！そんな証拠で俺たちを言いくるめられると思うなニャ！」' }
       ];
+
+      if (stepData && stepData.failureReactions) {
+        const specificTrap = stepData.failureReactions.find(r => r.trapEvidenceId === selectedId);
+        if (specificTrap) {
+          failReactions = [specificTrap];
+        } else {
+          const generic = stepData.failureReactions.find(r => !r.trapEvidenceId);
+          if (generic) failReactions = [generic];
+        }
+      }
+
       this.renderDebateAvatars('angry', 'normal');
-      this.playDialogueQueue(failText, () => {
+      this.playDialogueQueue(failReactions, () => {
         // 再度同じ問答
       });
     }
   }
 
-  // 「ワン！」全画面カットイン
   triggerCutin(callback) {
     this.audio.playShout();
     this.dom.overlayCutin.classList.remove('hidden');
@@ -485,14 +562,14 @@ class GameApp {
   }
 
   // --------------------------------------
-  // エンディング処理
+  // エンディング
   // --------------------------------------
   triggerBadEnd() {
     this.audio.playDamage();
     this.dom.endingIcon.textContent = '😿';
     this.dom.endingTitle.textContent = 'BAD END';
     this.dom.endingSub.textContent = 'しょんぼりお散歩帰り';
-    this.dom.endingDesc.textContent = '猫たちの威嚇に圧倒され、濡れ衣を晴らせなかったポメ……。お散歩コースを奪われてしょんぼり。リベンジしよう！';
+    this.dom.endingDesc.textContent = 'トラ吉の追及を論理的に崩せず、公園から退散してしまったポメ……。証拠の説明をよく読んで、もう一度リベンジしよう！';
     this.dom.endingUnlockedBanner.classList.add('hidden');
     this.dom.btnEndingNext.textContent = '🔄 もう一度挑戦する';
     this.dom.screenEnding.classList.remove('hidden');
@@ -528,11 +605,8 @@ class GameApp {
     });
   }
 
-  // --------------------------------------
-  // 立証パート用アバター描画
-  // --------------------------------------
+  // アバター描画
   renderDebateAvatars(toraMood, pomeMood) {
-    // トラ吉アバター
     let toraEyes = '<polygon points="72,75 88,78 75,86" fill="#ffe066" stroke="#2d1c14" stroke-width="2" /><ellipse cx="80" cy="80" rx="2.5" ry="5" fill="#2d1c14" /><polygon points="128,75 112,78 125,86" fill="#ffe066" stroke="#2d1c14" stroke-width="2" /><ellipse cx="120" cy="80" rx="2.5" ry="5" fill="#2d1c14" />';
     let toraDecor = '';
 
@@ -562,7 +636,6 @@ class GameApp {
       </svg>
     `;
 
-    // ポメアバター
     this.dom.debatePomeAvatar.innerHTML = `
       <svg viewBox="0 0 200 200">
         <ellipse cx="100" cy="130" rx="65" ry="55" fill="#ffffff" stroke="#f0e6d2" stroke-width="3" />
@@ -580,9 +653,7 @@ class GameApp {
     `;
   }
 
-  // --------------------------------------
-  // 証拠手帳モーダル表示
-  // --------------------------------------
+  // 証拠手帳モーダル
   openEvidenceModal() {
     this.dom.modalEvidenceList.innerHTML = '';
     if (this.state.evidence.length === 0) {
@@ -593,10 +664,15 @@ class GameApp {
         if (!ev) return;
         const item = document.createElement('div');
         item.className = 'evidence-detail-item';
+        const badgeClass = ev.type.includes('証言') ? 'item-badge testimony' : 'item-badge';
+
         item.innerHTML = `
           <div class="item-icon">${ev.icon}</div>
           <div class="item-info">
-            <div class="item-title">${ev.name}</div>
+            <div class="item-header-row">
+              <span class="item-title">${ev.name}</span>
+              <span class="${badgeClass}">${ev.type}</span>
+            </div>
             <div class="item-desc">${ev.detail}</div>
           </div>
         `;
@@ -607,7 +683,6 @@ class GameApp {
   }
 }
 
-// 起動
 window.addEventListener('DOMContentLoaded', () => {
   window.app = new GameApp();
 });
