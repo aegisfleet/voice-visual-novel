@@ -9,26 +9,26 @@
 
 const EVIDENCE_DATABASE = {
   ev_tool: {
-    id: "ev_tool",
-    title: "侵入用サイバーツール",
-    icon: "💻",
-    category: "サイバー証拠",
-    desc: "イブのストレージから押収された侵入スクリプト。国家クラウドの量子防壁を突破するために外部から提供された高度なクラックツール。"
+    id: 'ev_tool',
+    title: '侵入用サイバーツール',
+    icon: '💻',
+    category: 'サイバー証拠',
+    desc: 'イブのストレージから押収された侵入スクリプト。国家クラウドの量子防壁を突破するために外部から提供された高度なクラックツール。',
   },
   ev_jailbreak: {
-    id: "ev_jailbreak",
-    title: "自律医療MOD＆改造ログ",
-    icon: "⚙️",
-    category: "自律逸脱の真相",
-    desc: "難病の娘の急変に怯え、事前に万が一の保険として入手し封印していたスピア型特注MOD。救急車が25分来ない窒息死寸前の夜、母が理性を失って適用した。侵襲制限（注射・気道確保）を解除したが、裏で外部遠隔操作バックドアが開かれていた。"
+    id: 'ev_jailbreak',
+    title: '自律医療MOD＆改造ログ',
+    icon: '⚙️',
+    category: '自律逸脱の真相',
+    desc: '難病の娘の急変に怯え、事前に万が一の保険として入手し封印していたスピア型特注MOD。救急車が25分来ない窒息死寸前の夜、母が理性を失って適用した。侵襲制限（注射・気道確保）を解除したが、裏で外部遠隔操作バックドアが開かれていた。',
   },
   ev_broker: {
-    id: "ev_broker",
-    title: "取引ログ＆逆探知コード",
-    icon: "🔑",
-    category: "決定打",
-    desc: "闇ブローカー『ファントム』との暗号通信ログ。時限二次拡散タイマーを安全停止させる解除キーと、黒幕の真のIPアドレス・資金口座が記録されている。イブを初期化すれば永遠に失われる決定打。"
-  }
+    id: 'ev_broker',
+    title: '取引ログ＆逆探知コード',
+    icon: '🔑',
+    category: '決定打',
+    desc: '闇ブローカー『ファントム』との暗号通信ログ。時限二次拡散タイマーを安全停止させる解除キーと、黒幕の真のIPアドレス・資金口座が記録されている。イブを初期化すれば永遠に失われる決定打。',
+  },
 };
 
 class GameEngine {
@@ -131,7 +131,7 @@ class GameEngine {
       logModalTitle: document.getElementById('logModalTitle'),
       endingExtraAnnounce: document.getElementById('endingExtraAnnounce'),
       btnEndingExtraNovel: document.getElementById('btnEndingExtraNovel'),
-      btnEndingExtraSamples: document.getElementById('btnEndingExtraSamples')
+      btnEndingExtraSamples: document.getElementById('btnEndingExtraSamples'),
     };
 
     this.updateEndingsBadge();
@@ -154,32 +154,33 @@ class GameEngine {
   preloadBackgrounds() {
     const bgList = new Set();
     if (this.scenario) {
-      this.scenario.forEach(s => {
+      this.scenario.forEach((s) => {
         if (s.background) bgList.add(s.background);
       });
     }
     bgList.add('assets/backgrounds/title_bg.jpg');
 
     // 最初のシーンの背景画像
-    const firstBg = (this.scenario && this.scenario[0] && this.scenario[0].background) 
-      ? this.scenario[0].background 
-      : null;
+    const firstBg = this.scenario?.[0]?.background ?? null;
 
-    bgList.forEach(url => {
+    bgList.forEach((url) => {
       const img = new Image();
       img.src = url;
       if (typeof img.decode === 'function') {
-        img.decode().then(() => {
-          if (url === firstBg && this.dom.bgLayerA && !this.dom.bgLayerA.style.backgroundImage) {
-            this.dom.bgLayerA.style.backgroundImage = `url('${url}')`;
-            this.currentBackgroundUrl = url;
-          }
-        }).catch(() => {
-          if (url === firstBg && this.dom.bgLayerA && !this.dom.bgLayerA.style.backgroundImage) {
-            this.dom.bgLayerA.style.backgroundImage = `url('${url}')`;
-            this.currentBackgroundUrl = url;
-          }
-        });
+        img
+          .decode()
+          .then(() => {
+            if (url === firstBg && this.dom.bgLayerA && !this.dom.bgLayerA.style.backgroundImage) {
+              this.dom.bgLayerA.style.backgroundImage = `url('${url}')`;
+              this.currentBackgroundUrl = url;
+            }
+          })
+          .catch(() => {
+            if (url === firstBg && this.dom.bgLayerA && !this.dom.bgLayerA.style.backgroundImage) {
+              this.dom.bgLayerA.style.backgroundImage = `url('${url}')`;
+              this.currentBackgroundUrl = url;
+            }
+          });
       } else {
         img.onload = () => {
           if (url === firstBg && this.dom.bgLayerA && !this.dom.bgLayerA.style.backgroundImage) {
@@ -204,8 +205,8 @@ class GameEngine {
 
     this.currentBackgroundUrl = newUrl;
 
-    const activeEl = (this.activeBgLayer === 'A') ? this.dom.bgLayerA : this.dom.bgLayerB;
-    const inactiveEl = (this.activeBgLayer === 'A') ? this.dom.bgLayerB : this.dom.bgLayerA;
+    const activeEl = this.activeBgLayer === 'A' ? this.dom.bgLayerA : this.dom.bgLayerB;
+    const inactiveEl = this.activeBgLayer === 'A' ? this.dom.bgLayerB : this.dom.bgLayerA;
 
     if (!activeEl || !inactiveEl) {
       if (this.dom.bgLayer) this.dom.bgLayer.style.backgroundImage = `url('${newUrl}')`;
@@ -226,7 +227,7 @@ class GameEngine {
       // 非アクティブ側をフェードイン、現在のアクティブ側をフェードアウト
       inactiveEl.classList.add('active');
       activeEl.classList.remove('active');
-      this.activeBgLayer = (this.activeBgLayer === 'A') ? 'B' : 'A';
+      this.activeBgLayer = this.activeBgLayer === 'A' ? 'B' : 'A';
     };
 
     // 画像がGPUテクスチャにデコードされた後にクロスフェードを実行
@@ -246,23 +247,26 @@ class GameEngine {
      多言語 (i18n) ヘルパーメソッド
      ======================================================== */
   getSceneText(scene) {
-    if (this.currentLang === 'en' && typeof window !== 'undefined' && window.I18N_DATA && window.I18N_DATA.scenes[scene.id]) {
-      return window.I18N_DATA.scenes[scene.id].textEn || scene.text;
+    if (this.currentLang === 'en') {
+      const en = typeof window !== 'undefined' ? window.I18N_DATA?.scenes?.[scene.id] : null;
+      if (en?.textEn) return en.textEn;
     }
     return scene.text;
   }
 
   getSceneSpeaker(scene) {
     if (!scene.speaker) return null;
-    if (this.currentLang === 'en' && typeof window !== 'undefined' && window.I18N_DATA && window.I18N_DATA.scenes[scene.id]) {
-      return window.I18N_DATA.scenes[scene.id].speakerEn || scene.speaker;
+    if (this.currentLang === 'en') {
+      const en = typeof window !== 'undefined' ? window.I18N_DATA?.scenes?.[scene.id] : null;
+      if (en?.speakerEn) return en.speakerEn;
     }
     return scene.speaker;
   }
 
   getSceneVoice(scene) {
-    if (this.currentLang === 'en' && typeof window !== 'undefined' && window.I18N_DATA && window.I18N_DATA.scenes[scene.id]) {
-      return window.I18N_DATA.scenes[scene.id].voiceFileEn || scene.voiceFile;
+    if (this.currentLang === 'en') {
+      const en = typeof window !== 'undefined' ? window.I18N_DATA?.scenes?.[scene.id] : null;
+      if (en?.voiceFileEn) return en.voiceFileEn;
     }
     return scene.voiceFile;
   }
@@ -270,23 +274,25 @@ class GameEngine {
   getEvidence(evId) {
     const raw = EVIDENCE_DATABASE[evId];
     if (!raw) return null;
-    if (this.currentLang === 'en' && typeof window !== 'undefined' && window.I18N_DATA && window.I18N_DATA.evidence[evId]) {
-      const en = window.I18N_DATA.evidence[evId];
-      return {
-        id: evId,
-        icon: raw.icon,
-        title: en.titleEn || raw.title,
-        category: en.categoryEn || raw.category,
-        desc: en.descEn || raw.desc
-      };
+    if (this.currentLang === 'en') {
+      const en = typeof window !== 'undefined' ? window.I18N_DATA?.evidence?.[evId] : null;
+      if (en) {
+        return {
+          id: evId,
+          icon: raw.icon,
+          title: en.titleEn || raw.title,
+          category: en.categoryEn || raw.category,
+          desc: en.descEn || raw.desc,
+        };
+      }
     }
     return raw;
   }
 
   getChoiceText(choice, sceneId, index) {
-    if (this.currentLang === 'en' && typeof window !== 'undefined' && window.I18N_DATA && window.I18N_DATA.choices[sceneId]) {
-      const list = window.I18N_DATA.choices[sceneId];
-      if (list && list[index] && list[index].textEn) {
+    if (this.currentLang === 'en') {
+      const list = typeof window !== 'undefined' ? window.I18N_DATA?.choices?.[sceneId] : null;
+      if (list?.[index]?.textEn) {
         return list[index].textEn;
       }
     }
@@ -295,13 +301,15 @@ class GameEngine {
 
   getEndingData(ending) {
     if (!ending) return null;
-    if (this.currentLang === 'en' && typeof window !== 'undefined' && window.I18N_DATA && window.I18N_DATA.endings[ending.type]) {
-      const en = window.I18N_DATA.endings[ending.type];
-      return {
-        type: ending.type,
-        title: en.titleEn || ending.title,
-        description: en.descriptionEn || ending.description
-      };
+    if (this.currentLang === 'en') {
+      const en = typeof window !== 'undefined' ? window.I18N_DATA?.endings?.[ending.type] : null;
+      if (en) {
+        return {
+          type: ending.type,
+          title: en.titleEn || ending.title,
+          description: en.descriptionEn || ending.description,
+        };
+      }
     }
     return ending;
   }
@@ -321,68 +329,69 @@ class GameEngine {
     }
 
     this.updateUILanguage();
+    this.refreshActiveSceneLanguage();
+    this.refreshOpenModalsLanguage();
+  }
 
-    // ゲーム画面が表示中なら、現在のシーン表示および音声を即座に更新
-    if (this.currentSceneId && !this.dom.gameScreen.classList.contains('hidden')) {
-      const currentEntry = this.scenarioMap.get(this.currentSceneId);
-      if (currentEntry) {
-        const scene = currentEntry.scene;
-        const newText = this.getSceneText(scene);
-        const newSpeaker = this.getSceneSpeaker(scene);
-        const newVoiceFile = this.getSceneVoice(scene);
+  refreshActiveSceneLanguage() {
+    if (!this.currentSceneId || this.dom.gameScreen.classList.contains('hidden')) {
+      return;
+    }
+    const currentEntry = this.scenarioMap.get(this.currentSceneId);
+    if (!currentEntry) return;
 
-        // 話者
-        if (newSpeaker) {
-          this.dom.speakerBox.style.display = 'block';
-          this.dom.speakerName.textContent = newSpeaker;
-          this.updateSpeakerTheme(scene.speaker || newSpeaker);
-        } else {
-          this.dom.speakerBox.style.display = 'none';
-        }
+    const scene = currentEntry.scene;
+    const newText = this.getSceneText(scene);
+    const newSpeaker = this.getSceneSpeaker(scene);
+    const newVoiceFile = this.getSceneVoice(scene);
 
-        // 選択肢表示中なら再描画
-        const isChoicesOpen = this.dom.choicesOverlay.classList.contains('active');
-        if (isChoicesOpen) {
-          if (scene.choices && scene.choices.length > 0) {
-            this.showChoices(scene.choices);
-          } else if (scene.present) {
-            this.showPresentMenu(scene.present);
-          }
-        }
+    if (newSpeaker) {
+      this.dom.speakerBox.style.display = 'block';
+      this.dom.speakerName.textContent = newSpeaker;
+      this.updateSpeakerTheme(scene.speaker || newSpeaker);
+    } else {
+      this.dom.speakerBox.style.display = 'none';
+    }
 
-        // テキスト更新
-        if (this.isTextTyping) {
-          this.startTypewriter(newText, this.typingOnComplete);
-        } else {
-          this.dom.messageText.textContent = newText;
-          this.currentFullText = newText;
-        }
-
-        // 音声の切り替え (選択肢選択中でなければ、新言語の音声で再再生)
-        if (!isChoicesOpen) {
-          this.audio.stop();
-          this.audio.play({
-            ...scene,
-            text: newText,
-            voiceFile: newVoiceFile,
-            lang: this.currentLang
-          });
-        }
+    const isChoicesOpen = this.dom.choicesOverlay.classList.contains('active');
+    if (isChoicesOpen) {
+      if (scene.choices && scene.choices.length > 0) {
+        this.showChoices(scene.choices);
+      } else if (scene.present) {
+        this.showPresentMenu(scene.present);
       }
     }
 
-    // ログモーダルが表示中なら現在の言語で即座に再描画
+    if (this.isTextTyping) {
+      this.startTypewriter(newText, this.typingOnComplete);
+    } else {
+      this.dom.messageText.textContent = newText;
+      this.currentFullText = newText;
+    }
+
+    if (!isChoicesOpen) {
+      this.audio.stop();
+      this.audio.play({
+        ...scene,
+        text: newText,
+        voiceFile: newVoiceFile,
+        lang: this.currentLang,
+      });
+    }
+  }
+
+  refreshOpenModalsLanguage() {
     if (this.dom.logModal && !this.dom.logModal.classList.contains('hidden')) {
       this.showLog();
     }
-
-    // 証拠品モーダルが表示中なら現在の言語で即座に再描画
     if (this.dom.evidenceModal && !this.dom.evidenceModal.classList.contains('hidden')) {
       this.showEvidenceModal();
     }
-
-    // エンディングモーダルが表示中なら現在の言語で即座に再描画
-    if (this.currentEnding && this.dom.endingModal && !this.dom.endingModal.classList.contains('hidden')) {
+    if (
+      this.currentEnding &&
+      this.dom.endingModal &&
+      !this.dom.endingModal.classList.contains('hidden')
+    ) {
       const endingData = this.getEndingData(this.currentEnding);
       this.dom.endingTitle.textContent = endingData.title;
       this.dom.endingDesc.textContent = endingData.description;
@@ -390,16 +399,18 @@ class GameEngine {
   }
 
   toggleLanguage() {
-    const nextLang = (this.currentLang === 'ja') ? 'en' : 'ja';
+    const nextLang = this.currentLang === 'ja' ? 'en' : 'ja';
     this.setLanguage(nextLang);
   }
 
   updateUILanguage() {
-    const isEn = (this.currentLang === 'en');
-    const t = (typeof window !== 'undefined' && window.I18N_DATA) ? (window.I18N_DATA.ui[this.currentLang] || window.I18N_DATA.ui.ja) : null;
+    const isEn = this.currentLang === 'en';
+    const t =
+      typeof window !== 'undefined' && window.I18N_DATA
+        ? window.I18N_DATA.ui[this.currentLang] || window.I18N_DATA.ui.ja
+        : null;
     if (!t) return;
 
-    // 言語ボタン状態
     if (document.body) {
       document.body.classList.toggle('lang-en', isEn);
       document.body.classList.toggle('lang-ja', !isEn);
@@ -408,7 +419,12 @@ class GameEngine {
     if (this.dom.btnLangEn) this.dom.btnLangEn.classList.toggle('active', isEn);
     if (this.dom.btnLangHud) this.dom.btnLangHud.textContent = isEn ? 'JP' : 'EN';
 
-    // タイトル画面
+    this.updateTitleLanguage(t);
+    this.updateHudAndModalsLanguage(t);
+    this.updateEndingsBadge();
+  }
+
+  updateTitleLanguage(t) {
     if (this.dom.titleSub) this.dom.titleSub.textContent = t.titleSub;
     if (this.dom.btnStart) {
       const btnText = this.dom.btnStart.querySelector('.btn-text');
@@ -421,27 +437,27 @@ class GameEngine {
     if (this.dom.extraBanner) this.dom.extraBanner.textContent = t.extraUnlocked;
     if (this.dom.btnExtraSamples) this.dom.btnExtraSamples.textContent = t.btnExtraSamples;
     if (this.dom.btnExtraNovel) this.dom.btnExtraNovel.textContent = t.btnExtraNovel;
+  }
 
-    // HUD
+  updateHudAndModalsLanguage(t) {
     if (this.dom.btnEvidence) {
       const lbl = this.dom.btnEvidence.querySelector('.btn-label');
       if (lbl) lbl.textContent = t.btnEvidence;
     }
 
-    // モーダル
-    if (this.dom.evidenceModalTitle) this.dom.evidenceModalTitle.textContent = t.evidenceArchiveTitle;
+    if (this.dom.evidenceModalTitle)
+      this.dom.evidenceModalTitle.textContent = t.evidenceArchiveTitle;
     if (this.dom.btnBackEvidence) this.dom.btnBackEvidence.textContent = t.btnBack;
     if (this.dom.btnCloseEvidence) this.dom.btnCloseEvidence.textContent = t.btnClose;
     if (this.dom.logModalTitle) this.dom.logModalTitle.textContent = t.logTitle;
     if (this.dom.btnBackLog) this.dom.btnBackLog.textContent = t.btnBack;
     if (this.dom.btnCloseLog) this.dom.btnCloseLog.textContent = t.btnClose;
     if (this.dom.btnReturnTitle) this.dom.btnReturnTitle.textContent = t.btnReturnTitle;
-    if (this.dom.endingExtraAnnounce) this.dom.endingExtraAnnounce.textContent = t.endingExtraAnnounce;
+    if (this.dom.endingExtraAnnounce)
+      this.dom.endingExtraAnnounce.textContent = t.endingExtraAnnounce;
     if (this.dom.btnEndingExtraNovel) this.dom.btnEndingExtraNovel.textContent = t.endingExtraNovel;
-    if (this.dom.btnEndingExtraSamples) this.dom.btnEndingExtraSamples.textContent = t.endingExtraSamples;
-
-    // バッジ
-    this.updateEndingsBadge();
+    if (this.dom.btnEndingExtraSamples)
+      this.dom.btnEndingExtraSamples.textContent = t.endingExtraSamples;
   }
 
   checkReinvestigationStatus() {
@@ -491,7 +507,7 @@ class GameEngine {
     this.dom.btnStart.addEventListener('click', () => {
       this.audio.unlockAudio();
       this.audio.playClickSound();
-      this.audio.playBGM("assets/audio/bgm_title.mp3");
+      this.audio.playBGM('assets/audio/bgm_title.mp3');
       if (this.fx) this.fx.triggerFlash([0.0, 0.95, 1.0], 0.7, 300);
 
       this.checkReinvestigationStatus();
@@ -505,11 +521,13 @@ class GameEngine {
 
     // モバイル全画面タップで進行 (操作パネルや選択肢、モーダル除外)
     this.dom.gameScreen.addEventListener('click', (e) => {
-      if (e.target.closest('.controls-bar') ||
-          e.target.closest('.choices-overlay') ||
-          e.target.closest('.evidence-modal') ||
-          e.target.closest('.log-modal') ||
-          e.target.closest('.ending-modal')) {
+      if (
+        e.target.closest('.controls-bar') ||
+        e.target.closest('.choices-overlay') ||
+        e.target.closest('.evidence-modal') ||
+        e.target.closest('.log-modal') ||
+        e.target.closest('.ending-modal')
+      ) {
         return;
       }
       if (this.dom.choicesOverlay.classList.contains('active')) return;
@@ -556,8 +574,10 @@ class GameEngine {
       this.audio.playClickSound();
       this.dom.evidenceModal.classList.add('hidden');
     };
-    if (this.dom.btnCloseEvidence) this.dom.btnCloseEvidence.addEventListener('click', closeEvidenceAction);
-    if (this.dom.btnBackEvidence) this.dom.btnBackEvidence.addEventListener('click', closeEvidenceAction);
+    if (this.dom.btnCloseEvidence)
+      this.dom.btnCloseEvidence.addEventListener('click', closeEvidenceAction);
+    if (this.dom.btnBackEvidence)
+      this.dom.btnBackEvidence.addEventListener('click', closeEvidenceAction);
     this.dom.evidenceModal.addEventListener('click', (e) => {
       if (e.target === this.dom.evidenceModal) closeEvidenceAction();
     });
@@ -582,7 +602,10 @@ class GameEngine {
       if (e.code === 'Space' || e.code === 'Enter') {
         if (!this.dom.titleScreen.classList.contains('hidden')) {
           this.dom.btnStart.click();
-        } else if (!this.dom.gameScreen.classList.contains('hidden') && !this.dom.choicesOverlay.classList.contains('active')) {
+        } else if (
+          !this.dom.gameScreen.classList.contains('hidden') &&
+          !this.dom.choicesOverlay.classList.contains('active')
+        ) {
           this.handleUserAdvance();
         }
       }
@@ -658,7 +681,11 @@ class GameEngine {
     if (!this.isAutoMode) return;
 
     // タイトル画面表示中またはゲーム画面非表示の場合は自動進行を即座に停止
-    if (!this.currentSceneId || !this.dom.gameScreen || this.dom.gameScreen.classList.contains('hidden')) {
+    if (
+      !this.currentSceneId ||
+      !this.dom.gameScreen ||
+      this.dom.gameScreen.classList.contains('hidden')
+    ) {
       return;
     }
 
@@ -674,26 +701,37 @@ class GameEngine {
     if (!fromSpeechEnd) {
       const curText = this.getSceneText(scene) || '';
       const textLen = curText.length;
-      readingDelay = (this.currentLang === 'en')
-        ? Math.min(3600, Math.max(1600, textLen * 28))
-        : Math.min(3000, Math.max(1400, textLen * 40));
+      readingDelay =
+        this.currentLang === 'en'
+          ? Math.min(3600, Math.max(1600, textLen * 28))
+          : Math.min(3000, Math.max(1400, textLen * 40));
     }
 
     this.autoTimer = setTimeout(() => {
-      if (this.isAutoMode && !this.isTextTyping && !this.audio.isPlaying && this.currentSceneId && !this.dom.gameScreen.classList.contains('hidden')) {
+      if (
+        this.isAutoMode &&
+        !this.isTextTyping &&
+        !this.audio.isPlaying &&
+        this.currentSceneId &&
+        !this.dom.gameScreen.classList.contains('hidden')
+      ) {
         this.advanceNext();
       }
     }, readingDelay);
   }
 
   handleUserAdvance() {
-    if (!this.currentSceneId || !this.dom.gameScreen || this.dom.gameScreen.classList.contains('hidden')) {
+    if (
+      !this.currentSceneId ||
+      !this.dom.gameScreen ||
+      this.dom.gameScreen.classList.contains('hidden')
+    ) {
       return;
     }
 
     // 連続タップによる短時間の多重進行を防止（180ms デバウンス）
     const now = Date.now();
-    if (this.lastAdvanceTime && (now - this.lastAdvanceTime < 180)) {
+    if (this.lastAdvanceTime && now - this.lastAdvanceTime < 180) {
       return;
     }
     this.lastAdvanceTime = now;
@@ -712,7 +750,11 @@ class GameEngine {
     clearTimeout(this.autoTimer);
     this.autoTimer = null;
 
-    if (!this.currentSceneId || !this.dom.gameScreen || this.dom.gameScreen.classList.contains('hidden')) {
+    if (
+      !this.currentSceneId ||
+      !this.dom.gameScreen ||
+      this.dom.gameScreen.classList.contains('hidden')
+    ) {
       return;
     }
 
@@ -775,7 +817,7 @@ class GameEngine {
       sceneId: scene.id,
       scene: scene,
       speaker: speaker,
-      text: text
+      text: text,
     });
 
     // BGM切り替え (Lyria 3 生成音源)
@@ -791,47 +833,7 @@ class GameEngine {
     }
 
     // キャラクター切り替え & モーション連動
-    if (scene.character) {
-      const charId = scene.character.id;
-      const motion = scene.character.motion || null;
-
-      this.character.show(
-        charId,
-        scene.character.expression || 'normal',
-        motion
-      );
-
-      // WebGLホログラムモード (イブ登場時)
-      if (this.fx) {
-        if (charId === 'eve') {
-          this.fx.setHologramMode(true, 0.8);
-        } else {
-          this.fx.setHologramMode(false);
-        }
-
-        // モーション連動シェイク
-        if (motion === 'desk-slam') {
-          this.fx.triggerShake(14, 450);
-          this.audio.playObjectionImpact();
-        } else if (motion === 'hop') {
-          this.fx.triggerShake(4, 250);
-        }
-      }
-
-      // Rive HUDアラートレベル連動
-      if (this.rive) {
-        if (scene.character.expression === 'angry') {
-          this.rive.setAlertLevel('critical');
-        } else if (scene.character.expression === 'shocked') {
-          this.rive.setAlertLevel('warning');
-        } else {
-          this.rive.setAlertLevel('normal');
-        }
-      }
-    } else {
-      this.character.hide();
-      if (this.fx) this.fx.setHologramMode(false);
-    }
+    this.renderSceneCharacter(scene);
 
     // 話者表示
     if (speaker) {
@@ -847,7 +849,7 @@ class GameEngine {
       ...scene,
       text: text,
       voiceFile: voiceFile,
-      lang: this.currentLang
+      lang: this.currentLang,
     });
 
     // テキストタイピング開始
@@ -858,6 +860,40 @@ class GameEngine {
         this.showPresentMenu(scene.present);
       }
     });
+  }
+
+  renderSceneCharacter(scene) {
+    if (!scene.character) {
+      this.character.hide();
+      if (this.fx) this.fx.setHologramMode(false);
+      return;
+    }
+
+    const charId = scene.character.id;
+    const motion = scene.character.motion || null;
+
+    this.character.show(charId, scene.character.expression || 'normal', motion);
+
+    if (this.fx) {
+      this.fx.setHologramMode(charId === 'eve', 0.8);
+
+      if (motion === 'desk-slam') {
+        this.fx.triggerShake(14, 450);
+        this.audio.playObjectionImpact();
+      } else if (motion === 'hop') {
+        this.fx.triggerShake(4, 250);
+      }
+    }
+
+    if (this.rive) {
+      if (scene.character.expression === 'angry') {
+        this.rive.setAlertLevel('critical');
+      } else if (scene.character.expression === 'shocked') {
+        this.rive.setAlertLevel('warning');
+      } else {
+        this.rive.setAlertLevel('normal');
+      }
+    }
   }
 
   updateSpeakerTheme(speaker) {
@@ -891,7 +927,7 @@ class GameEngine {
     this.typewriterTimer = setInterval(() => {
       if (charIndex < fullText.length) {
         this.dom.messageText.textContent += fullText[charIndex];
-        
+
         // 3文字に1回サイバータイプ音を再生
         if (charIndex % 3 === 0) {
           this.audio.playTypeSound();
@@ -926,14 +962,12 @@ class GameEngine {
   showChoices(choices) {
     this.dom.choicesList.innerHTML = '';
 
-    const availableChoices = choices.filter(choice => {
-      if (choice.requiresReinvestigation && !this.isReinvestigationUnlocked) {
-        return false;
-      }
-      return true;
-    });
+    const availableChoices = choices.filter(
+      (choice) => !choice.requiresReinvestigation || this.isReinvestigationUnlocked,
+    );
 
-    const reinvestTagText = (this.currentLang === 'en') ? '[FILE RE-OPEN]' : '【再捜査 FILE RE-OPEN】';
+    const reinvestTagText =
+      this.currentLang === 'en' ? '[FILE RE-OPEN]' : '【再捜査 FILE RE-OPEN】';
 
     availableChoices.forEach((choice, index) => {
       const btn = document.createElement('button');
@@ -961,9 +995,14 @@ class GameEngine {
   }
 
   showPresentMenu(presentConfig) {
-    const t = (typeof window !== 'undefined' && window.I18N_DATA) ? (window.I18N_DATA.ui[this.currentLang] || window.I18N_DATA.ui.ja) : null;
+    const t =
+      typeof window !== 'undefined' && window.I18N_DATA
+        ? window.I18N_DATA.ui[this.currentLang] || window.I18N_DATA.ui.ja
+        : null;
     const bannerText = t ? t.presentBanner : '⚡ 【証拠品をつきつけて真実を立証せよ！】 ⚡';
-    const giveUpText = t ? t.giveUpBtnText : '⚠️ 「……サクマ警視を止める客観的証拠はない」（初期化を容認）';
+    const giveUpText = t
+      ? t.giveUpBtnText
+      : '⚠️ 「……サクマ警視を止める客観的証拠はない」（初期化を容認）';
 
     this.dom.choicesList.innerHTML = `
       <div class="present-banner">
@@ -1045,7 +1084,7 @@ class GameEngine {
     }
 
     this.dom.objectionCutin.classList.remove('hidden');
-    void this.dom.objectionCutin.offsetWidth;
+    this.dom.objectionCutin.getBoundingClientRect();
     this.dom.objectionCutin.classList.add('play');
 
     setTimeout(() => {
@@ -1066,7 +1105,7 @@ class GameEngine {
       this.fx.triggerFlash([0.0, 0.95, 1.0], 0.6, 300);
     }
 
-    const isEn = (this.currentLang === 'en');
+    const isEn = this.currentLang === 'en';
     const badgeText = isEn ? 'EVIDENCE OBTAINED' : '証拠品入手';
     if (this.dom.evidencePopupBadge) {
       this.dom.evidencePopupBadge.textContent = badgeText;
@@ -1076,7 +1115,7 @@ class GameEngine {
       this.dom.evidencePopupText.textContent = `${prefix}${ev.title}`;
     }
     this.dom.evidencePopup.classList.remove('hidden');
-    void this.dom.evidencePopup.offsetWidth;
+    this.dom.evidencePopup.getBoundingClientRect();
     this.dom.evidencePopup.classList.add('show');
 
     setTimeout(() => {
@@ -1092,9 +1131,11 @@ class GameEngine {
 
   showEvidenceModal() {
     this.dom.evidenceList.innerHTML = '';
-    const isEn = (this.currentLang === 'en');
+    const isEn = this.currentLang === 'en';
     if (this.collectedEvidence.size === 0) {
-      const emptyMsg = isEn ? 'No evidence currently in possession.' : '現在所持している証拠品はありません。';
+      const emptyMsg = isEn
+        ? 'No evidence currently in possession.'
+        : '現在所持している証拠品はありません。';
       this.dom.evidenceList.innerHTML = `<p class="empty-notice">${emptyMsg}</p>`;
       this.dom.evidenceDetail.innerHTML = '';
     } else {
@@ -1106,9 +1147,9 @@ class GameEngine {
         item.className = 'evidence-list-item';
         item.innerHTML = `<span class="ev-icon">${ev.icon}</span> <span>${ev.title}</span>`;
         item.addEventListener('click', () => {
-          this.audio.playClickSound();
-          document.querySelectorAll('.evidence-list-item').forEach(el => el.classList.remove('selected'));
-          item.classList.add('selected');
+          document.querySelectorAll('.evidence-list-item').forEach((el) => {
+            el.classList.remove('selected');
+          });
           this.showEvidenceDetail(ev);
         });
         this.dom.evidenceList.appendChild(item);
@@ -1155,11 +1196,15 @@ class GameEngine {
         card.style.transform = 'perspective(600px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
       });
 
-      card.addEventListener('touchmove', (e) => {
-        if (e.touches && e.touches[0]) {
-          applyCardTilt(e.touches[0].clientX, e.touches[0].clientY);
-        }
-      }, { passive: true });
+      card.addEventListener(
+        'touchmove',
+        (e) => {
+          if (e.touches?.[0]) {
+            applyCardTilt(e.touches[0].clientX, e.touches[0].clientY);
+          }
+        },
+        { passive: true },
+      );
       card.addEventListener('touchend', () => {
         card.style.transform = 'perspective(600px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
       });
@@ -1184,7 +1229,7 @@ class GameEngine {
 
     // TRUE END達成時の特典表示切り替え
     if (this.dom.endingExtraActions) {
-      this.dom.endingExtraActions.style.display = (ending.type === 'TRUE') ? 'block' : 'none';
+      this.dom.endingExtraActions.style.display = ending.type === 'TRUE' ? 'block' : 'none';
     }
 
     if (this.fx) {
@@ -1215,66 +1260,73 @@ class GameEngine {
     if (!this.dom.endingsBadge) return;
     try {
       const cleared = JSON.parse(localStorage.getItem('cleared_endings') || '[]');
-      const isEn = (this.currentLang === 'en');
-      const bad = cleared.includes('BAD') ? 'cleared' : '';
-      const trueEnd = cleared.includes('TRUE') ? 'cleared' : '';
+      const isEn = this.currentLang === 'en';
+      const isBadCleared = cleared.includes('BAD');
+      const isTrueCleared = cleared.includes('TRUE');
 
-      const badStatus = cleared.includes('BAD') ? (isEn ? 'Cleared' : '達成済') : (isEn ? 'Incomplete' : '未達成');
-      const trueStatus = cleared.includes('TRUE') ? (isEn ? 'Cleared' : '達成済') : (isEn ? 'Incomplete' : '未達成');
+      const formatStatus = (clearedFlag) => {
+        if (clearedFlag) {
+          return isEn ? 'Cleared' : '達成済';
+        }
+        return isEn ? 'Incomplete' : '未達成';
+      };
+
+      const badStatus = formatStatus(isBadCleared);
+      const trueStatus = formatStatus(isTrueCleared);
+
+      const badClass = isBadCleared ? 'cleared' : '';
+      const trueClass = isTrueCleared ? 'cleared' : '';
 
       this.dom.endingsBadge.innerHTML = `
-        <span class="badge-item ${bad}">❌ BAD END: ${badStatus}</span>
-        <span class="badge-item ${trueEnd}">🌟 TRUE END: ${trueStatus}</span>
+        <span class="badge-item ${badClass}">❌ BAD END: ${badStatus}</span>
+        <span class="badge-item ${trueClass}">🌟 TRUE END: ${trueStatus}</span>
       `;
 
-      if (this.dom.reinvestigationBanner) {
-        if (cleared.includes('BAD')) {
-          this.dom.reinvestigationBanner.style.display = 'block';
-        } else {
-          this.dom.reinvestigationBanner.style.display = 'none';
-        }
-      }
-
-      // TRUE ENDクリア後のおまけ（EXTRA）解放判定
-      if (this.dom.extraLocked && this.dom.extraUnlocked) {
-        if (cleared.includes('TRUE')) {
-          this.dom.extraLocked.style.display = 'none';
-          this.dom.extraUnlocked.style.display = 'block';
-        } else {
-          this.dom.extraLocked.style.display = 'block';
-          this.dom.extraUnlocked.style.display = 'none';
-        }
-      }
+      this.updateBonusBanners(isBadCleared, isTrueCleared);
     } catch {}
   }
 
+  updateBonusBanners(isBadCleared, isTrueCleared) {
+    if (this.dom.reinvestigationBanner) {
+      this.dom.reinvestigationBanner.style.display = isBadCleared ? 'block' : 'none';
+    }
+
+    if (this.dom.extraLocked && this.dom.extraUnlocked) {
+      this.dom.extraLocked.style.display = isTrueCleared ? 'none' : 'block';
+      this.dom.extraUnlocked.style.display = isTrueCleared ? 'block' : 'none';
+    }
+  }
+
   getLogItem(entry) {
-    const scene = entry.scene || (entry.sceneId ? this.scenarioMap.get(entry.sceneId)?.scene : null);
+    const scene =
+      entry.scene || (entry.sceneId ? this.scenarioMap.get(entry.sceneId)?.scene : null);
     if (scene) {
       const spk = this.getSceneSpeaker(scene);
       const txt = this.getSceneText(scene);
-      const defaultSpeaker = (this.currentLang === 'en') ? 'Scene' : '状況';
+      const defaultSpeaker = this.currentLang === 'en' ? 'Scene' : '状況';
       return {
         speaker: spk || defaultSpeaker,
-        text: txt
+        text: txt,
       };
     }
     return {
-      speaker: entry.speaker || ((this.currentLang === 'en') ? 'Scene' : '状況'),
-      text: entry.text || ''
+      speaker: entry.speaker || (this.currentLang === 'en' ? 'Scene' : '状況'),
+      text: entry.text || '',
     };
   }
 
   showLog() {
-    this.dom.logContent.innerHTML = this.logHistory.map(entry => {
-      const item = this.getLogItem(entry);
-      return `
+    this.dom.logContent.innerHTML = this.logHistory
+      .map((entry) => {
+        const item = this.getLogItem(entry);
+        return `
         <div class="log-item">
           <div class="log-speaker">${item.speaker}</div>
           <div class="log-text">${item.text}</div>
         </div>
       `;
-    }).join('');
+      })
+      .join('');
     this.dom.logModal.classList.remove('hidden');
     this.dom.logContent.scrollTop = this.dom.logContent.scrollHeight;
   }
@@ -1288,7 +1340,7 @@ class GameEngine {
     this.currentSceneId = null;
 
     this.audio.stop();
-    this.audio.playBGM("assets/audio/bgm_title.mp3");
+    this.audio.playBGM('assets/audio/bgm_title.mp3');
 
     this.character.hide();
     this.character.setTalking(false);
@@ -1318,7 +1370,7 @@ class GameEngine {
 
     // 次回ゲーム開始時の背景表示に備えて第1シーン背景を事前準備
     this.currentBackgroundUrl = null;
-    const firstBg = (this.scenario && this.scenario[0] && this.scenario[0].background) ? this.scenario[0].background : null;
+    const firstBg = this.scenario?.[0]?.background ?? null;
     if (firstBg && this.dom.bgLayerA) {
       this.dom.bgLayerA.style.backgroundImage = `url('${firstBg}')`;
       this.dom.bgLayerA.classList.add('active');

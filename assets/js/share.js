@@ -40,7 +40,7 @@
 
     const icon = type === 'success' ? '✔' : '⚡';
     toast.innerHTML = `<span style="color: #00f3ff; font-weight: bold;">${icon}</span> <span>${message}</span>`;
-    
+
     // 表示アニメーション
     requestAnimationFrame(() => {
       toast.style.transform = 'translateY(0)';
@@ -59,7 +59,7 @@
   async function copyLink(urlToCopy, successMsg) {
     const url = urlToCopy || window.location.href;
     const msg = successMsg || 'リンクをクリップボードにコピーしました！';
-    
+
     try {
       if (navigator.clipboard && window.isSecureContext) {
         await navigator.clipboard.writeText(url);
@@ -87,7 +87,7 @@
     const url = options.url || defaultUrl;
     const text = options.text || defaultText;
     const hashtags = options.hashtags || 'PROJECT_EVE,VoiceVisualNovel';
-    
+
     const intentUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}&hashtags=${encodeURIComponent(hashtags)}`;
     window.open(intentUrl, '_blank', 'width=550,height=420,menubar=no,toolbar=no,scrollbars=yes');
   }
@@ -119,12 +119,12 @@
     showToast: showCyberToast,
     copyLink: copyLink,
     shareOnX: shareOnX,
-    smartShare: smartShare
+    smartShare: smartShare,
   };
 
   // 自動イベントハンドラ登録
   document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('[data-share-action]').forEach(btn => {
+    document.querySelectorAll('[data-share-action]').forEach((btn) => {
       btn.addEventListener('click', (e) => {
         e.preventDefault();
         const action = btn.getAttribute('data-share-action');

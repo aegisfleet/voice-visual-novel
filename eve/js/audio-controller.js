@@ -62,6 +62,18 @@ class AudioController {
   }
 
   /**
+   * 安全な乱数生成 (SonarQube S2245 準拠)
+   */
+  _getRandom() {
+    if (typeof window !== 'undefined' && window.crypto?.getRandomValues) {
+      const arr = new Uint32Array(1);
+      window.crypto.getRandomValues(arr);
+      return arr[0] / 4294967296;
+    }
+    return 0.5;
+  }
+
+  /**
    * 後方互換性用: 現在再生中のBGM Audio要素を取得
    */
   get currentBGM() {
@@ -73,7 +85,8 @@ class AudioController {
    */
   _initAudioContext() {
     if (this.audioCtx) return;
-    const AudioContextClass = typeof window !== 'undefined' && (window.AudioContext || window.webkitAudioContext);
+    const AudioContextClass =
+      typeof window !== 'undefined' && (window.AudioContext || window.webkitAudioContext);
     if (!AudioContextClass) return;
 
     try {
@@ -105,7 +118,7 @@ class AudioController {
       this.voiceAnalyserNode.connect(this.voiceGainNode);
       this.analyserDataArray = new Uint8Array(this.voiceAnalyserNode.frequencyBinCount);
     } catch (e) {
-      console.warn("[AudioController] Failed to initialize AudioContext:", e);
+      console.warn('[AudioController] Failed to initialize AudioContext:', e);
     }
   }
 
@@ -115,17 +128,17 @@ class AudioController {
   pauseAll() {
     this.stop(); // ボイス再生を即時完全停止
 
-    if (this.currentBGMTrack && this.currentBGMTrack.audio && !this.currentBGMTrack.audio.paused) {
+    if (this.currentBGMTrack?.audio && !this.currentBGMTrack.audio.paused) {
       this.wasBGMPlayingBeforeHide = true;
       try {
         this.currentBGMTrack.audio.pause();
-      } catch (e) {}
+      } catch {}
     }
 
-    if (this.audioCtx && this.audioCtx.state === 'running') {
+    if (this.audioCtx?.state === 'running') {
       try {
         this.audioCtx.suspend();
-      } catch (e) {}
+      } catch {}
     }
   }
 
@@ -135,10 +148,11 @@ class AudioController {
   resumeAll() {
     this._ensureAudioContextRunning();
 
-    if (this.wasBGMPlayingBeforeHide && this.currentBGMTrack && this.currentBGMTrack.audio && !this.isMuted) {
-      try {
-        this.currentBGMTrack.audio.play().catch(() => {});
-      } catch (e) {}
+    if (this.wasBGMPlayingBeforeHide && this.currentBGMTrack?.audio && !this.isMuted) {
+      const playPromise = this.currentBGMTrack.audio.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {});
+      }
     }
     this.wasBGMPlayingBeforeHide = false;
   }
@@ -186,10 +200,10 @@ class AudioController {
    * AudioContextが停止している場合に再開
    */
   _ensureAudioContextRunning() {
-    if (this.audioCtx && this.audioCtx.state === 'suspended') {
+    if (this.audioCtx?.state === 'suspended') {
       try {
         this.audioCtx.resume();
-      } catch (e) {}
+      } catch {}
     }
   }
 
@@ -210,11 +224,11 @@ class AudioController {
           this.voiceSourceNode = this.audioCtx.createMediaElementSource(this.voiceAudio);
           this.voiceSourceNode.connect(this.voiceAnalyserNode);
         } catch (e) {
-          console.warn("[AudioController] createMediaElementSource voice fallback:", e);
+          console.warn('[AudioController] createMediaElementSource voice fallback:', e);
         }
       }
     } catch (e) {
-      console.warn("[AudioController] Failed to init voiceAudio:", e);
+      console.warn('[AudioController] Failed to init voiceAudio:', e);
     }
   }
 
@@ -234,22 +248,21 @@ class AudioController {
         source.buffer = buffer;
         source.connect(this.audioCtx.destination);
         source.start(0);
-      } catch (e) {}
+      } catch {}
     }
 
     // LINE内ブラウザ / iOS Safari用: ボイス専用Audio要素の先行アンロック (無音再生)
     if (this.voiceAudio && !this.isVoiceAudioUnlocked) {
-      try {
-        this.voiceAudio.src = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA';
-        const p = this.voiceAudio.play();
-        if (p !== undefined) {
-          p.then(() => {
-            this.voiceAudio.pause();
-            this.voiceAudio.currentTime = 0;
-          }).catch(() => {});
-        }
-        this.isVoiceAudioUnlocked = true;
-      } catch (e) {}
+      this.voiceAudio.src =
+        'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA';
+      const p = this.voiceAudio.play();
+      if (p !== undefined) {
+        p.then(() => {
+          this.voiceAudio.pause();
+          this.voiceAudio.currentTime = 0;
+        }).catch(() => {});
+      }
+      this.isVoiceAudioUnlocked = true;
     }
 
     // Web Speech APIの無音ダミー発話でiOS/Androidの音声ロックを解除
@@ -258,7 +271,7 @@ class AudioController {
         const dummy = new SpeechSynthesisUtterance('');
         dummy.volume = 0;
         this.synth.speak(dummy);
-      } catch (e) {}
+      } catch {}
     }
 
     this.isAudioUnlocked = true;
@@ -278,7 +291,7 @@ class AudioController {
     if (typeof navigator !== 'undefined' && navigator.vibrate) {
       try {
         navigator.vibrate(pattern);
-      } catch (e) {}
+      } catch {}
     }
   }
 
@@ -299,7 +312,7 @@ class AudioController {
       const osc = this.audioCtx.createOscillator();
       const gain = this.audioCtx.createGain();
 
-      const baseFreq = 1800 + Math.random() * 400;
+      const baseFreq = 1800 + this._getRandom() * 400;
       osc.type = 'sine';
       osc.frequency.setValueAtTime(baseFreq, now);
       osc.frequency.exponentialRampToValueAtTime(baseFreq * 0.5, now + 0.025);
@@ -312,7 +325,7 @@ class AudioController {
 
       osc.start(now);
       osc.stop(now + 0.025);
-    } catch (e) {}
+    } catch {}
   }
 
   /**
@@ -340,7 +353,7 @@ class AudioController {
 
       osc.start(now);
       osc.stop(now + 0.04);
-    } catch (e) {}
+    } catch {}
   }
 
   /**
@@ -369,7 +382,7 @@ class AudioController {
 
       osc.start(now);
       osc.stop(now + 0.06);
-    } catch (e) {}
+    } catch {}
   }
 
   /**
@@ -383,7 +396,7 @@ class AudioController {
 
     try {
       const now = this.audioCtx.currentTime;
-      const notes = [587.33, 880.00, 1174.66, 1760.00]; // D5, A5, D6, A6
+      const notes = [587.33, 880.0, 1174.66, 1760.0]; // D5, A5, D6, A6
 
       notes.forEach((freq, idx) => {
         const osc = this.audioCtx.createOscillator();
@@ -402,7 +415,7 @@ class AudioController {
         osc.start(start);
         osc.stop(start + 0.3);
       });
-    } catch (e) {}
+    } catch {}
   }
 
   /**
@@ -446,7 +459,7 @@ class AudioController {
       laserGain.connect(this.sfxGainNode || this.audioCtx.destination);
       laserOsc.start(now);
       laserOsc.stop(now + 0.3);
-    } catch (e) {}
+    } catch {}
   }
 
   /**
@@ -463,7 +476,7 @@ class AudioController {
       const buffer = this.audioCtx.createBuffer(1, bufferSize, this.audioCtx.sampleRate);
       const output = buffer.getChannelData(0);
       for (let i = 0; i < bufferSize; i++) {
-        output[i] = Math.random() * 2 - 1;
+        output[i] = this._getRandom() * 2 - 1;
       }
 
       const whiteNoise = this.audioCtx.createBufferSource();
@@ -482,7 +495,7 @@ class AudioController {
       gain.connect(this.sfxGainNode || this.audioCtx.destination);
 
       whiteNoise.start();
-    } catch (e) {}
+    } catch {}
   }
 
   /* ========================================================
@@ -504,11 +517,13 @@ class AudioController {
     if (!this.voices || this.voices.length === 0) {
       this.voices = this.synth ? this.synth.getVoices() : [];
     }
-    const jaVoices = this.voices.filter(v => v.lang.startsWith('ja'));
+    const jaVoices = this.voices.filter((v) => v.lang.startsWith('ja'));
     if (jaVoices.length === 0) return null;
 
     if (gender === 'female') {
-      const female = jaVoices.find(v => /female|kyoko|otoya|nanami|ayumi|haruka|sayaka|mei/i.test(v.name));
+      const female = jaVoices.find((v) =>
+        /female|kyoko|otoya|nanami|ayumi|haruka|sayaka|mei/i.test(v.name),
+      );
       if (female) return female;
     }
     return jaVoices[0];
@@ -518,14 +533,16 @@ class AudioController {
     if (!this.voices || this.voices.length === 0) {
       this.voices = this.synth ? this.synth.getVoices() : [];
     }
-    const enVoices = this.voices.filter(v => v.lang.startsWith('en'));
+    const enVoices = this.voices.filter((v) => v.lang.startsWith('en'));
     if (enVoices.length === 0) return null;
 
     if (gender === 'female') {
-      const female = enVoices.find(v => /female|samantha|victoria|karen|zira|aria|jenny/i.test(v.name));
+      const female = enVoices.find((v) =>
+        /female|samantha|victoria|karen|zira|aria|jenny/i.test(v.name),
+      );
       if (female) return female;
     } else {
-      const male = enVoices.find(v => /male|daniel|alex|george|david|guy/i.test(v.name));
+      const male = enVoices.find((v) => /male|daniel|alex|george|david|guy/i.test(v.name));
       if (male) return male;
     }
     return enVoices[0];
@@ -550,7 +567,7 @@ class AudioController {
   async play(lineData) {
     this.stop();
 
-    if (!lineData || !lineData.text) {
+    if (!lineData?.text) {
       this.isPlaying = false;
       return;
     }
@@ -624,30 +641,32 @@ class AudioController {
       audio.src = url;
       try {
         audio.currentTime = 0;
-      } catch (e) {}
+      } catch {}
 
       const playPromise = audio.play();
       if (playPromise !== undefined) {
-        playPromise.then(() => {
-          if (this.playSessionId !== sessionId) {
-            try {
-              audio.pause();
-              audio.currentTime = 0;
-            } catch (e) {}
-            resolve();
-            return;
-          }
-          if (!hasFinished) {
-            this._startVoiceAnalysis(sessionId);
-          }
-        }).catch((err) => {
-          console.warn("[AudioController] Voice play error:", err);
-          if (this.playSessionId !== sessionId) {
-            resolve();
-            return;
-          }
-          finish();
-        });
+        playPromise
+          .then(() => {
+            if (this.playSessionId !== sessionId) {
+              try {
+                audio.pause();
+                audio.currentTime = 0;
+              } catch {}
+              resolve();
+              return;
+            }
+            if (!hasFinished) {
+              this._startVoiceAnalysis(sessionId);
+            }
+          })
+          .catch((err) => {
+            console.warn('[AudioController] Voice play error:', err);
+            if (this.playSessionId !== sessionId) {
+              resolve();
+              return;
+            }
+            finish();
+          });
       }
     });
   }
@@ -721,18 +740,21 @@ class AudioController {
         if (this.synth.paused) {
           this.synth.resume();
         }
-      } catch (e) {}
+      } catch {}
 
       const text = lineData.text || '';
       const config = lineData.speechConfig || {};
       const utter = new SpeechSynthesisUtterance(text);
 
-      const isEnglish = (lineData.lang === 'en');
+      const isEnglish = lineData.lang === 'en';
+      const defaultRate = isEnglish ? 1.0 : 1.05;
       utter.lang = isEnglish ? 'en-US' : 'ja-JP';
       utter.pitch = config.pitch !== undefined ? config.pitch : 1.0;
-      utter.rate = config.rate !== undefined ? config.rate : (isEnglish ? 1.0 : 1.05);
+      utter.rate = config.rate !== undefined ? config.rate : defaultRate;
 
-      const voice = isEnglish ? this.getEnglishVoice(config.gender || 'female') : this.getJapaneseVoice(config.gender || 'female');
+      const voice = isEnglish
+        ? this.getEnglishVoice(config.gender || 'female')
+        : this.getJapaneseVoice(config.gender || 'female');
       if (voice) utter.voice = voice;
 
       window.__activeUtterance = utter;
@@ -765,7 +787,9 @@ class AudioController {
 
       utter.onstart = () => {
         if (this.playSessionId !== sessionId) {
-          try { this.synth.cancel(); } catch (e) {}
+          try {
+            this.synth.cancel();
+          } catch {}
           return;
         }
         this.isPlaying = true;
@@ -774,8 +798,10 @@ class AudioController {
         // iOS Safari対策: 長文発話途中でSpeechSynthesisが停止するバグの防止
         clearInterval(resumeTimer);
         resumeTimer = setInterval(() => {
-          if (this.synth && this.synth.speaking && !hasFinished) {
-            try { this.synth.resume(); } catch (e) {}
+          if (this.synth?.speaking && !hasFinished) {
+            try {
+              this.synth.resume();
+            } catch {}
           } else {
             clearInterval(resumeTimer);
           }
@@ -787,7 +813,7 @@ class AudioController {
 
       try {
         this.synth.speak(utter);
-      } catch (err) {
+      } catch {
         finish();
       }
     });
@@ -806,7 +832,7 @@ class AudioController {
       try {
         audio.pause();
         audio.currentTime = 0;
-      } catch (e) {}
+      } catch {}
     }
 
     if (this.currentUtterance) {
@@ -821,7 +847,7 @@ class AudioController {
     if (this.synth) {
       try {
         this.synth.cancel();
-      } catch (e) {}
+      } catch {}
     }
   }
 
@@ -833,7 +859,7 @@ class AudioController {
    * 指定したBGMトラックをフェードアウトしてノードを切断・破棄
    */
   _fadeOutAndCleanTrack(track, durationMs = 500) {
-    if (!track || !track.audio) return;
+    if (!track?.audio) return;
     const durationSec = durationMs / 1000;
 
     if (this.audioCtx && track.gain) {
@@ -842,7 +868,7 @@ class AudioController {
         track.gain.gain.cancelScheduledValues(now);
         track.gain.gain.setValueAtTime(track.gain.gain.value, now);
         track.gain.gain.linearRampToValueAtTime(0.0001, now + durationSec);
-      } catch (e) {}
+      } catch {}
     } else {
       // Web Audio非接続時のフォールバック
       try {
@@ -850,10 +876,12 @@ class AudioController {
         const step = vol / 10;
         const timer = setInterval(() => {
           vol = Math.max(0, vol - step);
-          try { track.audio.volume = vol; } catch (e) {}
+          try {
+            track.audio.volume = vol;
+          } catch {}
           if (vol <= 0.01) clearInterval(timer);
         }, durationMs / 10);
-      } catch (e) {}
+      } catch {}
     }
 
     setTimeout(() => {
@@ -862,7 +890,7 @@ class AudioController {
         track.audio.currentTime = 0;
         if (track.source) track.source.disconnect();
         if (track.gain) track.gain.disconnect();
-      } catch (e) {}
+      } catch {}
     }, durationMs + 80);
   }
 
@@ -906,7 +934,7 @@ class AudioController {
         sourceNode.connect(trackGain);
         trackGain.connect(this.bgmGainNode);
       } catch (e) {
-        console.warn("[AudioController] createMediaElementSource fallback to HTMLMediaElement:", e);
+        console.warn('[AudioController] createMediaElementSource fallback to HTMLMediaElement:', e);
       }
     }
 
@@ -919,13 +947,13 @@ class AudioController {
       audio: newAudio,
       source: sourceNode,
       gain: trackGain,
-      url: url
+      url: url,
     };
 
     const playPromise = newAudio.play();
     if (playPromise !== undefined) {
       playPromise.catch((err) => {
-        console.warn("[AudioController] BGM autoplay blocked or pending unlock:", err);
+        console.warn('[AudioController] BGM autoplay blocked or pending unlock:', err);
         this.pendingBGMUrl = url;
       });
     }
@@ -954,7 +982,7 @@ class AudioController {
         const now = this.audioCtx.currentTime;
         this.bgmGainNode.gain.cancelScheduledValues(now);
         this.bgmGainNode.gain.setValueAtTime(this.bgmVolume, now);
-      } catch (e) {
+      } catch {
         this.bgmGainNode.gain.value = this.bgmVolume;
       }
     }
@@ -978,7 +1006,7 @@ class AudioController {
         const now = this.audioCtx.currentTime;
         this.masterGainNode.gain.cancelScheduledValues(now);
         this.masterGainNode.gain.setValueAtTime(targetGain, now);
-      } catch (e) {
+      } catch {
         this.masterGainNode.gain.value = targetGain;
       }
     }

@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#030712">
@@ -88,9 +88,9 @@
         <!-- 言語切替セレクター (JP / EN) -->
         <div class="lang-switch-container">
           <span class="lang-switch-label">LANG:</span>
-          <button id="btnLangJa" class="lang-toggle-btn active" data-lang="ja">日本語</button>
+          <button type="button" id="btnLangJa" class="lang-toggle-btn active" data-lang="ja">日本語</button>
           <span class="lang-divider">/</span>
-          <button id="btnLangEn" class="lang-toggle-btn" data-lang="en">English</button>
+          <button type="button" id="btnLangEn" class="lang-toggle-btn" data-lang="en">English</button>
         </div>
 
         <div class="cyber-badge" id="cyberBadge">
@@ -117,7 +117,7 @@
           </a>
         </div>
 
-        <button id="btnStart" class="start-btn">
+        <button type="button" id="btnStart" class="start-btn">
           <span class="btn-scanline"></span>
           <span class="btn-text">事件の捜査を開始する</span>
         </button>
@@ -142,11 +142,11 @@
 
         <!-- タイトル画面 SNSシェアツールバー -->
         <div class="title-share-bar">
-          <button class="btn-game-share" data-share-action="x" data-share-text="AIフルボイス電脳サイバー捜査ノベル『PROJECT EVE: 家族のためのハッキング』ブラウザで今すぐ無料プレイ！" data-share-hashtags="PROJECT_EVE,VoiceVisualNovel">
-            <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          <button type="button" class="btn-game-share" data-share-action="x" data-share-text="AIフルボイス電脳サイバー捜査ノベル『PROJECT EVE: 家族のためのハッキング』ブラウザで今すぐ無料プレイ！" data-share-hashtags="PROJECT_EVE,VoiceVisualNovel">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
             X でシェア
           </button>
-          <button class="btn-game-share" data-share-action="copy">
+          <button type="button" class="btn-game-share" data-share-action="copy">
             🔗 リンクをコピー
           </button>
         </div>
@@ -189,7 +189,7 @@
         <!-- 上部コントロールメニュー & RiveサイバーHUDスキャナー -->
         <div class="controls-bar">
           <div class="hud-left">
-            <button id="btnEvidence" class="ctrl-btn evidence-btn">
+            <button type="button" id="btnEvidence" class="ctrl-btn evidence-btn">
               <span class="btn-icon">📁</span>
               <span class="btn-label">証拠品</span>
               <span class="evidence-badge" id="evidenceBadgeCount">0</span>
@@ -203,11 +203,11 @@
           </div>
 
           <div class="hud-right">
-            <button id="btnLangHud" class="ctrl-btn lang-hud-btn" title="Language / 言語切替">EN</button>
-            <button id="btnSound" class="ctrl-btn sound-btn" title="サウンド切替">🔊</button>
-            <button id="btnAuto" class="ctrl-btn">AUTO</button>
-            <button id="btnLog" class="ctrl-btn">LOG</button>
-            <button id="btnTitle" class="ctrl-btn">TITLE</button>
+            <button type="button" id="btnLangHud" class="ctrl-btn lang-hud-btn" title="Language / 言語切替">EN</button>
+            <button type="button" id="btnSound" class="ctrl-btn sound-btn" title="サウンド切替">🔊</button>
+            <button type="button" id="btnAuto" class="ctrl-btn">AUTO</button>
+            <button type="button" id="btnLog" class="ctrl-btn">LOG</button>
+            <button type="button" id="btnTitle" class="ctrl-btn">TITLE</button>
           </div>
         </div>
 
@@ -236,7 +236,7 @@
     <div id="evidenceModal" class="evidence-modal hidden">
       <div class="evidence-card">
         <div class="modal-header">
-          <button id="btnBackEvidence" class="btn-back-header">◀ 戻る</button>
+          <button type="button" id="btnBackEvidence" class="btn-back-header">◀ 戻る</button>
           <span class="modal-title" id="evidenceModalTitle">📁 証拠品アーカイブ</span>
           <div style="width: 50px;"></div>
         </div>
@@ -245,7 +245,7 @@
           <div class="evidence-detail" id="evidenceDetail"></div>
         </div>
         <div class="modal-footer">
-          <button id="btnCloseEvidence" class="btn-modal-close-bottom">閉じる</button>
+          <button type="button" id="btnCloseEvidence" class="btn-modal-close-bottom">閉じる</button>
         </div>
       </div>
     </div>
@@ -270,17 +270,17 @@
         <div class="ending-share-container">
           <div class="ending-share-title">⚡ 捜査結果を報告・シェア</div>
           <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
-            <button id="btnShareEndingX" class="btn-game-share">
-              <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            <button type="button" id="btnShareEndingX" class="btn-game-share">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
               X で結果をポスト
             </button>
-            <button id="btnShareEndingCopy" class="btn-game-share">
+            <button type="button" id="btnShareEndingCopy" class="btn-game-share">
               🔗 リンクをコピー
             </button>
           </div>
         </div>
 
-        <button id="btnReturnTitle" class="btn-return-title">タイトルへ戻る</button>
+        <button type="button" id="btnReturnTitle" class="btn-return-title">タイトルへ戻る</button>
       </div>
     </div>
 
@@ -288,13 +288,13 @@
     <div id="logModal" class="log-modal hidden">
       <div class="log-card">
         <div class="modal-header">
-          <button id="btnBackLog" class="btn-back-header">◀ 戻る</button>
+          <button type="button" id="btnBackLog" class="btn-back-header">◀ 戻る</button>
           <span class="modal-title" id="logModalTitle">捜査・調書ログ (Log)</span>
           <div style="width: 50px;"></div>
         </div>
         <div id="logContent" class="log-content"></div>
         <div class="modal-footer">
-          <button id="btnCloseLog" class="btn-modal-close-bottom">閉じる</button>
+          <button type="button" id="btnCloseLog" class="btn-modal-close-bottom">閉じる</button>
         </div>
       </div>
     </div>
@@ -324,7 +324,7 @@
       
       if (btnShareEndingX) {
         btnShareEndingX.addEventListener('click', () => {
-          const endingTitle = document.getElementById('endingTitle')?.innerText || 'ENDING';
+          const endingTitle = document.getElementById('endingTitle')?.textContent || 'ENDING';
           const postText = `AIフルボイス電脳サイバーノベル『PROJECT EVE』をクリア！到達エンド: 【${endingTitle}】 #PROJECT_EVE #VoiceVisualNovel`;
           if (window.CyberShare) {
             window.CyberShare.shareOnX({ text: postText, url: window.location.href, hashtags: 'PROJECT_EVE,VoiceVisualNovel' });

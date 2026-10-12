@@ -12,8 +12,12 @@
 class WebGLCyberFX {
   constructor(canvasElement) {
     this.canvas = canvasElement;
-    this.gl = this.canvas.getContext('webgl', { alpha: true, antialias: false, premultipliedAlpha: false });
-    
+    this.gl = this.canvas.getContext('webgl', {
+      alpha: true,
+      antialias: false,
+      premultipliedAlpha: false,
+    });
+
     if (!this.gl) {
       console.warn('[WebGLCyberFX] WebGL is not supported. Fallback to CSS effects.');
       this.isSupported = false;
@@ -32,7 +36,7 @@ class WebGLCyberFX {
       glitchIntensity: 0.0,
       hologramIntensity: 0.0,
       flashIntensity: 0.0,
-      flashColor: [1.0, 1.0, 1.0]
+      flashColor: [1.0, 1.0, 1.0],
     };
 
     // シェイクパラメーター
@@ -40,7 +44,7 @@ class WebGLCyberFX {
       intensity: 0,
       decay: 0.9,
       offsetX: 0,
-      offsetY: 0
+      offsetY: 0,
     };
 
     // パーティクル配列
@@ -161,14 +165,7 @@ class WebGLCyberFX {
     gl.useProgram(this.program);
 
     // 頂点バッファ
-    const positions = new Float32Array([
-      -1, -1,
-       1, -1,
-      -1,  1,
-      -1,  1,
-       1, -1,
-       1,  1
-    ]);
+    const positions = new Float32Array([-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1]);
 
     const posBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
@@ -188,7 +185,7 @@ class WebGLCyberFX {
       glitchIntensity: gl.getUniformLocation(this.program, 'u_glitchIntensity'),
       hologramIntensity: gl.getUniformLocation(this.program, 'u_hologramIntensity'),
       flashIntensity: gl.getUniformLocation(this.program, 'u_flashIntensity'),
-      flashColor: gl.getUniformLocation(this.program, 'u_flashColor')
+      flashColor: gl.getUniformLocation(this.program, 'u_flashColor'),
     };
 
     // アルファブレンド設定
@@ -227,8 +224,12 @@ class WebGLCyberFX {
   handleResize() {
     if (!this.canvas) return;
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    const width = this.canvas.parentElement ? this.canvas.parentElement.clientWidth : window.innerWidth;
-    const height = this.canvas.parentElement ? this.canvas.parentElement.clientHeight : window.innerHeight;
+    const width = this.canvas.parentElement
+      ? this.canvas.parentElement.clientWidth
+      : window.innerWidth;
+    const height = this.canvas.parentElement
+      ? this.canvas.parentElement.clientHeight
+      : window.innerHeight;
 
     this.canvas.width = Math.floor(width * dpr);
     this.canvas.height = Math.floor(height * dpr);
@@ -251,7 +252,7 @@ class WebGLCyberFX {
         speedX: (Math.random() - 0.5) * 0.02,
         opacity: Math.random() * 0.7 + 0.3,
         pulseSpeed: Math.random() * 3 + 1,
-        color: Math.random() > 0.3 ? '#00f3ff' : '#2dd4bf'
+        color: Math.random() > 0.3 ? '#00f3ff' : '#2dd4bf',
       });
     }
   }
@@ -276,7 +277,7 @@ class WebGLCyberFX {
     const updateShake = () => {
       const elapsed = performance.now() - startTime;
       if (elapsed < durationMs) {
-        const factor = 1.0 - (elapsed / durationMs);
+        const factor = 1.0 - elapsed / durationMs;
         const curInt = this.shake.intensity * factor;
         this.shake.offsetX = (Math.random() - 0.5) * curInt * 2;
         this.shake.offsetY = (Math.random() - 0.5) * curInt * 2;

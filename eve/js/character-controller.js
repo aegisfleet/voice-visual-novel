@@ -22,11 +22,30 @@ class CharacterController {
     this.mouthTimer = null;
     // 自然な発話音素シーケンス (母音ホールド・子音・文節の息継ぎを含む有機的リズム)
     this.mouthSequence = [
-      1, 2, 3, 3, 2, 1, // 開いて母音ホールド
-      0, 1, 2, 2, 1,    // 軽やかな中間発音
-      0, 0,             // 文節の短い間・子音
-      1, 2, 3, 2, 1,    // 会話の流れ
-      2, 3, 3, 2, 1, 0  // 結び
+      1,
+      2,
+      3,
+      3,
+      2,
+      1, // 開いて母音ホールド
+      0,
+      1,
+      2,
+      2,
+      1, // 軽やかな中間発音
+      0,
+      0, // 文節の短い間・子音
+      1,
+      2,
+      3,
+      2,
+      1, // 会話の流れ
+      2,
+      3,
+      3,
+      2,
+      1,
+      0, // 結び
     ];
     this.mouthSeqIndex = 0;
 
@@ -42,11 +61,29 @@ class CharacterController {
     this.preloadAllDiffs();
   }
 
+  /**
+   * 安全な乱数生成 (SonarQube S2245 準拠)
+   */
+  _getRandom() {
+    if (typeof window !== 'undefined' && window.crypto?.getRandomValues) {
+      const arr = new Uint32Array(1);
+      window.crypto.getRandomValues(arr);
+      return arr[0] / 4294967296;
+    }
+    return 0.5;
+  }
+
   preloadAllDiffs() {
     const chars = ['eve', 'iris', 'sakuma', 'shinohara'];
-    const diffNames = ['eyes_closed.png', 'eyes_half.png', 'mouth_open.png', 'mouth_half.png', 'mouth_small.png'];
-    chars.forEach(charId => {
-      diffNames.forEach(diff => {
+    const diffNames = [
+      'eyes_closed.png',
+      'eyes_half.png',
+      'mouth_open.png',
+      'mouth_half.png',
+      'mouth_small.png',
+    ];
+    chars.forEach((charId) => {
+      diffNames.forEach((diff) => {
         const img = new Image();
         img.src = `assets/characters/diffs/${charId}/${diff}`;
       });
@@ -89,11 +126,11 @@ class CharacterController {
       eve: 'assets/characters/eve.png',
       iris: 'assets/characters/iris.png',
       sakuma: 'assets/characters/sakuma.png',
-      shinohara: 'assets/characters/shinohara.png'
+      shinohara: 'assets/characters/shinohara.png',
     };
 
     if (hiresImages[charId]) {
-      const isEve = (charId === 'eve');
+      const isEve = charId === 'eve';
       const blendModeClass = isEve ? 'char-img-holo' : 'char-img-solid';
       contentHtml = `
         <div class="char-sprite-container ${blendModeClass}">
@@ -131,7 +168,7 @@ class CharacterController {
       contentHtml = svgContent;
     }
 
-    const holoClass = (charId === 'eve') ? 'holo-character' : '';
+    const holoClass = charId === 'eve' ? 'holo-character' : '';
     this.container.innerHTML = `
       <div class="live2d-character-wrapper char-${charId} ${holoClass}" id="live2dWrapper">
         <div class="character-aura" id="charAura"></div>
@@ -691,56 +728,44 @@ class CharacterController {
 
     const wrapper = this.container.querySelector('#live2dWrapper');
     if (wrapper) {
-      wrapper.classList.remove('expr-normal', 'expr-smile', 'expr-shocked', 'expr-angry', 'expr-sad', 'expr-serious');
+      wrapper.classList.remove(
+        'expr-normal',
+        'expr-smile',
+        'expr-shocked',
+        'expr-angry',
+        'expr-sad',
+        'expr-serious',
+      );
       wrapper.classList.add(`expr-${expression}`);
     }
 
-    const eyesNormal = this.container.querySelector('#eyesNormal');
-    const eyesSmile = this.container.querySelector('#eyesSmile');
-    const eyesShocked = this.container.querySelector('#eyesShocked');
-    const sweatDrop = this.container.querySelector('#sweatDrop');
-    const blush = this.container.querySelector('#partBlush');
+    this._applySpecificExpression(expression);
+  }
 
-    // 画像立ち絵レイヤー
-    const layerEyesClosed = this.container.querySelector('#layerEyesClosed');
-    const layerEyesHalf = this.container.querySelector('#layerEyesHalf');
-
-    switch (expression) {
-      case 'smile':
-        if (layerEyesClosed) layerEyesClosed.classList.add('active');
-        if (layerEyesHalf) layerEyesHalf.classList.remove('active');
-        if (eyesNormal && eyesSmile) {
-          eyesNormal.style.display = 'none';
-          eyesSmile.style.display = 'block';
-        }
-        if (blush) blush.style.opacity = '0.7';
-        break;
-
-      case 'shocked':
-      case 'surprised':
-        if (layerEyesClosed) layerEyesClosed.classList.remove('active');
-        if (layerEyesHalf) layerEyesHalf.classList.remove('active');
-        if (eyesNormal && eyesShocked) {
-          eyesNormal.style.display = 'none';
-          eyesShocked.style.display = 'block';
-        }
-        if (sweatDrop) sweatDrop.style.display = 'block';
-        break;
-
-      case 'worried':
-      case 'sad':
-        if (layerEyesClosed) layerEyesClosed.classList.remove('active');
-        if (layerEyesHalf) layerEyesHalf.classList.remove('active');
-        if (sweatDrop) sweatDrop.style.display = 'block';
-        break;
-
-      case 'angry':
-      case 'serious':
-      case 'normal':
-      default:
-        if (layerEyesClosed) layerEyesClosed.classList.remove('active');
-        if (layerEyesHalf) layerEyesHalf.classList.remove('active');
-        break;
+  _applySpecificExpression(expression) {
+    if (expression === 'smile') {
+      const layerEyesClosed = this.container.querySelector('#layerEyesClosed');
+      if (layerEyesClosed) layerEyesClosed.classList.add('active');
+      const eyesNormal = this.container.querySelector('#eyesNormal');
+      const eyesSmile = this.container.querySelector('#eyesSmile');
+      if (eyesNormal && eyesSmile) {
+        eyesNormal.style.display = 'none';
+        eyesSmile.style.display = 'block';
+      }
+      const blush = this.container.querySelector('#partBlush');
+      if (blush) blush.style.opacity = '0.7';
+    } else if (expression === 'shocked' || expression === 'surprised') {
+      const eyesNormal = this.container.querySelector('#eyesNormal');
+      const eyesShocked = this.container.querySelector('#eyesShocked');
+      if (eyesNormal && eyesShocked) {
+        eyesNormal.style.display = 'none';
+        eyesShocked.style.display = 'block';
+      }
+      const sweatDrop = this.container.querySelector('#sweatDrop');
+      if (sweatDrop) sweatDrop.style.display = 'block';
+    } else if (expression === 'worried' || expression === 'sad') {
+      const sweatDrop = this.container.querySelector('#sweatDrop');
+      if (sweatDrop) sweatDrop.style.display = 'block';
     }
   }
 
@@ -773,24 +798,11 @@ class CharacterController {
 
     const wrapper = this.container.querySelector('#live2dWrapper');
     if (wrapper) {
-      if (isTalking) wrapper.classList.add('is-talking');
-      else wrapper.classList.remove('is-talking');
+      wrapper.classList.toggle('is-talking', Boolean(isTalking));
     }
 
     if (!isTalking) {
-      this.isAudioDriven = false;
-      this.audioSmoothVolume = 0.0;
-      this.resetMouthLayers();
-
-      // 発話終了時: セリフを言い切った直後（160ms後）に自然な息抜きとして1回瞬き
-      const now = performance.now();
-      if (now - this.lastBlinkTime > 1200) {
-        setTimeout(() => {
-          if (!this.isTalking) {
-            this.triggerSingleBlink();
-          }
-        }, 160);
-      }
+      this._handleStopTalking();
       return;
     }
 
@@ -805,6 +817,22 @@ class CharacterController {
         this._startFallbackMouthTimer();
       }
     }, 250);
+  }
+
+  _handleStopTalking() {
+    this.isAudioDriven = false;
+    this.audioSmoothVolume = 0.0;
+    this.resetMouthLayers();
+
+    // 発話終了時: セリフを言い切った直後（160ms後）に自然な息抜きとして1回瞬き
+    const now = performance.now();
+    if (now - this.lastBlinkTime > 1200) {
+      setTimeout(() => {
+        if (!this.isTalking) {
+          this.triggerSingleBlink();
+        }
+      }, 160);
+    }
   }
 
   /**
@@ -822,7 +850,7 @@ class CharacterController {
     if (volume > this.audioSmoothVolume) {
       this.audioSmoothVolume = volume;
     } else {
-      this.audioSmoothVolume = this.audioSmoothVolume * 0.80;
+      this.audioSmoothVolume = this.audioSmoothVolume * 0.8;
     }
 
     // 音量に応じた多段階口パク切り替え + ゆったりとした音節フラップ変調
@@ -862,8 +890,11 @@ class CharacterController {
       this.hasBlinkedInCurrentPause = false;
     } else {
       // 無音区間が 220ms 以上継続した場合（息継ぎ・読点ポーズ）
-      const now = performance.now();
-      if (silenceDuration >= 220 && !this.hasBlinkedInCurrentPause && (now - this.lastBlinkTime > 1800)) {
+      if (
+        silenceDuration >= 220 &&
+        !this.hasBlinkedInCurrentPause &&
+        now - this.lastBlinkTime > 1800
+      ) {
         this.hasBlinkedInCurrentPause = true;
         this.triggerSingleBlink();
       }
@@ -891,11 +922,11 @@ class CharacterController {
 
       let duration = 175;
       if (stage === 3 || stage === 2) {
-        duration = 190 + Math.floor(Math.random() * 45);
+        duration = 190 + Math.floor(this._getRandom() * 45);
       } else if (stage === 1) {
-        duration = 160 + Math.floor(Math.random() * 35);
+        duration = 160 + Math.floor(this._getRandom() * 35);
       } else {
-        duration = 150 + Math.floor(Math.random() * 30);
+        duration = 150 + Math.floor(this._getRandom() * 30);
       }
       this.mouthTimer = setTimeout(stepMouth, duration);
     };
@@ -934,8 +965,14 @@ class CharacterController {
     const wrapper = this.container.querySelector('#live2dWrapper');
     if (!motion || !wrapper) return;
 
-    wrapper.classList.remove('motion-nod', 'motion-shake', 'motion-hop', 'motion-tilt', 'motion-desk-slam');
-    void wrapper.offsetWidth;
+    wrapper.classList.remove(
+      'motion-nod',
+      'motion-shake',
+      'motion-hop',
+      'motion-tilt',
+      'motion-desk-slam',
+    );
+    wrapper.getBoundingClientRect();
     wrapper.classList.add(`motion-${motion}`);
 
     setTimeout(() => {
@@ -986,7 +1023,7 @@ class CharacterController {
       eyesSmile.style.display = 'block';
 
       setTimeout(() => {
-        if (this.currentExpression === 'normal' && eyesNormal && eyesSmile) {
+        if (this.currentExpression === 'normal') {
           eyesNormal.style.display = 'block';
           eyesSmile.style.display = 'none';
         }
@@ -1016,12 +1053,12 @@ class CharacterController {
 
       this.triggerSingleBlink(() => {
         // 非発話時の待機まばたき: 穏やかな 3.2秒 〜 5.6秒
-        const nextTime = 3200 + Math.random() * 2400;
+        const nextTime = 3200 + this._getRandom() * 2400;
         this.blinkTimer = setTimeout(scheduleNext, nextTime);
       });
     };
 
-    const initialTime = 2500 + Math.random() * 2000;
+    const initialTime = 2500 + this._getRandom() * 2000;
     this.blinkTimer = setTimeout(scheduleNext, initialTime);
   }
 
@@ -1035,21 +1072,29 @@ class CharacterController {
     });
 
     // 2. スマホ タッチトラッキング
-    window.addEventListener('touchmove', (e) => {
-      if (e.touches && e.touches[0]) {
-        this.applyTilt((e.touches[0].clientX - window.innerWidth / 2) / (window.innerWidth / 2));
-      }
-    }, { passive: true });
+    window.addEventListener(
+      'touchmove',
+      (e) => {
+        if (e.touches?.[0]) {
+          this.applyTilt((e.touches[0].clientX - window.innerWidth / 2) / (window.innerWidth / 2));
+        }
+      },
+      { passive: true },
+    );
 
     // 3. スマホ ジャイロセンサー対応 (DeviceOrientation)
     if (window.DeviceOrientationEvent) {
-      window.addEventListener('deviceorientation', (e) => {
-        if (e.gamma !== null) {
-          // gammaは左右の傾き (-90 〜 90)
-          const tilt = Math.max(-1, Math.min(1, e.gamma / 30));
-          this.applyTilt(tilt);
-        }
-      }, { passive: true });
+      window.addEventListener(
+        'deviceorientation',
+        (e) => {
+          if (e.gamma !== null) {
+            // gammaは左右の傾き (-90 〜 90)
+            const tilt = Math.max(-1, Math.min(1, e.gamma / 30));
+            this.applyTilt(tilt);
+          }
+        },
+        { passive: true },
+      );
     }
   }
 

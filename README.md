@@ -235,4 +235,21 @@ python tests/test_audio_lifecycle.py
 * 🧠 **[シナリオ整合性フレームワーク](docs/scenario-consistency-framework.md)**:  
   事件のなぜなぜ分析・法的根拠・時系列の完全論理構築ガイド。
 
+---
+
+## 🛠️ コード品質管理・フォーマッタ (Biome)
+
+本プロジェクトでは、高速かつモダンなツールチェーンとして **Biome** を採用し、静的コード解析（Linting）およびコードフォーマット（Formatting）を実施しています。また、SonarQube（SonarLint）の厳格な品質基準にも適合しています。
+
+```bash
+# 静的解析・リンターの実行 (0 errors, 0 warnings)
+npm run lint
+
+# コードの自動フォーマット適用
+npm run format
+
+# 静的解析およびフォーマット状態の総合チェック
+npm run check
+```
+
 

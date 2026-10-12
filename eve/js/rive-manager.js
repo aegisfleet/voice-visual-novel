@@ -21,7 +21,7 @@ class RiveManager {
       pulse: 0,
       activeScanner: true,
       analysisProgress: 0.75,
-      alertLevel: 'normal' // 'normal', 'warning', 'critical'
+      alertLevel: 'normal', // 'normal', 'warning', 'critical'
     };
 
     this.handleResize();
@@ -60,7 +60,7 @@ class RiveManager {
         this.riveInstance.cleanup();
       }
 
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve) => {
         this.riveInstance = new rive.Rive({
           src: srcUrl,
           canvas: this.canvas,
@@ -72,7 +72,7 @@ class RiveManager {
             // ステートマシン入力のキャッシュ
             const inputs = this.riveInstance.stateMachineInputs(stateMachineName);
             if (inputs) {
-              inputs.forEach(input => {
+              inputs.forEach((input) => {
                 this.stateMachineInputs.set(input.name, input);
               });
             }
@@ -83,7 +83,7 @@ class RiveManager {
             console.warn('[RiveManager] Rive load failed, fallback to Procedural HUD:', err);
             this.isRiveLoaded = false;
             resolve(false);
-          }
+          },
         });
       });
     } catch (e) {
@@ -135,9 +135,11 @@ class RiveManager {
       this.hudParams.angle += 0.025;
       this.hudParams.pulse += 0.05;
 
-      const mainColor = this.hudParams.alertLevel === 'critical' ? '#ff0055' 
-                      : this.hudParams.alertLevel === 'warning' ? '#f59e0b' 
-                      : '#00f3ff';
+      const alertColors = {
+        critical: '#ff0055',
+        warning: '#f59e0b',
+      };
+      const mainColor = alertColors[this.hudParams.alertLevel] || '#00f3ff';
 
       // 外周リング
       ctx.save();
@@ -181,8 +183,10 @@ class RiveManager {
       ctx.lineWidth = 1;
       ctx.globalAlpha = 0.5;
       ctx.beginPath();
-      ctx.moveTo(-r * 0.45, 0); ctx.lineTo(r * 0.45, 0);
-      ctx.moveTo(0, -r * 0.45); ctx.lineTo(0, r * 0.45);
+      ctx.moveTo(-r * 0.45, 0);
+      ctx.lineTo(r * 0.45, 0);
+      ctx.moveTo(0, -r * 0.45);
+      ctx.lineTo(0, r * 0.45);
       ctx.stroke();
 
       ctx.restore();
