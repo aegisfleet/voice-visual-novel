@@ -47,6 +47,7 @@ class AudioController {
     this.bgmVolume = 0.15;
     this.isMuted = false;
     this.pendingBGMUrl = null;
+    this.wasBGMPlayingBeforeHide = false;
 
     // 音声ファイルの自動検知・再生を有効化
     this.hasAudioFilesInstalled = true;
@@ -109,19 +110,65 @@ class AudioController {
   }
 
   /**
-   * モバイルライフサイクルイベントの監視
+   * 画面非表示・ブラウザ終了（LINE内ブラウザ「×」含む）時の全音声即時停止
+   */
+  pauseAll() {
+    this.stop(); // ボイス再生を即時完全停止
+
+    if (this.currentBGMTrack && this.currentBGMTrack.audio && !this.currentBGMTrack.audio.paused) {
+      this.wasBGMPlayingBeforeHide = true;
+      try {
+        this.currentBGMTrack.audio.pause();
+      } catch (e) {}
+    }
+
+    if (this.audioCtx && this.audioCtx.state === 'running') {
+      try {
+        this.audioCtx.suspend();
+      } catch (e) {}
+    }
+  }
+
+  /**
+   * 画面復帰時の音声再開
+   */
+  resumeAll() {
+    this._ensureAudioContextRunning();
+
+    if (this.wasBGMPlayingBeforeHide && this.currentBGMTrack && this.currentBGMTrack.audio && !this.isMuted) {
+      try {
+        this.currentBGMTrack.audio.play().catch(() => {});
+      } catch (e) {}
+    }
+    this.wasBGMPlayingBeforeHide = false;
+  }
+
+  /**
+   * モバイルライフサイクルイベントの監視 (LINE内ブラウザ等でのバックグラウンド音声漏れ完全防止)
    */
   _setupLifecycleListeners() {
     if (typeof window === 'undefined') return;
 
-    // 1. タブ復帰・画面ロック解除時にAudioContextがsuspendedになる問題の自動復帰
+    const handleHide = () => {
+      this.pauseAll();
+    };
+
+    const handleShow = () => {
+      this.resumeAll();
+    };
+
     if (typeof document !== 'undefined') {
       document.addEventListener('visibilitychange', () => {
-        if (document.visibilityState === 'visible') {
-          this._ensureAudioContextRunning();
+        if (document.visibilityState === 'hidden') {
+          handleHide();
+        } else if (document.visibilityState === 'visible') {
+          handleShow();
         }
       });
     }
+
+    window.addEventListener('pagehide', handleHide);
+    window.addEventListener('beforeunload', handleHide);
 
     // 2. 画面の初回タッチ/クリック時に早期アンロック
     const earlyUnlock = () => {

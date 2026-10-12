@@ -185,6 +185,23 @@ python -m http.server 8080
 
 ---
 
+## 🧪 自動E2Eテスト（デグレ防止テストスイート）
+
+LINE内蔵ブラウザやiOS Safari/WebKit環境における自動再生制限（Autoplay Policy）、セリフ遷移時の連続再生、バックグラウンド移行（タブ非表示・ブラウザ終了・トーク画面復帰）時の音声漏れ防止が正常に動作することをワンコマンドで自動検証できます。
+
+```bash
+# ローカルHTTPサーバー自動起動〜Playwright検証〜クリーンアップまで完結
+python tests/test_audio_lifecycle.py
+```
+
+* **検証内容**:
+  1. 小説の連続朗読再生とセリフ間遷移（単一Audio要素の再利用）
+  2. Autoplay制限時の連鎖スキップ防止（安全停止ガード）
+  3. ゲーム本編のAUTOシナリオ進行とボイス継続再生
+  4. ブラウザ非表示・終了（`visibilitychange: hidden` / `pagehide`）時のAUTO・ボイス・BGM即時強制停止
+
+---
+
 ## 📚 開発・技術ドキュメント一覧
 
 * 📖 **[OGP画像・サイトアセット生成＆改変ガイド](docs/ogp-image-guide.md)**:  

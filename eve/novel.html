@@ -1682,6 +1682,21 @@
       }, 1500);
     }
 
+    // モバイル/LINE内蔵ブラウザ閉じる・非表示時の朗読即時停止
+    const handleNovelHide = () => {
+      stopPlayAll();
+    };
+
+    if (typeof document !== 'undefined') {
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'hidden') {
+          handleNovelHide();
+        }
+      });
+    }
+    window.addEventListener('pagehide', handleNovelHide);
+    window.addEventListener('beforeunload', handleNovelHide);
+
     // 縦書き切り替え (日本語時のみ)
     const btnWritingMode = document.getElementById('btnWritingMode');
     btnWritingMode.addEventListener('click', () => {

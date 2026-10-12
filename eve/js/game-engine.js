@@ -472,6 +472,47 @@ class GameEngine {
         }
       }
     });
+
+    // モバイル/LINE内蔵ブラウザ閉じる・非表示時のAUTO即時停止
+    const handleHide = () => {
+      this.pauseAutoMode();
+    };
+
+    if (typeof document !== 'undefined') {
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'hidden') {
+          handleHide();
+        }
+      });
+    }
+    window.addEventListener('pagehide', handleHide);
+    window.addEventListener('beforeunload', handleHide);
+  }
+
+  /**
+   * 画面非表示・ブラウザ終了時のAUTOモードおよび全音声の即時完全停止
+   */
+  pauseAutoMode() {
+    clearTimeout(this.autoTimer);
+    this.autoTimer = null;
+
+    if (this.isAutoMode) {
+      this.isAutoMode = false;
+      if (this.dom.btnAuto) {
+        this.dom.btnAuto.classList.remove('active');
+      }
+    }
+
+    if (this.isTextTyping) {
+      this.completeTyping();
+    }
+
+    if (this.audio) {
+      this.audio.stop();
+      if (typeof this.audio.pauseAll === 'function') {
+        this.audio.pauseAll();
+      }
+    }
   }
 
   setupAudioSync() {
