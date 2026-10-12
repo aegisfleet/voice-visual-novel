@@ -123,7 +123,7 @@ def render_portal_ogp():
     startX = 65
 
     # 1. 上部HUDバッジ
-    badge_label = "OFFICIAL PORTAL // CYBER FORENSICS"
+    badge_label = "OFFICIAL PORTAL // VOICE VISUAL NOVELS"
     temp_draw = ImageDraw.Draw(base)
     badge_w = int(temp_draw.textlength(badge_label, font=font_chakra_badge)) + 40
     badge_h = 32
@@ -147,7 +147,7 @@ def render_portal_ogp():
         draw.line([(startX + lx, 232), (startX + lx, 234)], fill=c)
 
     # 3. 日本語サブタイトル
-    draw.text((startX, 248), "AIフルボイス・電脳捜査ノベル アーカイブ", font=font_jp_title, fill=(241, 245, 249, 255))
+    draw.text((startX, 248), "AIフルボイス・Webビジュアルノベル アーカイブ", font=font_jp_title, fill=(241, 245, 249, 255))
 
     # 4. 特徴リスト (アイコンは幾何学サイバーシェイプ)
     features = [
