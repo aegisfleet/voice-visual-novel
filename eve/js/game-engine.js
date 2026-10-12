@@ -77,7 +77,10 @@ class GameEngine {
       endingsBadge: document.getElementById('endingsBadge'),
       reinvestigationBanner: document.getElementById('reinvestigationBanner'),
       gameScreen: document.getElementById('gameScreen'),
-      bgLayer: document.getElementById('bgLayer'),
+      bgContainer: document.getElementById('bgContainer'),
+      bgLayerA: document.getElementById('bgLayerA'),
+      bgLayerB: document.getElementById('bgLayerB'),
+      bgLayer: document.getElementById('bgLayerA') || document.getElementById('bgLayer'),
       speakerName: document.getElementById('speakerName'),
       speakerBox: document.getElementById('speakerBox'),
       messageText: document.getElementById('messageText'),
@@ -137,6 +140,105 @@ class GameEngine {
     this.setupAudioSync();
     if (this.dom.btnAuto) {
       this.dom.btnAuto.classList.toggle('active', this.isAutoMode);
+    }
+
+    // 背景レイヤー状態管理 (デュアルバッファ ＆ チラつき防止)
+    this.activeBgLayer = 'A';
+    this.currentBackgroundUrl = null;
+    this.preloadBackgrounds();
+  }
+
+  /* ========================================================
+     背景管理 ＆ デュアルバッファ・クロスフェード
+     ======================================================== */
+  preloadBackgrounds() {
+    const bgList = new Set();
+    if (this.scenario) {
+      this.scenario.forEach(s => {
+        if (s.background) bgList.add(s.background);
+      });
+    }
+    bgList.add('assets/backgrounds/title_bg.jpg');
+
+    // 最初のシーンの背景画像
+    const firstBg = (this.scenario && this.scenario[0] && this.scenario[0].background) 
+      ? this.scenario[0].background 
+      : null;
+
+    bgList.forEach(url => {
+      const img = new Image();
+      img.src = url;
+      if (typeof img.decode === 'function') {
+        img.decode().then(() => {
+          if (url === firstBg && this.dom.bgLayerA && !this.dom.bgLayerA.style.backgroundImage) {
+            this.dom.bgLayerA.style.backgroundImage = `url('${url}')`;
+            this.currentBackgroundUrl = url;
+          }
+        }).catch(() => {
+          if (url === firstBg && this.dom.bgLayerA && !this.dom.bgLayerA.style.backgroundImage) {
+            this.dom.bgLayerA.style.backgroundImage = `url('${url}')`;
+            this.currentBackgroundUrl = url;
+          }
+        });
+      } else {
+        img.onload = () => {
+          if (url === firstBg && this.dom.bgLayerA && !this.dom.bgLayerA.style.backgroundImage) {
+            this.dom.bgLayerA.style.backgroundImage = `url('${url}')`;
+            this.currentBackgroundUrl = url;
+          }
+        };
+      }
+    });
+
+    // decode非対応環境や同期フォールバック
+    if (firstBg && this.dom.bgLayerA && !this.dom.bgLayerA.style.backgroundImage) {
+      this.dom.bgLayerA.style.backgroundImage = `url('${firstBg}')`;
+      this.currentBackgroundUrl = firstBg;
+    }
+  }
+
+  changeBackground(newUrl) {
+    if (!newUrl) return;
+    // 同一背景画像ならDOM更新をスキップ（無駄な再描画とWebKitのチラつきを防止）
+    if (this.currentBackgroundUrl === newUrl) return;
+
+    this.currentBackgroundUrl = newUrl;
+
+    const activeEl = (this.activeBgLayer === 'A') ? this.dom.bgLayerA : this.dom.bgLayerB;
+    const inactiveEl = (this.activeBgLayer === 'A') ? this.dom.bgLayerB : this.dom.bgLayerA;
+
+    if (!activeEl || !inactiveEl) {
+      if (this.dom.bgLayer) this.dom.bgLayer.style.backgroundImage = `url('${newUrl}')`;
+      return;
+    }
+
+    // 初回（まだアクティブレイヤーに背景が何もない場合）
+    if (!activeEl.style.backgroundImage) {
+      activeEl.style.backgroundImage = `url('${newUrl}')`;
+      activeEl.classList.add('active');
+      return;
+    }
+
+    // 非アクティブ側のレイヤーに新しい背景画像をセット
+    inactiveEl.style.backgroundImage = `url('${newUrl}')`;
+
+    const applyCrossFade = () => {
+      // 非アクティブ側をフェードイン、現在のアクティブ側をフェードアウト
+      inactiveEl.classList.add('active');
+      activeEl.classList.remove('active');
+      this.activeBgLayer = (this.activeBgLayer === 'A') ? 'B' : 'A';
+    };
+
+    // 画像がGPUテクスチャにデコードされた後にクロスフェードを実行
+    const img = new Image();
+    img.src = newUrl;
+    if (typeof img.decode === 'function') {
+      img.decode().then(applyCrossFade).catch(applyCrossFade);
+    } else if (img.complete) {
+      applyCrossFade();
+    } else {
+      img.onload = applyCrossFade;
+      img.onerror = applyCrossFade;
     }
   }
 
@@ -683,9 +785,9 @@ class GameEngine {
       this.audio.stopBGM();
     }
 
-    // 背景切り替え
+    // 背景切り替え (デュアルバッファ・クロスフェード)
     if (scene.background) {
-      this.dom.bgLayer.style.backgroundImage = `url('${scene.background}')`;
+      this.changeBackground(scene.background);
     }
 
     // キャラクター切り替え & モーション連動
@@ -1212,6 +1314,20 @@ class GameEngine {
     this.dom.titleScreen.classList.remove('hidden');
     this.checkReinvestigationStatus();
     this.updateEndingsBadge();
+
+    // 次回ゲーム開始時の背景表示に備えて第1シーン背景を事前準備
+    this.currentBackgroundUrl = null;
+    const firstBg = (this.scenario && this.scenario[0] && this.scenario[0].background) ? this.scenario[0].background : null;
+    if (firstBg && this.dom.bgLayerA) {
+      this.dom.bgLayerA.style.backgroundImage = `url('${firstBg}')`;
+      this.dom.bgLayerA.classList.add('active');
+      if (this.dom.bgLayerB) {
+        this.dom.bgLayerB.classList.remove('active');
+        this.dom.bgLayerB.style.backgroundImage = '';
+      }
+      this.activeBgLayer = 'A';
+      this.currentBackgroundUrl = firstBg;
+    }
   }
 }
 
