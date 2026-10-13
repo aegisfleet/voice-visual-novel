@@ -20,6 +20,22 @@ Web標準技術（HTML5 / CSS3 / JavaScript / Web Audio API）のみで構築さ
 
 ---
 
+### 第2作『ひだまりベンチ占拠事件 〜消えたクッションとボス猫の秘密〜』
+公園特等席のふかふか座布団が消えた！ 白ポメラニアンのポメが現場検証と証拠収集を行い、ボス猫トラ吉率いる猫集会で論戦に挑むほのぼの本格推理ノベル。
+
+* 🐾 **今すぐプレイ**: **[https://aegisfleet.github.io/voice-visual-novel/pome/](https://aegisfleet.github.io/voice-visual-novel/pome/)**
+* 📄 **作品詳細・設定・システム**: **[pome/README.md](pome/README.md)**
+
+---
+
+### 第3作『BOX WORM 〜55ドルの自己増殖知性〜』(プロトタイプ)
+米Anthropicの2026年10月研究報告（55ドルのTVボックス15台で稼働する自己複製AI）をテーマにした電脳推理ノベル。アリエクで買った安物TVボックスが異常発熱し、秒速0.39トークンの微弱パケットを放つ。警察の強制遮断が迫る中、自室とアパートを調べて自己増殖AIの真相を立証せよ！
+
+* 📺 **今すぐプレイ**: **[https://aegisfleet.github.io/voice-visual-novel/box/](https://aegisfleet.github.io/voice-visual-novel/box/)**
+* 📄 **作品詳細・シナリオ整合性**: **[box/README.md](box/README.md)**
+
+---
+
 ## 🚀 起動方法
 
 ローカル環境でポータルおよび各作品をプレイするには、ローカル静的サーバーを起動します。

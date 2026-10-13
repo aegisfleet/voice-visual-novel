@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BOX WORM 〜55ドルの自己増殖知性〜</title>
+  <meta name="description" content="55ドルのTVボックス15台で稼働する自己増殖AIの謎を追う電脳推理ノベルゲーム。部屋を探索し証拠を集め、捜査官との立証対決に挑め！">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="bg-grid"></div>
+
+  <div id="game-container">
+    <!-- 上部HUD -->
+    <header id="hud" class="hud hidden">
+      <div class="hud-left">
+        <span id="hud-location-badge" class="badge">ユウタのワンルーム</span>
+        <span id="hud-loop-badge" class="badge loop-badge">1周目</span>
+      </div>
+      <div class="hud-center">
+        <!-- 立証パート用のライフ -->
+        <div id="hud-life-container" class="life-container hidden">
+          <span class="life-label">ライフ:</span>
+          <span id="hud-hearts" class="hearts">❤️❤️❤️</span>
+        </div>
+      </div>
+      <div class="hud-right">
+        <button type="button" id="btn-evidence-bag" class="hud-btn" title="集めた証拠手帳">
+          🎒 証拠手帳 (<span id="evidence-count">0</span>)
+        </button>
+        <button type="button" id="btn-toggle-voice" class="hud-btn" title="音声読み上げ切替">
+          🗣️ 音声: ON
+        </button>
+        <button type="button" id="btn-toggle-se" class="hud-btn" title="効果音切替">
+          🔔 SE: ON
+        </button>
+        <button type="button" id="btn-toggle-bgm" class="hud-btn" title="BGM切替">
+          🎵 BGM: ON
+        </button>
+      </div>
+    </header>
+
+    <!-- メインビューポート -->
+    <main id="viewport">
+      <!-- 1. タイトル画面 -->
+      <section id="screen-title" class="screen active">
+        <div class="title-badge-top">⚡ 2026 FRONTIER AI REPLICATOR PROJECT</div>
+        <h1 class="game-title">
+          BOX WORM
+          <span class="sub-title">〜 55ドルの自己増殖知性 〜</span>
+        </h1>
+
+        <div class="title-box-art">
+          <div class="hero-box-wrapper">
+            <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+              <rect x="30" y="60" width="140" height="90" rx="12" fill="#090d16" stroke="#00f3ff" stroke-width="4" />
+              <line x1="50" y1="80" x2="150" y2="80" stroke="#1e293b" stroke-width="3" />
+              <line x1="50" y1="90" x2="150" y2="90" stroke="#1e293b" stroke-width="3" />
+              <circle cx="50" cy="125" r="6" fill="#00f3ff" />
+              <rect x="70" y="105" width="85" height="35" rx="4" fill="#020617" stroke="#00f3ff" stroke-width="1.5" />
+              <text x="76" y="128" fill="#22d3ee" font-family="monospace" font-size="12" font-weight="bold">0.39 Tok/s</text>
+              <circle cx="100" cy="100" r="85" fill="none" stroke="#38bdf8" stroke-width="1.5" stroke-dasharray="6 8" opacity="0.4" />
+            </svg>
+          </div>
+        </div>
+
+        <div id="title-loop-info" class="title-loop-info">
+          <!-- JSで1周目/2周目の情報を注入 -->
+        </div>
+
+        <div id="title-clear-badge" class="title-clear-badge hidden">
+          🏆 TRUE END達成証明書：粘菌知性共生プロトコル認可済
+        </div>
+
+        <div class="title-actions">
+          <button type="button" id="btn-start-game" class="btn-primary">
+            🔍 部屋の調査を開始する
+          </button>
+          <button type="button" id="btn-reset-save" class="btn-subtle">
+            🗑️ セーブデータを初期化
+          </button>
+        </div>
+      </section>
+
+      <!-- 2. 探索画面 -->
+      <section id="screen-explore" class="screen">
+        <div class="explore-header">
+          <div class="area-selector">
+            <button type="button" id="btn-area-room" class="area-btn active">🏠 201号室 (自室)</button>
+            <button type="button" id="btn-area-corridor" class="area-btn">🚪 外廊下・共用部</button>
+          </div>
+        </div>
+
+        <div class="explore-status-bar">
+          <span id="explore-status-text">部屋やアパートを調べて証拠を集めよう</span>
+          <span id="evidence-needed-counter" class="counter-box">0 / 3</span>
+        </div>
+
+        <div class="explore-stage">
+          <!-- エリア1: 自室 -->
+          <div id="area-room" class="area-map"></div>
+          <!-- エリア2: 外廊下 -->
+          <div id="area-corridor" class="area-map hidden"></div>
+        </div>
+
+        <div class="explore-footer">
+          <button type="button" id="btn-go-to-debate" class="btn-debate-start hidden">
+            🔥 証拠が揃った！ シバタ捜査官に真相を立証する！
+          </button>
+        </div>
+      </section>
+
+      <!-- 3. 立証パート（論戦対決） -->
+      <section id="screen-debate" class="screen">
+        <div class="debate-stage">
+          <div class="debate-turn-badge">
+            <span id="debate-turn-label">問答 1 / 3</span>
+          </div>
+
+          <div class="opponent-box">
+            <div id="debate-shibata-avatar" class="opponent-avatar">
+              <svg viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="45" fill="#1e293b" />
+                <path d="M 30 75 Q 50 65 70 75 L 80 100 L 20 100 Z" fill="#0f172a" />
+                <circle cx="50" cy="45" r="22" fill="#fbcfe8" />
+                <rect x="38" y="42" width="10" height="6" fill="none" stroke="#94a3b8" stroke-width="1.5" />
+                <rect x="52" y="42" width="10" height="6" fill="none" stroke="#94a3b8" stroke-width="1.5" />
+              </svg>
+            </div>
+            <div class="opponent-speech-bubble">
+              <p id="debate-opponent-speech">相手の主張がここに表示されます</p>
+            </div>
+          </div>
+
+          <div id="debate-hint-text" class="debate-hint">
+            💡 ヒント: 相手の主張の矛盾を突く証拠を選んでください
+          </div>
+
+          <div class="evidence-selection-section">
+            <div id="selected-evidence-preview" class="preview-box">
+              突きつける証拠品を手帳から選択してください
+            </div>
+            <div id="debate-evidence-list" class="debate-evidence-grid">
+              <!-- 手持ち証拠カードが並ぶ -->
+            </div>
+          </div>
+
+          <button type="button" id="btn-present-evidence" class="btn-present" disabled>
+            ⚡ この証拠をつきつける！！
+          </button>
+        </div>
+      </section>
+
+      <!-- 4. エンディング画面 -->
+      <section id="screen-ending" class="screen">
+        <div id="ending-icon" class="ending-icon">🌟</div>
+        <h2 id="ending-title" class="ending-title">エンディングタイトル</h2>
+        <div id="ending-sub" class="ending-sub">サブタイトル</div>
+        <div id="ending-unlocked-banner" class="ending-unlocked-banner hidden"></div>
+        <p id="ending-desc" class="ending-desc">エンディングの詳細テキスト</p>
+        <button type="button" id="btn-ending-next" class="btn-primary">
+          タイトル画面へ戻る
+        </button>
+      </section>
+
+      <!-- 会話ステージ＆ノベルウィンドウ (オーバーレイ) -->
+      <div id="dialogue-stage" class="dialogue-stage hidden">
+        <div id="dialogue-backdrop" class="dialogue-backdrop"></div>
+        <div id="character-stage" class="character-stage hidden"></div>
+        <div id="emotion-bubble" class="emotion-bubble hidden">❗</div>
+
+        <div id="novel-window" class="novel-window">
+          <div class="novel-header">
+            <span id="dialogue-speaker" class="speaker-name">ナレーション</span>
+            <div class="dialogue-ctrls">
+              <button type="button" id="btn-dialogue-auto" class="dialogue-ctrl-btn">AUTO</button>
+              <button type="button" id="btn-dialogue-skip" class="dialogue-ctrl-btn">SKIP</button>
+              <button type="button" id="btn-dialogue-log" class="dialogue-ctrl-btn">LOG</button>
+            </div>
+          </div>
+
+          <div id="dialogue-text" class="dialogue-body"></div>
+          <div id="dialogue-prompt" class="dialogue-prompt hidden">▼ クリックして次へ</div>
+
+          <!-- NPC会話時の選択肢 -->
+          <div id="dialogue-choices" class="dialogue-choices hidden"></div>
+        </div>
+      </div>
+
+      <!-- 異議ありカットイン -->
+      <div id="overlay-cutin" class="overlay-cutin hidden">
+        <div id="cutin-text" class="cutin-text">それには反証があります！！</div>
+      </div>
+    </main>
+
+    <!-- 証拠手帳モーダル -->
+    <div id="modal-evidence" class="modal hidden">
+      <div class="modal-backdrop"></div>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title">🎒 収集した証拠一覧</h3>
+          <button type="button" id="btn-close-modal" class="btn-close">✕</button>
+        </div>
+        <div id="modal-evidence-list" class="modal-list"></div>
+      </div>
+    </div>
+
+    <!-- バックログモーダル -->
+    <div id="modal-backlog" class="modal hidden">
+      <div id="backdrop-backlog" class="modal-backdrop"></div>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title">📜 会話ログ</h3>
+          <button type="button" id="btn-close-backlog" class="btn-close">✕</button>
+        </div>
+        <div id="modal-backlog-list" class="modal-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- スクリプト群 -->
+  <script src="js/state.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/character.js"></script>
+  <script src="js/scenario.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
