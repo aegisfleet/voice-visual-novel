@@ -192,6 +192,7 @@
       margin-bottom: 16px;
       background: linear-gradient(135deg, #fff 20%, var(--neon-cyan) 60%, var(--neon-mint) 100%);
       -webkit-background-clip: text;
+      background-clip: text;
       -webkit-text-fill-color: transparent;
       filter: drop-shadow(0 0 25px rgba(0, 243, 255, 0.35));
     }
@@ -357,9 +358,9 @@
     .game-tag {
       font-family: var(--font-hud);
       font-size: 0.72rem;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      color: #94a3b8;
+      background: rgba(15, 23, 42, 0.75);
+      border: 1px solid rgba(0, 243, 255, 0.2);
+      color: #cbd5e1;
       padding: 2px 8px;
       border-radius: 6px;
     }
@@ -414,7 +415,7 @@
       justify-content: center;
       gap: 4px;
       padding: 8px;
-      background: rgba(255, 255, 255, 0.04);
+      background: rgba(15, 23, 42, 0.75);
       border: 1px solid rgba(0, 243, 255, 0.3);
       color: var(--neon-cyan);
       font-family: var(--font-hud);
@@ -425,9 +426,10 @@
       transition: all 0.2s ease;
     }
     .btn-sub:hover {
-      background: rgba(0, 243, 255, 0.15);
+      background: var(--neon-cyan);
       border-color: var(--neon-cyan);
-      color: #fff;
+      color: #030712;
+      box-shadow: 0 0 15px rgba(0, 243, 255, 0.4);
     }
 
     /* カミングスーンカードの調整 */
@@ -566,11 +568,11 @@
       align-items: center;
       gap: 6px;
       padding: 4px 12px;
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: 12px;
       font-size: 0.75rem;
-      color: #94a3b8;
+      color: #cbd5e1;
     }
     .footer-note {
       color: #475569;
