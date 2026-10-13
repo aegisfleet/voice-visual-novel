@@ -185,8 +185,8 @@ class GameApp {
       this.startDebate();
     });
 
-    // 会話ウィンドウ操作（クリックで次へ送り or 即時表示）
-    this.dom.novelWindow.addEventListener('click', (e) => {
+    // 会話ウィンドウ操作（画面全体のクリックで次へ送り or 即時表示）
+    this.dom.dialogueStage.addEventListener('click', (e) => {
       if (e.target.closest('.dialogue-ctrl-btn') || e.target.closest('.choice-btn')) return;
       this.handleDialogueProceed();
     });
@@ -675,10 +675,16 @@ class GameApp {
       this.updateHearts();
 
       // 囮証拠に対する専用リアクションがあるか探す
-      let reactionList = currentStep.failureReactions;
+      let reactionList = null;
       const trapReaction = currentStep.failureReactions.find(r => r.trapEvidenceId === this.selectedEvidenceId);
       if (trapReaction) {
         reactionList = [trapReaction];
+      } else {
+        // trapEvidenceIdが指定されていない汎用失敗セリフのみを抽出
+        const genericFailures = currentStep.failureReactions.filter(r => !r.trapEvidenceId);
+        reactionList = genericFailures.length > 0 ? genericFailures : [
+          { speaker: 'シバタ捜査官', emotion: 'angry', text: '「そのデータでは客観的反証にならない。論点がずれているぞ」' }
+        ];
       }
 
       this.playDialogueSequence(reactionList, () => {

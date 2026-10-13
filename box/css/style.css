@@ -151,12 +151,12 @@ body {
 }
 
 .screen {
-  display: none;
+  display: none !important;
   flex: 1;
   flex-direction: column;
 }
 .screen.active {
-  display: flex;
+  display: flex !important;
 }
 
 /* ----------------------------------------------------
@@ -306,8 +306,6 @@ body {
 ---------------------------------------------------- */
 #screen-explore {
   padding: 12px;
-  display: flex;
-  flex-direction: column;
 }
 
 .explore-header {
@@ -463,8 +461,6 @@ body {
 ---------------------------------------------------- */
 #screen-debate {
   padding: 12px;
-  display: flex;
-  flex-direction: column;
   gap: 12px;
 }
 
@@ -527,12 +523,13 @@ body {
 }
 
 .preview-box {
-  background: rgba(15, 23, 42, 0.9);
-  border: 1px dashed rgba(255, 255, 255, 0.2);
-  padding: 10px 14px;
-  border-radius: 8px;
-  font-size: 0.85rem;
-  color: #cbd5e1;
+  background: rgba(15, 23, 42, 0.95);
+  border: 1px solid var(--neon-cyan);
+  padding: 12px 16px;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  color: #fff;
+  box-shadow: 0 0 15px rgba(0, 243, 255, 0.2);
 }
 
 .debate-evidence-grid {
@@ -559,9 +556,10 @@ body {
   background: rgba(0, 243, 255, 0.1);
 }
 .debate-evidence-card.selected {
-  border-color: var(--neon-cyan);
-  background: rgba(0, 243, 255, 0.25);
-  box-shadow: 0 0 10px rgba(0, 243, 255, 0.4);
+  border: 2px solid var(--neon-cyan);
+  background: rgba(0, 243, 255, 0.3);
+  box-shadow: 0 0 15px rgba(0, 243, 255, 0.6);
+  transform: scale(1.02);
 }
 
 .btn-present {
@@ -712,18 +710,25 @@ body {
 }
 
 .dialogue-prompt {
-  text-align: right;
-  font-size: 0.8rem;
+  font-size: 0.85rem;
+  font-weight: 700;
   color: var(--neon-cyan);
-  animation: blink 1s infinite alternate;
+  padding: 4px 10px;
+  background: rgba(0, 243, 255, 0.15);
+  border: 1px solid var(--border-cyan);
+  border-radius: 6px;
+  display: inline-block;
+  float: right;
+  margin-top: 6px;
+  animation: blink 0.8s infinite alternate;
 }
 .dialogue-prompt.hidden {
-  display: none;
+  display: none !important;
 }
 
 @keyframes blink {
-  from { opacity: 0.3; }
-  to { opacity: 1; }
+  from { opacity: 0.4; transform: translateY(0); }
+  to { opacity: 1; transform: translateY(-2px); }
 }
 
 .dialogue-choices {
