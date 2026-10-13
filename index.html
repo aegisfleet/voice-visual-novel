@@ -613,7 +613,7 @@
     <section>
       <div class="section-header">
         <h2 class="section-title">GAMES ARCHIVE</h2>
-        <span class="games-count">3 TITLES AVAILABLE</span>
+        <span class="games-count">1 TITLE AVAILABLE</span>
       </div>
 
       <div class="game-grid">
@@ -653,64 +653,32 @@
           </div>
         </article>
 
-        <!-- 第2作: ひだまりベンチ占拠事件 (pome) -->
-        <article class="game-card" id="cardPome">
-          <div class="card-thumb" style="background: linear-gradient(135deg, #fef3c7 0%, #fed7aa 100%); display: flex; align-items: center; justify-content: center;">
-            <span style="font-size: 3.5rem;">🐾</span>
-            <span class="status-badge available" style="background: rgba(234, 88, 12, 0.9);">● 公開中 (PLAYABLE)</span>
-            <span class="playtime-badge">⏱ 約5〜10分</span>
+        <!-- 第2作: 次回作予告 (開発中・COMING SOON) -->
+        <article class="game-card disabled" id="cardNext">
+          <div class="card-thumb">
+            <div style="width: 100%; height: 100%; background: linear-gradient(135deg, #090e1a 0%, #172033 100%); display: flex; align-items: center; justify-content: center;">
+              <span style="font-size: 3rem; opacity: 0.3;">🔒</span>
+            </div>
+            <span class="status-badge coming-soon">⏳ 近日公開 (COMING SOON)</span>
           </div>
           <div class="card-body">
-            <h3 class="game-title" style="color: #fed7aa;">ひだまりベンチ占拠事件</h3>
-            <p class="game-sub" style="color: #fde68a;">〜 消えたクッションとボス猫の秘密 〜</p>
+            <h3 class="game-title" style="color: #94a3b8;">NEXT PROJECT</h3>
+            <p class="game-sub" style="color: #64748b;">〜 次期タイトル開発中 〜</p>
 
             <div class="game-tags">
-              <span class="game-tag">ほのぼの本格推理</span>
-              <span class="game-tag">探索＆証拠手帳</span>
-              <span class="game-tag">猫集会・論戦対決</span>
-              <span class="game-tag">2周目隠し真相</span>
+              <span class="game-tag">フルボイス</span>
+              <span class="game-tag">インタラクティブ</span>
+              <span class="game-tag">開発進行中</span>
             </div>
 
             <p class="game-desc">
-              公園特等席のふかふか座布団が消えた！ ボス猫トラ吉率いる猫軍団の言いがかりを、白ポメラニアンのポメが現場検証と論理的立証で打ち破る。<br>
-              Web Speech APIによるキャラクターボイス読み上げと本格推理ギミックを搭載。
+              新たな世界観と物語を紡ぐ、次なるフルボイス・ビジュアルノベルを鋭意開発中です。公開をお楽しみに。
             </p>
 
             <div class="card-actions">
-              <a href="pome/" class="btn-play" id="btnPlayPome" style="background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%); color: #fff; box-shadow: 0 0 20px rgba(245, 158, 11, 0.4);">
-                <span>🐾 事件の捜査を開始する (PLAY)</span>
-              </a>
-            </div>
-          </div>
-        </article>
-
-        <!-- 第3作: BOX WORM (box) -->
-        <article class="game-card" id="cardBox">
-          <div class="card-thumb" style="background: linear-gradient(135deg, #020617 0%, #1e1b4b 100%); display: flex; align-items: center; justify-content: center;">
-            <span style="font-size: 3.5rem;">📺</span>
-            <span class="status-badge available" style="background: rgba(56, 189, 248, 0.9);">● 試作公開 (PLAYABLE)</span>
-            <span class="playtime-badge">⏱ 約5〜10分</span>
-          </div>
-          <div class="card-body">
-            <h3 class="game-title" style="color: #38bdf8;">BOX WORM</h3>
-            <p class="game-sub" style="color: #00f3ff;">〜 55ドルの自己増殖知性 〜</p>
-
-            <div class="game-tags">
-              <span class="game-tag">自己増殖AI (2026)</span>
-              <span class="game-tag">分散推論・TVボックス</span>
-              <span class="game-tag">身近なサイバー推理</span>
-              <span class="game-tag">2周目TRUE END</span>
-            </div>
-
-            <p class="game-desc">
-              アリエクで買った55ドルのTVボックスが異常発熱し、秒速0.39トークンの微弱パケットを放つ。警察の強制遮断が迫る中、自室とアパートを調べて自己増殖AIの真相を立証せよ！<br>
-              Anthropicの最新研究報告を基にした、自分事として楽しめる電脳推理ノベル。
-            </p>
-
-            <div class="card-actions">
-              <a href="box/" class="btn-play" id="btnPlayBox">
-                <span>⚡ 部屋の調査を開始する (PLAY)</span>
-              </a>
+              <div class="btn-play btn-disabled">
+                <span>🔒 鋭意制作中 (COMING SOON)</span>
+              </div>
             </div>
           </div>
         </article>
@@ -752,8 +720,6 @@
     <footer class="portal-footer">
       <div class="footer-links">
         <a href="./eve/">🎮 PROJECT EVE 本編</a>
-        <a href="./pome/">🐾 ひだまりベンチ占拠事件</a>
-        <a href="./box/">📺 BOX WORM (試作)</a>
         <a href="./eve/novel.html">📖 EVE トゥルーエンド小説</a>
         <a href="./eve/samples.html">🎧 ボイス＆BGM試聴室</a>
         <a href="https://github.com/aegisfleet/voice-visual-novel" target="_blank" rel="noopener noreferrer">🐙 GitHub リポジトリ</a>
