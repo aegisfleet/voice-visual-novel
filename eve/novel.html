@@ -104,8 +104,8 @@
     }
 
     /* 多言語制御 (ja / en) */
-    body[data-lang="ja"] .text-en { display: none !important; }
-    body[data-lang="en"] .text-ja { display: none !important; }
+    body[data-lang="ja"] .text-en { display: none; }
+    body[data-lang="en"] .text-ja { display: none; }
 
     body[data-lang="en"] {
       font-family: 'Inter', 'Segoe UI', -apple-system, sans-serif;
@@ -131,7 +131,7 @@
       margin-bottom: 22px;
     }
     body[data-lang="en"] #btnWritingMode {
-      display: none !important;
+      display: none;
     }
 
     /* 上部固定ナビゲーションバー */
@@ -223,9 +223,15 @@
       font-weight: 700;
     }
     .btn-play-all.playing {
-      background: rgba(239, 68, 68, 0.2);
+      background: #dc2626;
+      border-color: #ef4444;
+      color: #ffffff;
+      box-shadow: 0 0 12px rgba(239, 68, 68, 0.4);
+    }
+    .btn-play-all.playing:hover {
+      background: #b91c1c;
       border-color: #f87171;
-      color: #f87171;
+      color: #ffffff;
     }
 
     /* メインコンテナ */
@@ -391,16 +397,17 @@
       letter-spacing: 0.06em;
       padding: 2px 8px;
       border-radius: 4px;
+      background: #0b1329;
     }
 
-    .speaker-eve { color: #38bdf8; background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.3); }
-    .speaker-sakuma { color: #f87171; background: rgba(248, 113, 113, 0.12); border: 1px solid rgba(248, 113, 113, 0.3); }
-    .speaker-azuma { color: #4ade80; background: rgba(74, 222, 128, 0.12); border: 1px solid rgba(74, 222, 128, 0.3); }
-    .speaker-iris { color: #c084fc; background: rgba(192, 132, 252, 0.12); border: 1px solid rgba(192, 132, 252, 0.3); }
-    .speaker-shinohara { color: #fbbf24; background: rgba(251, 191, 36, 0.12); border: 1px solid rgba(251, 191, 36, 0.3); }
+    .speaker-eve { color: #38bdf8; background: #0b1329; border: 1px solid rgba(56, 189, 248, 0.4); }
+    .speaker-sakuma { color: #f87171; background: #0b1329; border: 1px solid rgba(248, 113, 113, 0.4); }
+    .speaker-azuma { color: #4ade80; background: #0b1329; border: 1px solid rgba(74, 222, 128, 0.4); }
+    .speaker-iris { color: #c084fc; background: #0b1329; border: 1px solid rgba(192, 132, 252, 0.4); }
+    .speaker-shinohara { color: #fbbf24; background: #0b1329; border: 1px solid rgba(251, 191, 36, 0.4); }
 
     .btn-voice {
-      background: rgba(0, 243, 255, 0.15);
+      background: #0b1329;
       border: 1px solid var(--neon-cyan);
       color: var(--neon-cyan);
       font-family: var(--font-hud);
@@ -561,9 +568,14 @@
       color: var(--neon-cyan);
     }
     .footer-btn-portal {
-      background: rgba(255, 255, 255, 0.08);
+      background: #0f172a;
       border: 1px solid rgba(255, 255, 255, 0.2);
-      color: #94a3b8;
+      color: #cbd5e1;
+    }
+    .footer-btn-portal:hover {
+      background: #1e293b;
+      border-color: rgba(255, 255, 255, 0.4);
+      color: #ffffff;
     }
   </style>
 </head>
@@ -1396,7 +1408,9 @@
         } else if (navigator.language?.startsWith('en')) {
           currentLang = 'en';
         }
-      } catch (e) {}
+      } catch (e) {
+        // プライベートブラウジング等で localStorage へのアクセスが制限されている場合はデフォルト言語を使用
+      }
       applyLanguage(currentLang);
     }
 
@@ -1404,9 +1418,11 @@
       currentLang = lang;
       try {
         localStorage.setItem('project_eve_lang', lang);
-      } catch (e) {}
+      } catch (e) {
+        // プライベートブラウジング等で localStorage への書き込みが制限されている場合は保存をスキップ
+      }
 
-      document.body.setAttribute('data-lang', lang);
+      document.body.dataset.lang = lang;
       document.documentElement.lang = lang;
 
       // 言語トグルボタン表示更新 (現在と逆の言語、または現在の言語を示すインジケーター)
@@ -1469,9 +1485,13 @@
           p.then(() => {
             audio.pause();
             audio.currentTime = 0;
-          }).catch(() => {});
+          }).catch(() => {
+            // 自動再生ポリシーによる中断は安全に無視
+          });
         }
-      } catch (e) {}
+      } catch (e) {
+        // ユーザー操作前のオーディオアンロック失敗は安全に無視
+      }
     }
 
     window.addEventListener('click', unlockSharedAudio, { once: true, capture: true });
@@ -1480,9 +1500,9 @@
     function getAudioSrcForBlock(block) {
       if (!block) return '';
       if (currentLang === 'en') {
-        return block.getAttribute('data-audio-en') || block.getAttribute('data-audio-ja') || block.getAttribute('data-audio') || '';
+        return block.dataset.audioEn || block.dataset.audioJa || block.dataset.audio || '';
       }
-      return block.getAttribute('data-audio-ja') || block.getAttribute('data-audio') || '';
+      return block.dataset.audioJa || block.dataset.audio || '';
     }
 
     function updatePlayButtonsLanguage() {
@@ -1508,7 +1528,9 @@
         try {
           sharedVoiceAudio.pause();
           sharedVoiceAudio.currentTime = 0;
-        } catch (e) {}
+        } catch (e) {
+          // すでに停止済み、またはリセット不可能な状態での例外は無視
+        }
       }
       document.querySelectorAll('.dialogue-block').forEach(b => { b.classList.remove('playing-voice'); });
       document.querySelectorAll('.btn-voice').forEach(b => {
@@ -1561,7 +1583,9 @@
       audio.src = audioUrl;
       try {
         audio.currentTime = 0;
-      } catch (e) {}
+      } catch (e) {
+        // メディア未ロード時のシーク例外は無視
+      }
 
       const playPromise = audio.play();
       if (playPromise !== undefined) {
@@ -1608,13 +1632,11 @@
             } else {
               startPlayAll(idx);
             }
+          } else if (block.classList.contains('playing-voice')) {
+            stopCurrentAudio();
           } else {
-            if (block.classList.contains('playing-voice')) {
-              stopCurrentAudio();
-            } else {
-              lastPlayedIndex = idx;
-              playDialogueAudio(block);
-            }
+            lastPlayedIndex = idx;
+            playDialogueAudio(block);
           }
         });
       }
