@@ -30,7 +30,8 @@
       "complexity": {
         "noImportantStyles": "off",
         "useArrowFunction": "off",
-        "noUselessSwitchCase": "off"
+        "noUselessSwitchCase": "off",
+        "noArguments": "off"
       },
       "suspicious": {
         "noDuplicateProperties": "warn",
