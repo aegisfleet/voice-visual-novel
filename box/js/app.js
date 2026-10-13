@@ -15,6 +15,8 @@ class GameApp {
     // 会話キュー＆タイピング状態
     this.dialogueQueue = [];
     this.currentDialogueCallback = null;
+    this.keepStageOpen = false;
+    this.isDialogueActive = false;
     this.selectedEvidenceId = null;
     this.isChoiceActive = false;
 
@@ -187,7 +189,7 @@ class GameApp {
 
     // 会話ウィンドウ操作（画面全体のクリックで次へ送り or 即時表示）
     this.dom.dialogueStage.addEventListener('click', (e) => {
-      if (e.target.closest('.dialogue-ctrl-btn') || e.target.closest('.choice-btn')) return;
+      if (e.target.closest('.dialogue-ctrl-btn') || e.target.closest('.choice-btn') || e.target.closest('.dialogue-choices')) return;
       this.handleDialogueProceed();
     });
 
@@ -376,6 +378,7 @@ class GameApp {
 
   // スポット調査処理
   handleInspectSpot(spot) {
+    if (this.isDialogueActive || this.isChoiceActive) return;
     this.audio.playClick();
     this.state.markSpotInspected(spot.id);
 
@@ -388,17 +391,18 @@ class GameApp {
         this.updateEvidenceCounter();
       }
       this.renderExploreMap();
-    });
+    }, false);
   }
 
   // NPC会話処理
   handleTalkNpc(npc) {
+    if (this.isDialogueActive || this.isChoiceActive) return;
     this.audio.playClick();
     this.state.markNpcTalked(npc.id);
 
     const introQueue = [...npc.dialogue.intro];
     this.playDialogueSequence(introQueue, () => {
-      // 選択肢表示
+      // 選択肢表示（ステージとキャラクターは表示を維持）
       this.showChoiceMenu(npc.dialogue.choices, (chosenChoice) => {
         this.playDialogueSequence(chosenChoice.responses, () => {
           if (chosenChoice.giveEvidence) {
@@ -409,9 +413,9 @@ class GameApp {
             this.updateEvidenceCounter();
           }
           this.renderExploreMap();
-        });
+        }, false);
       });
-    });
+    }, true);
   }
 
   // 証拠カウンタ・立証ボタン有効化判定
@@ -435,20 +439,29 @@ class GameApp {
   // ----------------------------------------------------
   // 会話・ノベルウィンドウ演出 (タイピング & 音声)
   // ----------------------------------------------------
-  playDialogueSequence(dialogueList, onComplete = null) {
+  playDialogueSequence(dialogueList, onComplete = null, keepStageOpen = false) {
     this.dialogueQueue = [...dialogueList];
     this.currentDialogueCallback = onComplete;
+    this.keepStageOpen = keepStageOpen;
+    this.isDialogueActive = true;
+    this.isChoiceActive = false;
+    this.dom.dialogueChoices.classList.add('hidden');
+    this.dom.dialogueChoices.innerHTML = '';
     this.dom.dialogueStage.classList.remove('hidden');
     this.showNextDialogue();
   }
 
   showNextDialogue() {
     if (this.dialogueQueue.length === 0) {
-      this.dom.dialogueStage.classList.add('hidden');
-      this.character.hide();
+      if (!this.keepStageOpen) {
+        this.dom.dialogueStage.classList.add('hidden');
+        this.character.hide();
+        this.isDialogueActive = false;
+      }
       if (this.currentDialogueCallback) {
         const cb = this.currentDialogueCallback;
         this.currentDialogueCallback = null;
+        this.keepStageOpen = false;
         cb();
       }
       return;
@@ -500,7 +513,9 @@ class GameApp {
     clearInterval(this.typewriterTimer);
     this.isTyping = false;
     this.dom.dialogueText.textContent = this.currentFullText;
-    this.dom.dialoguePrompt.classList.remove('hidden');
+    if (!this.isChoiceActive) {
+      this.dom.dialoguePrompt.classList.remove('hidden');
+    }
 
     if (this.isAutoMode || this.isSkipMode) {
       const waitTime = this.isSkipMode ? 80 : 1800;
@@ -527,6 +542,8 @@ class GameApp {
   // 選択肢メニュー表示
   showChoiceMenu(choices, onSelect) {
     this.isChoiceActive = true;
+    this.isDialogueActive = true;
+    this.dom.dialogueStage.classList.remove('hidden');
     this.dom.dialoguePrompt.classList.add('hidden');
     this.dom.dialogueChoices.classList.remove('hidden');
     this.dom.dialogueChoices.innerHTML = '';
@@ -534,6 +551,7 @@ class GameApp {
     choices.forEach(choice => {
       const btn = document.createElement('button');
       btn.className = 'choice-btn';
+      btn.type = 'button';
       btn.textContent = choice.text;
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -541,7 +559,7 @@ class GameApp {
         this.isChoiceActive = false;
         this.dom.dialogueChoices.classList.add('hidden');
         this.dom.dialogueChoices.innerHTML = '';
-        onSelect(choice);
+        if (onSelect) onSelect(choice);
       });
       this.dom.dialogueChoices.appendChild(btn);
     });
@@ -654,11 +672,15 @@ class GameApp {
   }
 
   handlePresentEvidence() {
-    if (!this.selectedEvidenceId) return;
+    if (!this.selectedEvidenceId || this.isDialogueActive) return;
+
+    const submittedId = this.selectedEvidenceId;
+    this.selectedEvidenceId = null;
+    this.dom.btnPresentEvidence.disabled = true;
 
     const steps = this.getDebateSteps();
     const currentStep = steps[this.state.currentDebateStep];
-    const isCorrect = (this.selectedEvidenceId === currentStep.correctEvidenceId);
+    const isCorrect = (submittedId === currentStep.correctEvidenceId);
 
     if (isCorrect) {
       // 正解演出！カットイン
@@ -666,7 +688,7 @@ class GameApp {
         this.playDialogueSequence(currentStep.successReactions, () => {
           this.state.currentDebateStep++;
           this.renderDebateTurn();
-        });
+        }, false);
       });
     } else {
       // 失敗演出！ショック音＆ハート減少
@@ -676,7 +698,7 @@ class GameApp {
 
       // 囮証拠に対する専用リアクションがあるか探す
       let reactionList = null;
-      const trapReaction = currentStep.failureReactions.find(r => r.trapEvidenceId === this.selectedEvidenceId);
+      const trapReaction = currentStep.failureReactions.find(r => r.trapEvidenceId === submittedId);
       if (trapReaction) {
         reactionList = [trapReaction];
       } else {
@@ -695,7 +717,7 @@ class GameApp {
           // リトライ
           this.renderDebateTurn();
         }
-      });
+      }, false);
     }
   }
 
