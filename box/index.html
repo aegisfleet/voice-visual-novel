@@ -28,7 +28,10 @@
         </div>
       </div>
       <div class="hud-right">
-        <button type="button" id="btn-evidence-bag" class="hud-btn" title="集めた証拠手帳">
+        <button type="button" id="btn-hud-goto-debate" class="hud-btn hud-debate-btn hidden" title="シバタ捜査官に反証する">
+          ⚖️ 反証へ進む！
+        </button>
+        <button type="button" id="btn-evidence-bag" class="hud-btn" title="集めた証拠手帳 [E]">
           🎒 証拠手帳 (<span id="evidence-count">0</span>)
         </button>
         <button type="button" id="btn-toggle-voice" class="hud-btn" title="音声読み上げ切替">
@@ -198,7 +201,7 @@
 
     <!-- 証拠手帳モーダル -->
     <div id="modal-evidence" class="modal hidden">
-      <div class="modal-backdrop"></div>
+      <div id="backdrop-evidence" class="modal-backdrop"></div>
       <div class="modal-content">
         <div class="modal-header">
           <h3 class="modal-title">🎒 収集した証拠一覧</h3>
@@ -219,6 +222,16 @@
         <div id="modal-backlog-list" class="modal-list"></div>
       </div>
     </div>
+
+    <!-- キーボード操作ガイドバー -->
+    <footer id="keyboard-guide" class="keyboard-guide">
+      <div class="key-hint"><span class="key-tag">Space / Enter</span> 会話送り・決定</div>
+      <div class="key-hint"><span class="key-tag">Tab / ← →</span> エリア切替</div>
+      <div class="key-hint"><span class="key-tag">1〜9</span> 選択肢・証拠選択</div>
+      <div class="key-hint"><span class="key-tag">E</span> 証拠手帳</div>
+      <div class="key-hint"><span class="key-tag">L</span> ログ</div>
+      <div class="key-hint"><span class="key-tag">Esc</span> 閉じる</div>
+    </footer>
   </div>
 
   <!-- スクリプト群 -->

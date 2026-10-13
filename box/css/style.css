@@ -953,3 +953,268 @@ body {
   line-height: 1.5;
   color: #e2e8f0;
 }
+
+/* ----------------------------------------------------
+   操作性向上スタイル (キーボードガイド、ピンバッジ、クイックボタン)
+---------------------------------------------------- */
+.hud-debate-btn {
+  background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%) !important;
+  color: #fff !important;
+  border-color: #f87171 !important;
+  font-weight: 800 !important;
+  box-shadow: 0 0 12px rgba(239, 68, 68, 0.6) !important;
+  animation: pulse-red 1.5s infinite ease-in-out !important;
+}
+
+.pin-status-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 1px 6px;
+  border-radius: 8px;
+  z-index: 2;
+  box-shadow: 0 0 8px rgba(0,0,0,0.5);
+  pointer-events: none;
+}
+.pin-status-badge.new {
+  background: var(--neon-cyan);
+  color: #030712;
+  animation: pulse-cyan 1.5s infinite;
+}
+.pin-status-badge.inspected {
+  background: #334155;
+  color: #94a3b8;
+  border: 1px solid #475569;
+}
+
+.keyboard-guide {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 8px 16px;
+  background: rgba(15, 23, 42, 0.95);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 0.72rem;
+  color: var(--text-sub);
+  z-index: 30;
+}
+.keyboard-guide.hidden {
+  display: none !important;
+}
+.key-hint {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.key-tag {
+  background: #1e293b;
+  border: 1px solid #475569;
+  border-radius: 4px;
+  padding: 1px 6px;
+  color: var(--neon-cyan);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.5);
+}
+
+.card-key-badge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid var(--neon-cyan);
+  color: var(--neon-cyan);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 800;
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+.debate-evidence-card {
+  position: relative;
+}
+
+.choice-key-tag {
+  background: rgba(0, 243, 255, 0.2);
+  border: 1px solid var(--neon-cyan);
+  color: var(--neon-cyan);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-right: 6px;
+}
+
+/* ====================================================
+   📱 スマートフォン・モバイルファースト最適化
+   ==================================================== */
+
+/* タッチデバイス・画面幅768px以下ではキーボードガイドを非表示 */
+@media (max-width: 768px), (pointer: coarse) {
+  #keyboard-guide,
+  .keyboard-guide,
+  .card-key-badge,
+  .choice-key-tag {
+    display: none !important;
+  }
+}
+
+/* 画面幅600px以下のスマートフォン縦画面に完全特化 */
+@media (max-width: 600px) {
+  body {
+    font-size: 14px;
+  }
+
+  /* 上部HUDの省スペース・親指最適化 */
+  .hud {
+    padding: 6px 10px;
+    gap: 4px;
+  }
+  .hud-left, .hud-right {
+    gap: 4px;
+  }
+  .hud-btn {
+    padding: 5px 8px;
+    font-size: 0.7rem;
+    border-radius: 6px;
+  }
+  .badge {
+    font-size: 0.7rem;
+    padding: 3px 8px;
+  }
+  .hud-debate-btn {
+    padding: 5px 10px !important;
+    font-size: 0.75rem !important;
+  }
+
+  /* 探索画面：ピンのタッチ領域（48px以上）拡大 */
+  #screen-explore {
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+  }
+  .explore-header {
+    margin-bottom: 8px;
+  }
+  .area-btn {
+    flex: 1;
+    padding: 10px 12px;
+    font-size: 0.85rem;
+    text-align: center;
+  }
+  .explore-stage {
+    min-height: 380px;
+  }
+  .explore-pin {
+    padding: 8px;
+    /* タップ領域を広げる */
+    touch-action: manipulation;
+  }
+  .pin-icon {
+    width: 48px;
+    height: 48px;
+    font-size: 1.5rem;
+  }
+  .pin-label {
+    font-size: 0.75rem;
+    padding: 3px 8px;
+    margin-top: 3px;
+  }
+
+  /* 「反証へ進む！」ボタンを画面下部にフローティング固定 */
+  .explore-footer {
+    position: sticky;
+    bottom: 8px;
+    z-index: 30;
+    margin-top: 8px;
+  }
+  .btn-debate-start {
+    padding: 16px;
+    font-size: 1.05rem;
+    border-radius: 14px;
+    box-shadow: 0 4px 20px rgba(239, 68, 68, 0.7);
+  }
+
+  /* 立証パートのモバイル親指レイアウト */
+  #screen-debate {
+    padding: 8px;
+  }
+  .debate-stage {
+    gap: 8px;
+  }
+  .opponent-box {
+    padding: 10px 12px;
+    gap: 10px;
+  }
+  .opponent-avatar {
+    width: 52px;
+    height: 52px;
+    flex-shrink: 0;
+  }
+  .opponent-speech-bubble p {
+    font-size: 0.85rem;
+    line-height: 1.45;
+  }
+  .debate-hint {
+    padding: 6px 10px;
+    font-size: 0.75rem;
+  }
+  .preview-box {
+    padding: 10px 12px;
+    font-size: 0.85rem;
+  }
+
+  /* 証拠カード一覧（縦1列で指でタップしやすいカード） */
+  .debate-evidence-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    max-height: 220px;
+  }
+  .debate-evidence-card {
+    padding: 12px 14px;
+    min-height: 54px;
+    border-radius: 10px;
+    touch-action: manipulation;
+  }
+  .evidence-icon {
+    font-size: 1.5rem;
+  }
+  .evidence-name {
+    font-size: 0.9rem;
+  }
+
+  /* 提示ボタンの親指ワンタップ最適化 */
+  .btn-present {
+    padding: 16px;
+    font-size: 1.15rem;
+    border-radius: 14px;
+    position: sticky;
+    bottom: 8px;
+    z-index: 30;
+    box-shadow: 0 4px 20px rgba(0, 243, 255, 0.5);
+  }
+
+  /* 会話ノベルウィンドウ */
+  .novel-window {
+    margin: 8px;
+    padding: 12px 14px;
+    min-height: 120px;
+    border-radius: 12px;
+  }
+  .dialogue-body {
+    font-size: 0.92rem;
+    line-height: 1.55;
+  }
+  .choice-btn {
+    padding: 14px 16px;
+    font-size: 0.92rem;
+    min-height: 48px;
+    margin-bottom: 8px;
+    border-radius: 10px;
+  }
+}

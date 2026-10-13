@@ -66,6 +66,7 @@ class GameApp {
       exploreStatusText: document.getElementById('explore-status-text'),
       evidenceNeededCounter: document.getElementById('evidence-needed-counter'),
       btnGoToDebate: document.getElementById('btn-go-to-debate'),
+      btnHudGotoDebate: document.getElementById('btn-hud-goto-debate'),
 
       // 立証
       debateShibataAvatar: document.getElementById('debate-shibata-avatar'),
@@ -110,12 +111,16 @@ class GameApp {
       modalEvidence: document.getElementById('modal-evidence'),
       modalEvidenceList: document.getElementById('modal-evidence-list'),
       btnCloseModal: document.getElementById('btn-close-modal'),
+      backdropEvidence: document.getElementById('backdrop-evidence'),
 
       // バックログ
       modalBacklog: document.getElementById('modal-backlog'),
       modalBacklogList: document.getElementById('modal-backlog-list'),
       btnCloseBacklog: document.getElementById('btn-close-backlog'),
-      backdropBacklog: document.getElementById('backdrop-backlog')
+      backdropBacklog: document.getElementById('backdrop-backlog'),
+
+      // ガイドバー
+      keyboardGuide: document.getElementById('keyboard-guide')
     };
 
     this.bindEvents();
@@ -170,6 +175,12 @@ class GameApp {
       this.dom.modalEvidence.classList.add('hidden');
     });
 
+    if (this.dom.backdropEvidence) {
+      this.dom.backdropEvidence.addEventListener('click', () => {
+        this.dom.modalEvidence.classList.add('hidden');
+      });
+    }
+
     // エリア切替
     this.dom.btnAreaRoom.addEventListener('click', () => {
       this.audio.playClick();
@@ -186,6 +197,13 @@ class GameApp {
       this.audio.playCutin();
       this.startDebate();
     });
+
+    if (this.dom.btnHudGotoDebate) {
+      this.dom.btnHudGotoDebate.addEventListener('click', () => {
+        this.audio.playCutin();
+        this.startDebate();
+      });
+    }
 
     // 会話ウィンドウ操作（画面全体のクリックで次へ送り or 即時表示）
     this.dom.dialogueStage.addEventListener('click', (e) => {
@@ -225,25 +243,120 @@ class GameApp {
       this.audio.playClick();
       this.returnToTitle();
     });
+
+    // ----------------------------------------------------
+    // キーボードショートカット操作
+    // ----------------------------------------------------
+    window.addEventListener('keydown', (e) => {
+      if (['INPUT', 'TEXTAREA'].includes(document.activeElement?.tagName)) return;
+
+      // Escキー: モーダルを閉じる
+      if (e.key === 'Escape') {
+        if (!this.dom.modalEvidence.classList.contains('hidden')) {
+          this.dom.modalEvidence.classList.add('hidden');
+          return;
+        }
+        if (!this.dom.modalBacklog.classList.contains('hidden')) {
+          this.dom.modalBacklog.classList.add('hidden');
+          return;
+        }
+      }
+
+      // Space / Enter: 会話送り or 立証決定
+      if (e.key === ' ' || e.key === 'Enter') {
+        e.preventDefault();
+        if (this.isDialogueActive && !this.isChoiceActive) {
+          this.handleDialogueProceed();
+          return;
+        }
+        if (!this.isDialogueActive && this.selectedEvidenceId && !this.dom.btnPresentEvidence.disabled) {
+          this.handlePresentEvidence();
+          return;
+        }
+      }
+
+      // Tab / ← → / A / D: 探索エリア切替
+      if (['Tab', 'ArrowLeft', 'ArrowRight', 'a', 'd', 'A', 'D'].includes(e.key)) {
+        if (this.dom.screenExplore.classList.contains('active') && !this.isDialogueActive) {
+          e.preventDefault();
+          const targetArea = (this.currentArea === 'room') ? 'corridor' : 'room';
+          this.audio.playClick();
+          this.switchArea(targetArea);
+          return;
+        }
+      }
+
+      // 1〜9キー: 選択肢 or 証拠カード選択
+      if (e.key >= '1' && e.key <= '9') {
+        const num = parseInt(e.key, 10);
+        // 会話選択肢表示中
+        if (this.isChoiceActive) {
+          const choiceBtns = this.dom.dialogueChoices.querySelectorAll('.choice-btn');
+          if (choiceBtns[num - 1]) {
+            choiceBtns[num - 1].click();
+            return;
+          }
+        }
+        // 立証パートで証拠カード選択
+        if (this.dom.screenDebate.classList.contains('active') && !this.isDialogueActive) {
+          const cards = this.dom.debateEvidenceList.querySelectorAll('.debate-evidence-card');
+          if (cards[num - 1]) {
+            cards[num - 1].click();
+            return;
+          }
+        }
+      }
+
+      // Eキー: 証拠手帳モーダル開閉
+      if (e.key === 'e' || e.key === 'E') {
+        if (this.dom.modalEvidence.classList.contains('hidden')) {
+          this.openEvidenceModal();
+        } else {
+          this.dom.modalEvidence.classList.add('hidden');
+        }
+        return;
+      }
+
+      // Lキー: バックログモーダル開閉
+      if (e.key === 'l' || e.key === 'L') {
+        if (this.dom.modalBacklog.classList.contains('hidden')) {
+          this.openBacklog();
+        } else {
+          this.dom.modalBacklog.classList.add('hidden');
+        }
+        return;
+      }
+    });
+
+    // マウスホイールでの会話送り・バックログ
+    window.addEventListener('wheel', (e) => {
+      if (this.isDialogueActive && !this.isChoiceActive) {
+        if (e.deltaY > 30) {
+          this.handleDialogueProceed();
+        } else if (e.deltaY < -30) {
+          this.openBacklog();
+        }
+      }
+    }, { passive: true });
   }
 
   // タイトル画面の表示更新
   updateTitleView() {
     const isLoop2 = this.state.isClearedFirstLoop();
-    this.dom.hudLoopBadge.textContent = isLoop2 ? '2周目 (深層真実)' : '1周目 (基本捜査)';
+    this.dom.hudLoopBadge.textContent = isLoop2 ? '2周目 (深層真実編)' : '1周目 (未知の怪異編)';
 
     if (isLoop2) {
       this.dom.titleLoopInfo.innerHTML = `
-        <span class="loop-tag loop-2">FILE RE-OPEN: 2周目・深層鑑識モード</span>
-        <p class="loop-desc">初動の現場確認をクリアしました。2周目では隠された『重みバイナリ』『感染連鎖ログ』を収集でき、強制遮断を阻止してTRUE ENDへ到達できます！</p>
+        <span class="loop-tag loop-2">FILE RE-OPEN: 2周目・自律増殖AI（深層真実編）</span>
+        <p class="loop-desc">1周目の破滅の記憶が蘇る。深層解析で『自律増殖コード』や『0.39トークン分散推論』を暴き、強制切断を阻止して増殖抑制パッチでTRUE ENDへ導け！</p>
       `;
-      this.dom.btnStartGame.textContent = '⚡ 2周目の深層鑑識を開始する';
+      this.dom.btnStartGame.textContent = '⚡ 2周目の深層真実を解明する';
     } else {
       this.dom.titleLoopInfo.innerHTML = `
-        <span class="loop-tag loop-1">1周目: 初動現場確認モード</span>
-        <p class="loop-desc">部屋とアパートの電脳鑑識ログを収集し、自分が攻撃者ではなく被害者であることをシバタ捜査官に立証せよ！</p>
+        <span class="loop-tag loop-1">1周目: 未知の怪異編（侵食の恐怖）</span>
+        <p class="loop-desc">部屋とアパートを覆う不可解な電子怪異を調査し、シバタ捜査官の強引な全機器押収と強制遮断を阻止せよ！</p>
       `;
-      this.dom.btnStartGame.textContent = '🔍 部屋の現場確認を開始する';
+      this.dom.btnStartGame.textContent = '🔍 部屋の怪異を調査する';
     }
 
     if (this.state.hasClearedTrueEnd) {
@@ -266,20 +379,28 @@ class GameApp {
     if (screenName === 'title') {
       this.dom.screenTitle.classList.add('active');
       this.dom.hud.classList.add('hidden');
+      if (this.dom.btnHudGotoDebate) this.dom.btnHudGotoDebate.classList.add('hidden');
+      if (this.dom.keyboardGuide) this.dom.keyboardGuide.classList.add('hidden');
     } else if (screenName === 'explore') {
       this.dom.screenExplore.classList.add('active');
       this.dom.hud.classList.remove('hidden');
       this.dom.hudLifeContainer.classList.add('hidden');
       this.dom.hudLocationBadge.textContent = this.currentArea === 'room' ? 'ユウタのワンルーム' : 'アパート外廊下';
+      if (this.dom.keyboardGuide) this.dom.keyboardGuide.classList.remove('hidden');
+      this.updateEvidenceCounter();
     } else if (screenName === 'debate') {
       this.dom.screenDebate.classList.add('active');
       this.dom.hud.classList.remove('hidden');
       this.dom.hudLifeContainer.classList.remove('hidden');
       this.dom.hudLocationBadge.textContent = '玄関口・立証対決';
+      if (this.dom.btnHudGotoDebate) this.dom.btnHudGotoDebate.classList.add('hidden');
+      if (this.dom.keyboardGuide) this.dom.keyboardGuide.classList.remove('hidden');
       this.updateHearts();
     } else if (screenName === 'ending') {
       this.dom.screenEnding.classList.add('active');
       this.dom.hud.classList.add('hidden');
+      if (this.dom.btnHudGotoDebate) this.dom.btnHudGotoDebate.classList.add('hidden');
+      if (this.dom.keyboardGuide) this.dom.keyboardGuide.classList.add('hidden');
     }
   }
 
@@ -340,11 +461,18 @@ class GameApp {
           return;
         }
 
+        const isInspected = this.state.isSpotInspected(spot.id);
         const el = document.createElement('div');
-        el.className = `explore-pin spot-pin ${this.state.isSpotInspected(spot.id) ? 'inspected' : ''}`;
+        el.className = `explore-pin spot-pin ${isInspected ? 'inspected' : ''}`;
         el.style.left = `${spot.coords.x}%`;
         el.style.top = `${spot.coords.y}%`;
+
+        const badgeHtml = isInspected
+          ? '<span class="pin-status-badge inspected">✔ 済</span>'
+          : '<span class="pin-status-badge new">NEW</span>';
+
         el.innerHTML = `
+          ${badgeHtml}
           <div class="pin-icon">${spot.icon}</div>
           <div class="pin-label">${spot.name}</div>
         `;
@@ -357,11 +485,18 @@ class GameApp {
       // NPC
       const npcs = this.scenario.npcs.filter(n => n.area === area);
       npcs.forEach(npc => {
+        const isTalked = this.state.isNpcTalked(npc.id);
         const el = document.createElement('div');
-        el.className = `explore-pin npc-pin ${this.state.isNpcTalked(npc.id) ? 'talked' : ''}`;
+        el.className = `explore-pin npc-pin ${isTalked ? 'talked' : ''}`;
         el.style.left = `${npc.coords.x}%`;
         el.style.top = `${npc.coords.y}%`;
+
+        const badgeHtml = isTalked
+          ? '<span class="pin-status-badge inspected">✔ 済</span>'
+          : '<span class="pin-status-badge new">TALK</span>';
+
         el.innerHTML = `
+          ${badgeHtml}
           <div class="pin-icon">${npc.icon}</div>
           <div class="pin-label">${npc.name}</div>
         `;
@@ -427,10 +562,12 @@ class GameApp {
     const required = 3;
     if (count >= required) {
       this.dom.btnGoToDebate.classList.remove('hidden');
+      if (this.dom.btnHudGotoDebate) this.dom.btnHudGotoDebate.classList.remove('hidden');
       this.dom.exploreStatusText.textContent = `⚖️ 鑑識データが揃った！ (${count}件) シバタ捜査官に客観的反証を提示できるぞ！`;
       this.dom.evidenceNeededCounter.textContent = '提示可能！';
     } else {
       this.dom.btnGoToDebate.classList.add('hidden');
+      if (this.dom.btnHudGotoDebate) this.dom.btnHudGotoDebate.classList.add('hidden');
       this.dom.exploreStatusText.textContent = `部屋やアパートを調べて鑑識データを集めよう（あと${required - count}件必要）`;
       this.dom.evidenceNeededCounter.textContent = `${count} / ${required}`;
     }
@@ -548,11 +685,11 @@ class GameApp {
     this.dom.dialogueChoices.classList.remove('hidden');
     this.dom.dialogueChoices.innerHTML = '';
 
-    choices.forEach(choice => {
+    choices.forEach((choice, idx) => {
       const btn = document.createElement('button');
       btn.className = 'choice-btn';
       btn.type = 'button';
-      btn.textContent = choice.text;
+      btn.innerHTML = `<span class="choice-key-tag">[${idx + 1}]</span> <span>${choice.text}</span>`;
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
         this.audio.playClick();
@@ -647,25 +784,38 @@ class GameApp {
     this.dom.debateEvidenceList.innerHTML = '';
     const collected = Array.from(this.state.collectedEvidence);
 
-    collected.forEach(evId => {
+    collected.forEach((evId, idx) => {
       const ev = this.scenario.evidence[evId];
       if (!ev) return;
 
       const card = document.createElement('div');
       card.className = `debate-evidence-card ${this.selectedEvidenceId === evId ? 'selected' : ''}`;
       card.innerHTML = `
+        <span class="card-key-badge">[${idx + 1}]</span>
         <div class="evidence-icon">${ev.icon}</div>
         <div class="evidence-info">
           <div class="evidence-name">${ev.name}</div>
           <div class="evidence-type">${ev.type}</div>
         </div>
       `;
+      // クリック/タップで選択（すでに選択中のカードを再タップで即座に提示！）
       card.addEventListener('click', () => {
         this.audio.playClick();
+        if (this.selectedEvidenceId === evId) {
+          // 選択中カードを再タップ → 即座に提示！（スマホ片手親指UX）
+          this.handlePresentEvidence();
+          return;
+        }
         this.selectedEvidenceId = evId;
         this.dom.btnPresentEvidence.disabled = false;
-        this.dom.selectedEvidencePreview.innerHTML = `<strong>選択中:</strong> ${ev.icon} ${ev.name}（${ev.summary}）`;
+        this.dom.selectedEvidencePreview.innerHTML = `<strong>選択中:</strong> ${ev.icon} ${ev.name} <span style="color:var(--neon-cyan); margin-left:6px; font-size:0.8rem;">[再タップで提示]</span>`;
         this.renderDebateEvidenceList();
+      });
+      // PC向けダブルクリックでも提示可能
+      card.addEventListener('dblclick', () => {
+        this.audio.playClick();
+        this.selectedEvidenceId = evId;
+        this.handlePresentEvidence();
       });
       this.dom.debateEvidenceList.appendChild(card);
     });
@@ -738,23 +888,25 @@ class GameApp {
   // 立証勝利
   handleDebateVictory() {
     const isLoop2 = this.state.isClearedFirstLoop();
-    this.audio.startBgm('truth');
 
     if (isLoop2) {
-      // TRUE END
+      // 2周目完答：TRUE END
+      this.audio.startBgm('truth');
       this.state.markTrueEndCleared();
       this.showEnding(this.scenario.endings.true);
     } else {
-      // NORMAL END (1周目クリア)
+      // 1周目完答：未知の恐怖による必然のBAD END（2周目解放）
+      this.audio.stopBgm();
+      this.audio.playShock();
       this.state.markLoop1Cleared();
-      this.showEnding(this.scenario.endings.normal);
+      this.showEnding(this.scenario.endings.loop1_bad);
     }
   }
 
   // 立証失敗 (ライフ0)
   handleDebateGameOver() {
     this.audio.stopBgm();
-    this.showEnding(this.scenario.endings.bad);
+    this.showEnding(this.scenario.endings.gameOver);
   }
 
   // ----------------------------------------------------
@@ -767,18 +919,18 @@ class GameApp {
     this.dom.endingSub.textContent = endingData.sub;
     this.dom.endingDesc.textContent = endingData.desc;
 
-    if (endingData.type === 'normal') {
-      this.dom.endingIcon.textContent = '⛅';
+    if (endingData.type === 'loop1_bad') {
+      this.dom.endingIcon.textContent = '💀';
       this.dom.endingUnlockedBanner.classList.remove('hidden');
-      this.dom.endingUnlockedBanner.textContent = '🎉 1周目クリア！【2周目：深層真実ルート】が解放されました！';
-      this.dom.btnEndingNext.textContent = 'タイトル画面へ戻る (2周目を開始)';
+      this.dom.endingUnlockedBanner.textContent = '🔓 1周目終了：BAD ENDを経験したことで【2周目：自律増殖AI（深層真実編）】が解放されました！';
+      this.dom.btnEndingNext.textContent = '記憶を引き継ぎ、2周目を開始する';
     } else if (endingData.type === 'true') {
       this.dom.endingIcon.textContent = '🌟';
       this.dom.endingUnlockedBanner.classList.remove('hidden');
-      this.dom.endingUnlockedBanner.textContent = '🏆 祝・TRUE END達成！ 0.39トークンの知性は僕たちの街を守る盾となった！';
+      this.dom.endingUnlockedBanner.textContent = '🏆 祝・TRUE END達成！ 粘菌知性（The Slime Mold Protocol）との共生に成功した！';
       this.dom.btnEndingNext.textContent = 'タイトル画面へ戻る';
     } else {
-      this.dom.endingIcon.textContent = '💀';
+      this.dom.endingIcon.textContent = '💥';
       this.dom.endingUnlockedBanner.classList.add('hidden');
       this.dom.btnEndingNext.textContent = '立証をやり直す (リトライ)';
     }
