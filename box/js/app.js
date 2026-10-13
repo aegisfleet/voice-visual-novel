@@ -232,16 +232,16 @@ class GameApp {
 
     if (isLoop2) {
       this.dom.titleLoopInfo.innerHTML = `
-        <span class="loop-tag loop-2">FILE RE-OPEN: 2周目解放中</span>
-        <p class="loop-desc">1周目の基本立証を完了しました。2周目では隠された『重みバイナリ』『感染連鎖ログ』を収集でき、TRUE ENDへ到達できます！</p>
+        <span class="loop-tag loop-2">FILE RE-OPEN: 2周目・深層鑑識モード</span>
+        <p class="loop-desc">初動の現場確認をクリアしました。2周目では隠された『重みバイナリ』『感染連鎖ログ』を収集でき、強制遮断を阻止してTRUE ENDへ到達できます！</p>
       `;
-      this.dom.btnStartGame.textContent = '⚡ 2周目の深層捜査を開始する';
+      this.dom.btnStartGame.textContent = '⚡ 2周目の深層鑑識を開始する';
     } else {
       this.dom.titleLoopInfo.innerHTML = `
-        <span class="loop-tag loop-1">1周目: 初動捜査モード</span>
-        <p class="loop-desc">部屋とアパートを調べて3つの証拠を揃え、シバタ捜査官の強制遮断を論破しよう！</p>
+        <span class="loop-tag loop-1">1周目: 初動現場確認モード</span>
+        <p class="loop-desc">部屋とアパートの電脳鑑識ログを収集し、自分が攻撃者ではなく被害者であることをシバタ捜査官に立証せよ！</p>
       `;
-      this.dom.btnStartGame.textContent = '🔍 部屋の調査を開始する';
+      this.dom.btnStartGame.textContent = '🔍 部屋の現場確認を開始する';
     }
 
     if (this.state.hasClearedTrueEnd) {
@@ -423,11 +423,11 @@ class GameApp {
     const required = 3;
     if (count >= required) {
       this.dom.btnGoToDebate.classList.remove('hidden');
-      this.dom.exploreStatusText.textContent = `⚡ 証拠が揃った！ (${count}個) シバタ捜査官との立証対決に挑めるぞ！`;
-      this.dom.evidenceNeededCounter.textContent = '立証可能！';
+      this.dom.exploreStatusText.textContent = `⚖️ 鑑識データが揃った！ (${count}件) シバタ捜査官に客観的反証を提示できるぞ！`;
+      this.dom.evidenceNeededCounter.textContent = '提示可能！';
     } else {
       this.dom.btnGoToDebate.classList.add('hidden');
-      this.dom.exploreStatusText.textContent = `部屋やアパートを調べて証拠を集めよう（あと${required - count}個必要）`;
+      this.dom.exploreStatusText.textContent = `部屋やアパートを調べて鑑識データを集めよう（あと${required - count}件必要）`;
       this.dom.evidenceNeededCounter.textContent = `${count} / ${required}`;
     }
   }
@@ -612,11 +612,11 @@ class GameApp {
 
     this.selectedEvidenceId = null;
     this.dom.btnPresentEvidence.disabled = true;
-    this.dom.selectedEvidencePreview.textContent = '突きつける証拠品を手帳から選択してください';
+    this.dom.selectedEvidencePreview.textContent = '提示する鑑識データを手帳から選択してください';
 
     this.dom.debateTurnLabel.textContent = `問答 ${currentStep.questionNumber} / ${steps.length}`;
     this.dom.debateOpponentSpeech.textContent = currentStep.opponentQuestion;
-    this.dom.debateHintText.textContent = `💡 ヒント: ${currentStep.hint}`;
+    this.dom.debateHintText.textContent = `💡 鑑識ポイント: ${currentStep.hint}`;
 
     // 相手の発言を読み上げ
     this.audio.speak('シバタ捜査官', currentStep.opponentQuestion);
@@ -662,7 +662,7 @@ class GameApp {
 
     if (isCorrect) {
       // 正解演出！カットイン
-      this.triggerCutin('それには反証があります！！', () => {
+      this.triggerCutin('客観的反証があります！', () => {
         this.playDialogueSequence(currentStep.successReactions, () => {
           this.state.currentDebateStep++;
           this.renderDebateTurn();
