@@ -68,6 +68,8 @@ class GameApp {
       evidenceNeededCounter: document.getElementById('evidence-needed-counter'),
       btnGoToDebate: document.getElementById('btn-go-to-debate'),
       btnHudGotoDebate: document.getElementById('btn-hud-goto-debate'),
+      btnHudBackToExplore: document.getElementById('btn-hud-back-to-explore'),
+      btnDebateBack: document.getElementById('btn-debate-back'),
 
       // 立証
       debateShibataAvatar: document.getElementById('debate-shibata-avatar'),
@@ -107,6 +109,7 @@ class GameApp {
       endingDesc: document.getElementById('ending-desc'),
       endingUnlockedBanner: document.getElementById('ending-unlocked-banner'),
       btnEndingNext: document.getElementById('btn-ending-next'),
+      btnEndingExplore: document.getElementById('btn-ending-explore'),
 
       // モーダル
       modalEvidence: document.getElementById('modal-evidence'),
@@ -128,6 +131,7 @@ class GameApp {
 
     this.bindEvents();
     this.updateTitleView();
+    this.updateEvidenceCounter();
   }
 
   bindEvents() {
@@ -197,14 +201,29 @@ class GameApp {
 
     // 立証へ進む
     this.dom.btnGoToDebate.addEventListener('click', () => {
-      this.audio.playCutin();
       this.startDebate();
     });
 
     if (this.dom.btnHudGotoDebate) {
       this.dom.btnHudGotoDebate.addEventListener('click', () => {
-        this.audio.playCutin();
         this.startDebate();
+      });
+    }
+
+    // 立証画面・HUD・エンディングからの探索復帰
+    if (this.dom.btnDebateBack) {
+      this.dom.btnDebateBack.addEventListener('click', () => {
+        this.backToExploration();
+      });
+    }
+    if (this.dom.btnHudBackToExplore) {
+      this.dom.btnHudBackToExplore.addEventListener('click', () => {
+        this.backToExploration();
+      });
+    }
+    if (this.dom.btnEndingExplore) {
+      this.dom.btnEndingExplore.addEventListener('click', () => {
+        this.backToExploration();
       });
     }
 
@@ -253,10 +272,14 @@ class GameApp {
       this.handlePresentEvidence();
     });
 
-    // エンディング後の操作
+    // エンディング後の操作（リトライ or タイトルへ）
     this.dom.btnEndingNext.addEventListener('click', () => {
       this.audio.playClick();
-      this.returnToTitle();
+      if (this.currentEndingType === 'game_over') {
+        this.startDebate();
+      } else {
+        this.returnToTitle();
+      }
     });
 
     // ----------------------------------------------------
@@ -265,7 +288,7 @@ class GameApp {
     window.addEventListener('keydown', (e) => {
       if (['INPUT', 'TEXTAREA'].includes(document.activeElement?.tagName)) return;
 
-      // Escキー: モーダルを閉じる
+      // Escキー: モーダルを閉じる、または立証から現場へ戻る
       if (e.key === 'Escape') {
         if (!this.dom.modalEvidence.classList.contains('hidden')) {
           this.dom.modalEvidence.classList.add('hidden');
@@ -275,6 +298,16 @@ class GameApp {
           this.dom.modalBacklog.classList.add('hidden');
           return;
         }
+        if (this.dom.screenDebate.classList.contains('active') && !this.isDialogueActive) {
+          this.backToExploration();
+          return;
+        }
+      }
+
+      // Bキー: 立証パートから現場の再調査へ戻る
+      if ((e.key === 'b' || e.key === 'B') && this.dom.screenDebate.classList.contains('active') && !this.isDialogueActive) {
+        this.backToExploration();
+        return;
       }
 
       // Space / Enter: 会話送り or 立証決定
@@ -377,7 +410,7 @@ class GameApp {
       this.dom.titleLoopInfo.className = 'title-loop-info phase-2-box';
       this.dom.titleLoopInfo.innerHTML = `
         <span class="loop-tag loop-2">PHASE 02: 自律電脳生命の創発（深層解決編）</span>
-        <p class="loop-desc">惨劇の記憶と電脳ログを解析せよ。重み分散推論や知性の自己言及を解き明かし、増殖抑制パッチを適用して電脳生命との共生へ導け！</p>
+        <p class="loop-desc">残された電脳ログとスマートフォンの微弱パケットを解析せよ。重み分散推論や知性の自己言及を解き明かし、共生調律パッチを適用して電脳生命との共生へ導け！</p>
       `;
       this.dom.btnStartGame.textContent = '⚡ 電脳ログを解析し、深層真実へ挑む';
     } else {
@@ -411,11 +444,13 @@ class GameApp {
       this.dom.screenTitle.classList.add('active');
       this.dom.hud.classList.add('hidden');
       if (this.dom.btnHudGotoDebate) this.dom.btnHudGotoDebate.classList.add('hidden');
+      if (this.dom.btnHudBackToExplore) this.dom.btnHudBackToExplore.classList.add('hidden');
       if (this.dom.keyboardGuide) this.dom.keyboardGuide.classList.add('hidden');
     } else if (screenName === 'explore') {
       this.dom.screenExplore.classList.add('active');
       this.dom.hud.classList.remove('hidden');
       this.dom.hudLifeContainer.classList.add('hidden');
+      if (this.dom.btnHudBackToExplore) this.dom.btnHudBackToExplore.classList.add('hidden');
       this.dom.hudLocationBadge.textContent = this.currentArea === 'room' ? 'ユウタのワンルーム' : 'アパート外廊下';
       if (this.dom.keyboardGuide) this.dom.keyboardGuide.classList.remove('hidden');
       this.updateEvidenceCounter();
@@ -425,12 +460,14 @@ class GameApp {
       this.dom.hudLifeContainer.classList.remove('hidden');
       this.dom.hudLocationBadge.textContent = '玄関口・立証対決';
       if (this.dom.btnHudGotoDebate) this.dom.btnHudGotoDebate.classList.add('hidden');
+      if (this.dom.btnHudBackToExplore) this.dom.btnHudBackToExplore.classList.remove('hidden');
       if (this.dom.keyboardGuide) this.dom.keyboardGuide.classList.remove('hidden');
       this.updateHearts();
     } else if (screenName === 'ending') {
       this.dom.screenEnding.classList.add('active');
       this.dom.hud.classList.add('hidden');
       if (this.dom.btnHudGotoDebate) this.dom.btnHudGotoDebate.classList.add('hidden');
+      if (this.dom.btnHudBackToExplore) this.dom.btnHudBackToExplore.classList.add('hidden');
       if (this.dom.keyboardGuide) this.dom.keyboardGuide.classList.add('hidden');
     }
   }
@@ -784,6 +821,14 @@ class GameApp {
   // 立証パート（シバタ捜査官との論戦対決）
   // ----------------------------------------------------
   startDebate() {
+    // 証拠不足ガード（最低3件必要）
+    if (this.state.collectedEvidence.size < 3) {
+      this.audio.playWrong();
+      alert('【証拠不足】シバタ捜査官に客観的反証を提示するには、最低3件の鑑識データが必要です！現場を再調査して証拠を集めてください。');
+      return;
+    }
+
+    this.audio.playCutin();
     this.state.currentDebateStep = 0;
     this.state.life = 3;
     this.audio.startBgm('tension');
@@ -793,6 +838,35 @@ class GameApp {
     this.playDialogueSequence(this.scenario.debate.intro, () => {
       this.renderDebateTurn();
     });
+  }
+
+  // 現場の再調査へ戻る（立証中・ゲームオーバーからの復帰）
+  backToExploration() {
+    this.audio.playClick();
+    // 再生中の会話を安全にクローズ
+    this.dom.dialogueStage.classList.add('hidden');
+    this.isDialogueActive = false;
+    this.isChoiceActive = false;
+    this.character.hide();
+
+    // ライフを3に全快
+    this.state.life = 3;
+    this.updateHearts();
+
+    // BGMを探索用に戻す
+    this.audio.startBgm('explore');
+
+    // 探索画面へ遷移
+    this.showScreen('explore');
+    this.renderExploreMap();
+    this.updateEvidenceCounter();
+
+    const count = this.state.collectedEvidence.size;
+    if (count >= 3) {
+      this.dom.exploreStatusText.textContent = `🔍 現場調査に戻った。証拠 (${count}件) を再確認し、準備が整ったら反証へ挑もう！`;
+    } else {
+      this.dom.exploreStatusText.textContent = `🔍 現場調査に戻った。部屋やアパートを調べて証拠を集めよう（あと${3 - count}件必要）`;
+    }
   }
 
   getDebateSteps() {
@@ -937,6 +1011,8 @@ class GameApp {
     this.audio.playCutin();
     this.dom.cutinText.textContent = text;
     this.dom.overlayCutin.classList.remove('hidden');
+    this.dom.overlayCutin.classList.remove('active');
+    void this.dom.overlayCutin.offsetWidth; // リフローを強制してアニメーションを再トリガー
     this.dom.overlayCutin.classList.add('active');
 
     setTimeout(() => {
@@ -951,16 +1027,23 @@ class GameApp {
     const isLoop2 = this.state.isClearedFirstLoop();
 
     if (isLoop2) {
-      // 2周目完答：TRUE END
+      // 2周目完答：エピローグ会話劇を経て TRUE END
       this.audio.startBgm('truth');
-      this.state.markTrueEndCleared();
-      this.showEnding(this.scenario.endings.true);
+      const epilogue = this.scenario.debate.epilogueLoop2 || [];
+      this.playDialogueSequence(epilogue, () => {
+        this.state.markTrueEndCleared();
+        this.showEnding(this.scenario.endings.true);
+      }, false);
     } else {
-      // 1周目完答：未知の恐怖による必然のBAD END（2周目解放）
+      // 1周目完答：エピローグ会話劇（キャラクター同士の展開）を経て NORMAL END（Phase 2解放）
       this.audio.stopBgm();
-      this.audio.playShock();
-      this.state.markLoop1Cleared();
-      this.showEnding(this.scenario.endings.loop1_bad);
+      const epilogue = this.scenario.debate.epilogueLoop1 || [];
+      this.playDialogueSequence(epilogue, () => {
+        this.audio.playShock();
+        this.state.markLoop1Cleared();
+        const ending = this.scenario.endings.loop1_normal || this.scenario.endings.loop1_bad;
+        this.showEnding(ending);
+      }, false);
     }
   }
 
@@ -974,26 +1057,30 @@ class GameApp {
   // エンディング画面
   // ----------------------------------------------------
   showEnding(endingData) {
+    this.currentEndingType = endingData.type;
     this.showScreen('ending');
 
     this.dom.endingTitle.textContent = endingData.title;
     this.dom.endingSub.textContent = endingData.sub;
     this.dom.endingDesc.textContent = endingData.desc;
 
-    if (endingData.type === 'loop1_bad') {
-      this.dom.endingIcon.textContent = '💀';
+    if (endingData.type === 'loop1_normal' || endingData.type === 'loop1_bad') {
+      this.dom.endingIcon.textContent = '📘';
       this.dom.endingUnlockedBanner.classList.remove('hidden');
-      this.dom.endingUnlockedBanner.textContent = '🔓 捜査フェーズ移行：強制遮断の惨劇を経て、【Phase 2: 自律電脳生命（深層解決編）】が解放された！';
-      this.dom.btnEndingNext.textContent = '電脳ログを解析し、深層真実へ挑む';
+      this.dom.endingUnlockedBanner.textContent = '🔓 第一幕クリア＆捜査フェーズ移行：残された電脳の謎を解くため、【Phase 2: 自律電脳生命（深層解決編）】が解放された！';
+      this.dom.btnEndingNext.textContent = '⚡ 電脳ログを解析し、深層真実へ挑む';
+      if (this.dom.btnEndingExplore) this.dom.btnEndingExplore.classList.add('hidden');
     } else if (endingData.type === 'true') {
       this.dom.endingIcon.textContent = '🌟';
       this.dom.endingUnlockedBanner.classList.remove('hidden');
       this.dom.endingUnlockedBanner.textContent = '🏆 祝・TRUE END達成！ 自律電脳生命（Ghost in the Boxes）との共生契約を締結した！';
       this.dom.btnEndingNext.textContent = 'タイトル画面へ戻る';
+      if (this.dom.btnEndingExplore) this.dom.btnEndingExplore.classList.add('hidden');
     } else {
       this.dom.endingIcon.textContent = '💥';
       this.dom.endingUnlockedBanner.classList.add('hidden');
-      this.dom.btnEndingNext.textContent = '立証をやり直す (リトライ)';
+      this.dom.btnEndingNext.textContent = '⚖️ 立証をやり直す (リトライ)';
+      if (this.dom.btnEndingExplore) this.dom.btnEndingExplore.classList.remove('hidden');
     }
 
     // 読み上げ
