@@ -155,6 +155,10 @@ GitHub Actions（CI）により PR/Push 時に Biome 解析およびシナリオ
 
 ## 📚 開発・技術ドキュメント一覧
 
+* 📜 **[Webノベルゲーム＆ADV実装ガイドライン](docs/novel-game-implementation-guidelines.md)**:  
+  詰み防止（可逆性）、エピローグ演出、スマホレスポンシブ、ピン重なり防止、総合検証20項目チェックリスト。
+* 🤖 **[AIエージェント向け ノベルゲーム開発＆品質保証プロトコル](docs/agent-novel-game-dev-protocol.md)**:  
+  エージェントが陥りがちな5大過誤の防止策、4ステップ実行フロー、実機ブラウザ検証プロトコル。
 * 🛠️ **[開発ガイド＆作業手順書](docs/development-guide.md)**:  
   WebGL・Rive・Web Audioを統合したシステム構成と開発・デバッグワークフロー。
 * 🎨 **[表情差分（目パチ・口パク）完全実装＆再現ガイド](docs/avatar-lip-sync-animation-guide.md)**:  
