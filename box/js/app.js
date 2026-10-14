@@ -28,6 +28,7 @@ class GameApp {
     this.isTyping = false;
     this.currentFullText = '';
     this.currentSpeaker = '';
+    this.evidenceFilter = 'all'; // 'all' | 'deep'
 
     // 現在エリア (room | corridor)
     this.currentArea = 'room';
@@ -112,6 +113,8 @@ class GameApp {
       modalEvidenceList: document.getElementById('modal-evidence-list'),
       btnCloseModal: document.getElementById('btn-close-modal'),
       backdropEvidence: document.getElementById('backdrop-evidence'),
+      btnEvFilterAll: document.getElementById('btn-ev-filter-all'),
+      btnEvFilterDeep: document.getElementById('btn-ev-filter-deep'),
 
       // バックログ
       modalBacklog: document.getElementById('modal-backlog'),
@@ -136,7 +139,7 @@ class GameApp {
     });
 
     this.dom.btnResetSave.addEventListener('click', () => {
-      if (confirm('セーブデータを初期化して1周目に戻しますか？')) {
+      if (confirm('捜査ログとセーブデータを初期化し、初期捜査（Phase 1）からやり直しますか？')) {
         this.state.resetAllData();
         this.updateTitleView();
         alert('セーブデータを初期化しました。');
@@ -232,6 +235,18 @@ class GameApp {
     this.dom.backdropBacklog.addEventListener('click', () => {
       this.dom.modalBacklog.classList.add('hidden');
     });
+
+    // 証拠手帳フィルター
+    if (this.dom.btnEvFilterAll) {
+      this.dom.btnEvFilterAll.addEventListener('click', () => {
+        this.setEvidenceFilter('all');
+      });
+    }
+    if (this.dom.btnEvFilterDeep) {
+      this.dom.btnEvFilterDeep.addEventListener('click', () => {
+        this.setEvidenceFilter('deep');
+      });
+    }
 
     // 立証パートの証拠突きつけ
     this.dom.btnPresentEvidence.addEventListener('click', () => {
@@ -340,21 +355,37 @@ class GameApp {
     }, { passive: true });
   }
 
+  // 深層鑑識データ（人形遣い・自己増殖AI関連）の判定
+  isDeepForensicEvidence(evId) {
+    const deepIds = ['weight_replicator_binary', 'distributed_mesh_log', 'escape_trigger_danger', 'reproduction_control_patch'];
+    const ev = this.scenario.evidence[evId];
+    if (!ev) return false;
+    return deepIds.includes(evId) ||
+           ev.summary?.includes('【深層鑑識】') ||
+           ev.type?.includes('深層') ||
+           ev.type?.includes('クラスタ') ||
+           ev.type?.includes('共生');
+  }
+
   // タイトル画面の表示更新
   updateTitleView() {
     const isLoop2 = this.state.isClearedFirstLoop();
-    this.dom.hudLoopBadge.textContent = isLoop2 ? '2周目 (深層真実編)' : '1周目 (未知の怪異編)';
+    this.dom.hudLoopBadge.textContent = isLoop2 ? 'Phase 2: 電脳生命の自我' : 'Phase 1: 異常事態捜査';
 
     if (isLoop2) {
+      this.dom.hudLoopBadge.classList.add('phase-2');
+      this.dom.titleLoopInfo.className = 'title-loop-info phase-2-box';
       this.dom.titleLoopInfo.innerHTML = `
-        <span class="loop-tag loop-2">FILE RE-OPEN: 2周目・自律増殖AI（深層真実編）</span>
-        <p class="loop-desc">1周目の破滅の記憶が蘇る。深層解析で『自律増殖コード』や『0.39トークン分散推論』を暴き、強制切断を阻止して増殖抑制パッチでTRUE ENDへ導け！</p>
+        <span class="loop-tag loop-2">PHASE 02: 自律電脳生命の創発（深層解決編）</span>
+        <p class="loop-desc">惨劇の記憶と電脳ログを解析せよ。重み分散推論や知性の自己言及を解き明かし、増殖抑制パッチを適用して電脳生命との共生へ導け！</p>
       `;
-      this.dom.btnStartGame.textContent = '⚡ 2周目の深層真実を解明する';
+      this.dom.btnStartGame.textContent = '⚡ 電脳ログを解析し、深層真実へ挑む';
     } else {
+      this.dom.hudLoopBadge.classList.remove('phase-2');
+      this.dom.titleLoopInfo.className = 'title-loop-info';
       this.dom.titleLoopInfo.innerHTML = `
-        <span class="loop-tag loop-1">1周目: 未知の怪異編（侵食の恐怖）</span>
-        <p class="loop-desc">部屋とアパートを覆う不可解な電子怪異を調査し、シバタ捜査官の強引な全機器押収と強制遮断を阻止せよ！</p>
+        <span class="loop-tag loop-1">PHASE 01: 未知の電子怪異（初期捜査編）</span>
+        <p class="loop-desc">部屋とアパートを侵食する不可解な怪現象を調査し、シバタ捜査官による全機器押収とネットワーク遮断を阻止せよ！</p>
       `;
       this.dom.btnStartGame.textContent = '🔍 部屋の怪異を調査する';
     }
@@ -788,14 +819,17 @@ class GameApp {
       const ev = this.scenario.evidence[evId];
       if (!ev) return;
 
+      const isDeep = this.isDeepForensicEvidence(evId);
+      const isSelected = (this.selectedEvidenceId === evId);
+
       const card = document.createElement('div');
-      card.className = `debate-evidence-card ${this.selectedEvidenceId === evId ? 'selected' : ''}`;
+      card.className = `debate-evidence-card ${isDeep ? 'deep-cyber' : ''} ${isSelected ? 'selected' : ''}`;
       card.innerHTML = `
         <span class="card-key-badge">[${idx + 1}]</span>
         <div class="evidence-icon">${ev.icon}</div>
         <div class="evidence-info">
           <div class="evidence-name">${ev.name}</div>
-          <div class="evidence-type">${ev.type}</div>
+          <div class="evidence-type" style="${isDeep ? 'color:var(--neon-purple); font-weight:700;' : ''}">${isDeep ? '⚡ [CYBER] ' : ''}${ev.type}</div>
         </div>
       `;
       // クリック/タップで選択（すでに選択中のカードを再タップで即座に提示！）
@@ -808,7 +842,14 @@ class GameApp {
         }
         this.selectedEvidenceId = evId;
         this.dom.btnPresentEvidence.disabled = false;
-        this.dom.selectedEvidencePreview.innerHTML = `<strong>選択中:</strong> ${ev.icon} ${ev.name} <span style="color:var(--neon-cyan); margin-left:6px; font-size:0.8rem;">[再タップで提示]</span>`;
+        this.dom.selectedEvidencePreview.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+            <span><strong>選択中:</strong> ${ev.icon} ${ev.name}</span>
+            <span style="font-family:var(--font-mono); font-size:0.75rem; font-weight:700; color:${isDeep ? 'var(--neon-purple)' : 'var(--neon-cyan)'};">${isDeep ? '⚡ CYBER FORENSIC DATA' : 'STANDARD EVIDENCE'}</span>
+          </div>
+          <div style="font-size:0.82rem; color:#cbd5e1; margin-bottom:4px;">${ev.summary}</div>
+          <div style="color:var(--neon-cyan); font-size:0.75rem;">[再タップまたは Enter で即座に反証を突きつける]</div>
+        `;
         this.renderDebateEvidenceList();
       });
       // PC向けダブルクリックでも提示可能
@@ -922,12 +963,12 @@ class GameApp {
     if (endingData.type === 'loop1_bad') {
       this.dom.endingIcon.textContent = '💀';
       this.dom.endingUnlockedBanner.classList.remove('hidden');
-      this.dom.endingUnlockedBanner.textContent = '🔓 1周目終了：BAD ENDを経験したことで【2周目：自律増殖AI（深層真実編）】が解放されました！';
-      this.dom.btnEndingNext.textContent = '記憶を引き継ぎ、2周目を開始する';
+      this.dom.endingUnlockedBanner.textContent = '🔓 捜査フェーズ移行：強制遮断の惨劇を経て、【Phase 2: 自律電脳生命（深層解決編）】が解放された！';
+      this.dom.btnEndingNext.textContent = '電脳ログを解析し、深層真実へ挑む';
     } else if (endingData.type === 'true') {
       this.dom.endingIcon.textContent = '🌟';
       this.dom.endingUnlockedBanner.classList.remove('hidden');
-      this.dom.endingUnlockedBanner.textContent = '🏆 祝・TRUE END達成！ 粘菌知性（The Slime Mold Protocol）との共生に成功した！';
+      this.dom.endingUnlockedBanner.textContent = '🏆 祝・TRUE END達成！ 自律電脳生命（Ghost in the Boxes）との共生契約を締結した！';
       this.dom.btnEndingNext.textContent = 'タイトル画面へ戻る';
     } else {
       this.dom.endingIcon.textContent = '💥';
@@ -945,34 +986,66 @@ class GameApp {
     this.showScreen('title');
   }
 
-  // 証拠手帳モーダル
+  // 証拠手帳フィルター切替
+  setEvidenceFilter(filterType) {
+    this.evidenceFilter = filterType;
+    if (this.dom.btnEvFilterAll) {
+      if (filterType === 'all') {
+        this.dom.btnEvFilterAll.classList.add('active');
+        this.dom.btnEvFilterDeep.classList.remove('active');
+      } else {
+        this.dom.btnEvFilterAll.classList.remove('active');
+        this.dom.btnEvFilterDeep.classList.add('active');
+      }
+    }
+    this.renderEvidenceModalItems();
+  }
+
+  // 証拠手帳モーダルオープン
   openEvidenceModal() {
+    this.renderEvidenceModalItems();
+    this.dom.modalEvidence.classList.remove('hidden');
+  }
+
+  // 証拠手帳アイテム描画
+  renderEvidenceModalItems() {
     this.dom.modalEvidenceList.innerHTML = '';
     const collected = Array.from(this.state.collectedEvidence);
 
     if (collected.length === 0) {
-      this.dom.modalEvidenceList.innerHTML = '<p class="empty-note">まだ証拠品はありません。部屋やアパートを調査しましょう。</p>';
-    } else {
-      collected.forEach(evId => {
-        const ev = this.scenario.evidence[evId];
-        if (!ev) return;
-
-        const item = document.createElement('div');
-        item.className = 'evidence-modal-item';
-        item.innerHTML = `
-          <div class="evidence-modal-header">
-            <span class="ev-icon">${ev.icon}</span>
-            <span class="ev-name">${ev.name}</span>
-            <span class="ev-badge">${ev.type}</span>
-          </div>
-          <p class="ev-summary">${ev.summary}</p>
-          <p class="ev-detail">${ev.detail}</p>
-        `;
-        this.dom.modalEvidenceList.appendChild(item);
-      });
+      this.dom.modalEvidenceList.innerHTML = '<p class="empty-note" style="color:var(--text-sub); text-align:center; padding:20px;">まだ証拠品はありません。部屋やアパートを調査しましょう。</p>';
+      return;
     }
 
-    this.dom.modalEvidence.classList.remove('hidden');
+    // フィルタリング
+    const filtered = (this.evidenceFilter === 'deep')
+      ? collected.filter(evId => this.isDeepForensicEvidence(evId))
+      : collected;
+
+    if (filtered.length === 0) {
+      this.dom.modalEvidenceList.innerHTML = '<p class="empty-note" style="color:var(--text-sub); text-align:center; padding:20px;">深層鑑識データはまだ検出されていません。現場をさらに調査してください。</p>';
+      return;
+    }
+
+    filtered.forEach(evId => {
+      const ev = this.scenario.evidence[evId];
+      if (!ev) return;
+
+      const isDeep = this.isDeepForensicEvidence(evId);
+
+      const item = document.createElement('div');
+      item.className = `evidence-modal-item ${isDeep ? 'deep-cyber' : ''}`;
+      item.innerHTML = `
+        <div class="evidence-modal-header">
+          <span class="ev-icon">${ev.icon}</span>
+          <span class="ev-name">${ev.name}</span>
+          <span class="ev-badge ${isDeep ? 'cyber-badge' : ''}">${isDeep ? '⚡ [CYBER CORE] ' : ''}${ev.type}</span>
+        </div>
+        <p class="ev-summary">${ev.summary}</p>
+        <p class="ev-detail">${ev.detail}</p>
+      `;
+      this.dom.modalEvidenceList.appendChild(item);
+    });
   }
 }
 

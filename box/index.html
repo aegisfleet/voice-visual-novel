@@ -18,7 +18,7 @@
     <header id="hud" class="hud hidden">
       <div class="hud-left">
         <span id="hud-location-badge" class="badge">ユウタのワンルーム</span>
-        <span id="hud-loop-badge" class="badge loop-badge">1周目</span>
+        <span id="hud-loop-badge" class="badge loop-badge">Phase 1: 異常事態捜査</span>
       </div>
       <div class="hud-center">
         <!-- 立証パート用のライフ -->
@@ -71,11 +71,11 @@
         </div>
 
         <div id="title-loop-info" class="title-loop-info">
-          <!-- JSで1周目/2周目の情報を注入 -->
+          <!-- JSでPhase 1 / Phase 2の情報を注入 -->
         </div>
 
         <div id="title-clear-badge" class="title-clear-badge hidden">
-          🏆 TRUE END達成証明書：粘菌知性共生プロトコル認可済
+          🏆 TRUE END達成証明書：自律電脳生命 共生プロトコル締結済
         </div>
 
         <div class="title-actions">
@@ -195,17 +195,28 @@
 
       <!-- 異議ありカットイン -->
       <div id="overlay-cutin" class="overlay-cutin hidden">
-        <div id="cutin-text" class="cutin-text">客観的反証があります！</div>
+        <div class="cutin-cyber-lines"></div>
+        <div class="cutin-box">
+          <div class="cutin-sub">⚡ FORENSIC OBJECTION / 電脳鑑識反証</div>
+          <div id="cutin-text" class="cutin-text">客観的反証があります！</div>
+        </div>
       </div>
     </main>
 
     <!-- 証拠手帳モーダル -->
     <div id="modal-evidence" class="modal hidden">
       <div id="backdrop-evidence" class="modal-backdrop"></div>
-      <div class="modal-content">
+      <div class="modal-content modal-content-evidence">
         <div class="modal-header">
-          <h3 class="modal-title">🎒 収集した証拠一覧</h3>
+          <div class="modal-title-wrap">
+            <h3 class="modal-title">💾 電脳鑑識データベース</h3>
+            <span class="modal-sub-title">COLLECTED FORENSIC LOGS</span>
+          </div>
           <button type="button" id="btn-close-modal" class="btn-close">✕</button>
+        </div>
+        <div class="evidence-filter-bar">
+          <button type="button" id="btn-ev-filter-all" class="ev-filter-btn active">すべて表示</button>
+          <button type="button" id="btn-ev-filter-deep" class="ev-filter-btn">⚡ 深層鑑識データのみ</button>
         </div>
         <div id="modal-evidence-list" class="modal-list"></div>
       </div>
