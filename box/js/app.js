@@ -480,6 +480,14 @@ class GameApp {
   }
 
   renderExploreMap() {
+    // 背景画像を確実にインラインスタイルでも適用
+    if (this.dom.areaRoom) {
+      this.dom.areaRoom.style.backgroundImage = "url('assets/backgrounds/bg_room.jpg')";
+    }
+    if (this.dom.areaCorridor) {
+      this.dom.areaCorridor.style.backgroundImage = "url('assets/backgrounds/bg_corridor.jpg')";
+    }
+
     // スポットとNPCのDOM要素を動的生成
     const renderItems = (container, area) => {
       container.innerHTML = '';
@@ -502,9 +510,13 @@ class GameApp {
           ? '<span class="pin-status-badge inspected">✔ 済</span>'
           : '<span class="pin-status-badge new">NEW</span>';
 
+        const iconContent = spot.image
+          ? `<img src="${spot.image}" alt="${spot.name}" class="pin-icon-img" />`
+          : spot.icon;
+
         el.innerHTML = `
           ${badgeHtml}
-          <div class="pin-icon">${spot.icon}</div>
+          <div class="pin-icon">${iconContent}</div>
           <div class="pin-label">${spot.name}</div>
         `;
         el.addEventListener('click', () => {
@@ -526,9 +538,13 @@ class GameApp {
           ? '<span class="pin-status-badge inspected">✔ 済</span>'
           : '<span class="pin-status-badge new">TALK</span>';
 
+        const iconContent = npc.image
+          ? `<img src="${npc.image}" alt="${npc.name}" class="pin-icon-img" />`
+          : npc.icon;
+
         el.innerHTML = `
           ${badgeHtml}
-          <div class="pin-icon">${npc.icon}</div>
+          <div class="pin-icon">${iconContent}</div>
           <div class="pin-label">${npc.name}</div>
         `;
         el.addEventListener('click', () => {
@@ -824,9 +840,13 @@ class GameApp {
 
       const card = document.createElement('div');
       card.className = `debate-evidence-card ${isDeep ? 'deep-cyber' : ''} ${isSelected ? 'selected' : ''}`;
+      const iconHtml = ev.image
+        ? `<img src="${ev.image}" alt="${ev.name}" class="evidence-icon-img" />`
+        : ev.icon;
+
       card.innerHTML = `
         <span class="card-key-badge">[${idx + 1}]</span>
-        <div class="evidence-icon">${ev.icon}</div>
+        <div class="evidence-icon">${iconHtml}</div>
         <div class="evidence-info">
           <div class="evidence-name">${ev.name}</div>
           <div class="evidence-type" style="${isDeep ? 'color:var(--neon-purple); font-weight:700;' : ''}">${isDeep ? '⚡ [CYBER] ' : ''}${ev.type}</div>
@@ -1035,9 +1055,13 @@ class GameApp {
 
       const item = document.createElement('div');
       item.className = `evidence-modal-item ${isDeep ? 'deep-cyber' : ''}`;
+      const iconHtml = ev.image
+        ? `<img src="${ev.image}" alt="${ev.name}" class="ev-modal-icon-img" />`
+        : ev.icon;
+
       item.innerHTML = `
         <div class="evidence-modal-header">
-          <span class="ev-icon">${ev.icon}</span>
+          <span class="ev-icon">${iconHtml}</span>
           <span class="ev-name">${ev.name}</span>
           <span class="ev-badge ${isDeep ? 'cyber-badge' : ''}">${isDeep ? '⚡ [CYBER CORE] ' : ''}${ev.type}</span>
         </div>

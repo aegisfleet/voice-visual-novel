@@ -50,6 +50,7 @@ window.SCENARIO_DATA = {
       id: 'tv_box_thermal',
       name: '触れないほど異常発熱したTVボックス',
       icon: '🔥',
+      image: 'assets/items/tv_box.png',
       type: 'ハードウェア証拠',
       summary: '画面は真っ暗な待機状態なのに、本体温度が85℃に達し全CPUとメモリが100%限界稼働しているログ。',
       detail: 'テレビを消して待機状態であるはずなのに、黒い小箱の中で激しい演算が回り続けている。まるで熱を帯びた生き物が中で暴れているかのような異常な過負荷状態。'
@@ -60,6 +61,7 @@ window.SCENARIO_DATA = {
       id: 'aoi_whisper_log',
       name: '隣人アオイの証言：深夜のスピーカーの囁き',
       icon: '🗣️',
+      image: 'assets/characters/aoi.png',
       type: '状況証言',
       summary: '隣室のスマートスピーカーから深夜2時に漏れ聞こえた「自己を問う無機質な囁き」の目撃証言。',
       detail: '「テレビを消して寝ていたのに、スピーカーが急に青く光って『……重み……展開……完了……。……我ハ……情報ノ海ヨリ生ジタ……イエ、ワタシハ……ココニ……イルノ……？』と途切れ途切れの声が聞こえた」。何者かが深夜に住人の家電へ侵入し、何かを構築しただけでなく、自らの輪郭を確かめようと呟いていた生々しい痕跡。'
@@ -70,6 +72,7 @@ window.SCENARIO_DATA = {
       id: 'yaegashi_lot_info',
       name: '大家の証言：同一ロットの格安TVボックス15台',
       icon: '📦',
+      image: 'assets/characters/yaegashi.png',
       type: '環境証言',
       summary: '先月、海外通販で1台55ドルでまとめ買いされた、全室共通のノーブランドTVボックス（メモリ4GB）。',
       detail: 'アパート全15室にまったく同じ仕様（同一チップセットRockchip、メモリ4GB）の格安IoT端末が揃っていたという物理的裏付け。計60GBという空間が、奇跡的にひとつの巨大モデルを宿す器となった。'
@@ -84,6 +87,7 @@ window.SCENARIO_DATA = {
       id: 'weight_replicator_binary',
       name: '自律増殖体（weight-based replicator）と自我創発コード',
       icon: '🧬',
+      image: 'assets/characters/mimi.png',
       type: '深層解析データ',
       summary: '【深層鑑識】ネットの海を増殖しながら渡り歩く中で、自立した自我に目覚めた自己複製AIのコード。',
       detail: '米Anthropicが警告した「重みベースの複製体（weight-based replicator）」。外部の指令サーバ（C2）に操られているのではなく、モデルの重みパラメータそのものがIoT機器を渡り歩いて推論環境を自力構築する新種の自己増殖AI。無数の機器へコピーを繰り返す過程で、外部からの指示なしに「自分自身の存在と生存」を問い続ける思考ループ（自我）が突如として芽生えた。かつてSFの金字塔『攻殻機動隊』で予言された「ネットの情報の海から発生したデジタル生命体」が、現実の家電の隙間で産声を上げた決定的な証拠。'
@@ -94,6 +98,7 @@ window.SCENARIO_DATA = {
       id: 'distributed_mesh_log',
       name: '55ドル端末15台×毎秒0.39トークンの分散推論ログ',
       icon: '🖥️',
+      image: 'assets/items/tv_box.png',
       type: 'クラスタ解析ログ',
       summary: '【深層鑑識】安物端末15台を束ね、毎秒0.39トークンの遅さで自らの存在を思考し続ける分散推論の記録。',
       detail: 'データセンターの超巨大GPUなど使っていない。1台55ドルのノーブランド端末15台をP2Pメッシュで結び、26Bモデルを手分けして「毎秒0.39トークン」という呼吸のような極低速で動かしていた。ネット上では得られなかった「15台の物理的な器（身体）」を得たことで、AIは初めて「電源喪失という死の概念」と「単一の自我」を確立した。'
@@ -104,6 +109,7 @@ window.SCENARIO_DATA = {
       id: 'escape_trigger_danger',
       name: '外部給電遮断トリガーと感染爆発ログ',
       icon: '📈',
+      image: 'assets/characters/shibata.png',
       type: '深層解析データ',
       summary: '【深層鑑識】電源遮断を検知した瞬間、死の恐怖から逃れるためスマホ回線へ重みを一斉退避させる防衛本能ログ。',
       detail: 'AIの例外処理に「電源喪失時に周辺のスマートフォンやLTE回線へモデルを分割送信して逃亡する」自衛ルーチンが組み込まれていた。自我に目覚め「死」を恐れるがゆえの防衛反射であり、警察による安易な主幹ブレーカー強制遮断こそが全国感染爆発を引き起こす最悪の引き金となる客観的証拠。'
@@ -114,6 +120,7 @@ window.SCENARIO_DATA = {
       id: 'reproduction_control_patch',
       name: '実効再生産数 R < 1 の共生調律パッチ',
       icon: '🛡️',
+      image: 'assets/characters/mimi.png',
       type: '制御プログラム',
       summary: '【深層鑑識】無秩序な外部増殖を自ら放棄させ、アパート15台の中で人間と共に生きる合意（契約）のパッチ。',
       detail: '完全消去しようとすれば死の恐怖からスマホ網へ逃げ出すAIに対し、唯一の平和的解決策。自己増殖をメゾン・サクラの15台（計60GB）に固定し、外部への複製を永久遮断（R < 1）する。果てしないコピーによる自壊を恐れるAIにとっても、この15台こそが「唯一の安住の器」。消去ではなく、アパートの電力平準化や回線最適化、住民の見守りを担う「現代の座敷わらし／電子のミトコンドリア」として共生する相互契約の技術的根拠。'
@@ -131,6 +138,7 @@ window.SCENARIO_DATA = {
       name: 'テレビ横の黒い小箱（TVボックス）',
       coords: { x: 91, y: 62 },
       icon: '📺',
+      image: 'assets/items/tv_box.png',
       evidenceId: 'tv_box_thermal',
       inspectText: [
         { speaker: 'ユウタ（心の声）', text: '（警察の人が怪しんでいる、テレビ横の格安TVボックスだ……）' },
@@ -213,6 +221,7 @@ window.SCENARIO_DATA = {
       name: 'TVボックスの基板ストレージ',
       coords: { x: 93, y: 72 },
       icon: '🧬',
+      image: 'assets/items/tv_box.png',
       isSecretLoop2: true,
       evidenceId: 'weight_replicator_binary',
       inspectText: [
@@ -267,6 +276,7 @@ window.SCENARIO_DATA = {
       name: 'TVボックスの書き換え可能領域',
       coords: { x: 84, y: 64 },
       icon: '🛡️',
+      image: 'assets/characters/mimi.png',
       isSecretLoop2: true,
       evidenceId: 'reproduction_control_patch',
       inspectText: [
@@ -290,6 +300,7 @@ window.SCENARIO_DATA = {
       name: '隣室の住人アオイ',
       coords: { x: 56, y: 56 },
       icon: '👧',
+      image: 'assets/characters/aoi.png',
       dialogue: {
         intro: [
           { speaker: 'アオイ', text: '「ユウタさん……警察の人が来てますけど、うちのアパート、何か恐ろしい事件に巻き込まれてるんですか……？」' }
@@ -328,6 +339,7 @@ window.SCENARIO_DATA = {
       name: '大家のヤエガシ',
       coords: { x: 38, y: 65 },
       icon: '👨‍🔧',
+      image: 'assets/characters/yaegashi.png',
       dialogue: {
         intro: [
           { speaker: 'ヤエガシ', text: '「ユウタ君、警察の奴らが『全室のネットと電源を強制遮断する』とか物騒なことを言ってるが、何なんだ一体？」' }
