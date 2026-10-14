@@ -129,7 +129,7 @@ window.SCENARIO_DATA = {
       id: 'spot_tvbox',
       area: 'room',
       name: 'テレビ横の黒い小箱（TVボックス）',
-      coords: { x: 28, y: 55 },
+      coords: { x: 91, y: 62 },
       icon: '📺',
       evidenceId: 'tv_box_thermal',
       inspectText: [
@@ -145,7 +145,7 @@ window.SCENARIO_DATA = {
       id: 'spot_tv_cable',
       area: 'room',
       name: 'テレビ裏の配線コード',
-      coords: { x: 38, y: 42 },
+      coords: { x: 86, y: 88 },
       icon: '🔌',
       evidenceId: 'hdmi_bad_cable',
       inspectText: [
@@ -160,7 +160,7 @@ window.SCENARIO_DATA = {
       id: 'spot_router',
       area: 'room',
       name: 'デスク上のWi-Fiルーター',
-      coords: { x: 75, y: 48 },
+      coords: { x: 74, y: 55 },
       icon: '📶',
       evidenceId: 'creepy_pulse_packet',
       inspectText: [
@@ -176,7 +176,7 @@ window.SCENARIO_DATA = {
       id: 'spot_heater',
       area: 'room',
       name: 'キッチンの給湯器リモコン',
-      coords: { x: 18, y: 78 },
+      coords: { x: 18, y: 65 },
       icon: '♨️',
       evidenceId: 'os_auto_update',
       inspectText: [
@@ -192,7 +192,7 @@ window.SCENARIO_DATA = {
       id: 'spot_breaker',
       area: 'corridor',
       name: '外廊下の集中電気メーター盤',
-      coords: { x: 25, y: 50 },
+      coords: { x: 64, y: 28 },
       icon: '⚡',
       evidenceId: 'power_meter_pulse',
       inspectText: [
@@ -211,7 +211,7 @@ window.SCENARIO_DATA = {
       id: 'spot_tvbox_sd',
       area: 'room',
       name: 'TVボックスの基板ストレージ',
-      coords: { x: 30, y: 68 },
+      coords: { x: 93, y: 72 },
       icon: '🧬',
       isSecretLoop2: true,
       evidenceId: 'weight_replicator_binary',
@@ -230,7 +230,7 @@ window.SCENARIO_DATA = {
       id: 'spot_mesh_analysis',
       area: 'room',
       name: 'ルーターのクラスタ解析ログ',
-      coords: { x: 80, y: 35 },
+      coords: { x: 78, y: 34 },
       icon: '🖥️',
       isSecretLoop2: true,
       evidenceId: 'distributed_mesh_log',
@@ -248,7 +248,7 @@ window.SCENARIO_DATA = {
       id: 'spot_dark_packet',
       area: 'corridor',
       name: '配電盤裏の回線トラフィック',
-      coords: { x: 35, y: 65 },
+      coords: { x: 67, y: 44 },
       icon: '📈',
       isSecretLoop2: true,
       evidenceId: 'escape_trigger_danger',
@@ -265,7 +265,7 @@ window.SCENARIO_DATA = {
       id: 'spot_patch_code',
       area: 'room',
       name: 'TVボックスの書き換え可能領域',
-      coords: { x: 20, y: 45 },
+      coords: { x: 84, y: 64 },
       icon: '🛡️',
       isSecretLoop2: true,
       evidenceId: 'reproduction_control_patch',
@@ -288,7 +288,7 @@ window.SCENARIO_DATA = {
       id: 'npc_aoi',
       area: 'corridor',
       name: '隣室の住人アオイ',
-      coords: { x: 55, y: 55 },
+      coords: { x: 56, y: 56 },
       icon: '👧',
       dialogue: {
         intro: [
@@ -326,7 +326,7 @@ window.SCENARIO_DATA = {
       id: 'npc_yaegashi',
       area: 'corridor',
       name: '大家のヤエガシ',
-      coords: { x: 80, y: 65 },
+      coords: { x: 38, y: 65 },
       icon: '👨‍🔧',
       dialogue: {
         intro: [

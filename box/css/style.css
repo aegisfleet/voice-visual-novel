@@ -183,10 +183,13 @@ body {
    1. タイトル画面
 ---------------------------------------------------- */
 #screen-title {
-  padding: 32px 20px;
+  padding: 40px 20px;
   align-items: center;
   justify-content: center;
   text-align: center;
+  position: relative;
+  background: linear-gradient(180deg, rgba(3, 7, 18, 0.72) 0%, rgba(3, 7, 18, 0.9) 100%), url('../assets/backgrounds/bg_title.jpg') center center / cover no-repeat;
+  min-height: 100vh;
 }
 
 .title-badge-top {
@@ -194,43 +197,66 @@ body {
   font-family: var(--font-mono);
   font-size: 0.8rem;
   color: var(--neon-cyan);
-  background: rgba(0, 243, 255, 0.1);
+  background: rgba(0, 243, 255, 0.15);
   border: 1px solid var(--border-cyan);
   padding: 4px 14px;
   border-radius: 20px;
   margin-bottom: 16px;
   letter-spacing: 0.1em;
+  backdrop-filter: blur(4px);
 }
 
 .game-title {
-  font-size: 2.4rem;
+  font-size: 2.6rem;
   font-weight: 900;
   letter-spacing: 0.05em;
   color: #fff;
-  text-shadow: 0 0 20px rgba(0, 243, 255, 0.5);
+  text-shadow: 0 0 25px rgba(0, 243, 255, 0.7), 0 0 50px rgba(0, 243, 255, 0.3);
   line-height: 1.2;
 }
 
 .sub-title {
   display: block;
-  font-size: 1.1rem;
+  font-size: 1.15rem;
   font-weight: 500;
   color: var(--neon-blue);
   margin-top: 8px;
   letter-spacing: 0.08em;
+  text-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
 }
 
 .title-box-art {
-  margin: 28px 0;
+  margin: 24px 0 20px;
   position: relative;
   display: inline-block;
 }
 
-.hero-box-wrapper svg {
-  width: 160px;
-  height: 160px;
-  filter: drop-shadow(0 0 15px rgba(0, 243, 255, 0.4));
-  animation: float-pulse 3s infinite ease-in-out;
+.hero-box-wrapper {
+  position: relative;
+  display: inline-block;
+  animation: float-pulse 3.5s infinite ease-in-out;
+}
+
+.hero-tvbox-img {
+  width: 170px;
+  height: 170px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 25px rgba(0, 243, 255, 0.65));
+}
+
+.hero-token-badge {
+  position: absolute;
+  bottom: 8px;
+  right: -10px;
+  background: rgba(2, 6, 23, 0.92);
+  border: 1px solid var(--neon-cyan);
+  color: var(--neon-cyan);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 12px;
+  box-shadow: 0 0 14px rgba(0, 243, 255, 0.5);
 }
 
 @keyframes float-pulse {
@@ -399,12 +425,13 @@ body {
 
 .explore-stage {
   flex: 1;
-  min-height: 400px;
+  min-height: 480px;
   position: relative;
   border-radius: 16px;
   overflow: hidden;
   border: 1px solid var(--border-cyan);
   background: #090d16;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
 }
 
 .area-map {
@@ -418,12 +445,12 @@ body {
   display: none !important;
 }
 
-/* 部屋のビジュアル装飾 */
+/* 部屋・廊下のビジュアル背景 */
 #area-room {
-  background: radial-gradient(circle at 50% 50%, #172033 0%, #090e1a 100%);
+  background: url('../assets/backgrounds/bg_room.jpg') center center / cover no-repeat;
 }
 #area-corridor {
-  background: radial-gradient(circle at 50% 50%, #1e1b4b 0%, #090d16 100%);
+  background: url('../assets/backgrounds/bg_corridor.jpg') center center / cover no-repeat;
 }
 
 .explore-pin {
@@ -507,7 +534,7 @@ body {
 }
 
 .debate-stage {
-  background: rgba(15, 23, 42, 0.85);
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.88) 0%, rgba(15, 23, 42, 0.95) 100%), url('../assets/backgrounds/bg_debate.jpg') center center / cover no-repeat;
   border: 1px solid var(--border-cyan);
   border-radius: 16px;
   padding: 18px;
@@ -516,6 +543,7 @@ body {
   gap: 12px;
   position: relative;
   overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7);
 }
 
 .debate-turn-badge {
@@ -530,12 +558,25 @@ body {
   gap: 16px;
   align-items: center;
 }
-.opponent-avatar svg {
-  width: 70px;
-  height: 70px;
+.opponent-avatar {
+  width: 76px;
+  height: 76px;
   border-radius: 50%;
   background: #1e293b;
   border: 2px solid var(--neon-red);
+  overflow: hidden;
+  box-shadow: 0 0 15px rgba(239, 68, 68, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.opponent-portrait-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  transform: scale(1.35) translateY(4px);
 }
 
 .opponent-speech-bubble {
@@ -669,24 +710,55 @@ body {
 
 .character-stage {
   position: absolute;
-  bottom: 180px;
+  bottom: 155px;
   left: 50%;
   transform: translateX(-50%);
-  width: 220px;
-  height: 260px;
+  width: 380px;
+  max-width: 90vw;
+  height: 520px;
+  max-height: 65vh;
   display: flex;
   align-items: flex-end;
   justify-content: center;
   pointer-events: none;
+  z-index: 5;
+  transition: all 0.3s ease;
 }
 .character-stage.hidden {
   display: none !important;
 }
 
-.char-avatar svg {
+.char-avatar {
   width: 100%;
   height: 100%;
-  filter: drop-shadow(0 0 15px rgba(0, 243, 255, 0.3));
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.char-sprite-img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 20px rgba(0, 0, 0, 0.7));
+  transition: transform 0.25s ease, filter 0.25s ease;
+}
+
+/* MIMIの電脳ホログラム発光エフェクト */
+.char-wrapper-mimi .char-sprite-img {
+  filter: drop-shadow(0 0 20px rgba(0, 243, 255, 0.8)) drop-shadow(0 0 35px rgba(192, 132, 252, 0.5));
+  animation: mimi-hologram-pulse 2.5s infinite ease-in-out;
+}
+
+@keyframes mimi-hologram-pulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 15px rgba(0, 243, 255, 0.7)) drop-shadow(0 0 30px rgba(192, 132, 252, 0.4));
+    transform: scale(1);
+  }
+  50% {
+    filter: drop-shadow(0 0 28px rgba(0, 243, 255, 0.95)) drop-shadow(0 0 45px rgba(192, 132, 252, 0.7));
+    transform: scale(1.02);
+  }
 }
 
 .emotion-bubble {
