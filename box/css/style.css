@@ -137,6 +137,8 @@ body {
   border: 1px solid var(--neon-red);
   padding: 4px 12px;
   border-radius: 16px;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 .life-container.hidden {
   display: none !important;
@@ -145,10 +147,12 @@ body {
   font-size: 0.75rem;
   font-weight: 700;
   color: #fca5a5;
+  white-space: nowrap;
 }
 .hearts {
   font-size: 0.95rem;
   letter-spacing: 2px;
+  white-space: nowrap;
 }
 
 .hud-btn {
@@ -595,6 +599,7 @@ body {
 #screen-debate {
   padding: 12px;
   gap: 12px;
+  overflow-y: auto;
 }
 
 .debate-stage {
@@ -606,7 +611,7 @@ body {
   flex-direction: column;
   gap: 12px;
   position: relative;
-  overflow: hidden;
+  overflow: visible;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7);
 }
 
@@ -1530,8 +1535,8 @@ body {
 
   /* 上部HUDの省スペース・親指最適化 & 1行固定・ブレ防止 */
   .hud {
-    padding: 6px 8px;
-    gap: 4px;
+    padding: 6px 6px;
+    gap: 3px;
     flex-wrap: nowrap;
     align-items: center;
     justify-content: space-between;
@@ -1541,26 +1546,26 @@ body {
   .hud-left {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 3px;
     flex-wrap: nowrap;
     flex-shrink: 0;
   }
   .hud-right {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 3px;
     flex-wrap: nowrap;
     flex-shrink: 0;
   }
   .hud-btn {
-    padding: 4px 6px;
+    padding: 4px 5px;
     font-size: 0.68rem;
     border-radius: 6px;
     white-space: nowrap;
   }
   .hud-audio-btn {
-    padding: 4px 6px;
-    min-width: 28px;
+    padding: 4px 5px;
+    min-width: 26px;
     text-align: center;
     display: inline-flex;
     align-items: center;
@@ -1578,6 +1583,34 @@ body {
     padding: 4px 7px !important;
     font-size: 0.70rem !important;
     white-space: nowrap !important;
+  }
+  .hud-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .phase-desc-text {
+    display: none;
+  }
+  .life-container {
+    padding: 2px 7px;
+    gap: 4px;
+    border-radius: 12px;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+  .life-label {
+    font-size: 0.65rem;
+    white-space: nowrap;
+  }
+  .hearts {
+    font-size: 0.78rem;
+    letter-spacing: 1px;
+    white-space: nowrap;
+  }
+  .hud-back-explore-btn {
+    display: none !important;
   }
 
   /* 探索画面：部屋切り替えボタンの全幅均等配分（余白解消 & 2行折れ防止） */
@@ -1661,60 +1694,68 @@ body {
   /* 立証パートのモバイル親指レイアウト */
   #screen-debate {
     padding: 8px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
   .debate-stage {
     gap: 8px;
+    padding: 10px 12px;
+    overflow: visible;
   }
   .opponent-box {
-    padding: 10px 12px;
-    gap: 10px;
+    padding: 8px 10px;
+    gap: 8px;
   }
   .opponent-avatar {
-    width: 52px;
-    height: 52px;
+    width: 48px;
+    height: 48px;
     flex-shrink: 0;
   }
   .opponent-speech-bubble p {
-    font-size: 0.85rem;
-    line-height: 1.45;
+    font-size: 0.82rem;
+    line-height: 1.4;
   }
   .debate-hint {
-    padding: 6px 10px;
-    font-size: 0.75rem;
+    padding: 4px 8px;
+    font-size: 0.72rem;
   }
   .preview-box {
-    padding: 10px 12px;
-    font-size: 0.85rem;
+    padding: 8px 10px;
+    font-size: 0.82rem;
   }
 
   /* 証拠カード一覧（縦1列で指でタップしやすいカード） */
   .debate-evidence-grid {
     grid-template-columns: 1fr;
-    gap: 8px;
-    max-height: 220px;
+    gap: 6px;
+    max-height: 180px;
+    overflow-y: auto;
   }
   .debate-evidence-card {
-    padding: 12px 14px;
-    min-height: 54px;
-    border-radius: 10px;
+    padding: 8px 10px;
+    min-height: 46px;
+    border-radius: 8px;
     touch-action: manipulation;
   }
+  .evidence-icon-img {
+    width: 28px;
+    height: 28px;
+  }
   .evidence-icon {
-    font-size: 1.5rem;
+    font-size: 1.3rem;
   }
   .evidence-name {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
   }
 
   /* 提示ボタンの親指ワンタップ最適化 */
   .btn-present {
-    padding: 16px;
-    font-size: 1.15rem;
-    border-radius: 14px;
-    position: sticky;
-    bottom: 8px;
-    z-index: 30;
-    box-shadow: 0 4px 20px rgba(0, 243, 255, 0.5);
+    padding: 12px;
+    font-size: 1rem;
+    border-radius: 12px;
+    position: static;
+    margin-top: 4px;
+    box-shadow: 0 4px 15px rgba(0, 243, 255, 0.4);
   }
 
   /* 会話ノベルウィンドウ (スマホ最適化: 168px十分な高さ + ホームバー余裕浮動カード) */

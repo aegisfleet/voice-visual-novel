@@ -416,7 +416,7 @@ class GameApp {
   // タイトル画面の表示更新
   updateTitleView() {
     const isLoop2 = this.state.isClearedFirstLoop();
-    this.dom.hudLoopBadge.textContent = isLoop2 ? 'Phase 2: 電脳生命の自我' : 'Phase 1: 異常事態捜査';
+    this.dom.hudLoopBadge.innerHTML = `<span class="phase-title">Phase ${isLoop2 ? '2' : '1'}</span><span class="phase-desc-text">: ${isLoop2 ? '電脳生命の自我' : '異常事態捜査'}</span>`;
 
     if (isLoop2) {
       this.dom.hudLoopBadge.classList.add('phase-2');
@@ -506,11 +506,11 @@ class GameApp {
       this.dom.hud.classList.remove('hidden');
       this.dom.hudLifeContainer.classList.remove('hidden');
       if (this.dom.hudLocationBadge) {
-        this.dom.hudLocationBadge.classList.remove('hidden');
-        this.dom.hudLocationBadge.textContent = '玄関口・立証対決';
+        this.dom.hudLocationBadge.classList.add('hidden');
       }
       if (this.dom.btnHudGotoDebate) this.dom.btnHudGotoDebate.classList.add('hidden');
-      if (this.dom.btnHudBackToExplore) this.dom.btnHudBackToExplore.classList.remove('hidden');
+      // ステージ内に btn-debate-back があるため、HUD側の重複ボタンは非表示にしてライフ表示の横幅を確保
+      if (this.dom.btnHudBackToExplore) this.dom.btnHudBackToExplore.classList.add('hidden');
       if (this.dom.keyboardGuide) this.dom.keyboardGuide.classList.remove('hidden');
       this.updateHearts();
     } else if (screenName === 'ending') {
@@ -968,6 +968,9 @@ class GameApp {
     this.state.currentDebateStep = 0;
     this.state.life = 3;
     this.audio.startBgm('tension');
+
+    // 会話再生前に対決ターン・証拠リストを即座に初期化（未初期化プレースホルダーの表示防止）
+    this.renderDebateTurn();
     this.showScreen('debate');
 
     // イントロ会話再生
@@ -976,9 +979,11 @@ class GameApp {
       ? this.scenario.debate.introLoop2
       : this.scenario.debate.intro;
 
-    this.playDialogueSequence(introScript, () => {
-      this.renderDebateTurn();
-    });
+    if (introScript && introScript.length > 0) {
+      this.playDialogueSequence(introScript, () => {
+        this.renderDebateTurn();
+      });
+    }
   }
 
   // 現場の再調査へ戻る（立証中・ゲームオーバーからの復帰）
