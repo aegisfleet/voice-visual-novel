@@ -827,7 +827,7 @@ class GameApp {
   startDebate() {
     // 証拠不足ガード（最低3件必要）
     if (this.state.collectedEvidence.size < 3) {
-      this.audio.playWrong();
+      if (this.audio.playShock) this.audio.playShock();
       alert('【証拠不足】シバタ捜査官に客観的反証を提示するには、最低3件の鑑識データが必要です！現場を再調査して証拠を集めてください。');
       return;
     }
