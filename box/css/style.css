@@ -830,7 +830,7 @@ body {
 
 .character-stage {
   position: absolute;
-  bottom: 156px;
+  bottom: 175px;
   left: 50%;
   transform: translateX(-50%);
   width: 360px;
@@ -920,14 +920,14 @@ body {
 .novel-window {
   position: relative;
   z-index: 10;
-  height: 142px;
-  min-height: 142px;
-  max-height: 142px;
-  margin: 0 16px max(14px, env(safe-area-inset-bottom, 0px)) 16px;
+  height: 155px;
+  min-height: 155px;
+  max-height: 155px;
+  margin: 0 16px max(16px, env(safe-area-inset-bottom, 0px)) 16px;
   background: rgba(15, 23, 42, 0.96);
   border: 1px solid var(--border-cyan);
   border-radius: 14px;
-  padding: 12px 18px 10px 18px;
+  padding: 14px 20px 12px 20px;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -1652,14 +1652,15 @@ body {
     box-shadow: 0 4px 20px rgba(0, 243, 255, 0.5);
   }
 
-  /* 会話ノベルウィンドウ (スマホ最適化 & 見切れ完全防止 & 下部余白ゼロ化) */
+  /* 会話ノベルウィンドウ (スマホ最適化: 168px十分な高さ + ホームバー余裕浮動カード) */
   .character-stage {
-    bottom: 132px;
+    bottom: 186px;
+    bottom: calc(168px + max(14px, env(safe-area-inset-bottom, 0px)) + 4px);
     width: 310px;
     max-width: 86vw;
-    height: 410px;
-    max-height: 52vh;
-    max-height: 52dvh;
+    height: 400px;
+    max-height: 48vh;
+    max-height: 48dvh;
   }
   .character-sprite-box {
     width: 100%;
@@ -1667,32 +1668,35 @@ body {
   }
   .emotion-bubble {
     top: 10px;
-    right: 32px;
+    right: 30px;
     width: 38px;
     height: 38px;
     font-size: 1.25rem;
   }
   .novel-window {
-    height: 132px;
-    min-height: 132px;
-    max-height: 132px;
-    margin: 0;
-    width: 100%;
-    border-radius: 14px 14px 0 0;
-    border-left: none;
-    border-right: none;
-    border-bottom: none;
-    padding: 10px 14px max(10px, env(safe-area-inset-bottom, 0px)) 14px;
+    height: 168px;
+    min-height: 168px;
+    max-height: 168px;
+    margin: 0 10px max(14px, env(safe-area-inset-bottom, 0px)) 10px;
+    width: calc(100% - 20px);
+    border-radius: 14px;
+    border: 1px solid var(--border-cyan);
+    padding: 12px 14px 10px 14px;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     box-sizing: border-box;
     flex-shrink: 0;
+    box-shadow: 0 4px 25px rgba(0, 0, 0, 0.85);
   }
   .novel-window.has-choices {
     height: auto;
-    min-height: 170px;
+    min-height: 180px;
     max-height: 48dvh;
+    margin: 0 10px max(14px, env(safe-area-inset-bottom, 0px)) 10px;
+    width: calc(100% - 20px);
+    border-radius: 14px;
+    border: 1px solid var(--border-cyan);
   }
   .novel-header {
     margin-bottom: 4px;
@@ -1707,20 +1711,21 @@ body {
     padding: 2px 6px;
   }
   .dialogue-body {
-    font-size: clamp(0.82rem, 3.8vw, 0.92rem);
-    line-height: 1.45;
+    font-size: clamp(0.85rem, 3.8vw, 0.92rem);
+    line-height: 1.55;
     min-height: unset;
     margin-bottom: 2px;
     flex: 1;
     word-break: break-word;
     overflow-wrap: break-word;
+    overflow-y: auto;
   }
   .dialogue-prompt {
-    height: 14px;
-    line-height: 14px;
-    font-size: 0.70rem;
+    height: 16px;
+    line-height: 16px;
+    font-size: 0.72rem;
     padding: 0;
-    margin-top: 1px;
+    margin-top: 2px;
     background: none;
     border: none;
     flex-shrink: 0;

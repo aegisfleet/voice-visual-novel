@@ -14,6 +14,8 @@ class BoxCharacterController {
       'ユウタ（心の声）': { id: 'yuta', emotion: 'thinking' },
       'シバタ捜査官': { id: 'shibata', emotion: 'normal' },
       'シバタ': { id: 'shibata', emotion: 'normal' },
+      '柴田捜査官': { id: 'shibata', emotion: 'normal' },
+      '柴田': { id: 'shibata', emotion: 'normal' },
       'アオイ': { id: 'aoi', emotion: 'normal' },
       '隣人アオイ': { id: 'aoi', emotion: 'normal' },
       'ヤエガシ': { id: 'yaegashi', emotion: 'normal' },
