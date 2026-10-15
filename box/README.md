@@ -84,3 +84,18 @@ python -m http.server 8080
 ```
 http://localhost:8080/box/
 ```
+
+> [!TIP]
+> **ポートが既に使用中の場合 (`Address already in use`)**  
+> 過去に起動したサーバープロセスが残っているとエラーになります。以下でプロセスを終了してから再起動してください：
+> ```bash
+> # 起動中の http.server プロセスを一括終了
+> pkill -f "http.server"
+>
+> # またはポート指定で強制解放
+> fuser -k 8080/tcp
+>
+> # 再起動
+> python -m http.server 8080
+> ```
+> または `python -m http.server 8081` のように別ポートで起動し、`http://localhost:8081/box/` にアクセスしてください。

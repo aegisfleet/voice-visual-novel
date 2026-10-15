@@ -45,7 +45,28 @@ python -m http.server 8080
 ```
 
 ブラウザで `http://localhost:8080` を開くと公式ポータルが表示されます。  
-直接作品を起動する場合は `http://localhost:8080/eve/` にアクセスしてください。
+直接作品を起動する場合は `http://localhost:8080/eve/` （または `/box/`, `/pome/`）にアクセスしてください。
+
+> [!TIP]
+> **ポート競合エラー（`Address already in use`）が出た場合**  
+> 以前起動したサーバープロセスが残っていると、`OSError: [Errno 98] Address already in use` が発生します。以下のいずれかで対処してください：
+>
+> 1. **既存プロセスを終了して再起動（推奨）**
+>    ```bash
+>    # 起動中の http.server プロセスを一括終了
+>    pkill -f "http.server"
+>
+>    # またはポート指定で強制解放（fuser利用可能な場合）
+>    fuser -k 8080/tcp
+>
+>    # 再度起動
+>    python -m http.server 8080
+>    ```
+> 2. **別の空きポート番号で起動**
+>    ```bash
+>    python -m http.server 8081
+>    # アクセス先: http://localhost:8081/
+>    ```
 
 ---
 

@@ -50,6 +50,13 @@ PythonまたはNode.jsで静的サーバーを起動する。
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8;
 python -m http.server 8080
 ```
+```bash
+# Bash / Termux
+python -m http.server 8080
+```
+
+> 💡 **`Address already in use` が発生した場合**:  
+> 以前のサーバープロセスが残っている場合は `pkill -f "http.server"` または `fuser -k 8080/tcp` で解放してから再起動するか、`python -m http.server 8081` で別ポートを指定してください。
 
 ### ブラウザでのデバッグ確認
 1. ブラウザで `http://localhost:8080` を開く。
