@@ -277,6 +277,9 @@ class GameApp {
       this.audio.playClick();
       if (this.currentEndingType === 'game_over') {
         this.startDebate();
+      } else if (this.currentEndingType === 'loop1_normal' || this.currentEndingType === 'loop1_bad') {
+        this.audio.startBgm('ambient');
+        this.startPrologue();
       } else {
         this.returnToTitle();
       }
@@ -490,7 +493,12 @@ class GameApp {
     this.renderExploreMap();
     this.updateEvidenceCounter();
 
-    this.playDialogueSequence(this.scenario.prologue, () => {
+    const isLoop2 = this.state.isClearedFirstLoop();
+    const prologueScript = (isLoop2 && this.scenario.prologueLoop2)
+      ? this.scenario.prologueLoop2
+      : this.scenario.prologue;
+
+    this.playDialogueSequence(prologueScript, () => {
       // プロローグ終了後、探索モードへ
       this.audio.playPacketPulse();
     });
@@ -869,7 +877,12 @@ class GameApp {
     this.showScreen('debate');
 
     // イントロ会話再生
-    this.playDialogueSequence(this.scenario.debate.intro, () => {
+    const isLoop2 = this.state.isClearedFirstLoop();
+    const introScript = (isLoop2 && this.scenario.debate.introLoop2)
+      ? this.scenario.debate.introLoop2
+      : this.scenario.debate.intro;
+
+    this.playDialogueSequence(introScript, () => {
       this.renderDebateTurn();
     });
   }
