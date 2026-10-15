@@ -728,10 +728,15 @@ body {
 
 .debate-evidence-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 8px;
   max-height: 190px;
   overflow-y: auto;
+  overflow-x: hidden !important;
+  touch-action: pan-y;
+  overscroll-behavior-x: none;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .debate-evidence-card {
@@ -739,12 +744,24 @@ body {
   align-items: center;
   gap: 10px;
   background: rgba(30, 41, 59, 0.75);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  border: 2px solid rgba(255, 255, 255, 0.15);
   padding: 8px 12px;
   border-radius: 8px;
   cursor: pointer;
-  transition: all 0.2s;
-  position: relative;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+}
+.evidence-icon {
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  flex-shrink: 0;
 }
 .evidence-icon-img {
   width: 32px;
@@ -768,15 +785,14 @@ body {
   box-shadow: 0 0 12px rgba(192, 132, 252, 0.4);
 }
 .debate-evidence-card.selected {
-  border: 2px solid var(--neon-cyan);
+  border-color: var(--neon-cyan);
   background: rgba(0, 243, 255, 0.25);
-  box-shadow: 0 0 15px rgba(0, 243, 255, 0.6);
-  transform: scale(1.02);
+  box-shadow: 0 0 16px rgba(0, 243, 255, 0.6), inset 0 0 10px rgba(0, 243, 255, 0.2);
 }
 .debate-evidence-card.deep-cyber.selected {
-  border: 2px solid var(--neon-purple);
+  border-color: var(--neon-purple);
   background: rgba(192, 132, 252, 0.3);
-  box-shadow: 0 0 18px rgba(192, 132, 252, 0.7);
+  box-shadow: 0 0 18px rgba(192, 132, 252, 0.7), inset 0 0 10px rgba(192, 132, 252, 0.2);
 }
 
 .debate-evidence-card.already-submitted {
@@ -787,18 +803,58 @@ body {
   border-color: rgba(148, 163, 184, 0.2);
   pointer-events: none;
 }
+
+.evidence-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+}
+.evidence-name {
+  font-size: 0.88rem;
+  font-weight: 700;
+  line-height: 1.35;
+  color: #f1f5f9;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+.evidence-type {
+  font-size: 0.72rem;
+  color: #94a3b8;
+  line-height: 1.2;
+}
+
+.card-badge-container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-shrink: 0;
+  margin-left: 6px;
+}
+.card-key-badge {
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid var(--neon-cyan);
+  color: var(--neon-cyan);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 4px;
+  white-space: nowrap;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
 .ev-submitted-tag {
-  position: absolute;
-  top: 6px;
-  right: 6px;
   background: rgba(51, 65, 85, 0.85);
   border: 1px solid rgba(148, 163, 184, 0.4);
   color: #94a3b8;
   font-family: var(--font-mono);
-  font-size: 0.65rem;
+  font-size: 0.68rem;
   font-weight: 700;
-  padding: 1px 6px;
+  padding: 2px 8px;
   border-radius: 4px;
+  white-space: nowrap;
 }
 
 .btn-present {
@@ -1484,22 +1540,6 @@ body {
   box-shadow: 0 1px 2px rgba(0,0,0,0.5);
 }
 
-.card-key-badge {
-  position: absolute;
-  top: 6px;
-  right: 6px;
-  background: rgba(15, 23, 42, 0.9);
-  border: 1px solid var(--neon-cyan);
-  color: var(--neon-cyan);
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
-  font-weight: 800;
-  padding: 1px 6px;
-  border-radius: 4px;
-}
-.debate-evidence-card {
-  position: relative;
-}
 
 .choice-key-tag {
   background: rgba(0, 243, 255, 0.2);
@@ -1730,22 +1770,43 @@ body {
     gap: 6px;
     max-height: 180px;
     overflow-y: auto;
+    overflow-x: hidden !important;
+    touch-action: pan-y;
+    overscroll-behavior-x: none;
+    width: 100%;
+    box-sizing: border-box;
   }
   .debate-evidence-card {
     padding: 8px 10px;
     min-height: 46px;
     border-radius: 8px;
     touch-action: manipulation;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+  }
+  .evidence-icon {
+    width: 30px;
+    height: 30px;
+    font-size: 1.25rem;
   }
   .evidence-icon-img {
     width: 28px;
     height: 28px;
   }
-  .evidence-icon {
-    font-size: 1.3rem;
-  }
   .evidence-name {
     font-size: 0.85rem;
+  }
+  .evidence-type {
+    font-size: 0.70rem;
+  }
+  .card-badge-container {
+    margin-left: 4px;
+  }
+  .ev-submitted-tag {
+    font-size: 0.65rem;
+    padding: 2px 6px;
   }
 
   /* 提示ボタンの親指ワンタップ最適化 */

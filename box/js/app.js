@@ -1091,12 +1091,12 @@ class GameApp {
         : `<span class="card-key-badge">[${idx + 1}]</span>`;
 
       card.innerHTML = `
-        ${badgeHtml}
         <div class="evidence-icon">${iconHtml}</div>
         <div class="evidence-info">
           <div class="evidence-name">${ev.name}</div>
           <div class="evidence-type" style="${isDeep ? 'color:var(--neon-purple); font-weight:700;' : ''}">${isDeep ? '⚡ [CYBER] ' : ''}${ev.type}</div>
         </div>
+        <div class="card-badge-container">${badgeHtml}</div>
       `;
 
       if (!isAlreadySubmitted) {
