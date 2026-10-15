@@ -552,8 +552,10 @@ class GameApp {
           : spot.icon;
 
         el.innerHTML = `
-          ${badgeHtml}
-          <div class="pin-icon">${iconContent}</div>
+          <div class="pin-icon-wrap">
+            <div class="pin-icon">${iconContent}</div>
+            ${badgeHtml}
+          </div>
           <div class="pin-label">${spot.name}</div>
         `;
         el.addEventListener('click', () => {
@@ -580,8 +582,10 @@ class GameApp {
           : npc.icon;
 
         el.innerHTML = `
-          ${badgeHtml}
-          <div class="pin-icon">${iconContent}</div>
+          <div class="pin-icon-wrap">
+            <div class="pin-icon">${iconContent}</div>
+            ${badgeHtml}
+          </div>
           <div class="pin-label">${npc.name}</div>
         `;
         el.addEventListener('click', () => {

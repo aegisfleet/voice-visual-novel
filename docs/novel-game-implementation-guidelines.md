@@ -108,27 +108,53 @@
 ### 3-3. 探索ピンの重なり防止（Zero-Overlap Pin Layout）
 - **ピン同士の十分な距離（分散配置）**:
   - 探索画面で複数のアイテムやスポットが近接していると、ピンアイコンや `.pin-label` が折り重なり、後ろのピンがタップできなくなる。
-  - 各スポットの座標（`coords: { x, y }`）は、同一エリア内でユークリッド距離にして最低 15%〜20% 以上離すこと。
+  - 各スポットの座標（`coords: { x, y }`）は、同一エリア内でユークリッド距離にして最低 **20%以上** 離すこと。
+  - 特に**同一直線上（垂直・水平方向の同一列）への配置を厳禁**とする（縦並びの場合、高さ70px以上のピン同士が衝突する）。
+  - 端の境界マージンを確保するため、座標は `x: 15%〜86%`、`y: 20%〜82%` の範囲に収め、画面外への突き抜けや見切れを防止する。
   - 2周目以降で追加される隠しスポットも、1周目の既存ピンと被らない別領域（棚上、PCデスク、窓際、サブ端末等）に配置する。
+- **簡潔なピン名と折り返し制御**:
+  - ピンラベル（`.pin-label`）は5〜9文字程度の簡潔な名詞（「TVボックス」「Wi-Fiルーター」等）とし、`white-space: nowrap;` で制御する（冗長な名称による画面圧迫と不自然な縦改行を防止）。
+- **バッジのアンカー固定（`.pin-icon-wrap`）**:
+  - `NEW` や `TALK` などの状態バッジは、横幅が可変する `.explore-pin` 全体ではなく、常に一定サイズのアイコン直上（`.pin-icon-wrap`）に相対配置する。
 - **ピンのCSS制御**:
   ```css
   .explore-pin {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: max-content; /* 親の残り幅による自動縮小を抑止 */
+    max-width: 130px;
     z-index: 10;
     touch-action: manipulation;
   }
-  /* ホバーまたはフォーカス時に手前に浮き上がらせる */
-  .explore-pin:hover,
-  .explore-pin:focus-within {
-    z-index: 40;
-    transform: translate(-50%, -55%) scale(1.12);
+  .pin-icon-wrap {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .pin-status-badge {
+    position: absolute;
+    top: -4px;
+    right: -6px;
+    white-space: nowrap;
+    z-index: 5;
+    pointer-events: none;
   }
   .pin-label {
-    max-width: 125px;
-    white-space: normal;
+    margin-top: 4px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    background: rgba(3, 7, 18, 0.92);
+    border: 1px solid rgba(0, 243, 255, 0.35);
+    padding: 2px 8px;
+    border-radius: 8px;
+    white-space: nowrap;
     text-align: center;
-    line-height: 1.25;
-    word-break: break-all;
-    pointer-events: none; /* ラベルでなくピン本体でタップ判定を確実に受ける */
+    line-height: 1.3;
+    pointer-events: none;
   }
   ```
 
