@@ -38,6 +38,13 @@
   - セリフに含まれる前提事実（「〇〇が疑っている」「あいつが言っていた」）は、必ず直前のプロローグや対話で**読者と主人公が直接見聞きする客観的描写（行動・計器・セリフ）として事前に提示する**こと。
   - 詳細は [scenario-consistency-framework.md](file:///d:/Work/voice-visual-novel/docs/scenario-consistency-framework.md) を参照。
 
+### ❌ 過誤 7: 「100vh・非fixed・セーフエリア未考慮」による会話ウィンドウの画面下端見切れ
+- **現象**: 会話ステージを `position: absolute` で背後コンテンツ内に配置したり、`100vh` に依存してスタイルを定義したため、モバイルブラウザの動的URLバーや下部ジェスチャーバーによって、会話テキストの行末や送りプロンプト（▼）が画面外へ突き抜けて見えなくなる。
+- **防止策**: 
+  - 会話ステージ（`.dialogue-stage`）は `position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 960px; height: 100dvh;` でビューポートに完全固定する。
+  - HTMLに `viewport-fit=cover` を指定し、CSSで `calc(margin + env(safe-area-inset-bottom, 0px))` の余白を必ず確保する。
+  - 会話テキストは `font-size: clamp(...)`、`line-height: 1.5`、`word-break: break-word`、ノベルウィンドウには `max-height: 38dvh` を指定する。
+
 ---
 
 ## 2. エージェント開発実行フロー（4ステップ）
@@ -74,15 +81,16 @@ flowchart TD
    - ピンが被っていないことを確認し、証拠を収集。
    - 証拠が揃った瞬間に反証ボタンが出現することを確認（スクリーンショット）。
    - 立証画面に進み、「現場の再調査に戻る」ボタンで探索画面に戻れることを確認（スクリーンショット）。
-2. **スマートフォン画面（幅380px、高さ750px）**:
+2. **スマートフォン画面（幅360px〜380px、高さ640px〜750px）**:
    - ウィンドウをリサイズ。
+   - プロローグおよび立証パートで会話を進め、**立ち絵表示時・複数行セリフ・送りプロンプト（▼）が、動的URLバーや下部ジェスチャーバーに隠れず完全に画面内に収まっていること**をスクリーンショットで確認。
    - 立証画面で証拠を提示し、カットインバナー（「客観的反証があります！」）を発火。
    - **文字やサイバーボックスが画面外にはみ出さず、画面内に綺麗に収まっていること**をスクリーンショットで確認。
    - 撮影した画像を `view_file` で自身の目で目視検証する。
 
 ### ステップ 4: 完了判定（Definition of Done）
 以下の条件をすべて満たした場合にのみ、タスク完了とする：
-- [ ] 20項目チェックリストの全項目に違反がないこと。
+- [ ] 21項目チェックリストの全項目に違反がないこと。
 - [ ] PCおよびスマートフォンの両方でUI崩れ・見切れがないことがスクリーンショットで証明されていること。
 - [ ] プレイヤーが理不尽な詰み・不可逆遷移に遭遇しないことが実機操作で確認されていること。
 - [ ] 日本語コミットメッセージでGitにコミットされていること。
@@ -100,5 +108,7 @@ flowchart TD
 | **画面遷移** | `startDebate()` に戻る導線がない | `btnDebateBack`、`backToExploration()`、`Esc/B` キーを常備 |
 | **前提条件ガード** | `btn.click()` だけで無条件に遷移 | `if (count < 3) { alert(...); return; }` の二重安全ガード |
 | **ピン座標** | 近接する別スポットに `(x:91, y:62)`, `(x:93, y:72)` | ユークリッド距離で20%以上離した `(x:88, y:68)`, `(x:90, y:36)` |
+| **会話ステージ配置** | `.dialogue-stage { position: absolute; height: 100%; }` | `position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); max-width: 960px; height: 100dvh;` |
+| **ビューポート高・余白** | `min-height: 100vh; margin: 8px;` | `min-height: 100dvh; margin-bottom: calc(8px + env(safe-area-inset-bottom, 0px));` |
 | **カットインアニメ** | 単に `classList.add('active')` | `classList.remove('active'); void el.offsetWidth; classList.add('active');` |
 | **立証成功後の結末** | 問答終了直後にいきなり `showEnding(bad)` | 潔白証明と仲間・捜査官のエピローグ会話を経て `showEnding(normal)` |

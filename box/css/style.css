@@ -27,6 +27,7 @@ body {
   overflow-x: hidden;
   user-select: none;
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
 }
@@ -43,6 +44,7 @@ body {
   left: 0;
   width: 100vw;
   height: 100vh;
+  height: 100dvh;
   background-image: 
     linear-gradient(to right, rgba(0, 243, 255, 0.04) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(0, 243, 255, 0.04) 1px, transparent 1px);
@@ -58,6 +60,7 @@ body {
   max-width: 960px;
   margin: 0 auto;
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
 }
@@ -758,40 +761,49 @@ body {
    会話ステージ & ノベルウィンドウ
 ---------------------------------------------------- */
 .dialogue-stage {
-  position: absolute;
+  position: fixed;
   top: 0;
-  left: 0;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
   width: 100%;
+  max-width: 960px;
   height: 100%;
-  z-index: 40;
+  height: 100dvh;
+  z-index: 45;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
   pointer-events: auto;
+  box-sizing: border-box;
 }
 .dialogue-stage.hidden {
   display: none !important;
 }
 
 .dialogue-backdrop {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(3, 7, 18, 0.65);
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  background: rgba(3, 7, 18, 0.7);
   backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 1;
 }
 
 .character-stage {
   position: absolute;
-  bottom: 170px;
+  bottom: 175px;
   left: 50%;
   transform: translateX(-50%);
   width: 360px;
   max-width: 90vw;
   height: 480px;
-  max-height: 62vh;
+  max-height: 58vh;
+  max-height: 58dvh;
   display: flex;
   align-items: flex-end;
   justify-content: center;
@@ -838,8 +850,8 @@ body {
 
 .emotion-bubble {
   position: absolute;
-  top: -20px;
-  right: 20px;
+  top: clamp(65px, 11vh, 100px);
+  right: clamp(24px, 18vw, 80px);
   background: #fff;
   color: #030712;
   font-size: 1.5rem;
@@ -851,6 +863,7 @@ body {
   justify-content: center;
   box-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
   animation: bounce 0.6s infinite alternate;
+  z-index: 20;
 }
 .emotion-bubble.hidden {
   display: none !important;
@@ -864,12 +877,18 @@ body {
 .novel-window {
   position: relative;
   z-index: 10;
-  margin: 12px;
+  margin: 12px 16px calc(14px + env(safe-area-inset-bottom, 0px)) 16px;
   background: rgba(15, 23, 42, 0.95);
   border: 1px solid var(--border-cyan);
   border-radius: 14px;
   padding: 16px 20px;
-  min-height: 140px;
+  min-height: 110px;
+  max-height: 40vh;
+  max-height: 40dvh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-sizing: border-box;
   cursor: pointer;
   box-shadow: 0 0 25px rgba(0, 0, 0, 0.8);
 }
@@ -908,9 +927,11 @@ body {
 
 .dialogue-body {
   font-size: 0.95rem;
-  line-height: 1.7;
+  line-height: 1.65;
   color: var(--text-main);
-  min-height: 52px;
+  min-height: 48px;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 .dialogue-prompt {
@@ -922,7 +943,7 @@ body {
   border: 1px solid var(--border-cyan);
   border-radius: 6px;
   display: inline-block;
-  float: right;
+  align-self: flex-end;
   margin-top: 6px;
   animation: blink 0.8s infinite alternate;
 }
@@ -942,7 +963,7 @@ body {
   margin-top: 10px;
 }
 .dialogue-choices.hidden {
-  display: none;
+  display: none !important;
 }
 
 .choice-btn {
@@ -1420,24 +1441,24 @@ body {
 
   /* 上部HUDの省スペース・親指最適化 */
   .hud {
-    padding: 6px 10px;
+    padding: 5px 8px;
     gap: 4px;
   }
   .hud-left, .hud-right {
     gap: 4px;
   }
   .hud-btn {
-    padding: 5px 8px;
-    font-size: 0.7rem;
+    padding: 4px 6px;
+    font-size: 0.68rem;
     border-radius: 6px;
   }
   .badge {
-    font-size: 0.7rem;
-    padding: 3px 8px;
+    font-size: 0.68rem;
+    padding: 2px 6px;
   }
   .hud-debate-btn {
-    padding: 5px 10px !important;
-    font-size: 0.75rem !important;
+    padding: 4px 8px !important;
+    font-size: 0.72rem !important;
   }
 
   /* 探索画面：ピンのタッチ領域（48px以上）拡大 */
@@ -1456,7 +1477,11 @@ body {
     text-align: center;
   }
   .explore-stage {
-    min-height: 380px;
+    height: auto;
+    min-height: 320px;
+    max-height: 50vh;
+    max-height: 50dvh;
+    aspect-ratio: 4 / 3;
   }
   .explore-pin {
     padding: 8px;
@@ -1547,22 +1572,58 @@ body {
     box-shadow: 0 4px 20px rgba(0, 243, 255, 0.5);
   }
 
-  /* 会話ノベルウィンドウ */
+  /* 会話ノベルウィンドウ (スマホ最適化 & 見切れ完全防止) */
+  .character-stage {
+    bottom: clamp(120px, 19vh, 155px);
+    width: 310px;
+    max-width: 86vw;
+    height: 410px;
+    max-height: 52vh;
+    max-height: 52dvh;
+  }
+  .emotion-bubble {
+    top: clamp(50px, 8vh, 75px);
+    right: clamp(14px, 10vw, 36px);
+    width: 32px;
+    height: 32px;
+    font-size: 1.2rem;
+  }
   .novel-window {
-    margin: 8px;
-    padding: 12px 14px;
-    min-height: 120px;
+    margin: 6px 8px calc(8px + env(safe-area-inset-bottom, 0px)) 8px;
+    padding: 10px 12px calc(10px + env(safe-area-inset-bottom, 0px)) 12px;
+    min-height: 96px;
+    max-height: 38vh;
+    max-height: 38dvh;
     border-radius: 12px;
   }
+  .novel-header {
+    margin-bottom: 4px;
+    padding-bottom: 4px;
+  }
+  .speaker-name {
+    font-size: clamp(0.85rem, 3.6vw, 0.95rem);
+  }
+  .dialogue-ctrl-btn {
+    font-size: 0.68rem;
+    padding: 2px 6px;
+  }
   .dialogue-body {
-    font-size: 0.92rem;
-    line-height: 1.55;
+    font-size: clamp(0.82rem, 3.8vw, 0.92rem);
+    line-height: 1.5;
+    min-height: 40px;
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
+  .dialogue-prompt {
+    font-size: 0.72rem;
+    padding: 2px 6px;
+    margin-top: 2px;
   }
   .choice-btn {
-    padding: 14px 16px;
-    font-size: 0.92rem;
-    min-height: 48px;
-    margin-bottom: 8px;
-    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: clamp(0.82rem, 3.6vw, 0.9rem);
+    min-height: 44px;
+    margin-bottom: 6px;
+    border-radius: 8px;
   }
 }
