@@ -132,6 +132,7 @@ class GameApp {
     this.bindEvents();
     this.updateTitleView();
     this.updateEvidenceCounter();
+    this.updateAudioButtons();
   }
 
   bindEvents() {
@@ -155,21 +156,21 @@ class GameApp {
       const active = this.audio.toggleVoice();
       this.state.voiceEnabled = active;
       this.state.savePersistentState();
-      this.dom.btnToggleVoice.textContent = active ? '🗣️ 音声: ON' : '🗣️ 音声: OFF';
+      this.updateAudioButtons();
     });
 
     this.dom.btnToggleSe.addEventListener('click', () => {
       const active = this.audio.toggleSe();
       this.state.seEnabled = active;
       this.state.savePersistentState();
-      this.dom.btnToggleSe.textContent = active ? '🔔 SE: ON' : '🔔 SE: OFF';
+      this.updateAudioButtons();
     });
 
     this.dom.btnToggleBgm.addEventListener('click', () => {
       const active = this.audio.toggleBgm();
       this.state.bgmEnabled = active;
       this.state.savePersistentState();
-      this.dom.btnToggleBgm.textContent = active ? '🎵 BGM: ON' : '🎵 BGM: OFF';
+      this.updateAudioButtons();
     });
 
     this.dom.btnEvidenceBag.addEventListener('click', () => {
@@ -442,6 +443,37 @@ class GameApp {
     }
   }
 
+  // 音声・SE・BGMボタン表示の一括更新
+  updateAudioButtons() {
+    const v = this.state.voiceEnabled;
+    const s = this.state.seEnabled;
+    const b = this.state.bgmEnabled;
+
+    if (this.dom.btnToggleVoice) {
+      this.dom.btnToggleVoice.classList.toggle('active', v);
+      this.dom.btnToggleVoice.classList.toggle('muted', !v);
+      const lbl = this.dom.btnToggleVoice.querySelector('.hud-audio-label');
+      if (lbl) lbl.textContent = v ? ' 音声: ON' : ' 音声: OFF';
+      this.dom.btnToggleVoice.title = v ? '音声読み上げ: ON' : '音声読み上げ: OFF';
+    }
+
+    if (this.dom.btnToggleSe) {
+      this.dom.btnToggleSe.classList.toggle('active', s);
+      this.dom.btnToggleSe.classList.toggle('muted', !s);
+      const lbl = this.dom.btnToggleSe.querySelector('.hud-audio-label');
+      if (lbl) lbl.textContent = s ? ' SE: ON' : ' SE: OFF';
+      this.dom.btnToggleSe.title = s ? '効果音 (SE): ON' : '効果音 (SE): OFF';
+    }
+
+    if (this.dom.btnToggleBgm) {
+      this.dom.btnToggleBgm.classList.toggle('active', b);
+      this.dom.btnToggleBgm.classList.toggle('muted', !b);
+      const lbl = this.dom.btnToggleBgm.querySelector('.hud-audio-label');
+      if (lbl) lbl.textContent = b ? ' BGM: ON' : ' BGM: OFF';
+      this.dom.btnToggleBgm.title = b ? 'BGM音楽: ON' : 'BGM音楽: OFF';
+    }
+  }
+
   // 画面遷移
   showScreen(screenName) {
     const screens = [
@@ -463,14 +495,20 @@ class GameApp {
       this.dom.hud.classList.remove('hidden');
       this.dom.hudLifeContainer.classList.add('hidden');
       if (this.dom.btnHudBackToExplore) this.dom.btnHudBackToExplore.classList.add('hidden');
-      this.dom.hudLocationBadge.textContent = this.currentArea === 'room' ? 'ユウタのワンルーム' : 'アパート外廊下';
+      // 探索画面では直下のタブが現在のエリアを明示するため、ヘッダーの重複バッジを非表示にしてレイアウトを安定化
+      if (this.dom.hudLocationBadge) {
+        this.dom.hudLocationBadge.classList.add('hidden');
+      }
       if (this.dom.keyboardGuide) this.dom.keyboardGuide.classList.remove('hidden');
       this.updateEvidenceCounter();
     } else if (screenName === 'debate') {
       this.dom.screenDebate.classList.add('active');
       this.dom.hud.classList.remove('hidden');
       this.dom.hudLifeContainer.classList.remove('hidden');
-      this.dom.hudLocationBadge.textContent = '玄関口・立証対決';
+      if (this.dom.hudLocationBadge) {
+        this.dom.hudLocationBadge.classList.remove('hidden');
+        this.dom.hudLocationBadge.textContent = '玄関口・立証対決';
+      }
       if (this.dom.btnHudGotoDebate) this.dom.btnHudGotoDebate.classList.add('hidden');
       if (this.dom.btnHudBackToExplore) this.dom.btnHudBackToExplore.classList.remove('hidden');
       if (this.dom.keyboardGuide) this.dom.keyboardGuide.classList.remove('hidden');
@@ -523,13 +561,13 @@ class GameApp {
       this.dom.areaCorridor.classList.add('hidden');
       this.dom.btnAreaRoom.classList.add('active');
       this.dom.btnAreaCorridor.classList.remove('active');
-      this.dom.hudLocationBadge.textContent = 'ユウタのワンルーム';
+      if (this.dom.hudLocationBadge) this.dom.hudLocationBadge.textContent = '201号室';
     } else {
       this.dom.areaRoom.classList.add('hidden');
       this.dom.areaCorridor.classList.remove('hidden');
       this.dom.btnAreaRoom.classList.remove('active');
       this.dom.btnAreaCorridor.classList.add('active');
-      this.dom.hudLocationBadge.textContent = 'アパート外廊下';
+      if (this.dom.hudLocationBadge) this.dom.hudLocationBadge.textContent = '外廊下';
     }
   }
 

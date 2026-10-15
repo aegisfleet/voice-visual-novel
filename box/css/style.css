@@ -168,6 +168,24 @@ body {
   color: var(--neon-cyan);
 }
 
+.hud-audio-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.hud-audio-btn.active {
+  border-color: var(--neon-cyan);
+  color: var(--neon-cyan);
+  background: rgba(0, 243, 255, 0.15);
+  box-shadow: 0 0 10px rgba(0, 243, 255, 0.25);
+}
+.hud-audio-btn.muted {
+  opacity: 0.45;
+  filter: grayscale(0.85);
+  border-color: rgba(255, 255, 255, 0.15);
+  background: rgba(15, 23, 42, 0.6);
+}
+
 /* ----------------------------------------------------
    メインビューポート & スクリーン管理
 ---------------------------------------------------- */
@@ -385,28 +403,33 @@ body {
 }
 
 .explore-header {
+  width: 100%;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
   margin-bottom: 12px;
-  gap: 8px;
 }
 
 .area-selector {
   display: flex;
+  width: 100%;
   gap: 8px;
 }
 
 .area-btn {
-  padding: 8px 16px;
-  background: rgba(30, 41, 59, 0.8);
+  flex: 1;
+  padding: 10px 16px;
+  background: rgba(30, 41, 59, 0.85);
   border: 1px solid rgba(255, 255, 255, 0.2);
   color: var(--text-sub);
   border-radius: 10px;
-  font-size: 0.85rem;
+  font-size: 0.88rem;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  box-sizing: border-box;
 }
 .area-btn.active {
   background: rgba(0, 243, 255, 0.2);
@@ -1505,42 +1528,84 @@ body {
     font-size: 14px;
   }
 
-  /* 上部HUDの省スペース・親指最適化 */
+  /* 上部HUDの省スペース・親指最適化 & 1行固定・ブレ防止 */
   .hud {
-    padding: 5px 8px;
+    padding: 6px 8px;
     gap: 4px;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 40px;
+    box-sizing: border-box;
   }
-  .hud-left, .hud-right {
+  .hud-left {
+    display: flex;
+    align-items: center;
     gap: 4px;
+    flex-wrap: nowrap;
+    flex-shrink: 0;
+  }
+  .hud-right {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-wrap: nowrap;
+    flex-shrink: 0;
   }
   .hud-btn {
     padding: 4px 6px;
     font-size: 0.68rem;
     border-radius: 6px;
+    white-space: nowrap;
+  }
+  .hud-audio-btn {
+    padding: 4px 6px;
+    min-width: 28px;
+    text-align: center;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .hud-audio-label {
+    display: none;
   }
   .badge {
     font-size: 0.68rem;
-    padding: 2px 6px;
+    padding: 3px 6px;
+    white-space: nowrap;
   }
   .hud-debate-btn {
-    padding: 4px 8px !important;
-    font-size: 0.72rem !important;
+    padding: 4px 7px !important;
+    font-size: 0.70rem !important;
+    white-space: nowrap !important;
   }
 
-  /* 探索画面：ピンのタッチ領域（48px以上）拡大 */
+  /* 探索画面：部屋切り替えボタンの全幅均等配分（余白解消 & 2行折れ防止） */
   #screen-explore {
     padding: 8px;
     display: flex;
     flex-direction: column;
   }
   .explore-header {
+    width: 100%;
     margin-bottom: 8px;
+  }
+  .area-selector {
+    width: 100%;
+    display: flex;
+    gap: 6px;
   }
   .area-btn {
     flex: 1;
-    padding: 10px 12px;
-    font-size: 0.85rem;
+    padding: 9px 6px;
+    font-size: clamp(0.78rem, 3.4vw, 0.85rem);
     text-align: center;
+    white-space: nowrap;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
   }
   .explore-status-bar {
     padding: 6px 10px;

@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20261015_rev18">
+  <link rel="stylesheet" href="css/style.css?v=20261015_rev19">
 </head>
 <body>
   <div class="bg-grid"></div>
@@ -34,17 +34,17 @@
         <button type="button" id="btn-hud-back-to-explore" class="hud-btn hud-back-explore-btn hidden" title="現場の再調査に戻る">
           🔍 現場調査に戻る
         </button>
-        <button type="button" id="btn-evidence-bag" class="hud-btn" title="集めた証拠手帳 [E]">
+        <button type="button" id="btn-evidence-bag" class="hud-btn btn-evidence-hud" title="集めた証拠手帳 [E]">
           🎒 証拠手帳 (<span id="evidence-count">0</span>)
         </button>
-        <button type="button" id="btn-toggle-voice" class="hud-btn" title="音声読み上げ切替">
-          🗣️ 音声: ON
+        <button type="button" id="btn-toggle-voice" class="hud-btn hud-audio-btn active" title="音声読み上げ: ON">
+          <span class="hud-audio-icon">🗣️</span><span class="hud-audio-label"> 音声: ON</span>
         </button>
-        <button type="button" id="btn-toggle-se" class="hud-btn" title="効果音切替">
-          🔔 SE: ON
+        <button type="button" id="btn-toggle-se" class="hud-btn hud-audio-btn active" title="効果音 (SE): ON">
+          <span class="hud-audio-icon">🔔</span><span class="hud-audio-label"> SE: ON</span>
         </button>
-        <button type="button" id="btn-toggle-bgm" class="hud-btn" title="BGM切替">
-          🎵 BGM: ON
+        <button type="button" id="btn-toggle-bgm" class="hud-btn hud-audio-btn active" title="BGM音楽: ON">
+          <span class="hud-audio-icon">🎵</span><span class="hud-audio-label"> BGM: ON</span>
         </button>
       </div>
     </header>
