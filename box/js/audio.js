@@ -80,7 +80,7 @@ class AudioManager {
     } else if (speaker.includes('ヤエガシ') || speaker.includes('大家')) {
       utterance.pitch = 0.85; // 落ち着いた中古電器屋の親父
       utterance.rate = 1.0;
-    } else if (speaker.includes('MIMI') || speaker.includes('TVボックス') || speaker.includes('知性')) {
+    } else if (speaker.includes('MIMI') || speaker.includes('ミミ') || speaker.includes('TVボックス') || speaker.includes('知性')) {
       utterance.pitch = 1.15; // 感情を抑えた静謐なAIボイス、極めてゆっくり
       utterance.rate = 0.8;
     } else {

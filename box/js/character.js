@@ -21,9 +21,26 @@ class BoxCharacterController {
       'ヤエガシ': { id: 'yaegashi', emotion: 'normal' },
       '大家のヤエガシ': { id: 'yaegashi', emotion: 'normal' },
       'MIMI': { id: 'mimi', emotion: 'normal' },
+      'ミミ': { id: 'mimi', emotion: 'normal' },
       'TVボックス': { id: 'mimi', emotion: 'normal' },
       '分散知性 MIMI': { id: 'mimi', emotion: 'glow' }
     };
+
+    this.preloadAll();
+  }
+
+  preloadAll() {
+    const assets = [
+      'assets/characters/yuta.png',
+      'assets/characters/shibata.png',
+      'assets/characters/aoi.png',
+      'assets/characters/yaegashi.png',
+      'assets/characters/mimi.png'
+    ];
+    assets.forEach(src => {
+      const img = new Image();
+      img.src = src;
+    });
   }
 
   show(charId, emotion = 'normal', motion = null) {

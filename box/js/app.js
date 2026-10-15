@@ -516,6 +516,9 @@ class GameApp {
     } else if (screenName === 'ending') {
       this.dom.screenEnding.classList.add('active');
       this.dom.hud.classList.add('hidden');
+      if (this.dom.dialogueStage) this.dom.dialogueStage.classList.add('hidden');
+      if (this.character) this.character.hide();
+      this.isDialogueActive = false;
       if (this.dom.btnHudGotoDebate) this.dom.btnHudGotoDebate.classList.add('hidden');
       if (this.dom.btnHudBackToExplore) this.dom.btnHudBackToExplore.classList.add('hidden');
       if (this.dom.keyboardGuide) this.dom.keyboardGuide.classList.add('hidden');
@@ -811,9 +814,10 @@ class GameApp {
     this.dom.dialoguePrompt.classList.add('hidden');
 
     let charIdx = 0;
-    // 0.39トークンの遅さをMIMIのセリフ時に演出
-    const isMimi = speaker && (speaker.includes('MIMI') || speaker.includes('知性'));
-    const speed = isMimi ? 120 : (this.isSkipMode ? 5 : 25);
+    // 0.39トークンの遅さをMIMIが苦しんでいる時や電子の声の時に演出（アップグレード後は高速・流暢に）
+    const isStrugglingVoice = (speaker && (speaker.includes('電子の声') || speaker.includes('知性'))) ||
+      (speaker && speaker.includes('MIMI') && (text.includes('タイヘン') || text.includes('消サナイデ') || text.includes('オ……ハ……ナ……シ')));
+    const speed = this.isSkipMode ? 5 : (isStrugglingVoice ? 110 : 25);
 
     this.typewriterTimer = setInterval(() => {
       if (charIdx < text.length) {
@@ -1234,6 +1238,9 @@ class GameApp {
   // エンディング画面
   // ----------------------------------------------------
   showEnding(endingData) {
+    if (this.dom.dialogueStage) this.dom.dialogueStage.classList.add('hidden');
+    if (this.character) this.character.hide();
+    this.isDialogueActive = false;
     this.currentEndingType = endingData.type;
     this.showScreen('ending');
 
