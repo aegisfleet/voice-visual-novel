@@ -230,6 +230,10 @@ class GameApp {
     // 会話ウィンドウ操作（画面全体のクリックで次へ送り or 即時表示）
     this.dom.dialogueStage.addEventListener('click', (e) => {
       if (e.target.closest('.dialogue-ctrl-btn') || e.target.closest('.choice-btn') || e.target.closest('.dialogue-choices')) return;
+      if (this.isSkipMode) {
+        this.stopSkipMode();
+        return;
+      }
       this.handleDialogueProceed();
     });
 
@@ -317,6 +321,10 @@ class GameApp {
       if (e.key === ' ' || e.key === 'Enter') {
         e.preventDefault();
         if (this.isDialogueActive && !this.isChoiceActive) {
+          if (this.isSkipMode) {
+            this.stopSkipMode();
+            return;
+          }
           this.handleDialogueProceed();
           return;
         }
@@ -351,8 +359,9 @@ class GameApp {
         // 立証パートで証拠カード選択
         if (this.dom.screenDebate.classList.contains('active') && !this.isDialogueActive) {
           const cards = this.dom.debateEvidenceList.querySelectorAll('.debate-evidence-card');
-          if (cards[num - 1]) {
-            cards[num - 1].click();
+          const targetCard = cards[num - 1];
+          if (targetCard && !targetCard.classList.contains('already-submitted')) {
+            targetCard.click();
             return;
           }
         }
@@ -701,6 +710,10 @@ class GameApp {
   // 会話・ノベルウィンドウ演出 (タイピング & 音声)
   // ----------------------------------------------------
   playDialogueSequence(dialogueList, onComplete = null, keepStageOpen = false) {
+    this.stopSkipMode();
+    if (this.dom.novelWindow) {
+      this.dom.novelWindow.classList.remove('has-choices');
+    }
     this.dialogueQueue = [...dialogueList];
     this.currentDialogueCallback = onComplete;
     this.keepStageOpen = keepStageOpen;
@@ -714,6 +727,10 @@ class GameApp {
 
   showNextDialogue() {
     if (this.dialogueQueue.length === 0) {
+      this.stopSkipMode();
+      if (this.dom.novelWindow) {
+        this.dom.novelWindow.classList.remove('has-choices');
+      }
       if (!this.keepStageOpen) {
         this.dom.dialogueStage.classList.add('hidden');
         this.character.hide();
@@ -781,7 +798,7 @@ class GameApp {
     if (this.isAutoMode || this.isSkipMode) {
       const waitTime = this.isSkipMode ? 80 : 1800;
       this.autoTimer = setTimeout(() => {
-        if (!this.isChoiceActive) {
+        if (!this.isChoiceActive && (this.isAutoMode || this.isSkipMode)) {
           this.showNextDialogue();
         }
       }, waitTime);
@@ -802,9 +819,13 @@ class GameApp {
 
   // 選択肢メニュー表示
   showChoiceMenu(choices, onSelect) {
+    this.stopSkipMode();
     this.isChoiceActive = true;
     this.isDialogueActive = true;
     this.dom.dialogueStage.classList.remove('hidden');
+    if (this.dom.novelWindow) {
+      this.dom.novelWindow.classList.add('has-choices');
+    }
     this.dom.dialoguePrompt.classList.add('hidden');
     this.dom.dialogueChoices.classList.remove('hidden');
     this.dom.dialogueChoices.innerHTML = '';
@@ -818,6 +839,9 @@ class GameApp {
         e.stopPropagation();
         this.audio.playClick();
         this.isChoiceActive = false;
+        if (this.dom.novelWindow) {
+          this.dom.novelWindow.classList.remove('has-choices');
+        }
         this.dom.dialogueChoices.classList.add('hidden');
         this.dom.dialogueChoices.innerHTML = '';
         if (onSelect) onSelect(choice);
@@ -827,6 +851,9 @@ class GameApp {
   }
 
   toggleAutoMode() {
+    if (this.isSkipMode) {
+      this.stopSkipMode();
+    }
     this.isAutoMode = !this.isAutoMode;
     this.dom.btnDialogueAuto.classList.toggle('active', this.isAutoMode);
     if (this.isAutoMode && !this.isTyping && !this.isChoiceActive) {
@@ -835,11 +862,40 @@ class GameApp {
   }
 
   toggleSkipMode() {
-    this.isSkipMode = !this.isSkipMode;
-    this.dom.btnDialogueSkip.classList.toggle('active', this.isSkipMode);
-    if (this.isSkipMode && !this.isChoiceActive) {
-      this.handleDialogueProceed();
+    if (this.isAutoMode) {
+      this.isAutoMode = false;
+      this.dom.btnDialogueAuto.classList.remove('active');
     }
+    this.isSkipMode = !this.isSkipMode;
+    this.updateSkipButtonUI();
+
+    if (this.isSkipMode) {
+      if (!this.isChoiceActive) {
+        if (this.isTyping) {
+          this.finishTyping();
+        } else {
+          this.showNextDialogue();
+        }
+      }
+    } else {
+      clearTimeout(this.autoTimer);
+      clearInterval(this.typewriterTimer);
+      this.finishTyping();
+    }
+  }
+
+  stopSkipMode() {
+    if (this.isSkipMode) {
+      this.isSkipMode = false;
+      this.updateSkipButtonUI();
+      clearTimeout(this.autoTimer);
+    }
+  }
+
+  updateSkipButtonUI() {
+    if (!this.dom.btnDialogueSkip) return;
+    this.dom.btnDialogueSkip.classList.toggle('active', this.isSkipMode);
+    this.dom.btnDialogueSkip.textContent = this.isSkipMode ? 'STOP' : 'SKIP';
   }
 
   openBacklog() {
@@ -952,53 +1008,84 @@ class GameApp {
     this.dom.debateEvidenceList.innerHTML = '';
     const collected = Array.from(this.state.collectedEvidence);
 
+    // 過去の問答で提出・正解済みの証拠IDを収集
+    const steps = this.getDebateSteps();
+    const submittedCorrectIds = new Set();
+    for (let i = 0; i < this.state.currentDebateStep; i++) {
+      if (steps[i]?.correctEvidenceId) {
+        submittedCorrectIds.add(steps[i].correctEvidenceId);
+      }
+    }
+
+    // 既に提出済みの証拠が選択状態なら選択解除
+    if (this.selectedEvidenceId && submittedCorrectIds.has(this.selectedEvidenceId)) {
+      this.selectedEvidenceId = null;
+      this.dom.btnPresentEvidence.disabled = true;
+      this.dom.selectedEvidencePreview.textContent = '提示する鑑識データを手帳から選択してください';
+    }
+
     collected.forEach((evId, idx) => {
       const ev = this.scenario.evidence[evId];
       if (!ev) return;
 
       const isDeep = this.isDeepForensicEvidence(evId);
+      const isAlreadySubmitted = submittedCorrectIds.has(evId);
       const isSelected = (this.selectedEvidenceId === evId);
 
       const card = document.createElement('div');
-      card.className = `debate-evidence-card ${isDeep ? 'deep-cyber' : ''} ${isSelected ? 'selected' : ''}`;
+      card.className = `debate-evidence-card ${isDeep ? 'deep-cyber' : ''} ${isSelected ? 'selected' : ''} ${isAlreadySubmitted ? 'already-submitted' : ''}`;
+      if (isAlreadySubmitted) {
+        card.setAttribute('aria-disabled', 'true');
+        card.title = '以前の問答で立証済みです';
+      }
+
       const iconHtml = ev.image
         ? `<img src="${ev.image}" alt="${ev.name}" class="evidence-icon-img" />`
         : ev.icon;
 
+      const badgeHtml = isAlreadySubmitted
+        ? `<span class="ev-submitted-tag">✓ 提出済</span>`
+        : `<span class="card-key-badge">[${idx + 1}]</span>`;
+
       card.innerHTML = `
-        <span class="card-key-badge">[${idx + 1}]</span>
+        ${badgeHtml}
         <div class="evidence-icon">${iconHtml}</div>
         <div class="evidence-info">
           <div class="evidence-name">${ev.name}</div>
           <div class="evidence-type" style="${isDeep ? 'color:var(--neon-purple); font-weight:700;' : ''}">${isDeep ? '⚡ [CYBER] ' : ''}${ev.type}</div>
         </div>
       `;
-      // クリック/タップで選択（すでに選択中のカードを再タップで即座に提示！）
-      card.addEventListener('click', () => {
-        this.audio.playClick();
-        if (this.selectedEvidenceId === evId) {
-          // 選択中カードを再タップ → 即座に提示！（スマホ片手親指UX）
+
+      if (!isAlreadySubmitted) {
+        // クリック/タップで選択（すでに選択中のカードを再タップで即座に提示！）
+        card.addEventListener('click', () => {
+          this.audio.playClick();
+          if (this.selectedEvidenceId === evId) {
+            // 選択中カードを再タップ → 即座に提示！（スマホ片手親指UX）
+            this.handlePresentEvidence();
+            return;
+          }
+          this.selectedEvidenceId = evId;
+          this.dom.btnPresentEvidence.disabled = false;
+          this.dom.selectedEvidencePreview.innerHTML = `
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+              <span><strong>選択中:</strong> ${ev.icon} ${ev.name}</span>
+              <span style="font-family:var(--font-mono); font-size:0.75rem; font-weight:700; color:${isDeep ? 'var(--neon-purple)' : 'var(--neon-cyan)'};">${isDeep ? '⚡ CYBER FORENSIC DATA' : 'STANDARD EVIDENCE'}</span>
+            </div>
+            <div style="font-size:0.82rem; color:#cbd5e1; margin-bottom:4px;">${ev.summary}</div>
+            <div style="color:var(--neon-cyan); font-size:0.75rem;">[再タップまたは Enter で即座に反証を突きつける]</div>
+          `;
+          this.renderDebateEvidenceList();
+        });
+
+        // PC向けダブルクリックでも提示可能
+        card.addEventListener('dblclick', () => {
+          this.audio.playClick();
+          this.selectedEvidenceId = evId;
           this.handlePresentEvidence();
-          return;
-        }
-        this.selectedEvidenceId = evId;
-        this.dom.btnPresentEvidence.disabled = false;
-        this.dom.selectedEvidencePreview.innerHTML = `
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-            <span><strong>選択中:</strong> ${ev.icon} ${ev.name}</span>
-            <span style="font-family:var(--font-mono); font-size:0.75rem; font-weight:700; color:${isDeep ? 'var(--neon-purple)' : 'var(--neon-cyan)'};">${isDeep ? '⚡ CYBER FORENSIC DATA' : 'STANDARD EVIDENCE'}</span>
-          </div>
-          <div style="font-size:0.82rem; color:#cbd5e1; margin-bottom:4px;">${ev.summary}</div>
-          <div style="color:var(--neon-cyan); font-size:0.75rem;">[再タップまたは Enter で即座に反証を突きつける]</div>
-        `;
-        this.renderDebateEvidenceList();
-      });
-      // PC向けダブルクリックでも提示可能
-      card.addEventListener('dblclick', () => {
-        this.audio.playClick();
-        this.selectedEvidenceId = evId;
-        this.handlePresentEvidence();
-      });
+        });
+      }
+
       this.dom.debateEvidenceList.appendChild(card);
     });
   }

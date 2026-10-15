@@ -751,6 +751,28 @@ body {
   box-shadow: 0 0 18px rgba(192, 132, 252, 0.7);
 }
 
+.debate-evidence-card.already-submitted {
+  opacity: 0.42;
+  cursor: not-allowed;
+  filter: grayscale(0.85);
+  background: rgba(15, 23, 42, 0.55);
+  border-color: rgba(148, 163, 184, 0.2);
+  pointer-events: none;
+}
+.ev-submitted-tag {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: rgba(51, 65, 85, 0.85);
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  color: #94a3b8;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
 .btn-present {
   padding: 14px;
   background: linear-gradient(135deg, var(--neon-cyan) 0%, #2563eb 100%);
@@ -775,7 +797,6 @@ body {
 ---------------------------------------------------- */
 .dialogue-stage {
   position: fixed;
-  top: 0;
   bottom: 0;
   left: 50%;
   transform: translateX(-50%);
@@ -809,7 +830,7 @@ body {
 
 .character-stage {
   position: absolute;
-  bottom: 175px;
+  bottom: 156px;
   left: 50%;
   transform: translateX(-50%);
   width: 360px;
@@ -826,6 +847,14 @@ body {
 }
 .character-stage.hidden {
   display: none !important;
+}
+
+.character-sprite-box {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
 }
 
 .char-avatar {
@@ -863,20 +892,21 @@ body {
 
 .emotion-bubble {
   position: absolute;
-  top: clamp(65px, 11vh, 100px);
-  right: clamp(24px, 18vw, 80px);
+  top: 15px;
+  right: 42px;
   background: #fff;
   color: #030712;
-  font-size: 1.5rem;
-  width: 40px;
-  height: 40px;
+  font-size: 1.45rem;
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+  box-shadow: 0 4px 15px rgba(0, 243, 255, 0.6), 0 0 10px rgba(255, 255, 255, 0.9);
   animation: bounce 0.6s infinite alternate;
   z-index: 20;
+  border: 2px solid var(--neon-cyan);
 }
 .emotion-bubble.hidden {
   display: none !important;
@@ -890,29 +920,37 @@ body {
 .novel-window {
   position: relative;
   z-index: 10;
-  margin: 12px 16px calc(14px + env(safe-area-inset-bottom, 0px)) 16px;
-  background: rgba(15, 23, 42, 0.95);
+  height: 142px;
+  min-height: 142px;
+  max-height: 142px;
+  margin: 0 16px max(14px, env(safe-area-inset-bottom, 0px)) 16px;
+  background: rgba(15, 23, 42, 0.96);
   border: 1px solid var(--border-cyan);
   border-radius: 14px;
-  padding: 16px 20px;
-  min-height: 110px;
-  max-height: 40vh;
-  max-height: 40dvh;
+  padding: 12px 18px 10px 18px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-start;
   box-sizing: border-box;
   cursor: pointer;
-  box-shadow: 0 0 25px rgba(0, 0, 0, 0.8);
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.85);
+  flex-shrink: 0;
+}
+.novel-window.has-choices {
+  height: auto;
+  min-height: 180px;
+  max-height: 45vh;
+  max-height: 45dvh;
 }
 
 .novel-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  padding-bottom: 6px;
+  padding-bottom: 5px;
+  flex-shrink: 0;
 }
 .speaker-name {
   font-size: 1rem;
@@ -931,37 +969,50 @@ body {
   padding: 3px 8px;
   border-radius: 6px;
   cursor: pointer;
+  transition: all 0.2s ease;
 }
 .dialogue-ctrl-btn.active {
   background: var(--neon-cyan);
   color: #030712;
   font-weight: 700;
 }
+#btn-dialogue-skip.active {
+  background: #f59e0b;
+  border-color: #fbbf24;
+  color: #030712;
+  font-weight: 900;
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.7);
+}
 
 .dialogue-body {
+  flex: 1;
   font-size: 0.95rem;
-  line-height: 1.65;
+  line-height: 1.55;
   color: var(--text-main);
   min-height: 48px;
   word-break: break-word;
   overflow-wrap: break-word;
+  overflow-y: auto;
+  margin-bottom: 2px;
 }
 
 .dialogue-prompt {
-  font-size: 0.85rem;
+  height: 16px;
+  line-height: 16px;
+  font-size: 0.75rem;
   font-weight: 700;
   color: var(--neon-cyan);
-  padding: 4px 10px;
-  background: rgba(0, 243, 255, 0.15);
-  border: 1px solid var(--border-cyan);
-  border-radius: 6px;
-  display: inline-block;
-  align-self: flex-end;
-  margin-top: 6px;
+  text-align: right;
   animation: blink 0.8s infinite alternate;
+  user-select: none;
+  transition: opacity 0.15s ease;
+  flex-shrink: 0;
 }
 .dialogue-prompt.hidden {
-  display: none !important;
+  display: block !important;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
 }
 
 @keyframes blink {
@@ -1601,33 +1652,52 @@ body {
     box-shadow: 0 4px 20px rgba(0, 243, 255, 0.5);
   }
 
-  /* 会話ノベルウィンドウ (スマホ最適化 & 見切れ完全防止) */
+  /* 会話ノベルウィンドウ (スマホ最適化 & 見切れ完全防止 & 下部余白ゼロ化) */
   .character-stage {
-    bottom: clamp(120px, 19vh, 155px);
+    bottom: 132px;
     width: 310px;
     max-width: 86vw;
     height: 410px;
     max-height: 52vh;
     max-height: 52dvh;
   }
+  .character-sprite-box {
+    width: 100%;
+    height: 100%;
+  }
   .emotion-bubble {
-    top: clamp(50px, 8vh, 75px);
-    right: clamp(14px, 10vw, 36px);
-    width: 32px;
-    height: 32px;
-    font-size: 1.2rem;
+    top: 10px;
+    right: 32px;
+    width: 38px;
+    height: 38px;
+    font-size: 1.25rem;
   }
   .novel-window {
-    margin: 6px 8px calc(8px + env(safe-area-inset-bottom, 0px)) 8px;
-    padding: 10px 12px calc(10px + env(safe-area-inset-bottom, 0px)) 12px;
-    min-height: 96px;
-    max-height: 38vh;
-    max-height: 38dvh;
-    border-radius: 12px;
+    height: 132px;
+    min-height: 132px;
+    max-height: 132px;
+    margin: 0;
+    width: 100%;
+    border-radius: 14px 14px 0 0;
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
+    padding: 10px 14px max(10px, env(safe-area-inset-bottom, 0px)) 14px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    box-sizing: border-box;
+    flex-shrink: 0;
+  }
+  .novel-window.has-choices {
+    height: auto;
+    min-height: 170px;
+    max-height: 48dvh;
   }
   .novel-header {
     margin-bottom: 4px;
     padding-bottom: 4px;
+    flex-shrink: 0;
   }
   .speaker-name {
     font-size: clamp(0.85rem, 3.6vw, 0.95rem);
@@ -1638,15 +1708,28 @@ body {
   }
   .dialogue-body {
     font-size: clamp(0.82rem, 3.8vw, 0.92rem);
-    line-height: 1.5;
-    min-height: 40px;
+    line-height: 1.45;
+    min-height: unset;
+    margin-bottom: 2px;
+    flex: 1;
     word-break: break-word;
     overflow-wrap: break-word;
   }
   .dialogue-prompt {
-    font-size: 0.72rem;
-    padding: 2px 6px;
-    margin-top: 2px;
+    height: 14px;
+    line-height: 14px;
+    font-size: 0.70rem;
+    padding: 0;
+    margin-top: 1px;
+    background: none;
+    border: none;
+    flex-shrink: 0;
+  }
+  .dialogue-prompt.hidden {
+    display: block !important;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
   }
   .choice-btn {
     padding: 10px 12px;

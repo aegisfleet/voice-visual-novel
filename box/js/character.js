@@ -3,7 +3,8 @@
 class BoxCharacterController {
   constructor(stageElement, bubbleElement) {
     this.stage = stageElement;
-    this.bubble = bubbleElement;
+    this.spriteBox = stageElement ? (stageElement.querySelector('#character-sprite-box') || stageElement.querySelector('.character-sprite-box') || stageElement) : null;
+    this.bubble = bubbleElement || (stageElement ? stageElement.querySelector('#emotion-bubble') : null);
     this.currentCharId = null;
     this.currentEmotion = 'normal';
     this.bubbleTimeout = null;
@@ -33,8 +34,9 @@ class BoxCharacterController {
     this.currentCharId = charId;
     this.currentEmotion = emotion;
 
-    if (isNewChar || !this.stage.querySelector(`.char-wrapper-${charId}`)) {
-      this.stage.innerHTML = this.renderCharacterHtml(charId);
+    const targetBox = this.spriteBox || this.stage;
+    if (isNewChar || !targetBox.querySelector(`.char-wrapper-${charId}`)) {
+      targetBox.innerHTML = this.renderCharacterHtml(charId);
     }
 
     this.setEmotion(emotion);
@@ -55,8 +57,8 @@ class BoxCharacterController {
     this.stage.classList.remove('visible');
     this.stage.classList.add('hidden');
     setTimeout(() => {
-      if (!this.currentCharId) {
-        this.stage.innerHTML = '';
+      if (!this.currentCharId && (this.spriteBox || this.stage)) {
+        (this.spriteBox || this.stage).innerHTML = '';
       }
     }, 250);
   }
@@ -115,7 +117,8 @@ class BoxCharacterController {
 
   setEmotion(emotion) {
     this.currentEmotion = emotion;
-    const wrapper = this.stage.querySelector('.char-avatar');
+    const targetBox = this.spriteBox || this.stage;
+    const wrapper = targetBox ? targetBox.querySelector('.char-avatar') : null;
     if (!wrapper) return;
 
     wrapper.classList.remove('emotion-normal', 'emotion-thinking', 'emotion-shock', 'emotion-confident', 'emotion-panic', 'emotion-glow');
@@ -123,7 +126,8 @@ class BoxCharacterController {
   }
 
   playMotion(motion) {
-    const wrapper = this.stage.querySelector('.char-avatar');
+    const targetBox = this.spriteBox || this.stage;
+    const wrapper = targetBox ? targetBox.querySelector('.char-avatar') : null;
     if (!wrapper) return;
 
     wrapper.classList.remove('motion-enter', 'motion-shake', 'motion-nod', 'motion-jump');
