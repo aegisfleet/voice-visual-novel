@@ -816,8 +816,15 @@ class GameApp {
     this.dom.dialogueChoices.classList.add('hidden');
     this.dom.dialogueChoices.innerHTML = '';
 
-    // 音声読み上げ
-    this.audio.speak(this.currentSpeaker, this.currentFullText);
+    // 音声読み上げ（スキップモード時は通信量完全ガードのため即座に停止・取得バイパス）
+    if (!this.isSkipMode) {
+      this.audio.speak(this.currentSpeaker, this.currentFullText, {
+        audioUrl: currentItem.voiceUrl || null,
+        isSkip: this.isSkipMode
+      });
+    } else {
+      this.audio.stopVoice();
+    }
 
     // タイピング演出
     this.startTypewriter(this.currentFullText, currentItem.speaker);
@@ -926,9 +933,11 @@ class GameApp {
       this.dom.btnDialogueAuto.classList.remove('active');
     }
     this.isSkipMode = !this.isSkipMode;
+    this.audio.setSkipMode(this.isSkipMode);
     this.updateSkipButtonUI();
 
     if (this.isSkipMode) {
+      this.audio.stopVoice();
       if (!this.isChoiceActive) {
         if (this.isTyping) {
           this.finishTyping();
@@ -946,6 +955,7 @@ class GameApp {
   stopSkipMode() {
     if (this.isSkipMode) {
       this.isSkipMode = false;
+      this.audio.setSkipMode(false);
       this.updateSkipButtonUI();
       clearTimeout(this.autoTimer);
     }

@@ -11,6 +11,9 @@ class AudioManager {
     this.currentUtterance = null;
     this.selectedVoice = null;
     this.currentBgmMode = 'ambient'; // ambient | tension | truth
+    this.isSkipActive = false; // スキップモード追従フラグ（通信量完全ガード用）
+    this.currentVoiceAudio = null; // 再生中のMP3 Audio要素
+    this.currentVoiceAbortController = null; // ロード中の中断用 AbortController
 
     this.initSpeech();
   }
@@ -48,8 +51,115 @@ class AudioManager {
     }
   }
 
-  // セリフ読み上げ
-  speak(speaker, text) {
+  // スキップ状態の同期（スキップ開始時は即座に音声ロード＆再生を完全遮断）
+  setSkipMode(isSkip) {
+    this.isSkipActive = !!isSkip;
+    if (this.isSkipActive) {
+      this.stopVoice();
+    }
+  }
+
+  // セリフ読み上げ（MP3優先 / Web Speech APIフォールバック対応）
+  speak(speaker, text, options = {}) {
+    // スキップ中・音声無効時はリクエストや再生を完全にガード（通信量0を保証）
+    if (this.isSkipActive || options.isSkip || !this.voiceEnabled) {
+      this.stopVoice();
+      return;
+    }
+
+    this.stopVoice();
+
+    // 将来のTTS MP3音声URLが指定されている場合（オンデマンド再生）
+    if (options.audioUrl) {
+      this.playVoiceFile(options.audioUrl, { speaker, text, ...options });
+      return;
+    }
+
+    // Web Speech API による合成音声
+    this.speakSpeechSynthesis(speaker, text);
+  }
+
+  // MP3音声ファイルのロード＆再生（スキップ完全防御・Abort対応）
+  async playVoiceFile(url, options = {}) {
+    // 二重チェック: スキップ中・音声無効ならHTTPリクエストを一切発行せずに即座に終了
+    if (this.isSkipActive || options.isSkip || !this.voiceEnabled || !url) {
+      return;
+    }
+
+    this.stopVoice();
+
+    const controller = new AbortController();
+    this.currentVoiceAbortController = controller;
+
+    try {
+      this.ensureContext();
+
+      const audio = new Audio();
+      this.currentVoiceAudio = audio;
+
+      audio.onended = () => {
+        if (this.currentVoiceAudio === audio) {
+          this.currentVoiceAudio = null;
+        }
+        if (options.onEnd) options.onEnd();
+      };
+
+      audio.onerror = (e) => {
+        if (this.isSkipActive || controller.signal.aborted) return;
+        console.warn(`[Audio] Failed to load voice file: ${url}`, e);
+        // MP3取得失敗時はブラウザのWeb Speech APIへフォールバック
+        if (options.speaker && options.text) {
+          this.speakSpeechSynthesis(options.speaker, options.text);
+        }
+      };
+
+      // 直前にスキップが押されていたら通信を完全破棄
+      if (this.isSkipActive || controller.signal.aborted) {
+        audio.removeAttribute('src');
+        audio.load();
+        this.currentVoiceAudio = null;
+        return;
+      }
+
+      audio.src = url;
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise.catch((err) => {
+          if (err.name !== 'AbortError') {
+            console.warn('[Audio] playVoiceFile aborted/interrupted:', err.message);
+          }
+        });
+      }
+    } catch (err) {
+      if (!controller.signal.aborted) {
+        console.warn('[Audio] Voice loading error:', err);
+      }
+    }
+  }
+
+  // 読み上げ停止（MP3通信＆Audio要素＆WebSpeechの完全停止・切断）
+  stopVoice() {
+    this.stopSpeech();
+
+    if (this.currentVoiceAbortController) {
+      try {
+        this.currentVoiceAbortController.abort();
+      } catch (e) {}
+      this.currentVoiceAbortController = null;
+    }
+
+    if (this.currentVoiceAudio) {
+      try {
+        this.currentVoiceAudio.pause();
+        this.currentVoiceAudio.removeAttribute('src'); // 通信バッファリング停止
+        this.currentVoiceAudio.load(); // 接続を即時解放
+      } catch (e) {}
+      this.currentVoiceAudio = null;
+    }
+  }
+
+  // 従来のWeb Speech API読み上げ
+  speakSpeechSynthesis(speaker, text) {
     if (!this.voiceEnabled || !('speechSynthesis' in window)) return;
 
     this.stopSpeech();
@@ -103,7 +213,7 @@ class AudioManager {
   toggleVoice() {
     this.voiceEnabled = !this.voiceEnabled;
     if (!this.voiceEnabled) {
-      this.stopSpeech();
+      this.stopVoice();
     }
     return this.voiceEnabled;
   }
