@@ -98,6 +98,13 @@ class GameApp {
       btnDialogueSkip: document.getElementById('btn-dialogue-skip'),
       btnDialogueLog: document.getElementById('btn-dialogue-log'),
 
+      // 鑑識データ図・イメージ図ステージ
+      dialogueIllustrationStage: document.getElementById('dialogue-illustration-stage'),
+      dialogueIllustrationImg: document.getElementById('dialogue-illustration-img'),
+      dialogueIllustrationCaption: document.getElementById('dialogue-illustration-caption'),
+      illustrationImgContainer: document.getElementById('illustration-img-container'),
+      btnCloseIllustration: document.getElementById('btn-close-illustration'),
+
       // カットイン
       overlayCutin: document.getElementById('overlay-cutin'),
       cutinText: document.getElementById('cutin-text'),
@@ -118,6 +125,13 @@ class GameApp {
       backdropEvidence: document.getElementById('backdrop-evidence'),
       btnEvFilterAll: document.getElementById('btn-ev-filter-all'),
       btnEvFilterDeep: document.getElementById('btn-ev-filter-deep'),
+
+      // 拡大画像ビューアーモーダル
+      modalImageViewer: document.getElementById('modal-image-viewer'),
+      backdropImageViewer: document.getElementById('backdrop-image-viewer'),
+      btnCloseImageViewer: document.getElementById('btn-close-image-viewer'),
+      imageViewerImg: document.getElementById('image-viewer-img'),
+      imageViewerTitle: document.getElementById('image-viewer-title'),
 
       // バックログ
       modalBacklog: document.getElementById('modal-backlog'),
@@ -260,6 +274,43 @@ class GameApp {
       this.dom.modalBacklog.classList.add('hidden');
     });
 
+    // 鑑識データ図・閉じるボタン
+    if (this.dom.btnCloseIllustration) {
+      this.dom.btnCloseIllustration.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.audio.playClick();
+        if (this.dom.dialogueIllustrationStage) {
+          this.dom.dialogueIllustrationStage.classList.add('hidden');
+        }
+      });
+    }
+
+    // 鑑識データ図・クリックで拡大表示
+    if (this.dom.illustrationImgContainer) {
+      this.dom.illustrationImgContainer.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (this.dom.dialogueIllustrationImg && this.dom.dialogueIllustrationImg.src) {
+          this.audio.playClick();
+          this.openImageViewer(
+            this.dom.dialogueIllustrationImg.src,
+            this.dom.dialogueIllustrationCaption?.textContent || '📊 証拠画像詳細'
+          );
+        }
+      });
+    }
+
+    // 拡大画像ビューアー閉じる
+    if (this.dom.btnCloseImageViewer) {
+      this.dom.btnCloseImageViewer.addEventListener('click', () => {
+        this.closeImageViewer();
+      });
+    }
+    if (this.dom.backdropImageViewer) {
+      this.dom.backdropImageViewer.addEventListener('click', () => {
+        this.closeImageViewer();
+      });
+    }
+
     // 証拠手帳フィルター
     if (this.dom.btnEvFilterAll) {
       this.dom.btnEvFilterAll.addEventListener('click', () => {
@@ -298,6 +349,10 @@ class GameApp {
 
       // Escキー: モーダルを閉じる、または立証から現場へ戻る
       if (e.key === 'Escape') {
+        if (this.dom.modalImageViewer && !this.dom.modalImageViewer.classList.contains('hidden')) {
+          this.closeImageViewer();
+          return;
+        }
         if (!this.dom.modalEvidence.classList.contains('hidden')) {
           this.dom.modalEvidence.classList.add('hidden');
           return;
@@ -788,6 +843,9 @@ class GameApp {
       if (this.dom.novelWindow) {
         this.dom.novelWindow.classList.remove('has-choices');
       }
+      if (this.dom.dialogueIllustrationStage) {
+        this.dom.dialogueIllustrationStage.classList.add('hidden');
+      }
       if (!this.keepStageOpen) {
         this.dom.dialogueStage.classList.add('hidden');
         document.body.classList.remove('dialogue-active');
@@ -805,6 +863,23 @@ class GameApp {
 
     const currentItem = this.dialogueQueue.shift();
     this.character.showForDialogue(currentItem);
+
+    // 鑑識データ図・イラスト表示制御
+    if (currentItem.illustration) {
+      if (this.dom.dialogueIllustrationImg) {
+        this.dom.dialogueIllustrationImg.src = currentItem.illustration;
+      }
+      if (this.dom.dialogueIllustrationCaption) {
+        this.dom.dialogueIllustrationCaption.textContent = currentItem.caption || '共用集中配電盤 CTロガーモニター解析データ';
+      }
+      if (this.dom.dialogueIllustrationStage) {
+        this.dom.dialogueIllustrationStage.classList.remove('hidden');
+      }
+    } else {
+      if (this.dom.dialogueIllustrationStage) {
+        this.dom.dialogueIllustrationStage.classList.add('hidden');
+      }
+    }
 
     this.currentSpeaker = currentItem.speaker || 'ナレーション';
     this.currentFullText = currentItem.text || '';
@@ -1379,6 +1454,13 @@ class GameApp {
         ? `<img src="${ev.image}" alt="${ev.name}" class="ev-modal-icon-img" />`
         : ev.icon;
 
+      const diagramHtml = ev.image
+        ? `<div class="ev-modal-diagram-wrap" data-img-src="${ev.image}" data-img-title="${ev.name}">
+             <img src="${ev.image}" alt="${ev.name}" class="ev-modal-diagram-img" />
+             <span class="ev-diagram-zoom-badge">🔍 タップで拡大表示</span>
+           </div>`
+        : '';
+
       item.innerHTML = `
         <div class="evidence-modal-header">
           <span class="ev-icon">${iconHtml}</span>
@@ -1387,9 +1469,40 @@ class GameApp {
         </div>
         <p class="ev-summary">${ev.summary}</p>
         <p class="ev-detail">${ev.detail}</p>
+        ${diagramHtml}
       `;
+
+      if (ev.image) {
+        const diagramEl = item.querySelector('.ev-modal-diagram-wrap');
+        if (diagramEl) {
+          diagramEl.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.audio.playClick();
+            this.openImageViewer(ev.image, `📊 ${ev.name} 詳細解析データ`);
+          });
+        }
+      }
+
       this.dom.modalEvidenceList.appendChild(item);
     });
+  }
+
+  // 拡大画像ビューアーモーダル制御
+  openImageViewer(imgSrc, title = '📊 証拠画像詳細') {
+    if (!this.dom.modalImageViewer || !this.dom.imageViewerImg) return;
+    this.dom.imageViewerImg.src = imgSrc;
+    if (this.dom.imageViewerTitle) {
+      this.dom.imageViewerTitle.textContent = title;
+    }
+    this.dom.modalImageViewer.classList.remove('hidden');
+  }
+
+  closeImageViewer() {
+    if (!this.dom.modalImageViewer) return;
+    this.dom.modalImageViewer.classList.add('hidden');
+    if (this.dom.imageViewerImg) {
+      this.dom.imageViewerImg.src = '';
+    }
   }
 }
 
