@@ -617,6 +617,9 @@ class GameApp {
           <div class="pin-label">${spot.name}</div>
         `;
         el.addEventListener('click', () => {
+          if (document.activeElement && document.activeElement.blur) {
+            document.activeElement.blur();
+          }
           this.handleInspectSpot(spot);
         });
         container.appendChild(el);
@@ -647,6 +650,9 @@ class GameApp {
           <div class="pin-label">${npc.name}</div>
         `;
         el.addEventListener('click', () => {
+          if (document.activeElement && document.activeElement.blur) {
+            document.activeElement.blur();
+          }
           this.handleTalkNpc(npc);
         });
         container.appendChild(el);
@@ -660,6 +666,9 @@ class GameApp {
   // スポット調査処理
   handleInspectSpot(spot) {
     if (this.isDialogueActive || this.isChoiceActive) return;
+    if (document.activeElement && document.activeElement.blur) {
+      document.activeElement.blur();
+    }
     this.audio.playClick();
     this.state.markSpotInspected(spot.id);
 
@@ -678,6 +687,9 @@ class GameApp {
   // NPC会話処理
   handleTalkNpc(npc) {
     if (this.isDialogueActive || this.isChoiceActive) return;
+    if (document.activeElement && document.activeElement.blur) {
+      document.activeElement.blur();
+    }
     this.audio.playClick();
     this.state.markNpcTalked(npc.id);
 
@@ -751,6 +763,9 @@ class GameApp {
   // 会話・ノベルウィンドウ演出 (タイピング & 音声)
   // ----------------------------------------------------
   playDialogueSequence(dialogueList, onComplete = null, keepStageOpen = false) {
+    if (document.activeElement && document.activeElement.blur) {
+      document.activeElement.blur();
+    }
     this.stopSkipMode();
     if (this.dom.novelWindow) {
       this.dom.novelWindow.classList.remove('has-choices');
@@ -759,6 +774,7 @@ class GameApp {
     this.currentDialogueCallback = onComplete;
     this.keepStageOpen = keepStageOpen;
     this.isDialogueActive = true;
+    document.body.classList.add('dialogue-active');
     this.isChoiceActive = false;
     this.dom.dialogueChoices.classList.add('hidden');
     this.dom.dialogueChoices.innerHTML = '';
@@ -774,6 +790,7 @@ class GameApp {
       }
       if (!this.keepStageOpen) {
         this.dom.dialogueStage.classList.add('hidden');
+        document.body.classList.remove('dialogue-active');
         this.character.hide();
         this.isDialogueActive = false;
       }
@@ -995,6 +1012,7 @@ class GameApp {
     this.audio.playClick();
     // 再生中の会話を安全にクローズ
     this.dom.dialogueStage.classList.add('hidden');
+    document.body.classList.remove('dialogue-active');
     this.isDialogueActive = false;
     this.isChoiceActive = false;
     this.character.hide();
@@ -1239,6 +1257,7 @@ class GameApp {
   // ----------------------------------------------------
   showEnding(endingData) {
     if (this.dom.dialogueStage) this.dom.dialogueStage.classList.add('hidden');
+    document.body.classList.remove('dialogue-active');
     if (this.character) this.character.hide();
     this.isDialogueActive = false;
     this.currentEndingType = endingData.type;
@@ -1273,6 +1292,7 @@ class GameApp {
 
   returnToTitle() {
     this.audio.stopBgm();
+    document.body.classList.remove('dialogue-active');
     this.updateTitleView();
     this.showScreen('title');
   }

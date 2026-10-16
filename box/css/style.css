@@ -14,10 +14,11 @@
   --font-mono: 'Chakra Petch', 'Courier New', monospace;
 }
 
-* {
+*, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
@@ -501,16 +502,38 @@ body {
   flex-direction: column;
   align-items: center;
   cursor: pointer;
-  transition: transform 0.2s ease, z-index 0.1s ease;
+  transition: transform 0.2s ease, z-index 0.1s ease, opacity 0.2s ease;
   z-index: 10;
   touch-action: manipulation;
   width: max-content;
   max-width: 130px;
+  outline: none !important;
+  -webkit-tap-highlight-color: transparent !important;
+  -webkit-touch-callout: none;
+  user-select: none;
+  -webkit-user-select: none;
 }
-.explore-pin:hover,
-.explore-pin:focus-within {
-  transform: translate(-50%, -55%) scale(1.1);
-  z-index: 40;
+
+.explore-pin:focus,
+.explore-pin:focus-visible,
+.explore-pin:focus-within,
+.explore-pin:active {
+  outline: none !important;
+  -webkit-tap-highlight-color: transparent !important;
+}
+
+/* マウス環境のみホバー拡大（スマホでタップ後に枠や浮上状態が残留するのを完全防止） */
+@media (hover: hover) and (pointer: fine) {
+  .explore-pin:hover {
+    transform: translate(-50%, -55%) scale(1.1);
+    z-index: 40;
+  }
+}
+
+/* 会話シーン再生中は背後の探索ピンの干渉・主張を抑え、キャラクター立ち絵を際立たせる */
+body.dialogue-active .explore-pin {
+  pointer-events: none !important;
+  opacity: 0.25;
 }
 
 .pin-icon-wrap {
