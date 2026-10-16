@@ -835,7 +835,10 @@ class GameApp {
     clearTimeout(this.autoTimer);
     this.isTyping = true;
     this.dom.dialogueText.textContent = '';
+    this.dom.dialogueText.scrollTop = 0;
+    this.dom.dialogueText.classList.remove('is-overflowing');
     this.dom.dialoguePrompt.classList.add('hidden');
+    this.dom.dialoguePrompt.textContent = '▼ 画面をクリックして進む';
 
     let charIdx = 0;
     // 0.39トークンの遅さをMIMIが苦しんでいる時や電子の声の時に演出（アップグレード後は高速・流暢に）
@@ -847,6 +850,11 @@ class GameApp {
       if (charIdx < text.length) {
         this.dom.dialogueText.textContent += text[charIdx];
         charIdx++;
+        // 自動スクロールで入力末尾を常に見せる
+        if (this.dom.dialogueText.scrollHeight > this.dom.dialogueText.clientHeight) {
+          this.dom.dialogueText.scrollTop = this.dom.dialogueText.scrollHeight;
+          this.dom.dialogueText.classList.add('is-overflowing');
+        }
       } else {
         this.finishTyping();
       }
@@ -857,6 +865,17 @@ class GameApp {
     clearInterval(this.typewriterTimer);
     this.isTyping = false;
     this.dom.dialogueText.textContent = this.currentFullText;
+
+    // スクロール可能なオーバーフローがあるか確認
+    const isOverflow = this.dom.dialogueText.scrollHeight > this.dom.dialogueText.clientHeight + 4;
+    if (isOverflow) {
+      this.dom.dialogueText.classList.add('is-overflowing');
+      this.dom.dialoguePrompt.textContent = '▼ スクロールで続きを読む / クリックで進む';
+    } else {
+      this.dom.dialogueText.classList.remove('is-overflowing');
+      this.dom.dialoguePrompt.textContent = '▼ 画面をクリックして進む';
+    }
+
     if (!this.isChoiceActive) {
       this.dom.dialoguePrompt.classList.remove('hidden');
     }
