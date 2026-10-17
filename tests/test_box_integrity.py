@@ -185,6 +185,33 @@ class TestBoxScenarioAndAssets(unittest.TestCase):
             self.assertNotIn("ミミ", speaker, f"Item at index {idx} prematurely uses ミミ as speaker before naming")
 
 
+    def test_endings_board_content(self):
+        """エンディングボードのテキストが冗長な劇中リピートを排し、1周目はループ解説＋次行動、2周目は後日譚となっていること"""
+        endings = self.scenario.get("endings", {})
+        self.assertIn("loop1_normal", endings)
+        self.assertIn("true", endings)
+
+        loop1 = endings["loop1_normal"]
+        # 1周目: ループ発生と次行動の説明
+        self.assertIn("巻き戻", loop1["desc"])
+        self.assertIn("10分前", loop1["desc"])
+        self.assertIn("深層", loop1["desc"])
+        self.assertIn("使命", loop1["desc"])
+        self.assertIn("共生調律パッチ", loop1["desc"])
+        # 劇中台詞の単なるオウム返し（『……暗イ……痛イヨ……！』）が含まれていないこと
+        self.assertNotIn("暗イ……痛イヨ", loop1["desc"])
+
+        true_end = endings["true"]
+        # 2周目: 後日譚としてまとめられていること
+        self.assertIn("後日譚", true_end["sub"])
+        self.assertIn("数ヶ月", true_end["desc"])
+        self.assertIn("歓迎鍋パーティー", true_end["desc"])
+        self.assertIn("デジタル座敷わらし", true_end["desc"])
+        # 直前のエピローグ会話劇の重複文章が含まれていないこと
+        self.assertNotIn("毎秒0.39トークンという息苦しい超低速の身体で必死に生きようとする小さな命", true_end["desc"])
+        self.assertNotIn("業者に工事費を払うのは御免じゃが", true_end["desc"])
+
+
 if __name__ == "__main__":
     unittest.main()
 
