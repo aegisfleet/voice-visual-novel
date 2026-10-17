@@ -796,7 +796,7 @@ class GameApp {
           : '<span class="pin-status-badge new">NEW</span>';
 
         const iconContent = spot.image
-          ? `<img src="${spot.image}" alt="${spot.name}" class="pin-icon-img" />`
+          ? `<img src="${spot.image}?v=20261017_rev47" alt="${spot.name}" class="pin-icon-img" />`
           : spot.icon;
 
         el.innerHTML = `
@@ -829,7 +829,7 @@ class GameApp {
           : '<span class="pin-status-badge new">TALK</span>';
 
         const iconContent = npc.image
-          ? `<img src="${npc.image}" alt="${npc.name}" class="pin-icon-img" />`
+          ? `<img src="${npc.image}?v=20261017_rev47" alt="${npc.name}" class="pin-icon-img" />`
           : npc.icon;
 
         el.innerHTML = `
@@ -1288,13 +1288,14 @@ class GameApp {
     if (!this.dom.debateShibataAvatar) return;
     const img = this.dom.debateShibataAvatar.querySelector('img');
     if (!img) return;
+    const v = '?v=20261017_rev47';
     const mapping = {
-      normal: 'assets/characters/shibata.png',
-      angry: 'assets/characters/shibata_angry.png',
-      shock: 'assets/characters/shibata_shock.png',
-      smile: 'assets/characters/shibata_smile.png'
+      normal: `assets/characters/shibata_angry.png${v}`,
+      angry: `assets/characters/shibata_angry.png${v}`,
+      shock: `assets/characters/shibata_shock.png${v}`,
+      smile: `assets/characters/shibata_smile.png${v}`
     };
-    const src = mapping[emotion] || mapping.normal;
+    const src = mapping[emotion] || mapping.angry;
     img.src = src;
   }
 
@@ -1360,7 +1361,7 @@ class GameApp {
       }
 
       const iconHtml = ev.image
-        ? `<img src="${ev.image}" alt="${ev.name}" class="evidence-icon-img" />`
+        ? `<img src="${ev.image}?v=20261017_rev47" alt="${ev.name}" class="evidence-icon-img" />`
         : ev.icon;
 
       const badgeHtml = isAlreadySubmitted
@@ -1615,13 +1616,15 @@ class GameApp {
 
       const item = document.createElement('div');
       item.className = `evidence-modal-item ${isDeep ? 'deep-cyber' : ''}`;
+      const v = '?v=20261017_rev47';
+      const imgSrc = ev.image ? `${ev.image}${v}` : '';
       const iconHtml = ev.image
-        ? `<img src="${ev.image}" alt="${ev.name}" class="ev-modal-icon-img" />`
+        ? `<img src="${imgSrc}" alt="${ev.name}" class="ev-modal-icon-img" />`
         : ev.icon;
 
       const diagramHtml = ev.image
-        ? `<div class="ev-modal-diagram-wrap" data-img-src="${ev.image}" data-img-title="${ev.name}">
-             <img src="${ev.image}" alt="${ev.name}" class="ev-modal-diagram-img" />
+        ? `<div class="ev-modal-diagram-wrap" data-img-src="${imgSrc}" data-img-title="${ev.name}">
+             <img src="${imgSrc}" alt="${ev.name}" class="ev-modal-diagram-img" />
              <span class="ev-diagram-zoom-badge">🔍 タップで拡大表示</span>
            </div>`
         : '';

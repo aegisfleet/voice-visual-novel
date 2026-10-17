@@ -140,7 +140,7 @@ window.SCENARIO_DATA = {
       id: 'spot_tvbox',
       area: 'room',
       name: 'TVボックス',
-      coords: { x: 86, y: 52 },
+      coords: { x: 78, y: 50 },
       icon: '📺',
       image: 'assets/items/tv_box.png',
       evidenceId: 'tv_box_thermal',

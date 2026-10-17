@@ -631,13 +631,14 @@ body.dialogue-active .explore-pin {
   background: linear-gradient(135deg, rgba(15, 23, 42, 0.88) 0%, rgba(15, 23, 42, 0.95) 100%), url('../assets/backgrounds/bg_debate.jpg') center center / cover no-repeat;
   border: 1px solid var(--border-cyan);
   border-radius: 16px;
-  padding: 18px;
+  padding: 22px 24px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
   position: relative;
   overflow: visible;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7);
+  min-height: 520px;
 }
 
 .debate-top-bar {
@@ -754,9 +755,9 @@ body.dialogue-active .explore-pin {
 .debate-evidence-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 8px;
-  max-height: 190px;
-  overflow-y: auto;
+  gap: 10px;
+  max-height: none;
+  overflow-y: visible;
   overflow-x: hidden !important;
   touch-action: pan-y;
   overscroll-behavior-x: none;
@@ -770,7 +771,7 @@ body.dialogue-active .explore-pin {
   gap: 10px;
   background: rgba(30, 41, 59, 0.75);
   border: 2px solid rgba(255, 255, 255, 0.15);
-  padding: 8px 12px;
+  padding: 9px 12px;
   border-radius: 8px;
   cursor: pointer;
   transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
@@ -1948,18 +1949,21 @@ body.dialogue-active .explore-pin {
     word-break: keep-all;
     overflow-wrap: break-word;
   }
+  #area-room {
+    background-position: 64% center !important;
+  }
   .explore-stage {
     height: auto;
-    min-height: 320px;
-    max-height: 50vh;
-    max-height: 50dvh;
-    aspect-ratio: 4 / 3;
+    min-height: 250px;
+    max-height: 54vh;
+    max-height: 54dvh;
+    aspect-ratio: 16 / 10;
   }
   .explore-pin {
     padding: 0;
     touch-action: manipulation;
     width: max-content;
-    max-width: 120px;
+    max-width: 110px;
   }
   .pin-icon {
     width: 44px;
