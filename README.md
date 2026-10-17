@@ -186,5 +186,7 @@ GitHub Actions（CI）により PR/Push 時に Biome 解析およびシナリオ
   単一の立ち絵画像から目・眉・口をプロシージャル分割し、音声・台詞と完全同期させるアニメーションパイプライン。
 * 🧠 **[シナリオ整合性フレームワーク](docs/scenario-consistency-framework.md)**:  
   物語の矛盾・ご都合主義を未然に排除し、「なぜなぜ分析」で論理的必然性を構築するフレームワーク。
+* 🎵 **[AI音響生成・サウンドデザイン設計書 (SFX & BGM)](docs/audio-and-sound-design-guide.md)**:  
+  Vertex AI (Lyria 3) によるシネマティック効果音・BGM生成、Web Audio API ハイブリッドアーキテクチャ、ビート同期シームレスループ、冒頭ソフトフェードイン設計。
 * 📖 **[OGP画像・サイトアセット生成＆改変ガイド](docs/ogp-image-guide.md)**:  
   SNSシェア用OGPバナーやファビコン群の自動生成スクリプト、文言・背景改変手順。

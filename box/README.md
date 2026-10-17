@@ -79,8 +79,8 @@ Web標準技術（HTML5 / CSS3 / JavaScript / Web Audio API / Web Speech API）�
 
 * **キャラクターボイス＆ナレーション（Google Gemini 3.8 Flash TTS / Web Speech API）**  
   全キャラクター（ユウタ、シバタ、アオイ、ヤエガシ、MIMI）の高音質音声合成に対応。
-* **シンセ効果音（Web Audio API）**  
-  パケット通信音、カットイン激突音、証拠提示音などをプログラム生成。
+* **音響設計・効果音生成ガイドライン**  
+  詳細なAI効果音・BGM生成パイプラインおよびWeb Audio APIハイブリッド実装については [AI音響生成・サウンドデザイン設計書 (SFX & BGM)](../docs/audio-and-sound-design-guide.md) を参照。
 
 ---
 
