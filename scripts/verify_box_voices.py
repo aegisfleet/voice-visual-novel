@@ -16,42 +16,34 @@ def main():
         # 1. 独立試聴室 (samples.html) の検証 (PC)
         page_pc = browser.new_page(viewport={"width": 1280, "height": 900})
         page_pc.goto("http://localhost:8080/box/samples.html", wait_until="networkidle")
-        page_pc.screenshot(path=str(OUTPUT_DIR / "verify_samples_pc.png"), full_page=True)
-        print("Captured verify_samples_pc.png")
+        page_pc.screenshot(path=str(OUTPUT_DIR / "verify_samples_v2_pc.png"), full_page=True)
+        print("Captured verify_samples_v2_pc.png")
 
         # 2. 独立試聴室 (samples.html) の検証 (Mobile)
         page_mobile = browser.new_page(viewport={"width": 390, "height": 844})
         page_mobile.goto("http://localhost:8080/box/samples.html", wait_until="networkidle")
-        page_mobile.screenshot(path=str(OUTPUT_DIR / "verify_samples_mobile.png"), full_page=False)
-        print("Captured verify_samples_mobile.png")
+        page_mobile.screenshot(path=str(OUTPUT_DIR / "verify_samples_v2_mobile.png"), full_page=False)
+        print("Captured verify_samples_v2_mobile.png")
 
         # 3. ゲーム本編 (index.html) の設定資料集モーダルの検証
-        page_game = browser.new_page(viewport={"width": 1200, "height": 800})
-        page_game.goto("http://localhost:8080/box/index.html?v=20261017_rev58", wait_until="networkidle")
+        page_game = browser.new_page(viewport={"width": 1200, "height": 850})
+        page_game.goto("http://localhost:8080/box/index.html?v=20261017_rev59", wait_until="networkidle")
 
-        # 設定資料集を開く (app.openGallery を実行)
-        page_game.evaluate("window.app.openGallery('yuta')")
-        page_game.wait_for_timeout(500)
-        page_game.screenshot(path=str(OUTPUT_DIR / "verify_gallery_yuta.png"))
-        print("Captured verify_gallery_yuta.png")
+        # ナレータータブの表示
+        page_game.evaluate("window.app.openGallery('narrator')")
+        page_game.wait_for_timeout(400)
+        page_game.evaluate("document.querySelector('.gallery-body').scrollTop = 9999")
+        page_game.wait_for_timeout(300)
+        page_game.screenshot(path=str(OUTPUT_DIR / "verify_gallery_narrator.png"))
+        print("Captured verify_gallery_narrator.png")
 
-        # アオイのタブに切替
-        page_game.evaluate("window.app.renderGalleryContent('aoi')")
-        page_game.wait_for_timeout(500)
-        page_game.screenshot(path=str(OUTPUT_DIR / "verify_gallery_aoi.png"))
-        print("Captured verify_gallery_aoi.png")
-
-        # ヤエガシのタブに切替
-        page_game.evaluate("window.app.renderGalleryContent('yaegashi')")
-        page_game.wait_for_timeout(500)
-        page_game.screenshot(path=str(OUTPUT_DIR / "verify_gallery_yaegashi.png"))
-        print("Captured verify_gallery_yaegashi.png")
-
-        # MIMIのタブに切替
+        # MIMIタブの表示
         page_game.evaluate("window.app.renderGalleryContent('mimi')")
-        page_game.wait_for_timeout(500)
-        page_game.screenshot(path=str(OUTPUT_DIR / "verify_gallery_mimi.png"))
-        print("Captured verify_gallery_mimi.png")
+        page_game.wait_for_timeout(400)
+        page_game.evaluate("document.querySelector('.gallery-body').scrollTop = 9999")
+        page_game.wait_for_timeout(300)
+        page_game.screenshot(path=str(OUTPUT_DIR / "verify_gallery_mimi_v2.png"))
+        print("Captured verify_gallery_mimi_v2.png")
 
         browser.close()
 

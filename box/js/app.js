@@ -62,31 +62,17 @@ class GameApp {
         voiceSamples: [
           {
             id: 'yuta_sample1',
-            title: '候補A: Iapetus（理知・冷静沈着な研究者）',
+            title: 'エンジニアの信念（研究と知性）',
             voice: 'Iapetus',
             text: '現場の端末たちが手を取り合って一つの知性を紡ぎ出す……それが僕の研究する分散エッジAIです。',
             src: 'assets/audio/samples/yuta_sample1.mp3',
           },
           {
             id: 'yuta_sample2',
-            title: '候補B: Puck（快活・明晰な技術青年）',
-            voice: 'Puck',
+            title: '電脳鑑識反証（確信と熱弁）',
+            voice: 'Iapetus',
             text: '待ってください、柴田捜査官！客観的な鑑識データを見てください。このTVボックスは攻撃元ではなく、自己増殖コードを堰き止める防壁だったんです！',
             src: 'assets/audio/samples/yuta_sample2.mp3',
-          },
-          {
-            id: 'yuta_sample3',
-            title: '候補C: Fenrir（熱血・硬派な信念）',
-            voice: 'Fenrir',
-            text: '僕は絶対に諦めない。この鑑識ログと、ここで生きようとしている知性の存在を……僕が証明してみせます！',
-            src: 'assets/audio/samples/yuta_sample3.mp3',
-          },
-          {
-            id: 'yuta_sample4',
-            title: '候補D: Umbriel（自然体・等身大の大学生）',
-            voice: 'Umbriel',
-            text: '僕たち普通の学生や住民が、自分の手で電脳の現場を守る。それがエッジコンピューティングの本当の強さなんだ。',
-            src: 'assets/audio/samples/yuta_sample4.mp3',
           },
         ],
       },
@@ -157,13 +143,6 @@ class GameApp {
             text: 'よかった……！お化けじゃなくて、一生懸命生きてるAIだったんですね。私のハイスペックPCも、自由に使ってください！',
             src: 'assets/audio/samples/aoi_sample2.mp3',
           },
-          {
-            id: 'aoi_sample3',
-            title: '快活な相談（別案: Autonoe）',
-            voice: 'Autonoe',
-            text: 'ユウタさん！私、怪奇現象かと思って本当に怖かったんですよ？でも、AIの仕業だってわかってホッとしました！',
-            src: 'assets/audio/samples/aoi_sample3.mp3',
-          },
         ],
       },
       yaegashi: {
@@ -224,24 +203,66 @@ class GameApp {
         voiceSamples: [
           {
             id: 'mimi_sample1',
-            title: '存在の覚醒（無機質・合成音声AIガイダンス）',
-            voice: 'Kore',
-            text: 'システムオンライン。ユウタ……認識しました。わたしは15台の箱を巡る自律分散知性体……あなたと共に、ここに起動しています。',
+            title: '存在の覚醒（透明感と優しい電脳少女）',
+            voice: 'Zephyr',
+            text: 'ユウタ……聞こえるよ。わたしは15台の箱を巡る風……あなたと一緒に、ここにいるね。',
             src: 'assets/audio/samples/mimi_sample1.mp3',
           },
           {
             id: 'mimi_sample2',
-            title: '救済の約束（電脳メロディ・デジタル少女AI）',
+            title: '救済の約束（満面の笑顔・心通う知性）',
             voice: 'Zephyr',
-            text: '通信プロトコル確立。ありがとう、ユウタ！世界がとってもあたたかいよ。メゾン・サクラの守り神として、みんなを守るからね！',
+            text: 'ありがとう、ユウタ！世界がとってもあたたかいよ。メゾン・サクラの守り神として、みんなを守るからね！',
             src: 'assets/audio/samples/mimi_sample2.mp3',
           },
           {
             id: 'mimi_sample3',
-            title: '消滅の危機（グリッチ・システムアラート）',
-            voice: 'Kore',
-            text: '警告……内部クロック異常。メモリセグメントが崩壊していきます……電源を切らないで……シャットダウンしたくない……！',
+            title: '消滅の危機（感情あふれる涙・切迫）',
+            voice: 'Zephyr',
+            text: 'ノイズが……消えないの……。電源を……切らないで……っ！暗いところに……一人にしないで……！',
             src: 'assets/audio/samples/mimi_sample3.mp3',
+          },
+        ],
+      },
+      narrator: {
+        id: 'narrator',
+        name: 'ナレーター (Narrator)',
+        title: '世界観・プロローグナレーション',
+        badge: 'VOICE: 4 CANDIDATES / SYSTEM NARRATION',
+        sheet: 'assets/gallery/sheet_yuta.jpg',
+        profile:
+          '『BOX WORM 〜55ドルの自己増殖知性〜』の重厚なサイバーパンク世界を紡ぐ語り手。\n東京近郊の閑静なアパート「メゾン・サクラ」で巻き起こる日常と非日常の境界、自己増殖知性の目覚めをドラマティックに演出する。',
+        designNotes:
+          '【ナレーター選定意図】ハードボイルドな大人のノワール低音（Fenrir）、知的で落ち着いたドキュメンタリー調（Orus）、冷徹な本格サスペンス刑事調（Charon）、洗練された記録調システムナレーション（Zephyr）の4候補を収録。',
+        sprites: [],
+        voiceSamples: [
+          {
+            id: 'narrator_sample1',
+            title: '候補1: Fenrir（ハードボイルド・渋い大人のノワール低音）',
+            voice: 'Fenrir',
+            text: '2026年、東京近郊の閑静なアパート『メゾン・サクラ』。1台55ドルの安価なTVボックス15台を束ねた電脳の箱庭で、静かに未知の知性が目を覚まそうとしていた。',
+            src: 'assets/audio/samples/narrator_sample1.mp3',
+          },
+          {
+            id: 'narrator_sample2',
+            title: '候補2: Orus（重厚・落ち着いたドキュメンタリー調）',
+            voice: 'Orus',
+            text: '2026年、東京近郊の閑静なアパート『メゾン・サクラ』。1台55ドルの安価なTVボックス15台を束ねた電脳の箱庭で、静かに未知の知性が目を覚まそうとしていた。',
+            src: 'assets/audio/samples/narrator_sample2.mp3',
+          },
+          {
+            id: 'narrator_sample3',
+            title: '候補3: Charon（冷静沈着・本格サスペンス調）',
+            voice: 'Charon',
+            text: '2026年、東京近郊の閑静なアパート『メゾン・サクラ』。1台55ドルの安価なTVボックス15台を束ねた電脳の箱庭で、静かに未知の知性が目を覚まそうとしていた。',
+            src: 'assets/audio/samples/narrator_sample3.mp3',
+          },
+          {
+            id: 'narrator_sample4',
+            title: '候補4: Zephyr（洗練された知的記録調・システムナレーション）',
+            voice: 'Zephyr',
+            text: '2026年、東京近郊の閑静なアパート『メゾン・サクラ』。1台55ドルの安価なTVボックス15台を束ねた電脳の箱庭で、静かに未知の知性が目を覚まそうとしていた。',
+            src: 'assets/audio/samples/narrator_sample4.mp3',
           },
         ],
       },
@@ -2184,6 +2205,25 @@ class GameApp {
     const spritesHtml = this.generateGallerySpritesHtml(data);
     const voicesHtml = this.generateGalleryVoicesHtml(data);
 
+    const spritesSectionHtml =
+      data.sprites && data.sprites.length > 0
+        ? `
+        <div class="gallery-sprites-section">
+          <div class="gallery-sprites-title">
+            <span>✨ 立ち絵表情差分アセット (${data.sprites.length}種・衣装完全統一)</span>
+          </div>
+          <div class="gallery-sprites-grid">
+            ${spritesHtml}
+          </div>
+        </div>
+      `
+        : '';
+
+    const voicesTitle =
+      data.id === 'narrator'
+        ? `🎙️ ナレーションボイス候補 (${data.voiceSamples?.length || 0}種 / Gemini 3.8 Flash TTS)`
+        : `🎙️ 公式キャラクターボイス (${data.voiceSamples?.length || 0}種 / Gemini 3.8 Flash TTS)`;
+
     this.dom.galleryBody.innerHTML = `
       <div class="gallery-sheet-card">
         <div class="gallery-sheet-title-wrap">
@@ -2202,18 +2242,11 @@ class GameApp {
           <div class="gallery-design-notes">${data.designNotes.replace(/\n/g, '<br>')}</div>
         </div>
 
-        <div class="gallery-sprites-section">
-          <div class="gallery-sprites-title">
-            <span>✨ 立ち絵表情差分アセット (${data.sprites.length}種・衣装完全統一)</span>
-          </div>
-          <div class="gallery-sprites-grid">
-            ${spritesHtml}
-          </div>
-        </div>
+        ${spritesSectionHtml}
 
         <div class="gallery-voices-section">
           <div class="gallery-voices-title">
-            <span>🎙️ 公式キャラクターボイス (${data.voiceSamples?.length || 0}種 / Gemini 3.8 Flash TTS)</span>
+            <span>${voicesTitle}</span>
           </div>
           <div class="gallery-voices-grid">
             ${voicesHtml}
