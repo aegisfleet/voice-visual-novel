@@ -80,11 +80,13 @@ class BoxCharacterController {
   }
 
   preloadAll() {
+    const v = '?v=20261017_rev62';
     const assetList = [];
     Object.values(this.characterImages).forEach((map) => {
       Object.values(map).forEach((src) => {
-        if (!assetList.includes(src)) {
-          assetList.push(src);
+        const fullSrc = `${src}${v}`;
+        if (!assetList.includes(fullSrc)) {
+          assetList.push(fullSrc);
         }
       });
     });
@@ -98,7 +100,10 @@ class BoxCharacterController {
   getSpriteSrc(charId, emotion = 'normal') {
     const charMap = this.characterImages[charId];
     if (!charMap) return '';
-    return charMap[emotion] || charMap.normal || '';
+    const src = charMap[emotion] || charMap.normal || '';
+    if (!src) return '';
+    const v = '?v=20261017_rev62';
+    return src.includes('?') ? src : `${src}${v}`;
   }
 
   show(charId, emotion = 'normal', motion = null) {
@@ -369,7 +374,7 @@ class BoxCharacterController {
     const spriteImg = wrapper.querySelector('.char-sprite-img');
     if (spriteImg && this.currentCharId) {
       const nextSrc = this.getSpriteSrc(this.currentCharId, emotion);
-      if (nextSrc && !spriteImg.src.endsWith(nextSrc)) {
+      if (nextSrc && spriteImg.getAttribute('src') !== nextSrc) {
         spriteImg.src = nextSrc;
       }
     }
@@ -402,7 +407,7 @@ class BoxCharacterController {
 
     this.bubbleTimeout = setTimeout(() => {
       this.hideEmotionBubble();
-    }, 1800);
+    }, 1100);
   }
 
   hideEmotionBubble() {

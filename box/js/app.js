@@ -1350,7 +1350,7 @@ class GameApp {
 
     if (!img || !stage) return;
 
-    const v = '?v=20261017_rev54';
+    const v = '?v=20261017_rev62';
     const targetUrl = illustration.includes('?') ? illustration : `${illustration}${v}`;
     this.setDialogueIllustrationImage(img, targetUrl);
     stage.classList.remove('hidden');
@@ -1424,7 +1424,7 @@ class GameApp {
         (text.includes('タイヘン') ||
           text.includes('消サナイデ') ||
           text.includes('オ……ハ……ナ……シ')));
-    const speed = this.isSkipMode ? 5 : isStrugglingVoice ? 110 : 25;
+    const speed = this.isSkipMode ? 5 : isStrugglingVoice ? 85 : 15;
 
     this.typewriterTimer = setInterval(() => {
       if (charIdx < text.length) {
@@ -1465,9 +1465,9 @@ class GameApp {
 
   handleVoicePlaybackEnd() {
     this.isVoicePlaying = false;
-    // タイピングも既に終わっており、AUTOモードまたはスキップモードなら次へ進行
+    // タイピングも既に終わっており、AUTOモードまたはスキップモードなら次へ進行（余韻350msで小気味よく進行）
     if (!this.isTyping && (this.isAutoMode || this.isSkipMode)) {
-      this.scheduleAutoAdvance(700);
+      this.scheduleAutoAdvance(350);
     }
   }
 
@@ -1475,7 +1475,7 @@ class GameApp {
     if (this.isChoiceActive) return;
 
     if (this.isSkipMode) {
-      this.scheduleAutoAdvance(80);
+      this.scheduleAutoAdvance(60);
       return;
     }
 
@@ -1487,7 +1487,7 @@ class GameApp {
     }
 
     // 音声がない場合、または既に再生完了している場合は余韻を置いて自動進行
-    this.scheduleAutoAdvance(1600);
+    this.scheduleAutoAdvance(1000);
   }
 
   scheduleAutoAdvance(waitTime) {
@@ -1695,9 +1695,9 @@ class GameApp {
     if (!this.dom.debateShibataAvatar) return;
     const img = this.dom.debateShibataAvatar.querySelector('img');
     if (!img) return;
-    const v = '?v=20261017_rev50';
+    const v = '?v=20261017_rev62';
     const mapping = {
-      normal: `assets/characters/shibata_angry.png${v}`,
+      normal: `assets/characters/shibata_normal.png${v}`,
       angry: `assets/characters/shibata_angry.png${v}`,
       shock: `assets/characters/shibata_shock.png${v}`,
       smile: `assets/characters/shibata_smile.png${v}`,
@@ -1764,7 +1764,7 @@ class GameApp {
 
   getDebateEvidenceIconHtml(ev) {
     if (ev.image) {
-      return `<img src="${ev.image}?v=20261017_rev54" alt="${ev.name}" class="evidence-icon-img" />`;
+      return `<img src="${ev.image}?v=20261017_rev62" alt="${ev.name}" class="evidence-icon-img" />`;
     }
     return ev.icon;
   }
@@ -2091,7 +2091,7 @@ class GameApp {
     const isDeep = this.isDeepForensicEvidence(evId);
     const item = document.createElement('div');
     item.className = `evidence-modal-item ${isDeep ? 'deep-cyber' : ''}`;
-    const v = '?v=20261017_rev54';
+    const v = '?v=20261017_rev62';
     const imgSrc = ev.image ? `${ev.image}${v}` : '';
     const iconHtml = this.getEvidenceModalIconHtml(ev, imgSrc);
     const diagramHtml = this.getEvidenceModalDiagramHtml(ev, imgSrc);

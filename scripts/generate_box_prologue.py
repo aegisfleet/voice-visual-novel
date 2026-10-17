@@ -280,9 +280,10 @@ def generate_line(item):
         with open(wav_path, "wb") as f:
             f.write(audio_bytes)
 
-        # ffmpegで軽量MP3に変換
+        # ffmpegで軽量MP3に変換 (atempo=1.18で早口・歯切れの良いテンポに)
         cmd = [
             "ffmpeg", "-y", "-i", str(wav_path),
+            "-filter:a", "atempo=1.18",
             "-codec:a", "libmp3lame", "-b:a", "128k",
             str(mp3_path)
         ]
