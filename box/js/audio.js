@@ -42,7 +42,7 @@ class AudioManager {
     const updateVoices = () => {
       const voices = window.speechSynthesis.getVoices();
       // 日本語の音声を優先選択
-      this.selectedVoice = voices.find(v => v.lang.startsWith('ja')) || voices[0] || null;
+      this.selectedVoice = voices.find((v) => v.lang.startsWith('ja')) || voices[0] || null;
     };
 
     updateVoices();
@@ -190,7 +190,12 @@ class AudioManager {
     } else if (speaker.includes('ヤエガシ') || speaker.includes('大家')) {
       utterance.pitch = 0.85; // 落ち着いた中古電器屋の親父
       utterance.rate = 1.0;
-    } else if (speaker.includes('MIMI') || speaker.includes('ミミ') || speaker.includes('TVボックス') || speaker.includes('知性')) {
+    } else if (
+      speaker.includes('MIMI') ||
+      speaker.includes('ミミ') ||
+      speaker.includes('TVボックス') ||
+      speaker.includes('知性')
+    ) {
       utterance.pitch = 1.15; // 感情を抑えた静謐なAIボイス、極めてゆっくり
       utterance.rate = 0.8;
     } else {
@@ -412,21 +417,21 @@ class AudioManager {
         [174.61, 207.65, 261.63, 349.23], // Fm
         [146.83, 174.61, 207.65, 293.66], // Ddim
         [116.54, 138.59, 174.61, 233.08], // Bbm
-        [130.81, 164.81, 196.00, 261.63]  // C7
+        [130.81, 164.81, 196.0, 261.63], // C7
       ];
     } else if (mode === 'truth') {
       progression = [
-        [155.56, 196.00, 233.08, 311.13], // Eb
-        [146.83, 174.61, 220.00, 293.66], // Bb/D
-        [130.81, 155.56, 196.00, 261.63], // Cm
-        [103.83, 130.81, 155.56, 207.65]  // Ab
+        [155.56, 196.0, 233.08, 311.13], // Eb
+        [146.83, 174.61, 220.0, 293.66], // Bb/D
+        [130.81, 155.56, 196.0, 261.63], // Cm
+        [103.83, 130.81, 155.56, 207.65], // Ab
       ];
     } else {
       progression = [
-        [130.81, 155.56, 196.00, 293.66], // Cm9
+        [130.81, 155.56, 196.0, 293.66], // Cm9
         [103.83, 130.81, 155.56, 261.63], // Abmaj7
-        [87.31,  103.83, 130.81, 220.00], // Fm9
-        [98.00,  123.47, 146.83, 246.94]  // G7
+        [87.31, 103.83, 130.81, 220.0], // Fm9
+        [98.0, 123.47, 146.83, 246.94], // G7
       ];
     }
 

@@ -1,0 +1,26 @@
+{
+  "editor.defaultFormatter": "biomejs.biome",
+  "editor.formatOnSave": true,
+  "sonarlint.output.showVerboseLogs": true,
+  "sonarlint.output.showAnalyzerLogs": true,
+  "sonarlint.rules": {
+    "javascript:S3776": {
+      "level": "on",
+      "parameters": {
+        "threshold": "15"
+      }
+    },
+    "javascript:S7773": {
+      "level": "on"
+    },
+    "css:S9423": {
+      "level": "on"
+    },
+    "css:S7924": {
+      "level": "on"
+    },
+    "css:S1874": {
+      "level": "on"
+    }
+  }
+}

@@ -10,8 +10,8 @@
   --neon-red: #ef4444;
   --text-main: #f8fafc;
   --text-sub: #cbd5e1;
-  --font-sans: 'Noto Sans JP', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-mono: 'Chakra Petch', 'Courier New', monospace;
+  --font-sans: "Noto Sans JP", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "Chakra Petch", "Courier New", monospace;
 }
 
 html {
@@ -23,7 +23,9 @@ html {
   overscroll-behavior-y: none;
 }
 
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -81,7 +83,7 @@ body.game-active {
   inset: 0;
   width: 100%;
   height: 100dvh;
-  background-image: 
+  background-image:
     linear-gradient(to right, rgba(0, 243, 255, 0.04) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(0, 243, 255, 0.04) 1px, transparent 1px);
   background-size: 32px 32px;
@@ -117,7 +119,8 @@ body.game-active {
   z-index: 50;
   gap: 8px;
 }
-.hud-left, .hud-right {
+.hud-left,
+.hud-right {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -151,7 +154,8 @@ body.game-active {
 }
 
 @keyframes cyber-phase-pulse {
-  0%, 100% {
+  0%,
+  100% {
     box-shadow: 0 0 8px rgba(192, 132, 252, 0.3);
     border-color: var(--neon-purple);
   }
@@ -252,7 +256,9 @@ body.game-active {
   justify-content: center;
   text-align: center;
   position: relative;
-  background: linear-gradient(180deg, rgba(3, 7, 18, 0.72) 0%, rgba(3, 7, 18, 0.9) 100%), url('../assets/backgrounds/bg_title.jpg') center center / cover no-repeat;
+  background:
+    linear-gradient(180deg, rgba(3, 7, 18, 0.72) 0%, rgba(3, 7, 18, 0.9) 100%),
+    url("../assets/backgrounds/bg_title.jpg") center center / cover no-repeat;
   min-height: 100vh;
 }
 
@@ -275,7 +281,9 @@ body.game-active {
   font-weight: 900;
   letter-spacing: 0.05em;
   color: #fff;
-  text-shadow: 0 0 25px rgba(0, 243, 255, 0.7), 0 0 50px rgba(0, 243, 255, 0.3);
+  text-shadow:
+    0 0 25px rgba(0, 243, 255, 0.7),
+    0 0 50px rgba(0, 243, 255, 0.3);
   line-height: 1.2;
 }
 
@@ -324,8 +332,13 @@ body.game-active {
 }
 
 @keyframes float-pulse {
-  0%, 100% { transform: translateY(0) scale(1); }
-  50% { transform: translateY(-8px) scale(1.02); }
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-8px) scale(1.02);
+  }
 }
 
 .title-loop-info {
@@ -385,8 +398,15 @@ body.game-active {
 }
 
 @keyframes pulse-gold {
-  0%, 100% { transform: scale(1); box-shadow: 0 0 12px rgba(251, 191, 36, 0.25); }
-  50% { transform: scale(1.02); box-shadow: 0 0 22px rgba(251, 191, 36, 0.55); }
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 12px rgba(251, 191, 36, 0.25);
+  }
+  50% {
+    transform: scale(1.02);
+    box-shadow: 0 0 22px rgba(251, 191, 36, 0.55);
+  }
 }
 
 .title-actions {
@@ -519,10 +539,10 @@ body.game-active {
 
 /* 部屋・廊下のビジュアル背景 */
 #area-room {
-  background: url('../assets/backgrounds/bg_room.jpg') center center / cover no-repeat;
+  background: url("../assets/backgrounds/bg_room.jpg") center center / cover no-repeat;
 }
 #area-corridor {
-  background: url('../assets/backgrounds/bg_corridor.jpg') center center / cover no-repeat;
+  background: url("../assets/backgrounds/bg_corridor.jpg") center center / cover no-repeat;
 }
 
 .explore-pin {
@@ -532,7 +552,10 @@ body.game-active {
   flex-direction: column;
   align-items: center;
   cursor: pointer;
-  transition: transform 0.2s ease, z-index 0.1s ease, opacity 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    z-index 0.1s ease,
+    opacity 0.2s ease;
   z-index: 10;
   touch-action: manipulation;
   width: max-content;
@@ -598,7 +621,8 @@ body.dialogue-active .explore-pin {
   border-color: var(--neon-purple);
   box-shadow: 0 0 15px rgba(192, 132, 252, 0.4);
 }
-.explore-pin.inspected .pin-icon, .explore-pin.talked .pin-icon {
+.explore-pin.inspected .pin-icon,
+.explore-pin.talked .pin-icon {
   border-color: #64748b;
   opacity: 0.8;
   box-shadow: none;
@@ -639,8 +663,13 @@ body.dialogue-active .explore-pin {
 }
 
 @keyframes pulse-red {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.02); }
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
 }
 
 /* ----------------------------------------------------
@@ -653,7 +682,9 @@ body.dialogue-active .explore-pin {
 }
 
 .debate-stage {
-  background: linear-gradient(135deg, rgba(15, 23, 42, 0.88) 0%, rgba(15, 23, 42, 0.95) 100%), url('../assets/backgrounds/bg_debate.jpg') center center / cover no-repeat;
+  background:
+    linear-gradient(135deg, rgba(15, 23, 42, 0.88) 0%, rgba(15, 23, 42, 0.95) 100%),
+    url("../assets/backgrounds/bg_debate.jpg") center center / cover no-repeat;
   border: 1px solid var(--border-cyan);
   border-radius: 16px;
   padding: 22px 24px;
@@ -800,7 +831,10 @@ body.dialogue-active .explore-pin {
   padding: 9px 12px;
   border-radius: 8px;
   cursor: pointer;
-  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+  transition:
+    border-color 0.2s,
+    background 0.2s,
+    box-shadow 0.2s;
   box-sizing: border-box;
   width: 100%;
   max-width: 100%;
@@ -840,12 +874,16 @@ body.dialogue-active .explore-pin {
 .debate-evidence-card.selected {
   border-color: var(--neon-cyan);
   background: #082f49;
-  box-shadow: 0 0 16px rgba(0, 243, 255, 0.6), inset 0 0 10px rgba(0, 243, 255, 0.2);
+  box-shadow:
+    0 0 16px rgba(0, 243, 255, 0.6),
+    inset 0 0 10px rgba(0, 243, 255, 0.2);
 }
 .debate-evidence-card.deep-cyber.selected {
   border-color: var(--neon-purple);
   background: #2e1065;
-  box-shadow: 0 0 18px rgba(192, 132, 252, 0.7), inset 0 0 10px rgba(192, 132, 252, 0.2);
+  box-shadow:
+    0 0 18px rgba(192, 132, 252, 0.7),
+    inset 0 0 10px rgba(192, 132, 252, 0.2);
 }
 
 .debate-evidence-card.already-submitted {
@@ -1001,22 +1039,28 @@ body.dialogue-active .explore-pin {
   max-height: 100%;
   object-fit: contain;
   filter: drop-shadow(0 4px 20px rgba(0, 0, 0, 0.7));
-  transition: transform 0.25s ease, filter 0.25s ease;
+  transition:
+    transform 0.25s ease,
+    filter 0.25s ease;
 }
 
 /* MIMIの電脳ホログラム発光エフェクト */
 .char-wrapper-mimi .char-sprite-img {
-  filter: drop-shadow(0 0 20px rgba(0, 243, 255, 0.8)) drop-shadow(0 0 35px rgba(192, 132, 252, 0.5));
+  filter: drop-shadow(0 0 20px rgba(0, 243, 255, 0.8))
+    drop-shadow(0 0 35px rgba(192, 132, 252, 0.5));
   animation: mimi-hologram-pulse 2.5s infinite ease-in-out;
 }
 
 @keyframes mimi-hologram-pulse {
-  0%, 100% {
-    filter: drop-shadow(0 0 15px rgba(0, 243, 255, 0.7)) drop-shadow(0 0 30px rgba(192, 132, 252, 0.4));
+  0%,
+  100% {
+    filter: drop-shadow(0 0 15px rgba(0, 243, 255, 0.7))
+      drop-shadow(0 0 30px rgba(192, 132, 252, 0.4));
     transform: scale(1);
   }
   50% {
-    filter: drop-shadow(0 0 28px rgba(0, 243, 255, 0.95)) drop-shadow(0 0 45px rgba(192, 132, 252, 0.7));
+    filter: drop-shadow(0 0 28px rgba(0, 243, 255, 0.95))
+      drop-shadow(0 0 45px rgba(192, 132, 252, 0.7));
     transform: scale(1.02);
   }
 }
@@ -1034,15 +1078,21 @@ body.dialogue-active .explore-pin {
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 15px rgba(0, 243, 255, 0.6), 0 0 10px rgba(255, 255, 255, 0.9);
+  box-shadow:
+    0 4px 15px rgba(0, 243, 255, 0.6),
+    0 0 10px rgba(255, 255, 255, 0.9);
   animation: bounce 0.6s infinite alternate;
   z-index: 20;
   border: 2px solid var(--neon-cyan);
 }
 
 @keyframes bounce {
-  from { transform: translateY(0); }
-  to { transform: translateY(-8px); }
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-8px);
+  }
 }
 
 /* 鑑識データ図・イメージ図ステージ (会話中表示) */
@@ -1058,7 +1108,9 @@ body.dialogue-active .explore-pin {
   justify-content: center;
   align-items: flex-end;
   pointer-events: auto;
-  transition: opacity 0.25s ease, transform 0.25s ease;
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s ease;
 }
 
 .illustration-frame {
@@ -1068,15 +1120,23 @@ body.dialogue-active .explore-pin {
   border-radius: 12px;
   padding: 8px 12px 10px 12px;
   box-sizing: border-box;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.9), 0 0 25px rgba(0, 243, 255, 0.35);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.9),
+    0 0 25px rgba(0, 243, 255, 0.35);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   animation: illustration-fadein 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @keyframes illustration-fadein {
-  from { opacity: 0; transform: translateY(12px) scale(0.97); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .illustration-header {
@@ -1108,7 +1168,9 @@ body.dialogue-active .explore-pin {
   padding: 2px 6px;
   line-height: 1;
   border-radius: 4px;
-  transition: color 0.15s, background 0.15s;
+  transition:
+    color 0.15s,
+    background 0.15s;
 }
 .illustration-close-btn:hover {
   color: #fff;
@@ -1123,7 +1185,11 @@ body.dialogue-active .explore-pin {
   cursor: zoom-in;
   overflow: hidden;
   border-radius: 6px;
-  background: radial-gradient(circle at center, rgba(0, 243, 255, 0.08) 0%, rgba(5, 10, 20, 0.95) 100%);
+  background: radial-gradient(
+    circle at center,
+    rgba(0, 243, 255, 0.08) 0%,
+    rgba(5, 10, 20, 0.95) 100%
+  );
   border: 1px solid rgba(0, 243, 255, 0.3);
   padding: 8px;
   box-sizing: border-box;
@@ -1135,7 +1201,9 @@ body.dialogue-active .explore-pin {
   max-height: clamp(160px, 34dvh, 320px);
   object-fit: contain;
   display: block;
-  transition: opacity 0.15s ease, transform 0.2s ease;
+  transition:
+    opacity 0.15s ease,
+    transform 0.2s ease;
 }
 .dialogue-illustration-img:hover {
   transform: scale(1.01);
@@ -1263,8 +1331,14 @@ body.dialogue-active .explore-pin {
 }
 
 @keyframes blink {
-  from { opacity: 0.4; transform: translateY(0); }
-  to { opacity: 1; transform: translateY(-2px); }
+  from {
+    opacity: 0.4;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(-2px);
+  }
 }
 
 .dialogue-choices {
@@ -1299,7 +1373,11 @@ body.dialogue-active .explore-pin {
   inset: 0;
   width: 100%;
   height: 100dvh;
-  background: radial-gradient(circle at center, rgba(14, 165, 233, 0.92) 0%, rgba(3, 7, 18, 0.95) 80%);
+  background: radial-gradient(
+    circle at center,
+    rgba(14, 165, 233, 0.92) 0%,
+    rgba(3, 7, 18, 0.95) 80%
+  );
   z-index: 100;
   display: flex;
   flex-direction: column;
@@ -1337,7 +1415,9 @@ body.dialogue-active .explore-pin {
   background: rgba(2, 6, 23, 0.94);
   border-top: 3px solid var(--neon-cyan);
   border-bottom: 3px solid var(--neon-cyan);
-  box-shadow: 0 0 45px rgba(0, 243, 255, 0.65), inset 0 0 25px rgba(0, 243, 255, 0.2);
+  box-shadow:
+    0 0 45px rgba(0, 243, 255, 0.65),
+    inset 0 0 25px rgba(0, 243, 255, 0.2);
   transform: skew(-6deg);
 }
 
@@ -1356,23 +1436,42 @@ body.dialogue-active .explore-pin {
   font-size: clamp(1.2rem, 5.8vw, 2.5rem);
   font-weight: 900;
   color: #fff;
-  text-shadow: 0 0 25px var(--neon-cyan), 0 0 50px rgba(56, 189, 248, 0.8);
+  text-shadow:
+    0 0 25px var(--neon-cyan),
+    0 0 50px rgba(56, 189, 248, 0.8);
   letter-spacing: 0.04em;
   white-space: nowrap;
   animation: cutin-zoom 0.8s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards;
 }
 
 @keyframes cutin-cyber-flash {
-  0% { opacity: 0; }
-  15% { opacity: 1; }
-  85% { opacity: 1; }
-  100% { opacity: 0; }
+  0% {
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
 }
 
 @keyframes cutin-zoom {
-  0% { transform: scale(0.2) rotate(-10deg); opacity: 0; }
-  60% { transform: scale(1.05) rotate(-3deg); opacity: 1; }
-  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+  0% {
+    transform: scale(0.2) rotate(-10deg);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.05) rotate(-3deg);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
 }
 
 /* ----------------------------------------------------
@@ -1576,7 +1675,12 @@ body.dialogue-active .explore-pin {
   gap: 8px;
   margin-bottom: 8px;
 }
-.ev-icon { font-size: 1.3rem; display: flex; align-items: center; justify-content: center; }
+.ev-icon {
+  font-size: 1.3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 .ev-modal-icon-img {
   width: 36px;
   height: 36px;
@@ -1587,7 +1691,11 @@ body.dialogue-active .explore-pin {
   box-shadow: 0 0 10px rgba(0, 243, 255, 0.3);
   flex-shrink: 0;
 }
-.ev-name { font-weight: 700; color: #fff; font-size: 0.95rem; }
+.ev-name {
+  font-weight: 700;
+  color: #fff;
+  font-size: 0.95rem;
+}
 .ev-badge {
   font-size: 0.7rem;
   padding: 2px 8px;
@@ -1604,8 +1712,17 @@ body.dialogue-active .explore-pin {
   color: var(--neon-purple);
   border: 1px solid var(--neon-purple);
 }
-.ev-summary { font-size: 0.85rem; color: #cbd5e1; margin-bottom: 6px; font-weight: 500; }
-.ev-detail { font-size: 0.8rem; color: var(--text-sub); line-height: 1.6; }
+.ev-summary {
+  font-size: 0.85rem;
+  color: #cbd5e1;
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+.ev-detail {
+  font-size: 0.8rem;
+  color: var(--text-sub);
+  line-height: 1.6;
+}
 
 /* 証拠手帳モーダル内の図解カードプレビュー */
 .ev-modal-diagram-wrap {
@@ -1614,7 +1731,11 @@ body.dialogue-active .explore-pin {
   border-radius: 8px;
   overflow: hidden;
   cursor: zoom-in;
-  background: radial-gradient(circle at center, rgba(0, 243, 255, 0.08) 0%, rgba(5, 10, 20, 0.95) 100%);
+  background: radial-gradient(
+    circle at center,
+    rgba(0, 243, 255, 0.08) 0%,
+    rgba(5, 10, 20, 0.95) 100%
+  );
   position: relative;
   height: 165px;
   display: flex;
@@ -1627,7 +1748,11 @@ body.dialogue-active .explore-pin {
 .ev-modal-diagram-wrap:hover {
   border-color: var(--neon-cyan);
   box-shadow: 0 0 16px rgba(0, 243, 255, 0.35);
-  background: radial-gradient(circle at center, rgba(0, 243, 255, 0.14) 0%, rgba(5, 10, 20, 0.98) 100%);
+  background: radial-gradient(
+    circle at center,
+    rgba(0, 243, 255, 0.14) 0%,
+    rgba(5, 10, 20, 0.98) 100%
+  );
 }
 .ev-modal-diagram-img {
   width: 100%;
@@ -1677,7 +1802,11 @@ body.dialogue-active .explore-pin {
   justify-content: center;
   align-items: center;
   overflow: auto;
-  background: radial-gradient(circle at center, rgba(0, 243, 255, 0.06) 0%, rgba(5, 10, 20, 0.98) 100%);
+  background: radial-gradient(
+    circle at center,
+    rgba(0, 243, 255, 0.06) 0%,
+    rgba(5, 10, 20, 0.98) 100%
+  );
   border-radius: 6px;
   border: 1px solid var(--border-cyan);
   padding: 10px;
@@ -1738,7 +1867,7 @@ body.dialogue-active .explore-pin {
   line-height: 1.2;
 }
 .pin-status-badge::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 100%;
   left: 50%;
@@ -1789,9 +1918,8 @@ body.dialogue-active .explore-pin {
   color: var(--neon-cyan);
   font-family: var(--font-mono);
   font-weight: 700;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.5);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
 }
-
 
 .choice-key-tag {
   background: #030712;
@@ -1873,7 +2001,7 @@ body.dialogue-active .explore-pin {
   }
   .hud .hud-btn.hud-debate-btn {
     padding: 4px 7px;
-    font-size: 0.70rem;
+    font-size: 0.7rem;
     white-space: nowrap;
   }
   .hud-center {
@@ -1948,7 +2076,8 @@ body.dialogue-active .explore-pin {
     background-size: 100% 100%;
     background-position: center center;
   }
-  #area-room, #area-corridor {
+  #area-room,
+  #area-corridor {
     background-position: center center;
     background-size: 100% 100%;
   }
@@ -2029,12 +2158,12 @@ body.dialogue-active .explore-pin {
     flex-shrink: 0;
   }
   .opponent-speech-bubble p {
-    font-size: 0.80rem;
+    font-size: 0.8rem;
     line-height: 1.35;
   }
   .debate-hint {
     padding: 3px 8px;
-    font-size: 0.70rem;
+    font-size: 0.7rem;
     flex-shrink: 0;
   }
   .evidence-selection-section {
@@ -2046,7 +2175,7 @@ body.dialogue-active .explore-pin {
   }
   .preview-box {
     padding: 6px 10px;
-    font-size: 0.80rem;
+    font-size: 0.8rem;
     line-height: 1.35;
     flex-shrink: 0;
   }
@@ -2086,7 +2215,7 @@ body.dialogue-active .explore-pin {
     height: 26px;
   }
   .evidence-name {
-    font-size: 0.80rem;
+    font-size: 0.8rem;
   }
   .evidence-type {
     font-size: 0.67rem;
@@ -2343,7 +2472,7 @@ body.dialogue-active .explore-pin {
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
 }
 .gallery-sheet-img-wrap:hover::after {
-  content: '🔍 クリックで超高精細・拡大表示';
+  content: "🔍 クリックで超高精細・拡大表示";
   position: absolute;
   bottom: 10px;
   right: 10px;

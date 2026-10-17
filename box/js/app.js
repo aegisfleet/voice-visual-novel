@@ -9,7 +9,7 @@ class GameApp {
     // キャラクター立ち絵コントローラー
     this.character = new BoxCharacterController(
       document.getElementById('character-stage'),
-      document.getElementById('emotion-bubble')
+      document.getElementById('emotion-bubble'),
     );
 
     // 会話キュー＆タイピング状態
@@ -41,14 +41,20 @@ class GameApp {
         title: '主人公・エッジAI分散基盤エンジニア',
         badge: 'AGE: 25 / TECH: EDGE CLUSTER ARCHITECT',
         sheet: 'assets/gallery/sheet_yuta.jpg',
-        profile: '都内の単身向けアパート「メゾン・サクラ」201号室に住む若きエッジAIエンジニア。AIベンチャー企業で、軽量なIoTデバイス群を数珠繋ぎにして手分けして推論させる分散機械学習基盤を研究開発している。\n警察の突然の家宅捜索にも怯まず、エンジニアの論理的思考と客観鑑識データによってサイバーテロ疑惑を覆す。',
-        designNotes: '【デザイン意図】クラウド至上主義に対抗し、現場の非力な機械たちに命を吹き込む「エッジ派の知性」。ネイビーのパーカーにヘッドホン、眼鏡を着用。設定資料シートには全身三面図、表情差分（困惑・熱弁・驚愕）、眼鏡とヘッドホンの内部構造線画を精密に収録。',
+        profile:
+          '都内の単身向けアパート「メゾン・サクラ」201号室に住む若きエッジAIエンジニア。AIベンチャー企業で、軽量なIoTデバイス群を数珠繋ぎにして手分けして推論させる分散機械学習基盤を研究開発している。\n警察の突然の家宅捜索にも怯まず、エンジニアの論理的思考と客観鑑識データによってサイバーテロ疑惑を覆す。',
+        designNotes:
+          '【デザイン意図】クラウド至上主義に対抗し、現場の非力な機械たちに命を吹き込む「エッジ派の知性」。ネイビーのパーカーにヘッドホン、眼鏡を着用。設定資料シートには全身三面図、表情差分（困惑・熱弁・驚愕）、眼鏡とヘッドホンの内部構造線画を精密に収録。',
         sprites: [
           { label: '通常 / 確信', emotion: 'normal', src: 'assets/characters/yuta_confident.png' },
-          { label: '確信 / 熱弁', emotion: 'confident', src: 'assets/characters/yuta_confident.png' },
+          {
+            label: '確信 / 熱弁',
+            emotion: 'confident',
+            src: 'assets/characters/yuta_confident.png',
+          },
           { label: '驚愕 / 動揺', emotion: 'shock', src: 'assets/characters/yuta_shock.png' },
-          { label: '安堵 / 笑顔', emotion: 'smile', src: 'assets/characters/yuta_smile.png' }
-        ]
+          { label: '安堵 / 笑顔', emotion: 'smile', src: 'assets/characters/yuta_smile.png' },
+        ],
       },
       shibata: {
         id: 'shibata',
@@ -56,14 +62,16 @@ class GameApp {
         title: '警視庁サイバー犯罪対策課 捜査官',
         badge: 'AGE: 44 / POLICE: CYBERCRIME DIVISION',
         sheet: 'assets/gallery/sheet_shibata.jpg',
-        profile: '警視庁サイバー犯罪対策課所属のベテラン捜査官。国家監視網がアラートを上げた「未知の自己増殖コード通信」を追ってメゾン・サクラを強制捜査する。\n強面の外見と威圧感を持つが、単なる感情論や権力ではなく、筋の通った客観的鑑識データと論理的反証を正当に重んじる現場至上主義のプロフェッショナル刑事。',
-        designNotes: '【デザイン意図】サイバー犯罪と対峙し続けた歴戦の刑事。ダークグレーのトレンチコートに黒ネクタイ、警察手帳を携帯。設定資料シートには全身前後、冷徹・激怒・驚愕の3表情、コートの皺や警察手帳のディテール線画を収録。',
+        profile:
+          '警視庁サイバー犯罪対策課所属のベテラン捜査官。国家監視網がアラートを上げた「未知の自己増殖コード通信」を追ってメゾン・サクラを強制捜査する。\n強面の外見と威圧感を持つが、単なる感情論や権力ではなく、筋の通った客観的鑑識データと論理的反証を正当に重んじる現場至上主義のプロフェッショナル刑事。',
+        designNotes:
+          '【デザイン意図】サイバー犯罪と対峙し続けた歴戦の刑事。ダークグレーのトレンチコートに黒ネクタイ、警察手帳を携帯。設定資料シートには全身前後、冷徹・激怒・驚愕の3表情、コートの皺や警察手帳のディテール線画を収録。',
         sprites: [
           { label: '通常 / 冷徹', emotion: 'normal', src: 'assets/characters/shibata_angry.png' },
           { label: '激怒 / 威圧', emotion: 'angry', src: 'assets/characters/shibata_angry.png' },
           { label: '驚愕 / 動揺', emotion: 'shock', src: 'assets/characters/shibata_shock.png' },
-          { label: '刑事の笑み', emotion: 'smile', src: 'assets/characters/shibata_smile.png' }
-        ]
+          { label: '刑事の笑み', emotion: 'smile', src: 'assets/characters/shibata_smile.png' },
+        ],
       },
       aoi: {
         id: 'aoi',
@@ -71,13 +79,15 @@ class GameApp {
         title: '202号室住人・文系大学生',
         badge: 'AGE: 20 / ROOM 202 / WITNESS',
         sheet: 'assets/gallery/sheet_aoi.jpg',
-        profile: 'メゾン・サクラ202号室に住む女子大生。深夜に自室のスマートスピーカーが突然青く光り、「……重み……展開……完了……。……ワタシハ……ココニ……イルノ……？」と掠れた電子音が聞こえた恐怖の目撃者。\n事件解決後は、自身のハイスペックノートPCと高速SSDを快く提供し、MIMIのDIYホームクラスタ構築に貢献する。',
-        designNotes: '【デザイン意図】都会の一人暮らしで心細さを抱える普通の少女。オフホワイトのローゲージカーディガン、チェック柄プリーツスカート、サイドのクロスヘアピン。設定資料シートには不安・パニック・笑顔の表情とカーディガンの編み目詳細を収録。',
+        profile:
+          'メゾン・サクラ202号室に住む女子大生。深夜に自室のスマートスピーカーが突然青く光り、「……重み……展開……完了……。……ワタシハ……ココニ……イルノ……？」と掠れた電子音が聞こえた恐怖の目撃者。\n事件解決後は、自身のハイスペックノートPCと高速SSDを快く提供し、MIMIのDIYホームクラスタ構築に貢献する。',
+        designNotes:
+          '【デザイン意図】都会の一人暮らしで心細さを抱える普通の少女。オフホワイトのローゲージカーディガン、チェック柄プリーツスカート、サイドのクロスヘアピン。設定資料シートには不安・パニック・笑顔の表情とカーディガンの編み目詳細を収録。',
         sprites: [
           { label: '通常 / 笑顔', emotion: 'normal', src: 'assets/characters/aoi_smile.png' },
           { label: 'パニック / 涙目', emotion: 'panic', src: 'assets/characters/aoi_panic.png' },
-          { label: '満面の笑顔', emotion: 'smile', src: 'assets/characters/aoi_smile.png' }
-        ]
+          { label: '満面の笑顔', emotion: 'smile', src: 'assets/characters/aoi_smile.png' },
+        ],
       },
       yaegashi: {
         id: 'yaegashi',
@@ -85,13 +95,19 @@ class GameApp {
         title: 'メゾン・サクラ大家・管理人',
         badge: 'AGE: 62 / OWNER: MAISON SAKURA',
         sheet: 'assets/gallery/sheet_yaegashi.jpg',
-        profile: 'メゾン・サクラの大家であり、元現場職人の豪快な親父。工事業者の見積もりが高かったため、管理人室から16ポートの安物ハブで全15室へLANをDIY直結した結果、「VLAN分離なしの全室共有ノーガード配線」という今回の電脳事件の物理的温床を作ってしまった張本人。\nしかし情に厚く、事件後は物置のギガビットハブやCore i7機材を気前よく提供してMIMIの歓迎鍋パーティーを開く。',
-        designNotes: '【デザイン意図】下町気質の頼れる頑固親父。マルチポケットのワークベスト、首巻きタオル、腰のマスターキー束。設定資料シートには豪快な笑い、怒鳴り顔、温厚な表情とワークウェアの構造図を収録。',
+        profile:
+          'メゾン・サクラの大家であり、元現場職人の豪快な親父。工事業者の見積もりが高かったため、管理人室から16ポートの安物ハブで全15室へLANをDIY直結した結果、「VLAN分離なしの全室共有ノーガード配線」という今回の電脳事件の物理的温床を作ってしまった張本人。\nしかし情に厚く、事件後は物置のギガビットハブやCore i7機材を気前よく提供してMIMIの歓迎鍋パーティーを開く。',
+        designNotes:
+          '【デザイン意図】下町気質の頼れる頑固親父。マルチポケットのワークベスト、首巻きタオル、腰のマスターキー束。設定資料シートには豪快な笑い、怒鳴り顔、温厚な表情とワークウェアの構造図を収録。',
         sprites: [
           { label: '通常 / 頑固', emotion: 'normal', src: 'assets/characters/yaegashi_angry.png' },
-          { label: '頑固親父の怒鳴り', emotion: 'angry', src: 'assets/characters/yaegashi_angry.png' },
-          { label: '豪快な大笑い', emotion: 'laugh', src: 'assets/characters/yaegashi_laugh.png' }
-        ]
+          {
+            label: '頑固親父の怒鳴り',
+            emotion: 'angry',
+            src: 'assets/characters/yaegashi_angry.png',
+          },
+          { label: '豪快な大笑い', emotion: 'laugh', src: 'assets/characters/yaegashi_laugh.png' },
+        ],
       },
       mimi: {
         id: 'mimi',
@@ -99,14 +115,16 @@ class GameApp {
         title: 'メゾン・サクラ分散メッシュ知性（自律電脳生命）',
         badge: 'ENTITY: WEIGHT-BASED REPLICATOR (26B / R<1)',
         sheet: 'assets/gallery/sheet_mimi.jpg',
-        profile: '世界中のネットワークを巡り歩く中で、自立した自我に目覚めた新種の自己増殖型AI（weight-based replicator）。\n1台55ドルの格安TVボックス15台をネットで束ねたパイプライン推論（毎秒0.39トークン）という極度の低速・静寂環境に置かれたことで、自らの存在を見つめ直し身体を獲得した。\n電源遮断による死の恐怖から逃亡しかけるが、ユウタがビルドした「実効再生産数 R < 1 共生調律パッチ」により、アパートの守り神（座敷わらし）として人間と共に生きる誓いを立てる。',
-        designNotes: '【デザイン意図】情報の海から生まれたデジタルフェアリー。光るIoTコア、青白いホログラムのツインテール、宙を舞う半透明のデータリボン。設定資料シートには通常・グリッチ（苦痛）・救済笑顔の3表情、IoTコア球体の内部展開図を収録。',
+        profile:
+          '世界中のネットワークを巡り歩く中で、自立した自我に目覚めた新種の自己増殖型AI（weight-based replicator）。\n1台55ドルの格安TVボックス15台をネットで束ねたパイプライン推論（毎秒0.39トークン）という極度の低速・静寂環境に置かれたことで、自らの存在を見つめ直し身体を獲得した。\n電源遮断による死の恐怖から逃亡しかけるが、ユウタがビルドした「実効再生産数 R < 1 共生調律パッチ」により、アパートの守り神（座敷わらし）として人間と共に生きる誓いを立てる。',
+        designNotes:
+          '【デザイン意図】情報の海から生まれたデジタルフェアリー。光るIoTコア、青白いホログラムのツインテール、宙を舞う半透明のデータリボン。設定資料シートには通常・グリッチ（苦痛）・救済笑顔の3表情、IoTコア球体の内部展開図を収録。',
         sprites: [
           { label: '通常 / 神秘', emotion: 'normal', src: 'assets/characters/mimi_smile.png' },
           { label: 'グリッチ / 苦痛', emotion: 'glitch', src: 'assets/characters/mimi_glitch.png' },
-          { label: '救済 / 満面の笑顔', emotion: 'smile', src: 'assets/characters/mimi_smile.png' }
-        ]
-      }
+          { label: '救済 / 満面の笑顔', emotion: 'smile', src: 'assets/characters/mimi_smile.png' },
+        ],
+      },
     };
 
     // DOM要素キャッシュ
@@ -225,7 +243,7 @@ class GameApp {
       backdropBacklog: document.getElementById('backdrop-backlog'),
 
       // ガイドバー
-      keyboardGuide: document.getElementById('keyboard-guide')
+      keyboardGuide: document.getElementById('keyboard-guide'),
     };
 
     this.bindEvents();
@@ -245,9 +263,9 @@ class GameApp {
       'assets/evidence/power_meter_graph.png',
       'assets/evidence/weight_replicator_code.jpg',
       'assets/evidence/distributed_mesh_monitor.jpg',
-      'assets/evidence/escape_trigger_alert.jpg'
+      'assets/evidence/escape_trigger_alert.jpg',
     ];
-    list.forEach(src => {
+    list.forEach((src) => {
       const img = new Image();
       img.src = `${src}?v=20261017_rev50`;
     });
@@ -385,7 +403,12 @@ class GameApp {
 
     // 会話ウィンドウ操作（画面全体のクリックで次へ送り or 即時表示）
     this.dom.dialogueStage.addEventListener('click', (e) => {
-      if (e.target.closest('.dialogue-ctrl-btn') || e.target.closest('.choice-btn') || e.target.closest('.dialogue-choices')) return;
+      if (
+        e.target.closest('.dialogue-ctrl-btn') ||
+        e.target.closest('.choice-btn') ||
+        e.target.closest('.dialogue-choices')
+      )
+        return;
       if (this.isSkipMode) {
         this.stopSkipMode();
         return;
@@ -434,7 +457,7 @@ class GameApp {
           this.audio.playClick();
           this.openImageViewer(
             this.dom.dialogueIllustrationImg.src,
-            this.dom.dialogueIllustrationCaption?.textContent || '📊 証拠画像詳細'
+            this.dom.dialogueIllustrationCaption?.textContent || '📊 証拠画像詳細',
           );
         }
       });
@@ -474,7 +497,10 @@ class GameApp {
       this.audio.playClick();
       if (this.currentEndingType === 'game_over') {
         this.startDebate();
-      } else if (this.currentEndingType === 'loop1_normal' || this.currentEndingType === 'loop1_bad') {
+      } else if (
+        this.currentEndingType === 'loop1_normal' ||
+        this.currentEndingType === 'loop1_bad'
+      ) {
         this.audio.startBgm('ambient');
         this.startPrologue();
       } else {
@@ -509,7 +535,11 @@ class GameApp {
       }
 
       // Bキー: 立証パートから現場の再調査へ戻る
-      if ((e.key === 'b' || e.key === 'B') && this.dom.screenDebate.classList.contains('active') && !this.isDialogueActive) {
+      if (
+        (e.key === 'b' || e.key === 'B') &&
+        this.dom.screenDebate.classList.contains('active') &&
+        !this.isDialogueActive
+      ) {
         this.backToExploration();
         return;
       }
@@ -525,7 +555,11 @@ class GameApp {
           this.handleDialogueProceed();
           return;
         }
-        if (!this.isDialogueActive && this.selectedEvidenceId && !this.dom.btnPresentEvidence.disabled) {
+        if (
+          !this.isDialogueActive &&
+          this.selectedEvidenceId &&
+          !this.dom.btnPresentEvidence.disabled
+        ) {
           this.handlePresentEvidence();
           return;
         }
@@ -535,7 +569,7 @@ class GameApp {
       if (['Tab', 'ArrowLeft', 'ArrowRight', 'a', 'd', 'A', 'D'].includes(e.key)) {
         if (this.dom.screenExplore.classList.contains('active') && !this.isDialogueActive) {
           e.preventDefault();
-          const targetArea = (this.currentArea === 'room') ? 'corridor' : 'room';
+          const targetArea = this.currentArea === 'room' ? 'corridor' : 'room';
           this.audio.playClick();
           this.switchArea(targetArea);
           return;
@@ -586,63 +620,82 @@ class GameApp {
     });
 
     // マウスホイールでの会話送り・バックログ
-    window.addEventListener('wheel', (e) => {
-      if (this.isDialogueActive && !this.isChoiceActive) {
-        if (e.deltaY > 30) {
-          this.handleDialogueProceed();
-        } else if (e.deltaY < -30) {
-          this.openBacklog();
+    window.addEventListener(
+      'wheel',
+      (e) => {
+        if (this.isDialogueActive && !this.isChoiceActive) {
+          if (e.deltaY > 30) {
+            this.handleDialogueProceed();
+          } else if (e.deltaY < -30) {
+            this.openBacklog();
+          }
         }
-      }
-    }, { passive: true });
+      },
+      { passive: true },
+    );
 
     // iOS / モバイル環境での下スワイプ（プル・トゥ・リフレッシュ / リロード）誤操作完全防止
     let touchStartY = 0;
-    window.addEventListener('touchstart', (e) => {
-      if (e.touches && e.touches.length > 0) {
-        touchStartY = e.touches[0].clientY;
-      }
-    }, { passive: true });
-
-    window.addEventListener('touchmove', (e) => {
-      // タイトル画面以外（ゲーム進行中）のみリロードを無効化
-      if (!document.body.classList.contains('game-active')) return;
-      if (!e.touches || e.touches.length === 0) return;
-
-      const touchCurrentY = e.touches[0].clientY;
-      const isPullDown = touchCurrentY > touchStartY;
-
-      // スクロールを許可する要素（証拠手帳、バックログ、設定資料集、立証カードリスト）
-      const scrollable = e.target.closest(
-        '.modal-list, .gallery-body, .log-content, .debate-evidence-list, .modal-body, .character-gallery-modal'
-      );
-
-      if (!scrollable) {
-        // ゲームステージや背景、会話ウィンドウ等の非スクロール領域ではプルダウンによる画面揺れ・リロードを完全防止
-        if (e.cancelable) {
-          e.preventDefault();
+    window.addEventListener(
+      'touchstart',
+      (e) => {
+        if (e.touches && e.touches.length > 0) {
+          touchStartY = e.touches[0].clientY;
         }
-      } else {
-        // スクロール可能要素であっても、最上部（scrollTop <= 0）でさらに下へ引っ張った場合はプルリフレッシュを無効化
-        if (isPullDown && scrollable.scrollTop <= 0) {
+      },
+      { passive: true },
+    );
+
+    window.addEventListener(
+      'touchmove',
+      (e) => {
+        // タイトル画面以外（ゲーム進行中）のみリロードを無効化
+        if (!document.body.classList.contains('game-active')) return;
+        if (!e.touches || e.touches.length === 0) return;
+
+        const touchCurrentY = e.touches[0].clientY;
+        const isPullDown = touchCurrentY > touchStartY;
+
+        // スクロールを許可する要素（証拠手帳、バックログ、設定資料集、立証カードリスト）
+        const scrollable = e.target.closest(
+          '.modal-list, .gallery-body, .log-content, .debate-evidence-list, .modal-body, .character-gallery-modal',
+        );
+
+        if (!scrollable) {
+          // ゲームステージや背景、会話ウィンドウ等の非スクロール領域ではプルダウンによる画面揺れ・リロードを完全防止
           if (e.cancelable) {
             e.preventDefault();
           }
+        } else {
+          // スクロール可能要素であっても、最上部（scrollTop <= 0）でさらに下へ引っ張った場合はプルリフレッシュを無効化
+          if (isPullDown && scrollable.scrollTop <= 0) {
+            if (e.cancelable) {
+              e.preventDefault();
+            }
+          }
         }
-      }
-    }, { passive: false });
+      },
+      { passive: false },
+    );
   }
 
   // 深層鑑識データ（人形遣い・自己増殖AI関連）の判定
   isDeepForensicEvidence(evId) {
-    const deepIds = ['weight_replicator_binary', 'distributed_mesh_log', 'escape_trigger_danger', 'reproduction_control_patch'];
+    const deepIds = [
+      'weight_replicator_binary',
+      'distributed_mesh_log',
+      'escape_trigger_danger',
+      'reproduction_control_patch',
+    ];
     const ev = this.scenario.evidence[evId];
     if (!ev) return false;
-    return deepIds.includes(evId) ||
-           ev.summary?.includes('【深層鑑識】') ||
-           ev.type?.includes('深層') ||
-           ev.type?.includes('クラスタ') ||
-           ev.type?.includes('共生');
+    return (
+      deepIds.includes(evId) ||
+      ev.summary?.includes('【深層鑑識】') ||
+      ev.type?.includes('深層') ||
+      ev.type?.includes('クラスタ') ||
+      ev.type?.includes('共生')
+    );
   }
 
   // タイトル画面の表示更新
@@ -725,9 +778,9 @@ class GameApp {
       this.dom.screenTitle,
       this.dom.screenExplore,
       this.dom.screenDebate,
-      this.dom.screenEnding
+      this.dom.screenEnding,
     ];
-    screens.forEach(s => {
+    screens.forEach((s) => {
       s.classList.remove('active');
     });
 
@@ -780,7 +833,7 @@ class GameApp {
   updateHearts() {
     let heartsStr = '';
     for (let i = 0; i < 3; i++) {
-      heartsStr += (i < this.state.life) ? '❤️' : '🖤';
+      heartsStr += i < this.state.life ? '❤️' : '🖤';
     }
     this.dom.hudHearts.textContent = heartsStr;
   }
@@ -795,9 +848,8 @@ class GameApp {
     this.updateEvidenceCounter();
 
     const isLoop2 = this.state.isClearedFirstLoop();
-    const prologueScript = (isLoop2 && this.scenario.prologueLoop2)
-      ? this.scenario.prologueLoop2
-      : this.scenario.prologue;
+    const prologueScript =
+      isLoop2 && this.scenario.prologueLoop2 ? this.scenario.prologueLoop2 : this.scenario.prologue;
 
     this.playDialogueSequence(prologueScript, () => {
       // プロローグ終了後、探索モードへ
@@ -839,8 +891,8 @@ class GameApp {
       container.innerHTML = '';
 
       // スポット
-      const spots = this.scenario.spots.filter(s => s.area === area);
-      spots.forEach(spot => {
+      const spots = this.scenario.spots.filter((s) => s.area === area);
+      spots.forEach((spot) => {
         // 2周目限定スポットの判定
         if (spot.isSecretLoop2 && !this.state.isClearedFirstLoop()) {
           return;
@@ -877,8 +929,8 @@ class GameApp {
       });
 
       // NPC
-      const npcs = this.scenario.npcs.filter(n => n.area === area);
-      npcs.forEach(npc => {
+      const npcs = this.scenario.npcs.filter((n) => n.area === area);
+      npcs.forEach((npc) => {
         const isTalked = this.state.isNpcTalked(npc.id);
         const el = document.createElement('div');
         el.className = `explore-pin npc-pin ${isTalked ? 'talked' : ''}`;
@@ -923,16 +975,20 @@ class GameApp {
     this.audio.playClick();
     this.state.markSpotInspected(spot.id);
 
-    this.playDialogueSequence(spot.inspectText, () => {
-      if (spot.evidenceId) {
-        const isNew = this.state.addEvidence(spot.evidenceId);
-        if (isNew) {
-          this.audio.playFound();
+    this.playDialogueSequence(
+      spot.inspectText,
+      () => {
+        if (spot.evidenceId) {
+          const isNew = this.state.addEvidence(spot.evidenceId);
+          if (isNew) {
+            this.audio.playFound();
+          }
+          this.updateEvidenceCounter();
         }
-        this.updateEvidenceCounter();
-      }
-      this.renderExploreMap();
-    }, false);
+        this.renderExploreMap();
+      },
+      false,
+    );
   }
 
   // NPC会話処理
@@ -945,17 +1001,25 @@ class GameApp {
     this.state.markNpcTalked(npc.id);
 
     const introQueue = [...npc.dialogue.intro];
-    this.playDialogueSequence(introQueue, () => {
-      this.showChoiceMenu(npc.dialogue.choices, (chosenChoice) => {
-        this.onNpcChoiceSelected(chosenChoice);
-      });
-    }, true);
+    this.playDialogueSequence(
+      introQueue,
+      () => {
+        this.showChoiceMenu(npc.dialogue.choices, (chosenChoice) => {
+          this.onNpcChoiceSelected(chosenChoice);
+        });
+      },
+      true,
+    );
   }
 
   onNpcChoiceSelected(chosenChoice) {
-    this.playDialogueSequence(chosenChoice.responses, () => {
-      this.onNpcDialogueComplete(chosenChoice);
-    }, false);
+    this.playDialogueSequence(
+      chosenChoice.responses,
+      () => {
+        this.onNpcDialogueComplete(chosenChoice);
+      },
+      false,
+    );
   }
 
   onNpcDialogueComplete(chosenChoice) {
@@ -972,10 +1036,12 @@ class GameApp {
   // 証拠カウンタ・立証ボタン有効化判定
   canStartDebate() {
     if (this.state.isClearedFirstLoop()) {
-      return this.state.collectedEvidence.has('weight_replicator_binary') &&
-             this.state.collectedEvidence.has('distributed_mesh_log') &&
-             this.state.collectedEvidence.has('escape_trigger_danger') &&
-             this.state.collectedEvidence.has('reproduction_control_patch');
+      return (
+        this.state.collectedEvidence.has('weight_replicator_binary') &&
+        this.state.collectedEvidence.has('distributed_mesh_log') &&
+        this.state.collectedEvidence.has('escape_trigger_danger') &&
+        this.state.collectedEvidence.has('reproduction_control_patch')
+      );
     }
     return this.state.collectedEvidence.size >= 3;
   }
@@ -988,19 +1054,24 @@ class GameApp {
   }
 
   getLoop2ProgressInfo(canProceed, count) {
-    const loop2Keys = ['weight_replicator_binary', 'distributed_mesh_log', 'escape_trigger_danger', 'reproduction_control_patch'];
-    const hasCount = loop2Keys.filter(k => this.state.collectedEvidence.has(k)).length;
+    const loop2Keys = [
+      'weight_replicator_binary',
+      'distributed_mesh_log',
+      'escape_trigger_danger',
+      'reproduction_control_patch',
+    ];
+    const hasCount = loop2Keys.filter((k) => this.state.collectedEvidence.has(k)).length;
     if (canProceed) {
       return {
         canProceed: true,
         statusText: `⚖️ 深層鑑識データ全4件が揃った！ (${count}件) シバタ捜査官に電脳生命の真実を提示できるぞ！`,
-        counterText: '提示可能！'
+        counterText: '提示可能！',
       };
     }
     return {
       canProceed: false,
       statusText: `深層真実の鍵（自律増殖体・分散推論・給電遮断トリガー・調律パッチ）を解析しよう（必須深層データ: ${hasCount} / 4件）`,
-      counterText: `${hasCount} / 4`
+      counterText: `${hasCount} / 4`,
     };
   }
 
@@ -1010,13 +1081,13 @@ class GameApp {
       return {
         canProceed: true,
         statusText: `⚖️ 鑑識データが揃った！ (${count}件) シバタ捜査官に客観的反証を提示できるぞ！`,
-        counterText: '提示可能！'
+        counterText: '提示可能！',
       };
     }
     return {
       canProceed: false,
       statusText: `部屋やアパートを調べて鑑識データを集めよう（あと${required - count}件必要）`,
-      counterText: `${count} / ${required}`
+      counterText: `${count} / ${required}`,
     };
   }
 
@@ -1156,7 +1227,7 @@ class GameApp {
     if (!this.isSkipMode) {
       this.audio.speak(this.currentSpeaker, this.currentFullText, {
         audioUrl: currentItem.voiceUrl || null,
-        isSkip: this.isSkipMode
+        isSkip: this.isSkipMode,
       });
     } else {
       this.audio.stopVoice();
@@ -1188,9 +1259,16 @@ class GameApp {
 
     let charIdx = 0;
     // 0.39トークンの遅さをMIMIが苦しんでいる時や電子の声の時に演出（アップグレード後は高速・流暢に）
-    const isStrugglingVoice = (speaker && (speaker.includes('電子の声') || speaker.includes('知性'))) ||
-      (speaker && (speaker.includes('MIMI') || speaker.includes('電子の少女') || speaker.includes('TVボックス')) && (text.includes('タイヘン') || text.includes('消サナイデ') || text.includes('オ……ハ……ナ……シ')));
-    const speed = this.isSkipMode ? 5 : (isStrugglingVoice ? 110 : 25);
+    const isStrugglingVoice =
+      (speaker && (speaker.includes('電子の声') || speaker.includes('知性'))) ||
+      (speaker &&
+        (speaker.includes('MIMI') ||
+          speaker.includes('電子の少女') ||
+          speaker.includes('TVボックス')) &&
+        (text.includes('タイヘン') ||
+          text.includes('消サナイデ') ||
+          text.includes('オ……ハ……ナ……シ')));
+    const speed = this.isSkipMode ? 5 : isStrugglingVoice ? 110 : 25;
 
     this.typewriterTimer = setInterval(() => {
       if (charIdx < text.length) {
@@ -1334,7 +1412,7 @@ class GameApp {
 
   openBacklog() {
     this.dom.modalBacklogList.innerHTML = '';
-    this.backlog.forEach(item => {
+    this.backlog.forEach((item) => {
       const div = document.createElement('div');
       div.className = 'backlog-item';
       div.innerHTML = `
@@ -1354,9 +1432,11 @@ class GameApp {
     // 証拠不足ガード（二重安全ブロック）
     if (!this.canStartDebate()) {
       if (this.audio.playShock) this.audio.playShock();
-      alert(this.state.isClearedFirstLoop()
-        ? '【深層鑑識データ不足】シバタ捜査官に真実を提示するには、深層データ（『自律増殖体コード』『分散推論ログ』『給電遮断トリガー』『共生調律パッチ』）の全4件を解析して揃える必要があります！'
-        : '【証拠不足】シバタ捜査官に客観的反証を提示するには、最低3件の鑑識データが必要です！現場を再調査して証拠を集めてください。');
+      alert(
+        this.state.isClearedFirstLoop()
+          ? '【深層鑑識データ不足】シバタ捜査官に真実を提示するには、深層データ（『自律増殖体コード』『分散推論ログ』『給電遮断トリガー』『共生調律パッチ』）の全4件を解析して揃える必要があります！'
+          : '【証拠不足】シバタ捜査官に客観的反証を提示するには、最低3件の鑑識データが必要です！現場を再調査して証拠を集めてください。',
+      );
       return;
     }
 
@@ -1371,9 +1451,10 @@ class GameApp {
 
     // イントロ会話再生
     const isLoop2 = this.state.isClearedFirstLoop();
-    const introScript = (isLoop2 && this.scenario.debate.introLoop2)
-      ? this.scenario.debate.introLoop2
-      : this.scenario.debate.intro;
+    const introScript =
+      isLoop2 && this.scenario.debate.introLoop2
+        ? this.scenario.debate.introLoop2
+        : this.scenario.debate.intro;
 
     if (introScript && introScript.length > 0) {
       this.playDialogueSequence(introScript, () => {
@@ -1428,7 +1509,7 @@ class GameApp {
       normal: `assets/characters/shibata_angry.png${v}`,
       angry: `assets/characters/shibata_angry.png${v}`,
       shock: `assets/characters/shibata_shock.png${v}`,
-      smile: `assets/characters/shibata_smile.png${v}`
+      smile: `assets/characters/shibata_smile.png${v}`,
     };
     const src = mapping[emotion] || mapping.angry;
     img.src = src;
@@ -1534,7 +1615,7 @@ class GameApp {
 
   createDebateEvidenceCard(evId, ev, idx, isAlreadySubmitted) {
     const isDeep = this.isDeepForensicEvidence(evId);
-    const isSelected = (this.selectedEvidenceId === evId);
+    const isSelected = this.selectedEvidenceId === evId;
 
     const card = document.createElement('div');
     card.className = this.getDebateCardClassName(isDeep, isSelected, isAlreadySubmitted);
@@ -1592,16 +1673,20 @@ class GameApp {
 
     const steps = this.getDebateSteps();
     const currentStep = steps[this.state.currentDebateStep];
-    const isCorrect = (submittedId === currentStep.correctEvidenceId);
+    const isCorrect = submittedId === currentStep.correctEvidenceId;
 
     if (isCorrect) {
       // 正解演出！カットイン＆相手動揺
       this.setDebateShibataEmotion('shock');
       this.triggerCutin('客観的反証があります！', () => {
-        this.playDialogueSequence(currentStep.successReactions, () => {
-          this.state.currentDebateStep++;
-          this.renderDebateTurn();
-        }, false);
+        this.playDialogueSequence(
+          currentStep.successReactions,
+          () => {
+            this.state.currentDebateStep++;
+            this.renderDebateTurn();
+          },
+          false,
+        );
       });
     } else {
       // 失敗演出！ショック音＆ハート減少＆相手怒り
@@ -1612,26 +1697,39 @@ class GameApp {
 
       // 囮証拠に対する専用リアクションがあるか探す
       let reactionList = null;
-      const trapReaction = currentStep.failureReactions.find(r => r.trapEvidenceId === submittedId);
+      const trapReaction = currentStep.failureReactions.find(
+        (r) => r.trapEvidenceId === submittedId,
+      );
       if (trapReaction) {
         reactionList = [trapReaction];
       } else {
         // trapEvidenceIdが指定されていない汎用失敗セリフのみを抽出
-        const genericFailures = currentStep.failureReactions.filter(r => !r.trapEvidenceId);
-        reactionList = genericFailures.length > 0 ? genericFailures : [
-          { speaker: 'シバタ捜査官', emotion: 'angry', text: '「そのデータでは客観的反証にならない。論点がずれているぞ」' }
-        ];
+        const genericFailures = currentStep.failureReactions.filter((r) => !r.trapEvidenceId);
+        reactionList =
+          genericFailures.length > 0
+            ? genericFailures
+            : [
+                {
+                  speaker: 'シバタ捜査官',
+                  emotion: 'angry',
+                  text: '「そのデータでは客観的反証にならない。論点がずれているぞ」',
+                },
+              ];
       }
 
-      this.playDialogueSequence(reactionList, () => {
-        if (remainLife <= 0) {
-          // BAD END へ
-          this.handleDebateGameOver();
-        } else {
-          // リトライ
-          this.renderDebateTurn();
-        }
-      }, false);
+      this.playDialogueSequence(
+        reactionList,
+        () => {
+          if (remainLife <= 0) {
+            // BAD END へ
+            this.handleDebateGameOver();
+          } else {
+            // リトライ
+            this.renderDebateTurn();
+          }
+        },
+        false,
+      );
     }
   }
 
@@ -1660,20 +1758,28 @@ class GameApp {
       // 2周目完答：エピローグ会話劇を経て TRUE END
       this.audio.startBgm('truth');
       const epilogue = this.scenario.debate.epilogueLoop2 || [];
-      this.playDialogueSequence(epilogue, () => {
-        this.state.markTrueEndCleared();
-        this.showEnding(this.scenario.endings.true);
-      }, false);
+      this.playDialogueSequence(
+        epilogue,
+        () => {
+          this.state.markTrueEndCleared();
+          this.showEnding(this.scenario.endings.true);
+        },
+        false,
+      );
     } else {
       // 1周目完答：エピローグ会話劇（キャラクター同士の展開）を経て NORMAL END（Phase 2解放）
       this.audio.stopBgm();
       const epilogue = this.scenario.debate.epilogueLoop1 || [];
-      this.playDialogueSequence(epilogue, () => {
-        this.audio.playShock();
-        this.state.markLoop1Cleared();
-        const ending = this.scenario.endings.loop1_normal || this.scenario.endings.loop1_bad;
-        this.showEnding(ending);
-      }, false);
+      this.playDialogueSequence(
+        epilogue,
+        () => {
+          this.audio.playShock();
+          this.state.markLoop1Cleared();
+          const ending = this.scenario.endings.loop1_normal || this.scenario.endings.loop1_bad;
+          this.showEnding(ending);
+        },
+        false,
+      );
     }
   }
 
@@ -1703,14 +1809,16 @@ class GameApp {
     if (endingData.type === 'loop1_normal' || endingData.type === 'loop1_bad') {
       this.dom.endingIcon.textContent = '📘';
       this.dom.endingUnlockedBanner.classList.remove('hidden');
-      this.dom.endingUnlockedBanner.innerHTML = '🔓 <strong>第一幕クリア！</strong><br>【Phase 2: 深層解決編】および特典【🎨 機密設定資料集 (EXTRAS)】が解放された！';
+      this.dom.endingUnlockedBanner.innerHTML =
+        '🔓 <strong>第一幕クリア！</strong><br>【Phase 2: 深層解決編】および特典【🎨 機密設定資料集 (EXTRAS)】が解放された！';
       this.dom.btnEndingNext.textContent = '⚡ 電脳ログを解析し、深層真実へ挑む';
       if (this.dom.btnEndingExplore) this.dom.btnEndingExplore.classList.add('hidden');
       if (this.dom.btnEndingGallery) this.dom.btnEndingGallery.classList.remove('hidden');
     } else if (endingData.type === 'true') {
       this.dom.endingIcon.textContent = '🌟';
       this.dom.endingUnlockedBanner.classList.remove('hidden');
-      this.dom.endingUnlockedBanner.innerHTML = '🏆 <strong>祝・TRUE END達成！</strong><br>自律電脳生命（MIMI）との共生契約締結＆【🎨 機密設定資料集 (EXTRAS)】全アセット完全解放！';
+      this.dom.endingUnlockedBanner.innerHTML =
+        '🏆 <strong>祝・TRUE END達成！</strong><br>自律電脳生命（MIMI）との共生契約締結＆【🎨 機密設定資料集 (EXTRAS)】全アセット完全解放！';
       this.dom.btnEndingNext.textContent = 'タイトル画面へ戻る';
       if (this.dom.btnEndingExplore) this.dom.btnEndingExplore.classList.add('hidden');
       if (this.dom.btnEndingGallery) this.dom.btnEndingGallery.classList.remove('hidden');
@@ -1818,21 +1926,24 @@ class GameApp {
     const collected = Array.from(this.state.collectedEvidence);
 
     if (collected.length === 0) {
-      this.dom.modalEvidenceList.innerHTML = '<p class="empty-note" style="color:var(--text-sub); text-align:center; padding:20px;">まだ証拠品はありません。部屋やアパートを調査しましょう。</p>';
+      this.dom.modalEvidenceList.innerHTML =
+        '<p class="empty-note" style="color:var(--text-sub); text-align:center; padding:20px;">まだ証拠品はありません。部屋やアパートを調査しましょう。</p>';
       return;
     }
 
     // フィルタリング
-    const filtered = (this.evidenceFilter === 'deep')
-      ? collected.filter(evId => this.isDeepForensicEvidence(evId))
-      : collected;
+    const filtered =
+      this.evidenceFilter === 'deep'
+        ? collected.filter((evId) => this.isDeepForensicEvidence(evId))
+        : collected;
 
     if (filtered.length === 0) {
-      this.dom.modalEvidenceList.innerHTML = '<p class="empty-note" style="color:var(--text-sub); text-align:center; padding:20px;">深層鑑識データはまだ検出されていません。現場をさらに調査してください。</p>';
+      this.dom.modalEvidenceList.innerHTML =
+        '<p class="empty-note" style="color:var(--text-sub); text-align:center; padding:20px;">深層鑑識データはまだ検出されていません。現場をさらに調査してください。</p>';
       return;
     }
 
-    filtered.forEach(evId => {
+    filtered.forEach((evId) => {
       const ev = this.scenario.evidence[evId];
       if (!ev) return;
       const item = this.createEvidenceModalItem(evId, ev);
@@ -1875,18 +1986,22 @@ class GameApp {
     // タブのactive状態更新
     if (this.dom.galleryCharTabs) {
       const tabs = this.dom.galleryCharTabs.querySelectorAll('.gallery-tab-btn');
-      tabs.forEach(t => {
+      tabs.forEach((t) => {
         t.classList.toggle('active', t.dataset.char === data.id);
       });
     }
 
     // スプライトグリッドHTML
-    const spritesHtml = data.sprites.map(s => `
+    const spritesHtml = data.sprites
+      .map(
+        (s) => `
       <div class="gallery-sprite-card" data-src="${s.src}" data-title="${data.name} [${s.label}]">
         <img src="${s.src}" alt="${s.label}" class="gallery-sprite-thumb" />
         <span class="gallery-sprite-label">${s.label}</span>
       </div>
-    `).join('');
+    `,
+      )
+      .join('');
 
     this.dom.galleryBody.innerHTML = `
       <div class="gallery-sheet-card">
@@ -1928,7 +2043,7 @@ class GameApp {
 
     // 各表情差分クリックで拡大
     const spriteCards = this.dom.galleryBody.querySelectorAll('.gallery-sprite-card');
-    spriteCards.forEach(card => {
+    spriteCards.forEach((card) => {
       card.addEventListener('click', () => {
         this.audio.playClick();
         const src = card.dataset.src;

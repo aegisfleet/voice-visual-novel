@@ -52,7 +52,7 @@ class GameState {
         voiceEnabled: this.voiceEnabled,
         seEnabled: this.seEnabled,
         bgmEnabled: this.bgmEnabled,
-        updatedAt: Date.now()
+        updatedAt: Date.now(),
       };
       localStorage.setItem(this.storageKey, JSON.stringify(data));
     } catch (e) {

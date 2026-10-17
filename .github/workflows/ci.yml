@@ -29,6 +29,9 @@ jobs:
       - name: Run Biome Check (Lint & Format)
         run: npm run check
 
+      - name: Run Cognitive Complexity Check
+        run: npm run check:complexity
+
       - name: Setup Python
         uses: actions/setup-python@v7
         with:

@@ -14,7 +14,9 @@ ENV/
 # OS / エディタ
 .DS_Store
 Thumbs.db
-.vscode/
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
 .idea/
 
 scratch/
