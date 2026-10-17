@@ -22,6 +22,7 @@ class AudioManager {
     this.isSkipActive = false; // スキップモード追従フラグ（通信量完全ガード用）
     this.currentVoiceAudio = null; // 再生中のMP3 Audio要素
     this.currentVoiceAbortController = null; // ロード中の中断用 AbortController
+    this.pendingBgmMode = null; // 自動再生制限時の保留中BGMモード
 
     this.initSpeech();
   }
@@ -444,6 +445,16 @@ class AudioManager {
   // (Web Audio API スムーズクロスフェード & シームレスループ)
   // ----------------------------------------------------
 
+  // ユーザー操作によるオーディオアンロック & 保留中BGM再開
+  unlockAudio() {
+    this.ensureContext();
+    if (this.pendingBgmMode && this.bgmEnabled) {
+      const mode = this.pendingBgmMode;
+      this.pendingBgmMode = null;
+      this.startBgm(mode);
+    }
+  }
+
   startBgm(mode = 'ambient') {
     this.currentBgmMode = mode;
     if (!this.bgmEnabled) return;
@@ -469,7 +480,7 @@ class AudioManager {
 
     const audio = new Audio(url);
     audio.loop = true;
-    audio.crossOrigin = 'anonymous';
+    audio.volume = this.bgmVolume; // 即時音量を保証 (フォールバック安全策)
 
     let sourceNode = null;
     let trackGain = null;
@@ -489,11 +500,6 @@ class AudioManager {
       }
     }
 
-    // Web Audio非接続時のフォールバック音量設定
-    if (!trackGain) {
-      audio.volume = this.bgmVolume;
-    }
-
     const trackObj = {
       audio,
       source: sourceNode,
@@ -506,7 +512,8 @@ class AudioManager {
     const playPromise = audio.play();
     if (playPromise !== undefined) {
       playPromise.catch((err) => {
-        console.warn('[AudioManager] BGM autoplay blocked or interrupted:', err);
+        console.warn('[AudioManager] BGM autoplay waiting for user interaction:', err);
+        this.pendingBgmMode = mode;
       });
     }
   }
@@ -523,13 +530,26 @@ class AudioManager {
       } catch (_e) {
         // ignore
       }
-    } else {
-      try {
-        audio.volume = 0;
-      } catch (_e) {
-        // ignore
-      }
     }
+
+    // HTMLAudioElement自体の音量もフェードアウト
+    const startVol = audio.volume;
+    const steps = 8;
+    const stepTime = (fadeSec * 1000) / steps;
+    let currentStep = 0;
+    const fadeTimer = setInterval(() => {
+      currentStep++;
+      if (currentStep >= steps) {
+        clearInterval(fadeTimer);
+        try {
+          audio.volume = 0;
+        } catch (_e) {}
+      } else {
+        try {
+          audio.volume = Math.max(0, startVol * (1 - currentStep / steps));
+        } catch (_e) {}
+      }
+    }, stepTime);
 
     setTimeout(
       () => {

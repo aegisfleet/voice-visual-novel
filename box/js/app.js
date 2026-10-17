@@ -432,7 +432,7 @@ class GameApp {
   bindTitleEvents() {
     // 初回ユーザーインタラクションでのAudioContextアンロックとタイトルBGM開始
     const unlockAudioAndPlayTitle = () => {
-      this.audio.ensureContext();
+      this.audio.unlockAudio();
       if (!this.audio.currentBgmTrack && this.audio.bgmEnabled) {
         this.audio.startBgm('title');
       }
@@ -441,6 +441,7 @@ class GameApp {
     document.addEventListener('keydown', unlockAudioAndPlayTitle, { once: true });
 
     this.dom.btnStartGame.addEventListener('click', () => {
+      this.audio.unlockAudio();
       this.audio.playClick();
       this.audio.startBgm('ambient');
       this.startPrologue();
@@ -813,6 +814,9 @@ class GameApp {
 
     // iOS / モバイル環境での下スワイプ（プル・トゥ・リフレッシュ）誤操作完全防止
     window.addEventListener('touchmove', (e) => this.onTouchMoveGuard(e), { passive: false });
+
+    // ユーザー操作時に保留中のBGM再開やAudioContextアンロックを自動補足
+    document.addEventListener('pointerdown', () => this.audio.unlockAudio(), { passive: true });
   }
 
   // マウスホイールでの会話送り・バックログ

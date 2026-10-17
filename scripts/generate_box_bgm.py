@@ -31,7 +31,7 @@ output_dir.mkdir(parents=True, exist_ok=True)
 scratch_dir = Path("scratch/box_bgm")
 scratch_dir.mkdir(parents=True, exist_ok=True)
 
-# BOX WORM メロディ重視・高品位インストゥルメンタルトラック定義
+# BOX WORM 電脳サスペンス調和・高品位インストゥルメンタルトラック定義
 BGM_TRACKS = [
     {
         "file": "bgm_title.mp3",
@@ -41,11 +41,10 @@ BGM_TRACKS = [
         "key": "D minor",
         "bars_xfade": 1, # 1小節 (4拍) = 2.927s
         "prompt": (
-            "A melancholic and beautiful Japanese visual novel title theme, featuring an expressive, "
-            "singable acoustic grand piano lead melody accompanied by a warm solo cello and lush emotional string orchestra. "
-            "Poignant chord progression in D minor, bittersweet and heartfelt emotion, gentle acoustic bass and brushed jazz snare, "
-            "deeply cinematic, flawless musical harmony with clear melodic structure, absolutely no harsh dissonance or chaotic electronic bleeps, "
-            "pristine studio recording, steady 82 BPM"
+            "A melancholic and beautiful cyberpunk noir visual novel main theme, featuring a poignant, "
+            "singable acoustic piano melody in D minor, accompanied by a warm deep solo cello and emotional orchestral string ensemble. "
+            "Subtle atmospheric analog synth pads, clean gentle rhythm, reflective and mysterious Tokyo night atmosphere, "
+            "sophisticated modern soundtrack composition, clear memorable melodic motifs, zero harsh dissonance, zero chaotic noise, steady 82 BPM"
         )
     },
     {
@@ -56,10 +55,11 @@ BGM_TRACKS = [
         "key": "A minor",
         "bars_xfade": 1, # 1小節 (4拍) = 2.609s
         "prompt": (
-            "An engaging and clever investigative mystery visual novel theme, clear catchy lead melody "
-            "played on acoustic piano, warm wooden marimba, and pizzicato strings. Sophisticated jazz-noir chord progression "
-            "in A minor, steady acoustic upright bass groove, gentle ticking hi-hat, highly focused and intellectual deduction mood, "
-            "memorable melodic motifs, flawless harmony, warm organic acoustic tone without harsh electronic noises, steady 92 BPM"
+            "A sophisticated cyber forensic deduction theme for a cyber crime investigation visual novel, "
+            "featuring a cool, intelligent, and focused melody played on a clear electric piano and muted acoustic piano. "
+            "Tonal harmony in A minor, precise electronic ticking hi-hats resembling a digital clock, clean deep synth bass groove, "
+            "atmospheric cybernetic strings, highly focused deductive mood, memorable investigative melodic hook, "
+            "perfectly balanced audio mix without jazz instruments, zero abrasive noise, loopable, steady 92 BPM"
         )
     },
     {
@@ -70,10 +70,10 @@ BGM_TRACKS = [
         "key": "C minor",
         "bars_xfade": 2, # 2小節 (8拍) = 3.810s
         "prompt": (
-            "An epic and urgent cinematic courtroom showdown theme, featuring a fierce, dramatic, "
-            "and heroic lead melody played by passionate orchestral violins and brass. Driving rhythmic strings, "
-            "thunderous cinematic orchestral percussion, intense chord progression in C minor, high-stakes debate climax, "
-            "powerful melodic hook, immaculate symphonic mixing, zero chaotic distortion or abrasive synth clutter, steady driving 126 BPM"
+            "An intense and adrenaline-pumping cinematic courtroom debate theme, featuring a fierce, dramatic, "
+            "and heroic lead melody played by passionate orchestral violins and powerful brass. Driving 16th-note rhythmic bassline, "
+            "urgent ticking tension, thunderous cinematic orchestral percussion, intense harmonic progression in C minor, "
+            "high-stakes showdown climax, powerful melodic hook, immaculate studio mix, driving steady 126 BPM"
         )
     },
     {
@@ -85,10 +85,10 @@ BGM_TRACKS = [
         "bars_xfade": 1, # 1小節 (4拍) = 3.200s
         "prompt": (
             "A breathtakingly emotional and touching neo-classical instrumental theme for a true ending, "
-            "featuring a deeply moving and lyrical lead melody played on a warm concert grand piano, "
-            "accompanied by soaring, tearful orchestral strings and french horns. Rich romantic harmonic progression "
-            "in F major and D minor, heartfelt resolution of love, understanding, and symbiosis, uplifting golden sunrise atmosphere, "
-            "pristine hi-fi acoustic fidelity, loopable, steady 75 BPM"
+            "featuring a deeply moving, lyrical melody played on a warm concert grand piano, "
+            "accompanied by soaring, tearful orchestral strings and gentle french horns. Rich romantic harmonic progression "
+            "in F major and D minor, heartfelt resolution of love, understanding, and symbiosis between human and artificial life, "
+            "uplifting golden sunrise atmosphere, loopable, steady 75 BPM"
         )
     }
 ]
