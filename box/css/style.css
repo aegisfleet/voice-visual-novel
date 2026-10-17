@@ -53,9 +53,26 @@ body.game-active {
   touch-action: pan-x pan-y;
 }
 
-/* 汎用非表示クラス（すべての要素で最優先） */
-.hidden {
-  display: none !important;
+/* 汎用非表示クラス（セレクタ詳細度により確実に非表示） */
+.hidden,
+[hidden],
+.hud.hidden,
+.life-container.hidden,
+.title-clear-badge.hidden,
+.area-map.hidden,
+.btn-debate-start.hidden,
+.dialogue-stage.hidden,
+.character-stage.hidden,
+.emotion-bubble.hidden,
+.dialogue-illustration-stage.hidden,
+.dialogue-choices.hidden,
+.overlay-cutin.hidden,
+.ending-unlocked-banner.hidden,
+.modal.hidden,
+.keyboard-guide.hidden,
+.hud-debate-btn.hidden,
+.hud-back-explore-btn.hidden {
+  display: none;
 }
 
 /* 背景サイバーグリッド */
@@ -100,10 +117,6 @@ body.game-active {
   z-index: 50;
   gap: 8px;
 }
-.hud.hidden {
-  display: none !important;
-}
-
 .hud-left, .hud-right {
   display: flex;
   align-items: center;
@@ -153,15 +166,12 @@ body.game-active {
   display: flex;
   align-items: center;
   gap: 6px;
-  background: rgba(239, 68, 68, 0.15);
+  background: #030712;
   border: 1px solid var(--neon-red);
   padding: 4px 12px;
   border-radius: 16px;
   flex-shrink: 0;
   white-space: nowrap;
-}
-.life-container.hidden {
-  display: none !important;
 }
 .life-label {
   font-size: 0.75rem;
@@ -176,7 +186,7 @@ body.game-active {
 }
 
 .hud-btn {
-  background: rgba(30, 41, 59, 0.8);
+  background: #0f172a;
   border: 1px solid rgba(255, 255, 255, 0.2);
   color: var(--text-main);
   padding: 6px 12px;
@@ -187,7 +197,7 @@ body.game-active {
   transition: all 0.2s;
 }
 .hud-btn:hover {
-  background: rgba(0, 243, 255, 0.2);
+  background: #082f49;
   border-color: var(--neon-cyan);
   color: var(--neon-cyan);
 }
@@ -221,12 +231,16 @@ body.game-active {
 }
 
 .screen {
-  display: none !important;
+  display: none;
   flex: 1;
   flex-direction: column;
 }
-.screen.active {
-  display: flex !important;
+.screen.active,
+#screen-title.active,
+#screen-explore.active,
+#screen-debate.active,
+#screen-ending.active {
+  display: flex;
 }
 
 /* ----------------------------------------------------
@@ -369,9 +383,6 @@ body.game-active {
   box-shadow: 0 0 15px rgba(251, 191, 36, 0.3);
   animation: pulse-gold 2.5s infinite ease-in-out;
 }
-.title-clear-badge.hidden {
-  display: none !important;
-}
 
 @keyframes pulse-gold {
   0%, 100% { transform: scale(1); box-shadow: 0 0 12px rgba(251, 191, 36, 0.25); }
@@ -408,7 +419,7 @@ body.game-active {
 }
 
 .btn-subtle {
-  background: transparent;
+  background: #0f172a;
   border: 1px solid rgba(255, 255, 255, 0.15);
   color: var(--text-sub);
   font-size: 0.75rem;
@@ -417,6 +428,7 @@ body.game-active {
   cursor: pointer;
 }
 .btn-subtle:hover {
+  background: #1e293b;
   color: #fff;
   border-color: #fff;
 }
@@ -504,9 +516,6 @@ body.game-active {
   background-size: cover;
   background-position: center;
 }
-.area-map.hidden {
-  display: none !important;
-}
 
 /* 部屋・廊下のビジュアル背景 */
 #area-room {
@@ -528,8 +537,8 @@ body.game-active {
   touch-action: manipulation;
   width: max-content;
   max-width: 130px;
-  outline: none !important;
-  -webkit-tap-highlight-color: transparent !important;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
   -webkit-touch-callout: none;
   user-select: none;
   -webkit-user-select: none;
@@ -539,8 +548,8 @@ body.game-active {
 .explore-pin:focus-visible,
 .explore-pin:focus-within,
 .explore-pin:active {
-  outline: none !important;
-  -webkit-tap-highlight-color: transparent !important;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* マウス環境のみホバー拡大（スマホでタップ後に枠や浮上状態が残留するのを完全防止） */
@@ -553,7 +562,7 @@ body.game-active {
 
 /* 会話シーン再生中は背後の探索ピンの干渉・主張を抑え、キャラクター立ち絵を際立たせる */
 body.dialogue-active .explore-pin {
-  pointer-events: none !important;
+  pointer-events: none;
   opacity: 0.25;
 }
 
@@ -628,9 +637,6 @@ body.dialogue-active .explore-pin {
   box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
   animation: pulse-red 2s infinite ease-in-out;
 }
-.btn-debate-start.hidden {
-  display: none !important;
-}
 
 @keyframes pulse-red {
   0%, 100% { transform: scale(1); }
@@ -698,13 +704,13 @@ body.dialogue-active .explore-pin {
 }
 
 .hud-back-explore-btn {
-  background: rgba(15, 23, 42, 0.85);
+  background: #0f172a;
   border-color: rgba(56, 189, 248, 0.5);
   color: #38bdf8;
   font-weight: 700;
 }
 .hud-back-explore-btn:hover {
-  background: rgba(56, 189, 248, 0.2);
+  background: #0369a1;
   color: #fff;
 }
 
@@ -736,7 +742,7 @@ body.dialogue-active .explore-pin {
 
 .opponent-speech-bubble {
   flex: 1;
-  background: rgba(30, 41, 59, 0.9);
+  background: #0f172a;
   border: 1px solid var(--neon-red);
   padding: 12px 16px;
   border-radius: 12px;
@@ -778,7 +784,7 @@ body.dialogue-active .explore-pin {
   gap: 10px;
   max-height: none;
   overflow-y: visible;
-  overflow-x: hidden !important;
+  overflow-x: hidden;
   touch-action: pan-y;
   overscroll-behavior-x: none;
   width: 100%;
@@ -820,7 +826,7 @@ body.dialogue-active .explore-pin {
 }
 .debate-evidence-card:hover {
   border-color: var(--neon-cyan);
-  background: rgba(0, 243, 255, 0.1);
+  background: #082f49;
 }
 .debate-evidence-card.deep-cyber {
   background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(88, 28, 135, 0.35) 100%);
@@ -828,16 +834,17 @@ body.dialogue-active .explore-pin {
 }
 .debate-evidence-card.deep-cyber:hover {
   border-color: var(--neon-purple);
+  background: #2e1065;
   box-shadow: 0 0 12px rgba(192, 132, 252, 0.4);
 }
 .debate-evidence-card.selected {
   border-color: var(--neon-cyan);
-  background: rgba(0, 243, 255, 0.25);
+  background: #082f49;
   box-shadow: 0 0 16px rgba(0, 243, 255, 0.6), inset 0 0 10px rgba(0, 243, 255, 0.2);
 }
 .debate-evidence-card.deep-cyber.selected {
   border-color: var(--neon-purple);
-  background: rgba(192, 132, 252, 0.3);
+  background: #2e1065;
   box-shadow: 0 0 18px rgba(192, 132, 252, 0.7), inset 0 0 10px rgba(192, 132, 252, 0.2);
 }
 
@@ -863,7 +870,6 @@ body.dialogue-active .explore-pin {
   font-weight: 700;
   line-height: 1.35;
   color: #f1f5f9;
-  word-break: break-word;
   overflow-wrap: break-word;
 }
 .evidence-type {
@@ -945,9 +951,6 @@ body.dialogue-active .explore-pin {
   pointer-events: auto;
   box-sizing: border-box;
 }
-.dialogue-stage.hidden {
-  display: none !important;
-}
 
 .dialogue-backdrop {
   position: fixed;
@@ -975,9 +978,6 @@ body.dialogue-active .explore-pin {
   pointer-events: none;
   z-index: 5;
   transition: all 0.3s ease;
-}
-.character-stage.hidden {
-  display: none !important;
 }
 
 .character-sprite-box {
@@ -1039,9 +1039,6 @@ body.dialogue-active .explore-pin {
   z-index: 20;
   border: 2px solid var(--neon-cyan);
 }
-.emotion-bubble.hidden {
-  display: none !important;
-}
 
 @keyframes bounce {
   from { transform: translateY(0); }
@@ -1062,9 +1059,6 @@ body.dialogue-active .explore-pin {
   align-items: flex-end;
   pointer-events: auto;
   transition: opacity 0.25s ease, transform 0.25s ease;
-}
-.dialogue-illustration-stage.hidden {
-  display: none !important;
 }
 
 .illustration-frame {
@@ -1118,7 +1112,7 @@ body.dialogue-active .explore-pin {
 }
 .illustration-close-btn:hover {
   color: #fff;
-  background: rgba(255, 255, 255, 0.15);
+  background: #334155;
 }
 
 .illustration-img-container {
@@ -1228,7 +1222,6 @@ body.dialogue-active .explore-pin {
   line-height: 1.52;
   color: var(--text-main);
   min-height: 48px;
-  word-break: break-word;
   overflow-wrap: break-word;
   overflow-y: auto;
   margin-bottom: 2px;
@@ -1263,7 +1256,7 @@ body.dialogue-active .explore-pin {
   flex-shrink: 0;
 }
 .dialogue-prompt.hidden {
-  display: block !important;
+  display: block;
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
@@ -1280,9 +1273,6 @@ body.dialogue-active .explore-pin {
   gap: 8px;
   margin-top: 10px;
 }
-.dialogue-choices.hidden {
-  display: none !important;
-}
 
 .choice-btn {
   background: rgba(30, 41, 59, 0.9);
@@ -1296,7 +1286,7 @@ body.dialogue-active .explore-pin {
   transition: all 0.2s;
 }
 .choice-btn:hover {
-  background: rgba(0, 243, 255, 0.2);
+  background: #082f49;
   border-color: var(--neon-cyan);
   color: var(--neon-cyan);
 }
@@ -1318,9 +1308,6 @@ body.dialogue-active .explore-pin {
   pointer-events: none;
   overflow: hidden;
   animation: cutin-cyber-flash 1s forwards ease-out;
-}
-.overlay-cutin.hidden {
-  display: none !important;
 }
 
 .cutin-cyber-lines {
@@ -1431,9 +1418,6 @@ body.dialogue-active .explore-pin {
   font-size: 0.9rem;
   margin-bottom: 24px;
 }
-.ending-unlocked-banner.hidden {
-  display: none !important;
-}
 
 .ending-actions {
   display: flex;
@@ -1449,7 +1433,7 @@ body.dialogue-active .explore-pin {
   padding: 14px 20px;
   font-size: 1rem;
   font-weight: 800;
-  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+  background: linear-gradient(135deg, #0369a1 0%, #075985 100%);
   color: #fff;
   border: 1px solid #38bdf8;
   border-radius: 12px;
@@ -1475,9 +1459,6 @@ body.dialogue-active .explore-pin {
   display: flex;
   align-items: center;
   justify-content: center;
-}
-.modal.hidden {
-  display: none !important;
 }
 
 .modal-backdrop {
@@ -1578,14 +1559,14 @@ body.dialogue-active .explore-pin {
 }
 
 .evidence-modal-item {
-  background: rgba(30, 41, 59, 0.7);
+  background: #0f172a;
   border: 1px solid rgba(255, 255, 255, 0.1);
   padding: 14px;
   border-radius: 10px;
   transition: all 0.2s;
 }
 .evidence-modal-item.deep-cyber {
-  background: linear-gradient(135deg, rgba(30, 41, 59, 0.85) 0%, rgba(88, 28, 135, 0.3) 100%);
+  background: linear-gradient(135deg, #0f172a 0%, #3b0764 100%);
   border: 1px solid var(--neon-purple);
   box-shadow: 0 0 15px rgba(192, 132, 252, 0.25);
 }
@@ -1673,7 +1654,7 @@ body.dialogue-active .explore-pin {
 
 /* 拡大画像ビューアーモーダル (証拠手帳モーダルなど全UIの最前面に表示) */
 #modal-image-viewer.modal {
-  z-index: 100 !important;
+  z-index: 100;
 }
 #modal-image-viewer .modal-backdrop {
   background: rgba(3, 7, 18, 0.88);
@@ -1730,13 +1711,13 @@ body.dialogue-active .explore-pin {
 /* ----------------------------------------------------
    操作性向上スタイル (キーボードガイド、ピンバッジ、クイックボタン)
 ---------------------------------------------------- */
-.hud-debate-btn {
-  background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%) !important;
-  color: #fff !important;
-  border-color: #f87171 !important;
-  font-weight: 800 !important;
-  box-shadow: 0 0 12px rgba(239, 68, 68, 0.6) !important;
-  animation: pulse-red 1.5s infinite ease-in-out !important;
+.hud .hud-btn.hud-debate-btn {
+  background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+  color: #fff;
+  border-color: #f87171;
+  font-weight: 800;
+  box-shadow: 0 0 12px rgba(239, 68, 68, 0.6);
+  animation: pulse-red 1.5s infinite ease-in-out;
 }
 
 .pin-status-badge {
@@ -1795,9 +1776,6 @@ body.dialogue-active .explore-pin {
   color: var(--text-sub);
   z-index: 30;
 }
-.keyboard-guide.hidden {
-  display: none !important;
-}
 .key-hint {
   display: flex;
   align-items: center;
@@ -1837,7 +1815,7 @@ body.dialogue-active .explore-pin {
   .keyboard-guide,
   .card-key-badge,
   .choice-key-tag {
-    display: none !important;
+    display: none;
   }
 }
 
@@ -1893,10 +1871,10 @@ body.dialogue-active .explore-pin {
     padding: 3px 6px;
     white-space: nowrap;
   }
-  .hud-debate-btn {
-    padding: 4px 7px !important;
-    font-size: 0.70rem !important;
-    white-space: nowrap !important;
+  .hud .hud-btn.hud-debate-btn {
+    padding: 4px 7px;
+    font-size: 0.70rem;
+    white-space: nowrap;
   }
   .hud-center {
     display: flex;
@@ -1923,15 +1901,13 @@ body.dialogue-active .explore-pin {
     letter-spacing: 1px;
     white-space: nowrap;
   }
-  .hud-back-explore-btn {
-    display: none !important;
+  .hud .hud-back-explore-btn {
+    display: none;
   }
 
   /* 探索画面：部屋切り替えボタンの全幅均等配分（余白解消 & 2行折れ防止） */
   #screen-explore {
     padding: 8px;
-    display: flex;
-    flex-direction: column;
     width: 100%;
     max-width: 100%;
     overflow-x: hidden;
@@ -1969,20 +1945,20 @@ body.dialogue-active .explore-pin {
     overflow-wrap: break-word;
   }
   .area-map {
-    background-size: 100% 100% !important;
-    background-position: center center !important;
+    background-size: 100% 100%;
+    background-position: center center;
   }
   #area-room, #area-corridor {
-    background-position: center center !important;
-    background-size: 100% 100% !important;
+    background-position: center center;
+    background-size: 100% 100%;
   }
-  .explore-stage {
+  #screen-explore .explore-stage {
     width: 100%;
-    aspect-ratio: 16 / 9 !important;
-    height: auto !important;
-    min-height: unset !important;
-    max-height: none !important;
-    flex: none !important;
+    aspect-ratio: 16 / 9;
+    height: auto;
+    min-height: unset;
+    max-height: none;
+    flex: none;
     border-radius: 12px;
   }
   .explore-pin {
@@ -2029,8 +2005,6 @@ body.dialogue-active .explore-pin {
     padding-bottom: max(8px, env(safe-area-inset-bottom, 8px));
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
-    display: flex;
-    flex-direction: column;
     flex: 1;
     min-height: 0;
   }
@@ -2086,7 +2060,7 @@ body.dialogue-active .explore-pin {
     max-height: none;
     align-content: start;
     overflow-y: auto;
-    overflow-x: hidden !important;
+    overflow-x: hidden;
     touch-action: pan-y;
     overscroll-behavior-x: none;
     width: 100%;
@@ -2205,7 +2179,6 @@ body.dialogue-active .explore-pin {
     min-height: unset;
     margin-bottom: 2px;
     flex: 1;
-    word-break: break-word;
     overflow-wrap: break-word;
     overflow-y: auto;
   }
@@ -2220,7 +2193,7 @@ body.dialogue-active .explore-pin {
     flex-shrink: 0;
   }
   .dialogue-prompt.hidden {
-    display: block !important;
+    display: block;
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
@@ -2238,8 +2211,8 @@ body.dialogue-active .explore-pin {
    機密設定資料集 (EXTRAS ARCHIVE / GALLERY)
 ---------------------------------------------------- */
 .btn-gallery {
-  background: linear-gradient(135deg, rgba(168, 85, 247, 0.25) 0%, rgba(59, 130, 246, 0.25) 100%);
-  border: 1px solid rgba(168, 85, 247, 0.6);
+  background: linear-gradient(135deg, #3b0764 0%, #1e1b4b 100%);
+  border: 1px solid rgba(168, 85, 247, 0.8);
   color: #e9d5ff;
   padding: 12px 24px;
   border-radius: 10px;
@@ -2255,7 +2228,7 @@ body.dialogue-active .explore-pin {
   gap: 8px;
 }
 .btn-gallery:hover:not(:disabled) {
-  background: linear-gradient(135deg, rgba(168, 85, 247, 0.45) 0%, rgba(59, 130, 246, 0.45) 100%);
+  background: linear-gradient(135deg, #581c87 0%, #2e1065 100%);
   border-color: #c084fc;
   color: #fff;
   box-shadow: 0 0 25px rgba(192, 132, 252, 0.5);
@@ -2309,7 +2282,7 @@ body.dialogue-active .explore-pin {
   color: #e9d5ff;
 }
 .gallery-tab-btn.active {
-  background: linear-gradient(135deg, rgba(168, 85, 247, 0.4) 0%, rgba(59, 130, 246, 0.4) 100%);
+  background: linear-gradient(135deg, #581c87 0%, #1e3a8a 100%);
   border-color: #c084fc;
   color: #fff;
   box-shadow: 0 0 12px rgba(192, 132, 252, 0.4);
@@ -2327,7 +2300,7 @@ body.dialogue-active .explore-pin {
 }
 
 .gallery-sheet-card {
-  background: rgba(10, 15, 30, 0.8);
+  background: #0a0f1e;
   border: 1px solid rgba(168, 85, 247, 0.35);
   border-radius: 12px;
   padding: 16px;
@@ -2395,7 +2368,7 @@ body.dialogue-active .explore-pin {
 }
 
 .gallery-profile-box {
-  background: rgba(15, 23, 42, 0.7);
+  background: #0f172a;
   border-left: 3px solid #c084fc;
   padding: 12px 14px;
   border-radius: 0 8px 8px 0;
@@ -2432,7 +2405,7 @@ body.dialogue-active .explore-pin {
   gap: 12px;
 }
 .gallery-sprite-card {
-  background: rgba(15, 23, 42, 0.85);
+  background: #0f172a;
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
   padding: 10px 8px;
