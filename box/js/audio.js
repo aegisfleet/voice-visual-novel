@@ -318,8 +318,18 @@ class AudioManager {
   playFound() {
     if (!this.seEnabled) return;
     this.ensureContext();
-    if (!this.ctx) return;
 
+    try {
+      const audio = new Audio('assets/audio/sfx_evidence.mp3');
+      audio.volume = 0.6;
+      audio.play().catch(() => this._playSynthFound());
+    } catch (_e) {
+      this._playSynthFound();
+    }
+  }
+
+  _playSynthFound() {
+    if (!this.ctx) return;
     const notes = [523.25, 659.25, 783.99, 1046.5]; // C5, E5, G5, C6
     notes.forEach((freq, idx) => {
       const osc = this.ctx.createOscillator();
@@ -367,8 +377,18 @@ class AudioManager {
   playCutin() {
     if (!this.seEnabled) return;
     this.ensureContext();
-    if (!this.ctx) return;
 
+    try {
+      const audio = new Audio('assets/audio/sfx_cutin.mp3');
+      audio.volume = 0.8;
+      audio.play().catch(() => this._playSynthCutin());
+    } catch (_e) {
+      this._playSynthCutin();
+    }
+  }
+
+  _playSynthCutin() {
+    if (!this.ctx) return;
     const now = this.ctx.currentTime;
 
     // 低音インパクト
@@ -475,12 +495,12 @@ class AudioManager {
 
     const previousTrack = this.currentBgmTrack;
     if (previousTrack) {
-      this._fadeOutAndCleanTrack(previousTrack, 0.8);
+      this._fadeOutAndCleanTrack(previousTrack, 1.0);
     }
 
     const audio = new Audio(url);
     audio.loop = true;
-    audio.volume = this.bgmVolume; // 即時音量を保証 (フォールバック安全策)
+    audio.volume = 0.001; // フェードイン開始初期音量
 
     let sourceNode = null;
     let trackGain = null;
@@ -491,7 +511,7 @@ class AudioManager {
         trackGain = this.ctx.createGain();
         const now = this.ctx.currentTime;
         trackGain.gain.setValueAtTime(0.0001, now);
-        trackGain.gain.linearRampToValueAtTime(1.0, now + 0.8);
+        trackGain.gain.linearRampToValueAtTime(1.0, now + 1.2);
 
         sourceNode.connect(trackGain);
         trackGain.connect(this.bgmMasterGain);
@@ -499,6 +519,25 @@ class AudioManager {
         console.warn('[AudioManager] Web Audio connection fallback to HTMLAudioElement:', err);
       }
     }
+
+    // HTMLAudioElement側のスムーズフェードイン (Web Audio非接続時のフォールバック兼用)
+    const targetVol = this.bgmVolume;
+    const fadeSteps = 12;
+    const stepInterval = 1200 / fadeSteps;
+    let stepCount = 0;
+    const inTimer = setInterval(() => {
+      stepCount++;
+      if (stepCount >= fadeSteps) {
+        clearInterval(inTimer);
+        try {
+          audio.volume = targetVol;
+        } catch (_e) {}
+      } else {
+        try {
+          audio.volume = (stepCount / fadeSteps) * targetVol;
+        } catch (_e) {}
+      }
+    }, stepInterval);
 
     const trackObj = {
       audio,

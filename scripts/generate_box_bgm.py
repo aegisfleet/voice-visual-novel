@@ -93,11 +93,11 @@ BGM_TRACKS = [
     }
 ]
 
-def create_beat_aligned_seamless_loop(wav_in: Path, wav_out: Path, bpm: float, bars_xfade: int = 1, loops: int = 2):
+def create_beat_aligned_seamless_loop(wav_in: Path, wav_out: Path, bpm: float, bars_xfade: int = 1, loops: int = 2, head_fade_in_sec: float = 1.0):
     """
     BPMと拍子（4/4）に数学的に完全同期させた等電力クロスフェードによるシームレスループ加工。
     小節境界（bars_xfade小節分）を正確に計算し、末尾の余韻と先頭を等電力カーブ（cos/sin）でブレンド。
-    さらに loops 回タイリングすることで長尺化（約50〜55秒）し、つなぎ目の違和感をゼロにする。
+    さらに曲の冒頭に自然なソフトS字フェードイン（head_fade_in_sec）を施し、再生開始時の急激なアタック・違和感を解消する。
     """
     beat_sec = 60.0 / bpm
     bar_sec = beat_sec * 4.0
@@ -134,6 +134,14 @@ def create_beat_aligned_seamless_loop(wav_in: Path, wav_out: Path, bpm: float, b
 
     # 長尺化タイリング
     extended = np.tile(loop_unit, (loops, 1))
+
+    # 冒頭ソフトフェードイン（急激なアタック・違和感の完全解消）
+    head_fade_frames = int(head_fade_in_sec * framerate)
+    if head_fade_frames > 0 and head_fade_frames < len(extended):
+        t_head = np.linspace(0.0, 1.0, head_fade_frames)[:, np.newaxis]
+        s_curve = 0.5 * (1.0 - np.cos(np.pi * t_head)) # Smooth S-curve
+        extended[:head_fade_frames] *= s_curve
+
     processed = np.clip(extended, -32768, 32767).astype(np.int16)
 
     with wave.open(str(wav_out), 'wb') as wf:
@@ -143,7 +151,7 @@ def create_beat_aligned_seamless_loop(wav_in: Path, wav_out: Path, bpm: float, b
 
     total_sec = len(processed) / framerate
     unit_sec = len(loop_unit) / framerate
-    print(f"  [ループ加工] BPM={bpm}, クロスフェード={crossfade_sec:.3f}s ({bars_xfade}小節) -> ユニット長: {unit_sec:.1f}s, 総長: {total_sec:.1f}s")
+    print(f"  [ループ加工] BPM={bpm}, クロスフェード={crossfade_sec:.3f}s ({bars_xfade}小節), 冒頭フェードイン={head_fade_in_sec}s -> ユニット長: {unit_sec:.1f}s, 総長: {total_sec:.1f}s")
     return total_sec
 
 def master_loudness(wav_in: Path, mp3_out: Path, target_i: float = -18.0, target_tp: float = -1.0):
@@ -161,12 +169,13 @@ def master_loudness(wav_in: Path, mp3_out: Path, target_i: float = -18.0, target
     print(f"  [マスタリング] EBU R128 (Target {target_i} LUFS) 適用完了: {mp3_out.name}")
 
 def main():
+    remaster_only = "--remaster" in sys.argv
     target_files = [arg for arg in sys.argv[1:] if arg.endswith('.mp3')]
     tracks = [t for t in BGM_TRACKS if not target_files or t["file"] in target_files]
 
     print("==================================================")
     print("Vertex AI (Google DeepMind Lyria 3) - BOX WORM BGM生成")
-    print(f"対象トラック数: {len(tracks)}")
+    print(f"対象トラック数: {len(tracks)} (Remasterモード: {remaster_only})")
     print("==================================================")
 
     for i, track in enumerate(tracks):
@@ -181,40 +190,43 @@ def main():
         temp_wav_loop = scratch_dir / f"loop_{filename}.wav"
         final_mp3 = output_dir / filename
 
-        print(f"\n[{i+1}/{len(tracks)}] 生成中: {title}")
+        print(f"\n[{i+1}/{len(tracks)}] 処理中: {title}")
         print(f"  ファイル: {filename} ({bpm} BPM, {track['key']})")
-        print(f"  プロンプト: {prompt[:90]}...")
 
         try:
-            inter = client.interactions.create(
-                model="lyria-3-clip-preview",
-                input=prompt
+            if not remaster_only or not raw_mp3.exists():
+                print(f"  プロンプト: {prompt[:90]}...")
+                inter = client.interactions.create(
+                    model="lyria-3-clip-preview",
+                    input=prompt
+                )
+
+                ac = inter.output_audio
+                if ac and ac.data:
+                    raw_bytes = base64.b64decode(ac.data) if isinstance(ac.data, str) else ac.data
+                    with open(raw_mp3, "wb") as f:
+                        f.write(raw_bytes)
+                    print(f"  -> Lyria 3 生成成功 ({len(raw_bytes) / 1024:.1f} KB)")
+                else:
+                    print("  -> エラー: 音声データが取得できませんでした")
+                    continue
+            else:
+                print(f"  -> 既存の生音源を使用: {raw_mp3.name} ({raw_mp3.stat().st_size / 1024:.1f} KB)")
+
+            # 1. MP3 -> WAV デコード (44.1kHz Stereo)
+            subprocess.run(
+                ["ffmpeg", "-y", "-i", str(raw_mp3), "-ar", "44100", "-ac", "2", str(temp_wav_in)],
+                check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
             )
 
-            ac = inter.output_audio
-            if ac and ac.data:
-                raw_bytes = base64.b64decode(ac.data) if isinstance(ac.data, str) else ac.data
-                with open(raw_mp3, "wb") as f:
-                    f.write(raw_bytes)
-                print(f"  -> Lyria 3 生成成功 ({len(raw_bytes) / 1024:.1f} KB)")
+            # 2. ビート同期シームレスループ加工 (長尺化2周分 & 冒頭1.0秒S字ソフトフェードイン)
+            create_beat_aligned_seamless_loop(
+                temp_wav_in, temp_wav_loop, bpm=bpm, bars_xfade=bars_xfade, loops=2, head_fade_in_sec=1.0
+            )
 
-                # 1. MP3 -> WAV デコード (44.1kHz Stereo)
-                subprocess.run(
-                    ["ffmpeg", "-y", "-i", str(raw_mp3), "-ar", "44100", "-ac", "2", str(temp_wav_in)],
-                    check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
-                )
-
-                # 2. ビート同期シームレスループ加工 (長尺化2周分)
-                create_beat_aligned_seamless_loop(
-                    temp_wav_in, temp_wav_loop, bpm=bpm, bars_xfade=bars_xfade, loops=2
-                )
-
-                # 3. EBU R128 ラウドネスノーマライゼーション & 192k MP3エンコード
-                master_loudness(temp_wav_loop, final_mp3, target_i=-18.0, target_tp=-1.0)
-                print(f"  -> 出力完了: {final_mp3} ({final_mp3.stat().st_size / 1024:.1f} KB)")
-
-            else:
-                print("  -> エラー: 音声データが取得できませんでした")
+            # 3. EBU R128 ラウドネスノーマライゼーション & 192k MP3エンコード
+            master_loudness(temp_wav_loop, final_mp3, target_i=-18.0, target_tp=-1.0)
+            print(f"  -> 出力完了: {final_mp3} ({final_mp3.stat().st_size / 1024:.1f} KB)")
 
         except Exception as e:
             print(f"  -> 生成・処理エラー: {e}")
