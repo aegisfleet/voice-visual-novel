@@ -918,7 +918,7 @@ class GameApp {
     let charIdx = 0;
     // 0.39トークンの遅さをMIMIが苦しんでいる時や電子の声の時に演出（アップグレード後は高速・流暢に）
     const isStrugglingVoice = (speaker && (speaker.includes('電子の声') || speaker.includes('知性'))) ||
-      (speaker && speaker.includes('MIMI') && (text.includes('タイヘン') || text.includes('消サナイデ') || text.includes('オ……ハ……ナ……シ')));
+      (speaker && (speaker.includes('MIMI') || speaker.includes('電子の少女') || speaker.includes('TVボックス')) && (text.includes('タイヘン') || text.includes('消サナイデ') || text.includes('オ……ハ……ナ……シ')));
     const speed = this.isSkipMode ? 5 : (isStrugglingVoice ? 110 : 25);
 
     this.typewriterTimer = setInterval(() => {

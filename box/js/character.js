@@ -23,7 +23,9 @@ class BoxCharacterController {
       'MIMI': { id: 'mimi', emotion: 'normal' },
       'ミミ': { id: 'mimi', emotion: 'normal' },
       'TVボックス': { id: 'mimi', emotion: 'normal' },
-      '分散知性 MIMI': { id: 'mimi', emotion: 'glow' }
+      '分散知性 MIMI': { id: 'mimi', emotion: 'glow' },
+      '電子の少女': { id: 'mimi', emotion: 'glow' },
+      '電子の声': { id: 'mimi', emotion: 'glow' }
     };
 
     this.preloadAll();

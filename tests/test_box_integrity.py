@@ -153,5 +153,38 @@ class TestBoxScenarioAndAssets(unittest.TestCase):
                     )
 
 
+    def test_mimi_naming_continuity(self):
+        """AIの命名（MIMI）がエピローグ命名シーンより前にフライング登場しないこと"""
+        spots = self.scenario.get("spots", [])
+        for spot in spots:
+            for text_item in spot.get("inspectText", []):
+                text = text_item.get("text", "")
+                self.assertNotIn("MIMI", text, f"Spot '{spot.get('id')}' prematurely mentions MIMI: {text}")
+
+        debate = self.scenario.get("debate", {})
+        all_steps = debate.get("stepsLoop1", []) + debate.get("stepsLoop2", [])
+        for step in all_steps:
+            self.assertNotIn("MIMI", step.get("opponentQuestion", ""))
+            for rx in step.get("successReactions", []) + step.get("failureReactions", []):
+                self.assertNotIn("MIMI", rx.get("speaker", ""))
+                self.assertNotIn("MIMI", rx.get("text", ""))
+
+        epilogue = debate.get("epilogueLoop2", [])
+        naming_idx = -1
+        for idx, item in enumerate(epilogue):
+            if "名前は……『MIMI" in item.get("text", ""):
+                naming_idx = idx
+                break
+        self.assertNotEqual(naming_idx, -1, "Naming scene where Yuta names MIMI must exist in epilogueLoop2")
+
+        # 命名シーン前の発話者は MIMI ではないこと
+        for idx in range(naming_idx):
+            item = epilogue[idx]
+            speaker = item.get("speaker", "")
+            self.assertNotIn("MIMI", speaker, f"Item at index {idx} prematurely uses MIMI as speaker before naming")
+            self.assertNotIn("ミミ", speaker, f"Item at index {idx} prematurely uses ミミ as speaker before naming")
+
+
 if __name__ == "__main__":
     unittest.main()
+
