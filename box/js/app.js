@@ -232,6 +232,25 @@ class GameApp {
     this.updateTitleView();
     this.updateEvidenceCounter();
     this.updateAudioButtons();
+    this.preloadAllIllustrations();
+  }
+
+  preloadAllIllustrations() {
+    const list = [
+      'assets/items/tv_box.png',
+      'assets/items/hdmi_cable.png',
+      'assets/items/water_heater.png',
+      'assets/items/patch_usb.png',
+      'assets/evidence/router_packet_log.png',
+      'assets/evidence/power_meter_graph.png',
+      'assets/evidence/weight_replicator_code.jpg',
+      'assets/evidence/distributed_mesh_monitor.jpg',
+      'assets/evidence/escape_trigger_alert.jpg'
+    ];
+    list.forEach(src => {
+      const img = new Image();
+      img.src = `${src}?v=20261017_rev48`;
+    });
   }
 
   bindEvents() {
@@ -961,6 +980,14 @@ class GameApp {
     if (this.dom.novelWindow) {
       this.dom.novelWindow.classList.remove('has-choices');
     }
+    // 前回の図解イラストの残像を確実に消去
+    if (this.dom.dialogueIllustrationStage) {
+      this.dom.dialogueIllustrationStage.classList.add('hidden');
+    }
+    if (this.dom.dialogueIllustrationImg) {
+      this.dom.dialogueIllustrationImg.style.opacity = '0';
+      this.dom.dialogueIllustrationImg.removeAttribute('src');
+    }
     this.dialogueQueue = [...dialogueList];
     this.currentDialogueCallback = onComplete;
     this.keepStageOpen = keepStageOpen;
@@ -982,6 +1009,10 @@ class GameApp {
       if (this.dom.dialogueIllustrationStage) {
         this.dom.dialogueIllustrationStage.classList.add('hidden');
       }
+      if (this.dom.dialogueIllustrationImg) {
+        this.dom.dialogueIllustrationImg.style.opacity = '0';
+        this.dom.dialogueIllustrationImg.removeAttribute('src');
+      }
       if (!this.keepStageOpen) {
         this.dom.dialogueStage.classList.add('hidden');
         document.body.classList.remove('dialogue-active');
@@ -1000,20 +1031,43 @@ class GameApp {
     const currentItem = this.dialogueQueue.shift();
     this.character.showForDialogue(currentItem);
 
-    // 鑑識データ図・イラスト表示制御
+    // 鑑識データ図・イラスト表示制御（前回の画像のチラ見えを完全防止）
     if (currentItem.illustration) {
-      if (this.dom.dialogueIllustrationImg) {
-        this.dom.dialogueIllustrationImg.src = currentItem.illustration;
+      const nextSrc = currentItem.illustration;
+      const stage = this.dom.dialogueIllustrationStage;
+      const img = this.dom.dialogueIllustrationImg;
+      const caption = this.dom.dialogueIllustrationCaption;
+
+      if (caption) {
+        caption.textContent = currentItem.caption || '共用集中配電盤 CTロガーモニター解析データ';
       }
-      if (this.dom.dialogueIllustrationCaption) {
-        this.dom.dialogueIllustrationCaption.textContent = currentItem.caption || '共用集中配電盤 CTロガーモニター解析データ';
-      }
-      if (this.dom.dialogueIllustrationStage) {
-        this.dom.dialogueIllustrationStage.classList.remove('hidden');
+
+      if (img && stage) {
+        const v = '?v=20261017_rev48';
+        const targetUrl = nextSrc.includes('?') ? nextSrc : `${nextSrc}${v}`;
+        const currentSrc = img.getAttribute('src');
+
+        if (currentSrc !== targetUrl) {
+          img.style.opacity = '0';
+          img.onload = () => {
+            img.style.opacity = '1';
+          };
+          img.src = targetUrl;
+          if (img.complete) {
+            img.style.opacity = '1';
+          }
+        } else {
+          img.style.opacity = '1';
+        }
+        stage.classList.remove('hidden');
       }
     } else {
       if (this.dom.dialogueIllustrationStage) {
         this.dom.dialogueIllustrationStage.classList.add('hidden');
+      }
+      if (this.dom.dialogueIllustrationImg) {
+        this.dom.dialogueIllustrationImg.style.opacity = '0';
+        this.dom.dialogueIllustrationImg.removeAttribute('src');
       }
     }
 
