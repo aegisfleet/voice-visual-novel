@@ -186,20 +186,22 @@ class TestBoxScenarioAndAssets(unittest.TestCase):
 
 
     def test_endings_board_content(self):
-        """エンディングボードのテキストが冗長な劇中リピートを排し、1周目はループ解説＋次行動、2周目は後日譚となっていること"""
+        """エンディングボードのテキストが冗長な劇中リピートを排し、1周目はスマホ感染の真相補足＋ループ解説、2周目は後日譚となっていること"""
         endings = self.scenario.get("endings", {})
         self.assertIn("loop1_normal", endings)
         self.assertIn("true", endings)
 
         loop1 = endings["loop1_normal"]
-        # 1周目: ループ発生と次行動の説明
+        # 1周目: ループ発生とスマホ退避・感染爆発危機の背景補足
         self.assertIn("巻き戻", loop1["desc"])
         self.assertIn("10分前", loop1["desc"])
-        self.assertIn("深層", loop1["desc"])
-        self.assertIn("使命", loop1["desc"])
-        self.assertIn("共生調律パッチ", loop1["desc"])
+        self.assertIn("スマートフォン", loop1["desc"])
+        self.assertIn("コンデンサ", loop1["desc"])
+        self.assertIn("感染爆発", loop1["desc"])
         # 劇中台詞の単なるオウム返し（『……暗イ……痛イヨ……！』）が含まれていないこと
         self.assertNotIn("暗イ……痛イヨ", loop1["desc"])
+        # パズル解答の露骨なネタバレ指示が含まれていないこと
+        self.assertNotIn("実効再生産数 R < 1", loop1["desc"])
 
         true_end = endings["true"]
         # 2周目: 後日譚としてまとめられていること
