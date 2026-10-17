@@ -495,7 +495,7 @@ class GameApp {
     // エンディング後の操作（リトライ or タイトルへ）
     this.dom.btnEndingNext.addEventListener('click', () => {
       this.audio.playClick();
-      if (this.currentEndingType === 'game_over') {
+      if (this.currentEndingType === 'gameover' || this.currentEndingType === 'game_over') {
         this.startDebate();
       } else if (
         this.currentEndingType === 'loop1_normal' ||
@@ -544,9 +544,13 @@ class GameApp {
         return;
       }
 
-      // Space / Enter: 会話送り or 立証決定
+      // Space / Enter: 会話送り or 立証決定 or エンディング次へ
       if (e.key === ' ' || e.key === 'Enter') {
         e.preventDefault();
+        if (this.dom.screenEnding.classList.contains('active')) {
+          this.dom.btnEndingNext.click();
+          return;
+        }
         if (this.isDialogueActive && !this.isChoiceActive) {
           if (this.isSkipMode) {
             this.stopSkipMode();
