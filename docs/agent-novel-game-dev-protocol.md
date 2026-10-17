@@ -4,7 +4,7 @@
 
 ---
 
-## 1. エージェントが陥りがちな「5大過誤」と防止策
+## 1. エージェントが陥りがちな「8大過誤」と防止策
 
 過去の開発において、エージェントが引き起こした重大な設計欠陥と、その防止策を以下に定義する。これらを二度と繰り返してはならない。
 
@@ -51,7 +51,16 @@
 - **防止策**: 
   - 会話ステージ（`.dialogue-stage`）は `position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 960px; height: 100dvh;` でビューポートに完全固定する。
   - HTMLに `viewport-fit=cover` を指定し、CSSで `calc(margin + env(safe-area-inset-bottom, 0px))` の余白を必ず確保する。
-  - 会話テキストは `font-size: clamp(...)`、`line-height: 1.5`、`word-break: break-word`、ノベルウィンドウには `max-height: 38dvh` を指定する。
+  - 会話テキストは `font-size: clamp(...)`、`line-height: 1.5`、`overflow-wrap: break-word`、ノベルウィンドウには `max-height: 38dvh` を指定する。
+
+### ❌ 過誤 8: 「SonarQube / 静的解析警告（S3776認知複雑度超過・S7773 parseInt・S9423 !important乱用・S7924コントラスト不足・S1874非推奨CSS）」の混入
+- **現象**: 1つの関数に多重の条件分岐やコールバック・DOM生成を詰め込み認知複雑度が15を超過する（S3776）、安全でない `parseInt` を使う（S7773）、CSSで安易に `!important` を乱用して破綻させる（S9423）、背景と文字のコントラスト比が不足して読めない（S7924）、非推奨CSS構文を使う（S1874）。
+- **防止策**: 
+  - **認知複雑度（S3776: Cognitive Complexity <= 15）**: メソッドは単一責任に分割し、長大な処理は「計算・ステータス判定」「DOM生成」「イベント紐付け」の小ヘルパーに分離して平坦化する。
+  - **安全な構文（S7773）**: `parseInt(...)` は禁止し、必ず `Number.parseInt(...)` を使用する。
+  - **CSS詳細度（S9423）**: `!important` の使用は原則禁止。コンポーネントクラスや詳細度（Specificity）の設計でカスケード競合を解決する。
+  - **コントラスト比（S7924）**: テキスト色と背景色は WCAG AA 基準（通常文字 4.5:1 以上、大文字 3:1 以上、推奨 7:1〜10:1 以上）を確保する。背景に半透明を使う場合でもフォールバック背景色（ソリッド暗色等）を定義する。
+  - **標準CSS（S1874）**: `word-break: break-word` などの非推奨構文を撤廃し、`overflow-wrap: break-word` 等の標準CSS仕様を採用する。
 
 ---
 
@@ -111,7 +120,11 @@ flowchart TD
 
 | 検査対象 | 不合格パターン（禁止） | 合格パターン（推奨） |
 | :--- | :--- | :--- |
-| **非表示制御** | `.some-btn.hidden { display: none; }` のみ | グローバル `.hidden { display: none !important; }` を併用 |
+| **非表示制御・CSS詳細度** | `!important` の乱用や局所スタイル競合 | 詳細度（Specificity）設計と標準 `.hidden { display: none; }` |
+| **関数の認知複雑度** | 1関数で多重ネスト・長大（CC > 15） | 単一責任の小メソッドに分割・平坦化（CC <= 15） |
+| **文字列数値変換** | グローバル `parseInt(str, 10)` | `Number.parseInt(str, 10)` |
+| **テキスト折り返し** | 非推奨 `word-break: break-word;` | 標準仕様 `overflow-wrap: break-word;` |
+| **文字コントラスト比** | 背景と文字の比率 < 4.5:1（暗い背景に暗い文字） | WCAG AA基準確保（推奨 7:1〜10:1 以上の明瞭な配色） |
 | **レスポンシブ文字** | `font-size: 2.8rem;` | `font-size: clamp(1.2rem, 5.8vw, 2.5rem);` |
 | **画面遷移** | `startDebate()` に戻る導線がない | `btnDebateBack`、`backToExploration()`、`Esc/B` キーを常備 |
 | **前提条件ガード** | `btn.click()` だけで無条件に遷移 | `if (count < 3) { alert(...); return; }` の二重安全ガード |

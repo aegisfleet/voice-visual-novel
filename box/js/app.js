@@ -544,7 +544,7 @@ class GameApp {
 
       // 1〜9キー: 選択肢 or 証拠カード選択
       if (e.key >= '1' && e.key <= '9') {
-        const num = parseInt(e.key, 10);
+        const num = Number.parseInt(e.key, 10);
         // 会話選択肢表示中
         if (this.isChoiceActive) {
           const choiceBtns = this.dom.dialogueChoices.querySelectorAll('.choice-btn');
@@ -946,20 +946,27 @@ class GameApp {
 
     const introQueue = [...npc.dialogue.intro];
     this.playDialogueSequence(introQueue, () => {
-      // 選択肢表示（ステージとキャラクターは表示を維持）
       this.showChoiceMenu(npc.dialogue.choices, (chosenChoice) => {
-        this.playDialogueSequence(chosenChoice.responses, () => {
-          if (chosenChoice.giveEvidence) {
-            const isNew = this.state.addEvidence(chosenChoice.giveEvidence);
-            if (isNew) {
-              this.audio.playFound();
-            }
-            this.updateEvidenceCounter();
-          }
-          this.renderExploreMap();
-        }, false);
+        this.onNpcChoiceSelected(chosenChoice);
       });
     }, true);
+  }
+
+  onNpcChoiceSelected(chosenChoice) {
+    this.playDialogueSequence(chosenChoice.responses, () => {
+      this.onNpcDialogueComplete(chosenChoice);
+    }, false);
+  }
+
+  onNpcDialogueComplete(chosenChoice) {
+    if (chosenChoice.giveEvidence) {
+      const isNew = this.state.addEvidence(chosenChoice.giveEvidence);
+      if (isNew) {
+        this.audio.playFound();
+      }
+      this.updateEvidenceCounter();
+    }
+    this.renderExploreMap();
   }
 
   // 証拠カウンタ・立証ボタン有効化判定
@@ -973,42 +980,63 @@ class GameApp {
     return this.state.collectedEvidence.size >= 3;
   }
 
+  setDebateButtonVisible(visible) {
+    this.dom.btnGoToDebate.classList.toggle('hidden', !visible);
+    if (this.dom.btnHudGotoDebate) {
+      this.dom.btnHudGotoDebate.classList.toggle('hidden', !visible);
+    }
+  }
+
+  getLoop2ProgressInfo(canProceed, count) {
+    const loop2Keys = ['weight_replicator_binary', 'distributed_mesh_log', 'escape_trigger_danger', 'reproduction_control_patch'];
+    const hasCount = loop2Keys.filter(k => this.state.collectedEvidence.has(k)).length;
+    if (canProceed) {
+      return {
+        canProceed: true,
+        statusText: `⚖️ 深層鑑識データ全4件が揃った！ (${count}件) シバタ捜査官に電脳生命の真実を提示できるぞ！`,
+        counterText: '提示可能！'
+      };
+    }
+    return {
+      canProceed: false,
+      statusText: `深層真実の鍵（自律増殖体・分散推論・給電遮断トリガー・調律パッチ）を解析しよう（必須深層データ: ${hasCount} / 4件）`,
+      counterText: `${hasCount} / 4`
+    };
+  }
+
+  getLoop1ProgressInfo(canProceed, count) {
+    const required = 3;
+    if (canProceed) {
+      return {
+        canProceed: true,
+        statusText: `⚖️ 鑑識データが揃った！ (${count}件) シバタ捜査官に客観的反証を提示できるぞ！`,
+        counterText: '提示可能！'
+      };
+    }
+    return {
+      canProceed: false,
+      statusText: `部屋やアパートを調べて鑑識データを集めよう（あと${required - count}件必要）`,
+      counterText: `${count} / ${required}`
+    };
+  }
+
+  getExploreProgressInfo(isLoop2, count) {
+    const canProceed = this.canStartDebate();
+    if (isLoop2) {
+      return this.getLoop2ProgressInfo(canProceed, count);
+    }
+    return this.getLoop1ProgressInfo(canProceed, count);
+  }
+
   updateEvidenceCounter() {
     const isLoop2 = this.state.isClearedFirstLoop();
     const count = this.state.collectedEvidence.size;
     this.dom.evidenceCount.textContent = count;
 
-    if (isLoop2) {
-      const loop2Keys = ['weight_replicator_binary', 'distributed_mesh_log', 'escape_trigger_danger', 'reproduction_control_patch'];
-      const hasCount = loop2Keys.filter(k => this.state.collectedEvidence.has(k)).length;
-      const canProceed = this.canStartDebate();
-
-      if (canProceed) {
-        this.dom.btnGoToDebate.classList.remove('hidden');
-        if (this.dom.btnHudGotoDebate) this.dom.btnHudGotoDebate.classList.remove('hidden');
-        this.dom.exploreStatusText.textContent = `⚖️ 深層鑑識データ全4件が揃った！ (${count}件) シバタ捜査官に電脳生命の真実を提示できるぞ！`;
-        this.dom.evidenceNeededCounter.textContent = '提示可能！';
-      } else {
-        this.dom.btnGoToDebate.classList.add('hidden');
-        if (this.dom.btnHudGotoDebate) this.dom.btnHudGotoDebate.classList.add('hidden');
-        this.dom.exploreStatusText.textContent = `深層真実の鍵（自律増殖体・分散推論・給電遮断トリガー・調律パッチ）を解析しよう（必須深層データ: ${hasCount} / 4件）`;
-        this.dom.evidenceNeededCounter.textContent = `${hasCount} / 4`;
-      }
-    } else {
-      // 1周目：最低3件必要
-      const required = 3;
-      if (count >= required) {
-        this.dom.btnGoToDebate.classList.remove('hidden');
-        if (this.dom.btnHudGotoDebate) this.dom.btnHudGotoDebate.classList.remove('hidden');
-        this.dom.exploreStatusText.textContent = `⚖️ 鑑識データが揃った！ (${count}件) シバタ捜査官に客観的反証を提示できるぞ！`;
-        this.dom.evidenceNeededCounter.textContent = '提示可能！';
-      } else {
-        this.dom.btnGoToDebate.classList.add('hidden');
-        if (this.dom.btnHudGotoDebate) this.dom.btnHudGotoDebate.classList.add('hidden');
-        this.dom.exploreStatusText.textContent = `部屋やアパートを調べて鑑識データを集めよう（あと${required - count}件必要）`;
-        this.dom.evidenceNeededCounter.textContent = `${count} / ${required}`;
-      }
-    }
+    const { canProceed, statusText, counterText } = this.getExploreProgressInfo(isLoop2, count);
+    this.setDebateButtonVisible(canProceed);
+    this.dom.exploreStatusText.textContent = statusText;
+    this.dom.evidenceNeededCounter.textContent = counterText;
   }
 
   // ----------------------------------------------------
@@ -1042,76 +1070,77 @@ class GameApp {
     this.showNextDialogue();
   }
 
-  showNextDialogue() {
-    if (this.dialogueQueue.length === 0) {
-      this.stopSkipMode();
-      if (this.dom.novelWindow) {
-        this.dom.novelWindow.classList.remove('has-choices');
-      }
-      if (this.dom.dialogueIllustrationStage) {
-        this.dom.dialogueIllustrationStage.classList.add('hidden');
-      }
-      if (this.dom.dialogueIllustrationImg) {
-        this.dom.dialogueIllustrationImg.style.opacity = '0';
-        this.dom.dialogueIllustrationImg.removeAttribute('src');
-      }
-      if (!this.keepStageOpen) {
-        this.dom.dialogueStage.classList.add('hidden');
-        document.body.classList.remove('dialogue-active');
-        this.character.hide();
-        this.isDialogueActive = false;
-      }
-      if (this.currentDialogueCallback) {
-        const cb = this.currentDialogueCallback;
-        this.currentDialogueCallback = null;
-        this.keepStageOpen = false;
-        cb();
-      }
+  handleDialogueQueueEmpty() {
+    this.stopSkipMode();
+    if (this.dom.novelWindow) {
+      this.dom.novelWindow.classList.remove('has-choices');
+    }
+    this.hideDialogueIllustration();
+
+    if (!this.keepStageOpen) {
+      this.dom.dialogueStage.classList.add('hidden');
+      document.body.classList.remove('dialogue-active');
+      this.character.hide();
+      this.isDialogueActive = false;
+    }
+    if (this.currentDialogueCallback) {
+      const cb = this.currentDialogueCallback;
+      this.currentDialogueCallback = null;
+      this.keepStageOpen = false;
+      cb();
+    }
+  }
+
+  hideDialogueIllustration() {
+    if (this.dom.dialogueIllustrationStage) {
+      this.dom.dialogueIllustrationStage.classList.add('hidden');
+    }
+    if (this.dom.dialogueIllustrationImg) {
+      this.dom.dialogueIllustrationImg.style.opacity = '0';
+      this.dom.dialogueIllustrationImg.removeAttribute('src');
+    }
+  }
+
+  setDialogueIllustrationImage(img, targetUrl) {
+    const currentSrc = img.getAttribute('src');
+    if (currentSrc === targetUrl) {
+      img.style.opacity = '1';
       return;
     }
-
-    const currentItem = this.dialogueQueue.shift();
-    this.character.showForDialogue(currentItem);
-
-    // 鑑識データ図・イラスト表示制御（前回の画像のチラ見えを完全防止）
-    if (currentItem.illustration) {
-      const nextSrc = currentItem.illustration;
-      const stage = this.dom.dialogueIllustrationStage;
-      const img = this.dom.dialogueIllustrationImg;
-      const caption = this.dom.dialogueIllustrationCaption;
-
-      if (caption) {
-        caption.textContent = currentItem.caption || '共用集中配電盤 CTロガーモニター解析データ';
-      }
-
-      if (img && stage) {
-        const v = '?v=20261017_rev50';
-        const targetUrl = nextSrc.includes('?') ? nextSrc : `${nextSrc}${v}`;
-        const currentSrc = img.getAttribute('src');
-
-        if (currentSrc !== targetUrl) {
-          img.style.opacity = '0';
-          img.onload = () => {
-            img.style.opacity = '1';
-          };
-          img.src = targetUrl;
-          if (img.complete) {
-            img.style.opacity = '1';
-          }
-        } else {
-          img.style.opacity = '1';
-        }
-        stage.classList.remove('hidden');
-      }
-    } else {
-      if (this.dom.dialogueIllustrationStage) {
-        this.dom.dialogueIllustrationStage.classList.add('hidden');
-      }
-      if (this.dom.dialogueIllustrationImg) {
-        this.dom.dialogueIllustrationImg.style.opacity = '0';
-        this.dom.dialogueIllustrationImg.removeAttribute('src');
-      }
+    img.style.opacity = '0';
+    img.onload = () => {
+      img.style.opacity = '1';
+    };
+    img.src = targetUrl;
+    if (img.complete) {
+      img.style.opacity = '1';
     }
+  }
+
+  updateDialogueIllustration(illustration, caption) {
+    if (!illustration) {
+      this.hideDialogueIllustration();
+      return;
+    }
+    const stage = this.dom.dialogueIllustrationStage;
+    const img = this.dom.dialogueIllustrationImg;
+    const captionEl = this.dom.dialogueIllustrationCaption;
+
+    if (captionEl) {
+      captionEl.textContent = caption || '共用集中配電盤 CTロガーモニター解析データ';
+    }
+
+    if (!img || !stage) return;
+
+    const v = '?v=20261017_rev54';
+    const targetUrl = illustration.includes('?') ? illustration : `${illustration}${v}`;
+    this.setDialogueIllustrationImage(img, targetUrl);
+    stage.classList.remove('hidden');
+  }
+
+  renderDialogueItem(currentItem) {
+    this.character.showForDialogue(currentItem);
+    this.updateDialogueIllustration(currentItem.illustration, currentItem.caption);
 
     this.currentSpeaker = currentItem.speaker || 'ナレーション';
     this.currentFullText = currentItem.text || '';
@@ -1135,6 +1164,16 @@ class GameApp {
 
     // タイピング演出
     this.startTypewriter(this.currentFullText, currentItem.speaker);
+  }
+
+  showNextDialogue() {
+    if (this.dialogueQueue.length === 0) {
+      this.handleDialogueQueueEmpty();
+      return;
+    }
+
+    const currentItem = this.dialogueQueue.shift();
+    this.renderDialogueItem(currentItem);
   }
 
   startTypewriter(text, speaker) {
@@ -1421,11 +1460,7 @@ class GameApp {
     this.renderDebateEvidenceList();
   }
 
-  renderDebateEvidenceList() {
-    this.dom.debateEvidenceList.innerHTML = '';
-    const collected = Array.from(this.state.collectedEvidence);
-
-    // 過去の問答で提出・正解済みの証拠IDを収集
+  getSubmittedCorrectEvidenceIds() {
     const steps = this.getDebateSteps();
     const submittedCorrectIds = new Set();
     for (let i = 0; i < this.state.currentDebateStep; i++) {
@@ -1433,6 +1468,105 @@ class GameApp {
         submittedCorrectIds.add(steps[i].correctEvidenceId);
       }
     }
+    return submittedCorrectIds;
+  }
+
+  handleEvidenceCardSelect(evId, ev, isDeep) {
+    if (this.selectedEvidenceId === evId) {
+      // 選択中カードを再タップ → 即座に提示！（スマホ片手親指UX）
+      this.handlePresentEvidence();
+      return;
+    }
+    this.selectedEvidenceId = evId;
+    this.dom.btnPresentEvidence.disabled = false;
+    this.dom.selectedEvidencePreview.innerHTML = `
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+        <span><strong>選択中:</strong> ${ev.icon} ${ev.name}</span>
+        <span style="font-family:var(--font-mono); font-size:0.75rem; font-weight:700; color:${isDeep ? 'var(--neon-purple)' : 'var(--neon-cyan)'};">${isDeep ? '⚡ CYBER FORENSIC DATA' : 'STANDARD EVIDENCE'}</span>
+      </div>
+      <div style="font-size:0.82rem; color:#cbd5e1; margin-bottom:4px;">${ev.summary}</div>
+      <div style="color:var(--neon-cyan); font-size:0.75rem;">[再タップまたは Enter で即座に反証を突きつける]</div>
+    `;
+    this.renderDebateEvidenceList();
+  }
+
+  getDebateEvidenceIconHtml(ev) {
+    if (ev.image) {
+      return `<img src="${ev.image}?v=20261017_rev54" alt="${ev.name}" class="evidence-icon-img" />`;
+    }
+    return ev.icon;
+  }
+
+  getDebateCardBadgeHtml(isAlreadySubmitted, idx) {
+    if (isAlreadySubmitted) {
+      return '<span class="ev-submitted-tag">✓ 提出済</span>';
+    }
+    return `<span class="card-key-badge">[${idx + 1}]</span>`;
+  }
+
+  bindDebateCardEvents(card, evId, ev, isDeep) {
+    card.addEventListener('click', () => {
+      this.audio.playClick();
+      this.handleEvidenceCardSelect(evId, ev, isDeep);
+    });
+
+    card.addEventListener('dblclick', () => {
+      this.audio.playClick();
+      this.selectedEvidenceId = evId;
+      this.handlePresentEvidence();
+    });
+  }
+
+  getDebateCardClassName(isDeep, isSelected, isAlreadySubmitted) {
+    const classes = ['debate-evidence-card'];
+    if (isDeep) classes.push('deep-cyber');
+    if (isSelected) classes.push('selected');
+    if (isAlreadySubmitted) classes.push('already-submitted');
+    return classes.join(' ');
+  }
+
+  getDebateCardTypeHtml(isDeep, evType) {
+    if (isDeep) {
+      return `<div class="evidence-type" style="color:var(--neon-purple); font-weight:700;">⚡ [CYBER] ${evType}</div>`;
+    }
+    return `<div class="evidence-type">${evType}</div>`;
+  }
+
+  createDebateEvidenceCard(evId, ev, idx, isAlreadySubmitted) {
+    const isDeep = this.isDeepForensicEvidence(evId);
+    const isSelected = (this.selectedEvidenceId === evId);
+
+    const card = document.createElement('div');
+    card.className = this.getDebateCardClassName(isDeep, isSelected, isAlreadySubmitted);
+    if (isAlreadySubmitted) {
+      card.setAttribute('aria-disabled', 'true');
+      card.title = '以前の問答で立証済みです';
+    }
+
+    const iconHtml = this.getDebateEvidenceIconHtml(ev);
+    const badgeHtml = this.getDebateCardBadgeHtml(isAlreadySubmitted, idx);
+    const typeHtml = this.getDebateCardTypeHtml(isDeep, ev.type);
+
+    card.innerHTML = `
+      <div class="evidence-icon">${iconHtml}</div>
+      <div class="evidence-info">
+        <div class="evidence-name">${ev.name}</div>
+        ${typeHtml}
+      </div>
+      <div class="card-badge-container">${badgeHtml}</div>
+    `;
+
+    if (!isAlreadySubmitted) {
+      this.bindDebateCardEvents(card, evId, ev, isDeep);
+    }
+
+    return card;
+  }
+
+  renderDebateEvidenceList() {
+    this.dom.debateEvidenceList.innerHTML = '';
+    const collected = Array.from(this.state.collectedEvidence);
+    const submittedCorrectIds = this.getSubmittedCorrectEvidenceIds();
 
     // 既に提出済みの証拠が選択状態なら選択解除
     if (this.selectedEvidenceId && submittedCorrectIds.has(this.selectedEvidenceId)) {
@@ -1444,65 +1578,7 @@ class GameApp {
     collected.forEach((evId, idx) => {
       const ev = this.scenario.evidence[evId];
       if (!ev) return;
-
-      const isDeep = this.isDeepForensicEvidence(evId);
-      const isAlreadySubmitted = submittedCorrectIds.has(evId);
-      const isSelected = (this.selectedEvidenceId === evId);
-
-      const card = document.createElement('div');
-      card.className = `debate-evidence-card ${isDeep ? 'deep-cyber' : ''} ${isSelected ? 'selected' : ''} ${isAlreadySubmitted ? 'already-submitted' : ''}`;
-      if (isAlreadySubmitted) {
-        card.setAttribute('aria-disabled', 'true');
-        card.title = '以前の問答で立証済みです';
-      }
-
-      const iconHtml = ev.image
-        ? `<img src="${ev.image}?v=20261017_rev50" alt="${ev.name}" class="evidence-icon-img" />`
-        : ev.icon;
-
-      const badgeHtml = isAlreadySubmitted
-        ? `<span class="ev-submitted-tag">✓ 提出済</span>`
-        : `<span class="card-key-badge">[${idx + 1}]</span>`;
-
-      card.innerHTML = `
-        <div class="evidence-icon">${iconHtml}</div>
-        <div class="evidence-info">
-          <div class="evidence-name">${ev.name}</div>
-          <div class="evidence-type" style="${isDeep ? 'color:var(--neon-purple); font-weight:700;' : ''}">${isDeep ? '⚡ [CYBER] ' : ''}${ev.type}</div>
-        </div>
-        <div class="card-badge-container">${badgeHtml}</div>
-      `;
-
-      if (!isAlreadySubmitted) {
-        // クリック/タップで選択（すでに選択中のカードを再タップで即座に提示！）
-        card.addEventListener('click', () => {
-          this.audio.playClick();
-          if (this.selectedEvidenceId === evId) {
-            // 選択中カードを再タップ → 即座に提示！（スマホ片手親指UX）
-            this.handlePresentEvidence();
-            return;
-          }
-          this.selectedEvidenceId = evId;
-          this.dom.btnPresentEvidence.disabled = false;
-          this.dom.selectedEvidencePreview.innerHTML = `
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-              <span><strong>選択中:</strong> ${ev.icon} ${ev.name}</span>
-              <span style="font-family:var(--font-mono); font-size:0.75rem; font-weight:700; color:${isDeep ? 'var(--neon-purple)' : 'var(--neon-cyan)'};">${isDeep ? '⚡ CYBER FORENSIC DATA' : 'STANDARD EVIDENCE'}</span>
-            </div>
-            <div style="font-size:0.82rem; color:#cbd5e1; margin-bottom:4px;">${ev.summary}</div>
-            <div style="color:var(--neon-cyan); font-size:0.75rem;">[再タップまたは Enter で即座に反証を突きつける]</div>
-          `;
-          this.renderDebateEvidenceList();
-        });
-
-        // PC向けダブルクリックでも提示可能
-        card.addEventListener('dblclick', () => {
-          this.audio.playClick();
-          this.selectedEvidenceId = evId;
-          this.handlePresentEvidence();
-        });
-      }
-
+      const card = this.createDebateEvidenceCard(evId, ev, idx, submittedCorrectIds.has(evId));
       this.dom.debateEvidenceList.appendChild(card);
     });
   }
@@ -1684,6 +1760,58 @@ class GameApp {
     this.dom.modalEvidence.classList.remove('hidden');
   }
 
+  getEvidenceModalIconHtml(ev, imgSrc) {
+    if (ev.image) {
+      return `<img src="${imgSrc}" alt="${ev.name}" class="ev-modal-icon-img" />`;
+    }
+    return ev.icon;
+  }
+
+  getEvidenceModalDiagramHtml(ev, imgSrc) {
+    if (!ev.image) return '';
+    return `
+      <div class="ev-modal-diagram-wrap" data-img-src="${imgSrc}" data-img-title="${ev.name}">
+        <img src="${imgSrc}" alt="${ev.name}" class="ev-modal-diagram-img" />
+        <span class="ev-diagram-zoom-badge">🔍 タップで拡大表示</span>
+      </div>
+    `;
+  }
+
+  bindEvidenceModalDiagramZoom(item, ev) {
+    if (!ev.image) return;
+    const diagramEl = item.querySelector('.ev-modal-diagram-wrap');
+    if (!diagramEl) return;
+    diagramEl.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.audio.playClick();
+      this.openImageViewer(ev.image, `📊 ${ev.name} 詳細解析データ`);
+    });
+  }
+
+  createEvidenceModalItem(evId, ev) {
+    const isDeep = this.isDeepForensicEvidence(evId);
+    const item = document.createElement('div');
+    item.className = `evidence-modal-item ${isDeep ? 'deep-cyber' : ''}`;
+    const v = '?v=20261017_rev54';
+    const imgSrc = ev.image ? `${ev.image}${v}` : '';
+    const iconHtml = this.getEvidenceModalIconHtml(ev, imgSrc);
+    const diagramHtml = this.getEvidenceModalDiagramHtml(ev, imgSrc);
+
+    item.innerHTML = `
+      <div class="evidence-modal-header">
+        <span class="ev-icon">${iconHtml}</span>
+        <span class="ev-name">${ev.name}</span>
+        <span class="ev-badge ${isDeep ? 'cyber-badge' : ''}">${isDeep ? '⚡ [CYBER CORE] ' : ''}${ev.type}</span>
+      </div>
+      <p class="ev-summary">${ev.summary}</p>
+      <p class="ev-detail">${ev.detail}</p>
+      ${diagramHtml}
+    `;
+
+    this.bindEvidenceModalDiagramZoom(item, ev);
+    return item;
+  }
+
   // 証拠手帳アイテム描画
   renderEvidenceModalItems() {
     this.dom.modalEvidenceList.innerHTML = '';
@@ -1707,46 +1835,7 @@ class GameApp {
     filtered.forEach(evId => {
       const ev = this.scenario.evidence[evId];
       if (!ev) return;
-
-      const isDeep = this.isDeepForensicEvidence(evId);
-
-      const item = document.createElement('div');
-      item.className = `evidence-modal-item ${isDeep ? 'deep-cyber' : ''}`;
-      const v = '?v=20261017_rev50';
-      const imgSrc = ev.image ? `${ev.image}${v}` : '';
-      const iconHtml = ev.image
-        ? `<img src="${imgSrc}" alt="${ev.name}" class="ev-modal-icon-img" />`
-        : ev.icon;
-
-      const diagramHtml = ev.image
-        ? `<div class="ev-modal-diagram-wrap" data-img-src="${imgSrc}" data-img-title="${ev.name}">
-             <img src="${imgSrc}" alt="${ev.name}" class="ev-modal-diagram-img" />
-             <span class="ev-diagram-zoom-badge">🔍 タップで拡大表示</span>
-           </div>`
-        : '';
-
-      item.innerHTML = `
-        <div class="evidence-modal-header">
-          <span class="ev-icon">${iconHtml}</span>
-          <span class="ev-name">${ev.name}</span>
-          <span class="ev-badge ${isDeep ? 'cyber-badge' : ''}">${isDeep ? '⚡ [CYBER CORE] ' : ''}${ev.type}</span>
-        </div>
-        <p class="ev-summary">${ev.summary}</p>
-        <p class="ev-detail">${ev.detail}</p>
-        ${diagramHtml}
-      `;
-
-      if (ev.image) {
-        const diagramEl = item.querySelector('.ev-modal-diagram-wrap');
-        if (diagramEl) {
-          diagramEl.addEventListener('click', (e) => {
-            e.stopPropagation();
-            this.audio.playClick();
-            this.openImageViewer(ev.image, `📊 ${ev.name} 詳細解析データ`);
-          });
-        }
-      }
-
+      const item = this.createEvidenceModalItem(evId, ev);
       this.dom.modalEvidenceList.appendChild(item);
     });
   }
