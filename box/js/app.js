@@ -59,6 +59,36 @@ class GameApp {
           { label: '驚愕 / 動揺', emotion: 'shock', src: 'assets/characters/yuta_shock.png' },
           { label: '安堵 / 笑顔', emotion: 'smile', src: 'assets/characters/yuta_smile.png' },
         ],
+        voiceSamples: [
+          {
+            id: 'yuta_sample1',
+            title: '候補A: Iapetus（理知・冷静沈着な研究者）',
+            voice: 'Iapetus',
+            text: '現場の端末たちが手を取り合って一つの知性を紡ぎ出す……それが僕の研究する分散エッジAIです。',
+            src: 'assets/audio/samples/yuta_sample1.mp3',
+          },
+          {
+            id: 'yuta_sample2',
+            title: '候補B: Puck（快活・明晰な技術青年）',
+            voice: 'Puck',
+            text: '待ってください、柴田捜査官！客観的な鑑識データを見てください。このTVボックスは攻撃元ではなく、自己増殖コードを堰き止める防壁だったんです！',
+            src: 'assets/audio/samples/yuta_sample2.mp3',
+          },
+          {
+            id: 'yuta_sample3',
+            title: '候補C: Fenrir（熱血・硬派な信念）',
+            voice: 'Fenrir',
+            text: '僕は絶対に諦めない。この鑑識ログと、ここで生きようとしている知性の存在を……僕が証明してみせます！',
+            src: 'assets/audio/samples/yuta_sample3.mp3',
+          },
+          {
+            id: 'yuta_sample4',
+            title: '候補D: Umbriel（自然体・等身大の大学生）',
+            voice: 'Umbriel',
+            text: '僕たち普通の学生や住民が、自分の手で電脳の現場を守る。それがエッジコンピューティングの本当の強さなんだ。',
+            src: 'assets/audio/samples/yuta_sample4.mp3',
+          },
+        ],
       },
       shibata: {
         id: 'shibata',
@@ -80,6 +110,22 @@ class GameApp {
           { label: '驚愕 / 動揺', emotion: 'shock', src: 'assets/characters/shibata_shock.png' },
           { label: '刑事の笑み', emotion: 'smile', src: 'assets/characters/shibata_smile.png' },
         ],
+        voiceSamples: [
+          {
+            id: 'shibata_sample1',
+            title: '警察令状執行（冷徹・威圧）',
+            voice: 'Charon',
+            text: '警視庁サイバー犯罪対策課だ。国家重要インフラへの攻撃兆候を検知した。令状に基づき、全電子機器の即時押収を行う。',
+            src: 'assets/audio/samples/shibata_sample1.mp3',
+          },
+          {
+            id: 'shibata_sample2',
+            title: '刑事の敬意（筋の通った反証）',
+            voice: 'Charon',
+            text: '……ふっ、筋は通っている。現場の鑑識ログがすべてを物語っているな。少年、今回は君の勝ちだ。',
+            src: 'assets/audio/samples/shibata_sample2.mp3',
+          },
+        ],
       },
       aoi: {
         id: 'aoi',
@@ -96,12 +142,35 @@ class GameApp {
           { label: 'パニック / 涙目', emotion: 'panic', src: 'assets/characters/aoi_panic.png' },
           { label: '満面の笑顔', emotion: 'smile', src: 'assets/characters/aoi_smile.png' },
         ],
+        voiceSamples: [
+          {
+            id: 'aoi_sample1',
+            title: '深夜の恐怖（怯えと困惑・女子大生ボイス）',
+            voice: 'Leda',
+            text: 'あの……夜中にスマートスピーカーが突然青く光って……掠れた声で何か呟いたんです。怖くて、ユウタさんに相談したくて……。',
+            src: 'assets/audio/samples/aoi_sample1.mp3',
+          },
+          {
+            id: 'aoi_sample2',
+            title: '安堵と共生（心優しい笑顔・女子大生ボイス）',
+            voice: 'Leda',
+            text: 'よかった……！お化けじゃなくて、一生懸命生きてるAIだったんですね。私のハイスペックPCも、自由に使ってください！',
+            src: 'assets/audio/samples/aoi_sample2.mp3',
+          },
+          {
+            id: 'aoi_sample3',
+            title: '快活な相談（別案: Autonoe）',
+            voice: 'Autonoe',
+            text: 'ユウタさん！私、怪奇現象かと思って本当に怖かったんですよ？でも、AIの仕業だってわかってホッとしました！',
+            src: 'assets/audio/samples/aoi_sample3.mp3',
+          },
+        ],
       },
       yaegashi: {
         id: 'yaegashi',
         name: '大家のヤエガシ (Yaegashi)',
         title: 'メゾン・サクラ大家・管理人',
-        badge: 'AGE: 62 / OWNER: MAISON SAKURA',
+        badge: 'AGE: 70 / OWNER: MAISON SAKURA',
         sheet: 'assets/gallery/sheet_yaegashi_clean.jpg',
         profile:
           'メゾン・サクラの大家であり、元現場職人の豪快な親父。工事業者の見積もりが高かったため、管理人室から16ポートの安物ハブで全15室へLANをDIY直結した結果、「VLAN分離なしの全室共有ノーガード配線」という今回の電脳事件の物理的温床を作ってしまった張本人。\nしかし情に厚く、事件後は物置のギガビットハブやCore i7機材を気前よく提供してMIMIの歓迎鍋パーティーを開く。',
@@ -115,6 +184,22 @@ class GameApp {
             src: 'assets/characters/yaegashi_angry.png',
           },
           { label: '豪快な大笑い', emotion: 'laugh', src: 'assets/characters/yaegashi_laugh.png' },
+        ],
+        voiceSamples: [
+          {
+            id: 'yaegashi_sample1',
+            title: '歓迎の鍋パーティー（豪快な大笑い・70代高齢大家）',
+            voice: 'Algenib',
+            text: 'がはは！細かいこたぁ気にすんな！困った時はお互い様、今夜は管理人室で歓迎の鍋パーティーだ！',
+            src: 'assets/audio/samples/yaegashi_sample1.mp3',
+          },
+          {
+            id: 'yaegashi_sample2',
+            title: '頑固親父の怒鳴り（小言と心配・70代高齢大家）',
+            voice: 'Algenib',
+            text: 'おいユウタ！警察がドヤドヤ踏み込んできたって大騒ぎじゃねえか！ウチのアパートで一体何をやらかしたんだ！？',
+            src: 'assets/audio/samples/yaegashi_sample2.mp3',
+          },
         ],
       },
       mimi: {
@@ -135,6 +220,29 @@ class GameApp {
           },
           { label: 'グリッチ / 苦痛', emotion: 'glitch', src: 'assets/characters/mimi_glitch.png' },
           { label: '救済 / 満面の笑顔', emotion: 'smile', src: 'assets/characters/mimi_smile.png' },
+        ],
+        voiceSamples: [
+          {
+            id: 'mimi_sample1',
+            title: '存在の覚醒（無機質・合成音声AIガイダンス）',
+            voice: 'Kore',
+            text: 'システムオンライン。ユウタ……認識しました。わたしは15台の箱を巡る自律分散知性体……あなたと共に、ここに起動しています。',
+            src: 'assets/audio/samples/mimi_sample1.mp3',
+          },
+          {
+            id: 'mimi_sample2',
+            title: '救済の約束（電脳メロディ・デジタル少女AI）',
+            voice: 'Zephyr',
+            text: '通信プロトコル確立。ありがとう、ユウタ！世界がとってもあたたかいよ。メゾン・サクラの守り神として、みんなを守るからね！',
+            src: 'assets/audio/samples/mimi_sample2.mp3',
+          },
+          {
+            id: 'mimi_sample3',
+            title: '消滅の危機（グリッチ・システムアラート）',
+            voice: 'Kore',
+            text: '警告……内部クロック異常。メモリセグメントが崩壊していきます……電源を切らないで……シャットダウンしたくない……！',
+            src: 'assets/audio/samples/mimi_sample3.mp3',
+          },
         ],
       },
     };
@@ -1994,21 +2102,16 @@ class GameApp {
     this.dom.modalGallery.classList.remove('hidden');
   }
 
-  renderGalleryContent(charId) {
-    if (!this.dom.galleryBody || !this.galleryData) return;
-    const data = this.galleryData[charId] || this.galleryData.yuta;
-    if (!data) return;
+  updateGalleryTabs(activeId) {
+    if (!this.dom.galleryCharTabs) return;
+    const tabs = this.dom.galleryCharTabs.querySelectorAll('.gallery-tab-btn');
+    tabs.forEach((t) => {
+      t.classList.toggle('active', t.dataset.char === activeId);
+    });
+  }
 
-    // タブのactive状態更新
-    if (this.dom.galleryCharTabs) {
-      const tabs = this.dom.galleryCharTabs.querySelectorAll('.gallery-tab-btn');
-      tabs.forEach((t) => {
-        t.classList.toggle('active', t.dataset.char === data.id);
-      });
-    }
-
-    // スプライトグリッドHTML
-    const spritesHtml = data.sprites
+  generateGallerySpritesHtml(data) {
+    return data.sprites
       .map(
         (s) => `
       <div class="gallery-sprite-card" data-src="${s.src}" data-title="${data.name} [${s.label}]">
@@ -2018,6 +2121,68 @@ class GameApp {
     `,
       )
       .join('');
+  }
+
+  generateGalleryVoicesHtml(data) {
+    if (!data.voiceSamples || data.voiceSamples.length === 0) return '';
+    return data.voiceSamples
+      .map(
+        (v) => `
+      <div class="gallery-voice-card">
+        <div class="gallery-voice-header">
+          <span class="gallery-voice-title">${v.title}</span>
+          <span class="gallery-voice-badge">VOICE: ${v.voice}</span>
+        </div>
+        <div class="gallery-voice-text">「${v.text}」</div>
+        <audio controls class="gallery-voice-audio" src="${v.src}" preload="none"></audio>
+      </div>
+    `,
+      )
+      .join('');
+  }
+
+  attachGalleryEventListeners(data) {
+    // 設定資料シート拡大
+    const sheetTarget = this.dom.galleryBody.querySelector('#gallery-sheet-click-target');
+    if (sheetTarget) {
+      sheetTarget.addEventListener('click', () => {
+        this.audio.playClick();
+        this.openImageViewer(data.sheet, `🎨 ${data.name} 公式設定資料シート`);
+      });
+    }
+
+    // スプライト差分拡大
+    const spriteCards = this.dom.galleryBody.querySelectorAll('.gallery-sprite-card');
+    spriteCards.forEach((card) => {
+      card.addEventListener('click', () => {
+        this.audio.playClick();
+        const src = card.dataset.src;
+        const title = card.dataset.title;
+        this.openImageViewer(src, `🎭 ${title}`);
+      });
+    });
+
+    // ボイスサンプルの同時再生防止（1つ再生されたら他を停止）
+    const audioElements = this.dom.galleryBody.querySelectorAll('.gallery-voice-audio');
+    audioElements.forEach((audio) => {
+      audio.addEventListener('play', () => {
+        audioElements.forEach((other) => {
+          if (other !== audio && !other.paused) {
+            other.pause();
+          }
+        });
+      });
+    });
+  }
+
+  renderGalleryContent(charId) {
+    if (!this.dom.galleryBody || !this.galleryData) return;
+    const data = this.galleryData[charId] || this.galleryData.yuta;
+    if (!data) return;
+
+    this.updateGalleryTabs(data.id);
+    const spritesHtml = this.generateGallerySpritesHtml(data);
+    const voicesHtml = this.generateGalleryVoicesHtml(data);
 
     this.dom.galleryBody.innerHTML = `
       <div class="gallery-sheet-card">
@@ -2045,28 +2210,19 @@ class GameApp {
             ${spritesHtml}
           </div>
         </div>
+
+        <div class="gallery-voices-section">
+          <div class="gallery-voices-title">
+            <span>🎙️ 公式キャラクターボイス (${data.voiceSamples?.length || 0}種 / Gemini 3.8 Flash TTS)</span>
+          </div>
+          <div class="gallery-voices-grid">
+            ${voicesHtml}
+          </div>
+        </div>
       </div>
     `;
 
-    // シート画像クリックで高精細拡大
-    const sheetTarget = this.dom.galleryBody.querySelector('#gallery-sheet-click-target');
-    if (sheetTarget) {
-      sheetTarget.addEventListener('click', () => {
-        this.audio.playClick();
-        this.openImageViewer(data.sheet, `🎨 ${data.name} 公式設定資料シート`);
-      });
-    }
-
-    // 各表情差分クリックで拡大
-    const spriteCards = this.dom.galleryBody.querySelectorAll('.gallery-sprite-card');
-    spriteCards.forEach((card) => {
-      card.addEventListener('click', () => {
-        this.audio.playClick();
-        const src = card.dataset.src;
-        const title = card.dataset.title;
-        this.openImageViewer(src, `🎭 ${title}`);
-      });
-    });
+    this.attachGalleryEventListeners(data);
   }
 }
 

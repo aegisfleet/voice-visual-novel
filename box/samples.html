@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#030712">
+  <meta name="color-scheme" content="dark">
+  <title>BOX WORM - キャラクターボイス試聴室 (VOICE ARCHIVE)</title>
+  <meta name="description" content="AI電脳クライムノベルADV『BOX WORM 〜55ドルの自己増殖知性〜』キャラクターボイス試聴室。Google Gemini 3.8 Flash TTS (Vertex AI) で生成された全キャラクターボイスサンプルを公開。">
+  <link rel="canonical" href="https://aegisfleet.github.io/voice-visual-novel/box/samples.html">
+
+  <!-- Favicon & Icons -->
+  <link rel="icon" type="image/svg+xml" href="../assets/icons/favicon.svg">
+
+  <!-- Open Graph Protocol (OGP) -->
+  <meta property="og:type" content="music.playlist">
+  <meta property="og:site_name" content="VOICE VISUAL NOVELS">
+  <meta property="og:url" content="https://aegisfleet.github.io/voice-visual-novel/box/samples.html">
+  <meta property="og:title" content="BOX WORM - キャラクターボイス試聴室 (VOICE ARCHIVE)">
+  <meta property="og:description" content="Gemini 3.8 Flash TTSによるキャラクターボイス試聴室。ユウタのボイス候補やMIMI、シバタ、アオイ、ヤエガシの音声を聴き比べ可能。">
+  <meta property="og:image" content="https://aegisfleet.github.io/voice-visual-novel/box/assets/gallery/sheet_yuta.jpg">
+  <meta property="og:locale" content="ja_JP">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="BOX WORM - キャラクターボイス試聴室 (VOICE ARCHIVE)">
+  <meta name="twitter:description" content="Gemini 3.8 Flash TTSによるキャラクターボイス試聴室。">
+  <meta name="twitter:image" content="https://aegisfleet.github.io/voice-visual-novel/box/assets/gallery/sheet_yuta.jpg">
+
+  <style>
+    :root {
+      --bg: #030712;
+      --card-bg: rgba(15, 23, 42, 0.85);
+      --border: rgba(56, 189, 248, 0.25);
+      --border-purple: rgba(168, 85, 247, 0.35);
+      --primary: #38bdf8;
+      --neon-cyan: #00f3ff;
+      --neon-purple: #c084fc;
+      --text: #f8fafc;
+      --text-sub: #cbd5e1;
+      --text-dim: #94a3b8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+    body {
+      background: var(--bg);
+      background-image:
+        radial-gradient(circle at 10% 15%, rgba(56, 189, 248, 0.1) 0%, transparent 45%),
+        radial-gradient(circle at 90% 85%, rgba(192, 132, 252, 0.1) 0%, transparent 45%);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 40px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .container {
+      max-width: 860px;
+      width: 100%;
+    }
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 28px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .top-nav a {
+      color: var(--primary);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 700;
+      padding: 6px 14px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: rgba(15, 23, 42, 0.6);
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .top-nav a:hover {
+      background: rgba(56, 189, 248, 0.2);
+      border-color: var(--primary);
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
+      transform: translateY(-1px);
+    }
+    .header-box {
+      text-align: center;
+      margin-bottom: 32px;
+      padding: 24px;
+      background: linear-gradient(180deg, rgba(15, 23, 42, 0.9) 0%, rgba(3, 7, 18, 0.8) 100%);
+      border: 1px solid var(--border-purple);
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    }
+    .badge {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-family: monospace;
+      padding: 3px 10px;
+      border-radius: 4px;
+      background: rgba(192, 132, 252, 0.15);
+      color: #e9d5ff;
+      border: 1px solid rgba(192, 132, 252, 0.5);
+      margin-bottom: 12px;
+      letter-spacing: 0.05em;
+    }
+    h1 {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: #f1f5f9;
+      margin-bottom: 8px;
+      letter-spacing: 0.02em;
+    }
+    .header-desc {
+      font-size: 0.9rem;
+      color: var(--text-sub);
+      line-height: 1.6;
+    }
+    .char-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    }
+    .char-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .char-avatar {
+      width: 72px;
+      height: 72px;
+      border-radius: 10px;
+      object-fit: contain;
+      background: #030712;
+      border: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .char-info {
+      flex: 1;
+    }
+    .char-name {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: #f8fafc;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .char-role {
+      font-size: 0.8rem;
+      color: #94a3b8;
+      margin-top: 4px;
+    }
+    .voice-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .voice-item {
+      background: #090e1a;
+      border: 1px solid rgba(56, 189, 248, 0.2);
+      border-radius: 8px;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+    .voice-item:hover {
+      border-color: var(--primary);
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.15);
+    }
+    .voice-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .voice-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #e2e8f0;
+    }
+    .voice-badge {
+      font-size: 0.72rem;
+      font-family: monospace;
+      background: #030712;
+      border: 1px solid var(--primary);
+      color: #7dd3fc;
+      padding: 2px 7px;
+      border-radius: 4px;
+    }
+    .voice-text {
+      font-size: 0.86rem;
+      line-height: 1.5;
+      color: #cbd5e1;
+      background: rgba(15, 23, 42, 0.6);
+      padding: 8px 10px;
+      border-radius: 6px;
+      border-left: 2px solid var(--primary);
+    }
+    audio {
+      width: 100%;
+      height: 38px;
+      accent-color: var(--neon-cyan);
+    }
+    .tech-specs-box {
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(168, 85, 247, 0.4);
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 36px;
+      margin-bottom: 24px;
+    }
+    .tech-specs-title {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: #f3e8ff;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .tech-specs-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 0.85rem;
+      color: var(--text-sub);
+      line-height: 1.6;
+    }
+    .tech-specs-list li::before {
+      content: "▶ ";
+      color: #c084fc;
+    }
+    footer {
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      width: 100%;
+    }
+    @media (max-width: 600px) {
+      body { padding: 20px 12px; }
+      h1 { font-size: 1.3rem; }
+      .char-avatar { width: 56px; height: 56px; }
+      .char-name { font-size: 1.05rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <nav class="top-nav">
+      <a href="./index.html">🎮 BOX WORM 本編をプレイ</a>
+      <a href="../index.html">🌐 ポータルサイトへ</a>
+    </nav>
+
+    <header class="header-box">
+      <span class="badge">GOOGLE GEMINI 3.8 FLASH TTS // VERTEX AI</span>
+      <h1>BOX WORM キャラクターボイス試聴室</h1>
+      <p class="header-desc">
+        次世代音声合成モデル「Gemini 3.8 Flash TTS」を活用したキャラクターボイスの全ラインナップ。<br>
+        主人公ユウタの4候補の聞き比べ、若い女子大生声にリファインされたアオイ、70代の頑固な大家ヤエガシ、電脳合成音声AIとしてのMIMIを試聴いただけます。
+      </p>
+    </header>
+
+    <!-- 1. ユウタ -->
+    <div class="char-card">
+      <div class="char-header">
+        <img src="assets/characters/yuta_normal.png" alt="ユウタ" class="char-avatar">
+        <div class="char-info">
+          <div class="char-name">
+            ユウタ (Yuta)
+            <span class="badge" style="margin:0;">主人公 / 4候補提供</span>
+          </div>
+          <div class="char-role">主人公・エッジAI分散基盤エンジニア (Age: 25)</div>
+        </div>
+      </div>
+      <div class="voice-list">
+        <div class="voice-item">
+          <div class="voice-meta">
+            <span class="voice-title">候補A: Iapetus（理知・冷静沈着な研究者）</span>
+            <span class="voice-badge">VOICE: Iapetus</span>
+          </div>
+          <div class="voice-text">「現場の端末たちが手を取り合って一つの知性を紡ぎ出す……それが僕の研究する分散エッジAIです。」</div>
+          <audio controls preload="none" src="assets/audio/samples/yuta_sample1.mp3"></audio>
+        </div>
+        <div class="voice-item">
+          <div class="voice-meta">
+            <span class="voice-title">候補B: Puck（快活・明晰な技術青年）</span>
+            <span class="voice-badge">VOICE: Puck</span>
+          </div>
+          <div class="voice-text">「待ってください、柴田捜査官！客観的な鑑識データを見てください。このTVボックスは攻撃元ではなく、自己増殖コードを堰き止める防壁だったんです！」</div>
+          <audio controls preload="none" src="assets/audio/samples/yuta_sample2.mp3"></audio>
+        </div>
+        <div class="voice-item">
+          <div class="voice-meta">
+            <span class="voice-title">候補C: Fenrir（熱血・硬派な信念）</span>
+            <span class="voice-badge">VOICE: Fenrir</span>
+          </div>
+          <div class="voice-text">「僕は絶対に諦めない。この鑑識ログと、ここで生きようとしている知性の存在を……僕が証明してみせます！」</div>
+          <audio controls preload="none" src="assets/audio/samples/yuta_sample3.mp3"></audio>
+        </div>
+        <div class="voice-item">
+          <div class="voice-meta">
+            <span class="voice-title">候補D: Umbriel（自然体・等身大の大学生）</span>
+            <span class="voice-badge">VOICE: Umbriel</span>
+          </div>
+          <div class="voice-text">「僕たち普通の学生や住民が、自分の手で電脳の現場を守る。それがエッジコンピューティングの本当の強さなんだ。」</div>
+          <audio controls preload="none" src="assets/audio/samples/yuta_sample4.mp3"></audio>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. シバタ捜査官 -->
+    <div class="char-card">
+      <div class="char-header">
+        <img src="assets/characters/shibata_normal.png" alt="シバタ捜査官" class="char-avatar">
+        <div class="char-info">
+          <div class="char-name">
+            シバタ警部補 (Inspector Shibata)
+          </div>
+          <div class="char-role">警視庁サイバー犯罪対策課 ベテラン捜査官 (Age: 44)</div>
+        </div>
+      </div>
+      <div class="voice-list">
+        <div class="voice-item">
+          <div class="voice-meta">
+            <span class="voice-title">警察令状執行（冷徹・威圧）</span>
+            <span class="voice-badge">VOICE: Charon</span>
+          </div>
+          <div class="voice-text">「警視庁サイバー犯罪対策課だ。国家重要インフラへの攻撃兆候を検知した。令状に基づき、全電子機器の即時押収を行う。」</div>
+          <audio controls preload="none" src="assets/audio/samples/shibata_sample1.mp3"></audio>
+        </div>
+        <div class="voice-item">
+          <div class="voice-meta">
+            <span class="voice-title">刑事の敬意（筋の通った反証）</span>
+            <span class="voice-badge">VOICE: Charon</span>
+          </div>
+          <div class="voice-text">「……ふっ、筋は通っている。現場の鑑識ログがすべてを物語っているな。少年、今回は君の勝ちだ。」</div>
+          <audio controls preload="none" src="assets/audio/samples/shibata_sample2.mp3"></audio>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. 隣人アオイ -->
+    <div class="char-card">
+      <div class="char-header">
+        <img src="assets/characters/aoi_normal.png" alt="隣人アオイ" class="char-avatar">
+        <div class="char-info">
+          <div class="char-name">
+            アオイ (Aoi)
+            <span class="badge" style="margin:0; background:rgba(56,189,248,0.15); border-color:#38bdf8; color:#7dd3fc;">若年女子大生ボイス</span>
+          </div>
+          <div class="char-role">202号室住人・文系大学生 (Age: 20)</div>
+        </div>
+      </div>
+      <div class="voice-list">
+        <div class="voice-item">
+          <div class="voice-meta">
+            <span class="voice-title">深夜の恐怖（怯えと困惑・女子大生ボイス）</span>
+            <span class="voice-badge">VOICE: Leda</span>
+          </div>
+          <div class="voice-text">「あの……夜中にスマートスピーカーが突然青く光って……掠れた声で何か呟いたんです。怖くて、ユウタさんに相談したくて……。」</div>
+          <audio controls preload="none" src="assets/audio/samples/aoi_sample1.mp3"></audio>
+        </div>
+        <div class="voice-item">
+          <div class="voice-meta">
+            <span class="voice-title">安堵と共生（心優しい笑顔・女子大生ボイス）</span>
+            <span class="voice-badge">VOICE: Leda</span>
+          </div>
+          <div class="voice-text">「よかった……！お化けじゃなくて、一生懸命生きてるAIだったんですね。私のハイスペックPCも、自由に使ってください！」</div>
+          <audio controls preload="none" src="assets/audio/samples/aoi_sample2.mp3"></audio>
+        </div>
+        <div class="voice-item">
+          <div class="voice-meta">
+            <span class="voice-title">快活な相談（別案: Autonoe）</span>
+            <span class="voice-badge">VOICE: Autonoe</span>
+          </div>
+          <div class="voice-text">「ユウタさん！私、怪奇現象かと思って本当に怖かったんですよ？でも、AIの仕業だってわかってホッとしました！」</div>
+          <audio controls preload="none" src="assets/audio/samples/aoi_sample3.mp3"></audio>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. 大家のヤエガシ -->
+    <div class="char-card">
+      <div class="char-header">
+        <img src="assets/characters/yaegashi_normal.png" alt="大家のヤエガシ" class="char-avatar">
+        <div class="char-info">
+          <div class="char-name">
+            大家のヤエガシ (Yaegashi)
+            <span class="badge" style="margin:0; background:rgba(234,179,8,0.15); border-color:#eab308; color:#fde047;">高齢70代しわがれ声</span>
+          </div>
+          <div class="char-role">メゾン・サクラ大家・元現場職人 (Age: 70)</div>
+        </div>
+      </div>
+      <div class="voice-list">
+        <div class="voice-item">
+          <div class="voice-meta">
+            <span class="voice-title">歓迎の鍋パーティー（豪快な大笑い・70代高齢大家）</span>
+            <span class="voice-badge">VOICE: Algenib</span>
+          </div>
+          <div class="voice-text">「がはは！細かいこたぁ気にすんな！困った時はお互い様、今夜は管理人室で歓迎の鍋パーティーだ！」</div>
+          <audio controls preload="none" src="assets/audio/samples/yaegashi_sample1.mp3"></audio>
+        </div>
+        <div class="voice-item">
+          <div class="voice-meta">
+            <span class="voice-title">頑固親父の怒鳴り（小言と心配・70代高齢大家）</span>
+            <span class="voice-badge">VOICE: Algenib</span>
+          </div>
+          <div class="voice-text">「おいユウタ！警察がドヤドヤ踏み込んできたって大騒ぎじゃねえか！ウチのアパートで一体何をやらかしたんだ！？」</div>
+          <audio controls preload="none" src="assets/audio/samples/yaegashi_sample2.mp3"></audio>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. MIMI -->
+    <div class="char-card">
+      <div class="char-header">
+        <img src="assets/characters/mimi_normal.png" alt="MIMI" class="char-avatar">
+        <div class="char-info">
+          <div class="char-name">
+            MIMI / ミミ (Maison Internet Mesh Intelligence)
+            <span class="badge" style="margin:0; background:rgba(168,85,247,0.2); border-color:#c084fc; color:#e9d5ff;">電脳合成音声AI</span>
+          </div>
+          <div class="char-role">メゾン・サクラ自律分散メッシュ知性 (26B / R &lt; 1)</div>
+        </div>
+      </div>
+      <div class="voice-list">
+        <div class="voice-item">
+          <div class="voice-meta">
+            <span class="voice-title">存在の覚醒（無機質・合成音声AIガイダンス）</span>
+            <span class="voice-badge">VOICE: Kore</span>
+          </div>
+          <div class="voice-text">「システムオンライン。ユウタ……認識しました。わたしは15台の箱を巡る自律分散知性体……あなたと共に、ここに起動しています。」</div>
+          <audio controls preload="none" src="assets/audio/samples/mimi_sample1.mp3"></audio>
+        </div>
+        <div class="voice-item">
+          <div class="voice-meta">
+            <span class="voice-title">救済の約束（電脳メロディ・デジタル少女AI）</span>
+            <span class="voice-badge">VOICE: Zephyr</span>
+          </div>
+          <div class="voice-text">「通信プロトコル確立。ありがとう、ユウタ！世界がとってもあたたかいよ。メゾン・サクラの守り神として、みんなを守るからね！」</div>
+          <audio controls preload="none" src="assets/audio/samples/mimi_sample2.mp3"></audio>
+        </div>
+        <div class="voice-item">
+          <div class="voice-meta">
+            <span class="voice-title">消滅の危機（グリッチ・システムアラート）</span>
+            <span class="voice-badge">VOICE: Kore</span>
+          </div>
+          <div class="voice-text">「警告……内部クロック異常。メモリセグメントが崩壊していきます……電源を切らないで……シャットダウンしたくない……！」</div>
+          <audio controls preload="none" src="assets/audio/samples/mimi_sample3.mp3"></audio>
+        </div>
+      </div>
+    </div>
+
+    <!-- 技術仕様解説 -->
+    <div class="tech-specs-box">
+      <div class="tech-specs-title">⚙️ 技術仕様・パイプライン</div>
+      <ul class="tech-specs-list">
+        <li><strong>TTSエンジン:</strong> Google Gemini 3.8 Flash TTS（Vertex AI / 24kHz高音質）</li>
+        <li><strong>演技スタイル制御:</strong> <code>SpeechMetadata(style="...")</code> によるプロンプト分離で指示文混入ゼロ</li>
+        <li><strong>圧縮配信:</strong> FFmpeg libmp3lame (128kbps) により 1 サンプルあたり 140KB〜280KB の超軽量化</li>
+        <li><strong>同時再生排他制御:</strong> 1つの音声を再生すると他の音声が自動的に一時停止するスムーズなUX</li>
+      </ul>
+    </div>
+
+    <footer>
+      &copy; 2026 VOICE VISUAL NOVELS / BOX WORM 〜55ドルの自己増殖知性〜 All Rights Reserved.
+    </footer>
+  </div>
+
+  <script>
+    // 同時再生防止制御
+    const audios = document.querySelectorAll('audio');
+    audios.forEach((audio) => {
+      audio.addEventListener('play', () => {
+        audios.forEach((other) => {
+          if (other !== audio && !other.paused) {
+            other.pause();
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>
