@@ -640,10 +640,7 @@ class GameApp {
       this.audio.playClick();
       if (this.currentEndingType === 'gameover' || this.currentEndingType === 'game_over') {
         this.startDebate();
-      } else if (
-        this.currentEndingType === 'loop1_normal' ||
-        this.currentEndingType === 'loop1_bad'
-      ) {
+      } else if (this.currentEndingType === 'loop1_normal') {
         this.audio.startBgm('ambient');
         this.startPrologue();
       } else {
@@ -1966,7 +1963,7 @@ class GameApp {
         () => {
           this.audio.playShock();
           this.state.markLoop1Cleared();
-          const ending = this.scenario.endings.loop1_normal || this.scenario.endings.loop1_bad;
+          const ending = this.scenario.endings.loop1_normal;
           this.showEnding(ending);
         },
         false,
@@ -1983,6 +1980,41 @@ class GameApp {
   // ----------------------------------------------------
   // エンディング画面
   // ----------------------------------------------------
+  // エンディング画面のUI装飾とボタン状態の更新
+  renderEndingContent(endingData) {
+    const hasAnyClear = this.state.isClearedFirstLoop() || this.state.hasClearedTrueEnd;
+
+    if (endingData.type === 'loop1_normal') {
+      this.dom.endingIcon.textContent = '📘';
+      this.dom.endingUnlockedBanner.classList.remove('hidden');
+      this.dom.endingUnlockedBanner.innerHTML =
+        '🔓 <strong>第一幕クリア！</strong><br>【Phase 2: 深層解決編】および特典【🎨 機密設定資料集 (EXTRAS)】が解放された！';
+      this.dom.btnEndingNext.textContent = '⚡ 電脳ログを解析し、深層真実へ挑む';
+      if (this.dom.btnEndingExplore) this.dom.btnEndingExplore.classList.add('hidden');
+      if (this.dom.btnEndingGallery) this.dom.btnEndingGallery.classList.remove('hidden');
+      return;
+    }
+
+    if (endingData.type === 'true') {
+      this.dom.endingIcon.textContent = '🌟';
+      this.dom.endingUnlockedBanner.classList.remove('hidden');
+      this.dom.endingUnlockedBanner.innerHTML =
+        '🏆 <strong>祝・TRUE END達成！</strong><br>自律電脳生命（MIMI）との共生契約締結＆【🎨 機密設定資料集 (EXTRAS)】全アセット完全解放！';
+      this.dom.btnEndingNext.textContent = 'タイトル画面へ戻る';
+      if (this.dom.btnEndingExplore) this.dom.btnEndingExplore.classList.add('hidden');
+      if (this.dom.btnEndingGallery) this.dom.btnEndingGallery.classList.remove('hidden');
+      return;
+    }
+
+    this.dom.endingIcon.textContent = '💥';
+    this.dom.endingUnlockedBanner.classList.add('hidden');
+    this.dom.btnEndingNext.textContent = '⚖️ 立証をやり直す (リトライ)';
+    if (this.dom.btnEndingExplore) this.dom.btnEndingExplore.classList.remove('hidden');
+    if (this.dom.btnEndingGallery) {
+      this.dom.btnEndingGallery.classList.toggle('hidden', !hasAnyClear);
+    }
+  }
+
   showEnding(endingData) {
     if (this.dom.dialogueStage) this.dom.dialogueStage.classList.add('hidden');
     document.body.classList.remove('dialogue-active');
@@ -1995,40 +2027,12 @@ class GameApp {
     this.dom.endingSub.textContent = endingData.sub;
     this.dom.endingDesc.textContent = endingData.desc;
 
-    const hasAnyClear = this.state.isClearedFirstLoop() || this.state.hasClearedTrueEnd;
+    this.renderEndingContent(endingData);
 
-    if (endingData.type === 'loop1_normal' || endingData.type === 'loop1_bad') {
-      this.dom.endingIcon.textContent = '📘';
-      this.dom.endingUnlockedBanner.classList.remove('hidden');
-      this.dom.endingUnlockedBanner.innerHTML =
-        '🔓 <strong>第一幕クリア！</strong><br>【Phase 2: 深層解決編】および特典【🎨 機密設定資料集 (EXTRAS)】が解放された！';
-      this.dom.btnEndingNext.textContent = '⚡ 電脳ログを解析し、深層真実へ挑む';
-      if (this.dom.btnEndingExplore) this.dom.btnEndingExplore.classList.add('hidden');
-      if (this.dom.btnEndingGallery) this.dom.btnEndingGallery.classList.remove('hidden');
-    } else if (endingData.type === 'true') {
-      this.dom.endingIcon.textContent = '🌟';
-      this.dom.endingUnlockedBanner.classList.remove('hidden');
-      this.dom.endingUnlockedBanner.innerHTML =
-        '🏆 <strong>祝・TRUE END達成！</strong><br>自律電脳生命（MIMI）との共生契約締結＆【🎨 機密設定資料集 (EXTRAS)】全アセット完全解放！';
-      this.dom.btnEndingNext.textContent = 'タイトル画面へ戻る';
-      if (this.dom.btnEndingExplore) this.dom.btnEndingExplore.classList.add('hidden');
-      if (this.dom.btnEndingGallery) this.dom.btnEndingGallery.classList.remove('hidden');
-    } else {
-      this.dom.endingIcon.textContent = '💥';
-      this.dom.endingUnlockedBanner.classList.add('hidden');
-      this.dom.btnEndingNext.textContent = '⚖️ 立証をやり直す (リトライ)';
-      if (this.dom.btnEndingExplore) this.dom.btnEndingExplore.classList.remove('hidden');
-      if (this.dom.btnEndingGallery) {
-        if (hasAnyClear) {
-          this.dom.btnEndingGallery.classList.remove('hidden');
-        } else {
-          this.dom.btnEndingGallery.classList.add('hidden');
-        }
-      }
-    }
-
-    // 読み上げ
-    this.audio.speak('ナレーション', endingData.title + '。' + endingData.desc);
+    // 読み上げ（生成済み高音質MP3があれば優先再生、なければフォールバック）
+    this.audio.speak('ナレーション', endingData.title + '。' + endingData.desc, {
+      audioUrl: endingData.voiceUrl || null,
+    });
   }
 
   returnToTitle() {
