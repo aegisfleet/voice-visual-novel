@@ -1112,8 +1112,10 @@ body.dialogue-active .explore-pin {
   cursor: zoom-in;
   overflow: hidden;
   border-radius: 6px;
-  background: #000;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: radial-gradient(circle at center, rgba(0, 243, 255, 0.08) 0%, rgba(5, 10, 20, 0.95) 100%);
+  border: 1px solid rgba(0, 243, 255, 0.3);
+  padding: 8px;
+  box-sizing: border-box;
 }
 
 .dialogue-illustration-img {
@@ -1615,21 +1617,29 @@ body.dialogue-active .explore-pin {
   border-radius: 8px;
   overflow: hidden;
   cursor: zoom-in;
-  background: rgba(0, 0, 0, 0.6);
+  background: radial-gradient(circle at center, rgba(0, 243, 255, 0.08) 0%, rgba(5, 10, 20, 0.95) 100%);
   position: relative;
+  height: 165px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  box-sizing: border-box;
   transition: all 0.2s ease;
 }
 .ev-modal-diagram-wrap:hover {
   border-color: var(--neon-cyan);
-  box-shadow: 0 0 15px rgba(0, 243, 255, 0.3);
+  box-shadow: 0 0 16px rgba(0, 243, 255, 0.35);
+  background: radial-gradient(circle at center, rgba(0, 243, 255, 0.14) 0%, rgba(5, 10, 20, 0.98) 100%);
 }
 .ev-modal-diagram-img {
   width: 100%;
-  height: auto;
-  max-height: 170px;
-  object-fit: cover;
-  object-position: top center;
+  height: 100%;
+  max-height: 148px;
+  object-fit: contain;
+  object-position: center;
   display: block;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.6));
 }
 .ev-diagram-zoom-badge {
   position: absolute;
@@ -1671,17 +1681,20 @@ body.dialogue-active .explore-pin {
   justify-content: center;
   align-items: center;
   overflow: auto;
-  background: #000;
+  background: radial-gradient(circle at center, rgba(0, 243, 255, 0.06) 0%, rgba(5, 10, 20, 0.98) 100%);
   border-radius: 6px;
   border: 1px solid var(--border-cyan);
-  padding: 4px;
+  padding: 10px;
+  box-sizing: border-box;
 }
 .image-viewer-img {
   max-width: 100%;
   max-height: 74vh;
   max-height: 74dvh;
   object-fit: contain;
+  object-position: center;
   display: block;
+  filter: drop-shadow(0 6px 20px rgba(0, 0, 0, 0.7));
 }
 
 .backlog-item {
