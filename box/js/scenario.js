@@ -794,13 +794,13 @@ window.SCENARIO_DATA = {
     },
     {
       speaker: 'ユウタ',
-      emotion: 'confident',
+      emotion: 'normal',
       text: '「住民がネット動画を見るためのただの市販プレイヤーで、俺は改造も特別なアプリも一切入れていません！」',
       voiceUrl: 'assets/audio/prologue/prologue_16.mp3',
     },
     {
       speaker: 'ユウタ',
-      emotion: 'shock',
+      emotion: 'normal',
       text: '「昨夜から触ってすらいません！ そんなただの動画プレイヤーが異常発熱したり激しい電磁ノイズを出しているなんて、何かの故障か間違いです！」',
       voiceUrl: 'assets/audio/prologue/prologue_17.mp3',
     },
