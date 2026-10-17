@@ -3,6 +3,9 @@
 .env.local
 .env.*.local
 
+# 音声一時ファイル
+*.wav
+
 # Python
 __pycache__/
 *.py[cod]
