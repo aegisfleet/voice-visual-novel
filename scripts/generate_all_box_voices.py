@@ -51,6 +51,8 @@ STYLE_MIMI = "clear, articulate, gentle ethereal cyber girl, sweet, transparent,
 # 読み仮名・誤読補正辞書
 # ----------------------------------------------------
 PRONUNCIATION_FIXES = {
+    "自室": "じしつ",
+    "安小箱": "格安端末",
     "物々しい": "ものものしい",
     "甲高い": "かんだかい",
     "ArXiv": "アーカイブ",

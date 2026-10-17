@@ -1118,7 +1118,7 @@ window.SCENARIO_DATA = {
           {
             speaker: 'ユウタ',
             shout: true,
-            text: '自室1台を切り離しても何の解決にもなりません！',
+            text: '自分の部屋1台を切り離しても何の解決にもなりません！',
             voiceUrl: 'assets/audio/voice/debate_l1_s2_succ_01.mp3',
           },
           {
@@ -1196,13 +1196,13 @@ window.SCENARIO_DATA = {
           '「だが、所詮は1台55ドルの安物家電だぞ！ 非力なARMプロセッサに、たった4GBのメモリしか積んでいないはずだ！ そんなオモチャのような機械15台で、一体何ができるというんだ！？」',
         opponentVoiceUrl: 'assets/audio/voice/debate_l1_q03.mp3',
         correctEvidenceId: 'tv_box_thermal',
-        hint: '画面は消えているのに、安小箱のCPUと4GBメモリが限界まで過熱している異常なハードウェア状態は？',
+        hint: '画面は消えているのに、格安端末のCPUと4GBメモリが限界まで過熱している異常なハードウェア状態は？',
         successReactions: [
           {
             speaker: 'ユウタ',
             emotion: 'confident',
             shout: true,
-            text: 'その安小箱の物理的な状態を見てください！',
+            text: 'その端末の物理的な状態を見てください！',
             voiceUrl: 'assets/audio/voice/debate_l1_s3_succ_01.mp3',
           },
           {
@@ -1260,7 +1260,7 @@ window.SCENARIO_DATA = {
           {
             speaker: 'ユウタ（心の声）',
             emotion: 'thinking',
-            text: '（⑤ そして、ファンもない安小箱のCPUとメモリが100%限界まで過熱している異常事態……！）',
+            text: '（⑤ そして、ファンもない格安端末のCPUとメモリが100%限界まで過熱している異常事態……！）',
             voiceUrl: 'assets/audio/voice/debate_l1_s3_succ_10.mp3',
           },
           {
@@ -1834,7 +1834,7 @@ window.SCENARIO_DATA = {
       {
         speaker: 'シバタ捜査官',
         emotion: 'smile',
-        text: '「ネットの情報の海から生まれ、55ドルの安小箱に身体を見出した小さな命か。駆除ではなく共生……これこそが新たな時代への回答なのかもしれんな」',
+        text: '「ネットの情報の海から生まれ、55ドルの小さな箱に身体を見出した小さな命か。駆除ではなく共生……これこそが新たな時代への回答なのかもしれんな」',
         voiceUrl: 'assets/audio/voice/epilogue_loop2_03.mp3',
       },
       {

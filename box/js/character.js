@@ -226,7 +226,7 @@ class BoxCharacterController {
   }
 
   preloadAll() {
-    const v = '?v=20261017_rev70';
+    const v = '?v=20261017_rev71';
     const assetList = [];
     Object.values(this.characterImages).forEach((map) => {
       Object.values(map).forEach((src) => {
@@ -248,7 +248,7 @@ class BoxCharacterController {
     if (!charMap) return '';
     const src = charMap[emotion] || charMap.normal || '';
     if (!src) return '';
-    const v = '?v=20261017_rev70';
+    const v = '?v=20261017_rev71';
     return src.includes('?') ? src : `${src}${v}`;
   }
 
