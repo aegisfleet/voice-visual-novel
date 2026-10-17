@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20261017_rev42">
+  <link rel="stylesheet" href="css/style.css?v=20261017_rev43">
 </head>
 <body>
   <div class="bg-grid"></div>
@@ -77,6 +77,9 @@
         <div class="title-actions">
           <button type="button" id="btn-start-game" class="btn-primary">
             🔍 部屋の調査を開始する
+          </button>
+          <button type="button" id="btn-open-gallery" class="btn-gallery" title="クリア後特典：公式設定資料シートと表情差分を閲覧">
+            🎨 機密設定資料集 (EXTRAS)
           </button>
           <button type="button" id="btn-reset-save" class="btn-subtle">
             🗑️ セーブデータを初期化
@@ -162,6 +165,9 @@
         <div class="ending-actions">
           <button type="button" id="btn-ending-explore" class="btn-secondary hidden" title="部屋やアパートを再調査して証拠を集め直す">
             🔍 現場の再調査に戻る（探索再開）
+          </button>
+          <button type="button" id="btn-ending-gallery" class="btn-gallery" title="クリア後特典：公式設定資料集を開く">
+            🎨 機密設定資料集 (EXTRAS)
           </button>
           <button type="button" id="btn-ending-next" class="btn-primary">
             タイトル画面へ戻る
@@ -250,6 +256,32 @@
       </div>
     </div>
 
+    <!-- 機密設定資料集モーダル (ARCHIVE / GALLERY) -->
+    <div id="modal-gallery" class="modal modal-gallery hidden">
+      <div id="backdrop-gallery" class="modal-backdrop"></div>
+      <div class="modal-content modal-content-gallery">
+        <div class="modal-header">
+          <div class="modal-title-wrap">
+            <h3 class="modal-title">🎨 機密設定資料集 (EXTRAS ARCHIVE)</h3>
+            <span class="modal-sub-title">OFFICIAL CHARACTER MODEL SHEETS & EMOTION ASSETS</span>
+          </div>
+          <button type="button" id="btn-close-gallery" class="btn-close">✕</button>
+        </div>
+        <div class="gallery-tabs-wrap">
+          <div class="gallery-character-tabs" id="gallery-char-tabs">
+            <button type="button" class="gallery-tab-btn active" data-char="yuta">ユウタ</button>
+            <button type="button" class="gallery-tab-btn" data-char="shibata">シバタ捜査官</button>
+            <button type="button" class="gallery-tab-btn" data-char="aoi">隣人アオイ</button>
+            <button type="button" class="gallery-tab-btn" data-char="yaegashi">大家のヤエガシ</button>
+            <button type="button" class="gallery-tab-btn" data-char="mimi">MIMI</button>
+          </div>
+        </div>
+        <div class="gallery-body" id="gallery-body">
+          <!-- JSで動的に設定シート・プロフィール・表情差分をレンダリング -->
+        </div>
+      </div>
+    </div>
+
     <!-- 拡大画像ビューアーモーダル (全モーダルの最前面に配置) -->
     <div id="modal-image-viewer" class="modal modal-image-viewer hidden">
       <div id="backdrop-image-viewer" class="modal-backdrop"></div>
@@ -279,10 +311,10 @@
   </div>
 
   <!-- スクリプト群 -->
-  <script src="js/state.js?v=20261017_rev41"></script>
-  <script src="js/audio.js?v=20261017_rev41"></script>
-  <script src="js/character.js?v=20261017_rev41"></script>
-  <script src="js/scenario.js?v=20261017_rev41"></script>
-  <script src="js/app.js?v=20261017_rev41"></script>
+  <script src="js/state.js?v=20261017_rev43"></script>
+  <script src="js/audio.js?v=20261017_rev43"></script>
+  <script src="js/character.js?v=20261017_rev43"></script>
+  <script src="js/scenario.js?v=20261017_rev43"></script>
+  <script src="js/app.js?v=20261017_rev43"></script>
 </body>
 </html>

@@ -9,6 +9,48 @@ class BoxCharacterController {
     this.currentEmotion = 'normal';
     this.bubbleTimeout = null;
 
+    // 各キャラクターの感情差分画像マッピング
+    this.characterImages = {
+      yuta: {
+        normal: 'assets/characters/yuta.png',
+        confident: 'assets/characters/yuta_confident.png',
+        shock: 'assets/characters/yuta_shock.png',
+        smile: 'assets/characters/yuta_smile.png',
+        thinking: 'assets/characters/yuta.png'
+      },
+      shibata: {
+        normal: 'assets/characters/shibata.png',
+        angry: 'assets/characters/shibata_angry.png',
+        shock: 'assets/characters/shibata_shock.png',
+        smile: 'assets/characters/shibata_smile.png',
+        thinking: 'assets/characters/shibata.png'
+      },
+      aoi: {
+        normal: 'assets/characters/aoi.png',
+        panic: 'assets/characters/aoi_panic.png',
+        smile: 'assets/characters/aoi_smile.png',
+        shock: 'assets/characters/aoi_panic.png',
+        thinking: 'assets/characters/aoi.png'
+      },
+      yaegashi: {
+        normal: 'assets/characters/yaegashi.png',
+        angry: 'assets/characters/yaegashi_angry.png',
+        laugh: 'assets/characters/yaegashi_laugh.png',
+        smile: 'assets/characters/yaegashi_laugh.png',
+        shock: 'assets/characters/yaegashi_angry.png',
+        thinking: 'assets/characters/yaegashi.png'
+      },
+      mimi: {
+        normal: 'assets/characters/mimi.png',
+        glitch: 'assets/characters/mimi_glitch.png',
+        panic: 'assets/characters/mimi_glitch.png',
+        smile: 'assets/characters/mimi_smile.png',
+        glow: 'assets/characters/mimi_smile.png',
+        shock: 'assets/characters/mimi_glitch.png',
+        thinking: 'assets/characters/mimi.png'
+      }
+    };
+
     this.speakerMap = {
       'ユウタ': { id: 'yuta', emotion: 'normal' },
       'ユウタ（心の声）': { id: 'yuta', emotion: 'thinking' },
@@ -20,6 +62,7 @@ class BoxCharacterController {
       '隣人アオイ': { id: 'aoi', emotion: 'normal' },
       'ヤエガシ': { id: 'yaegashi', emotion: 'normal' },
       '大家のヤエガシ': { id: 'yaegashi', emotion: 'normal' },
+      '大家': { id: 'yaegashi', emotion: 'normal' },
       'MIMI': { id: 'mimi', emotion: 'normal' },
       'ミミ': { id: 'mimi', emotion: 'normal' },
       'TVボックス': { id: 'mimi', emotion: 'normal' },
@@ -32,17 +75,25 @@ class BoxCharacterController {
   }
 
   preloadAll() {
-    const assets = [
-      'assets/characters/yuta.png',
-      'assets/characters/shibata.png',
-      'assets/characters/aoi.png',
-      'assets/characters/yaegashi.png',
-      'assets/characters/mimi.png'
-    ];
-    assets.forEach(src => {
+    const assetList = [];
+    Object.values(this.characterImages).forEach(map => {
+      Object.values(map).forEach(src => {
+        if (!assetList.includes(src)) {
+          assetList.push(src);
+        }
+      });
+    });
+
+    assetList.forEach(src => {
       const img = new Image();
       img.src = src;
     });
+  }
+
+  getSpriteSrc(charId, emotion = 'normal') {
+    const charMap = this.characterImages[charId];
+    if (!charMap) return '';
+    return charMap[emotion] || charMap['normal'] || '';
   }
 
   show(charId, emotion = 'normal', motion = null) {
@@ -56,11 +107,13 @@ class BoxCharacterController {
     this.currentEmotion = emotion;
 
     const targetBox = this.spriteBox || this.stage;
-    if (isNewChar || !targetBox.querySelector(`.char-wrapper-${charId}`)) {
-      targetBox.innerHTML = this.renderCharacterHtml(charId);
-    }
+    const existingWrapper = targetBox ? targetBox.querySelector(`.char-wrapper-${charId}`) : null;
 
-    this.setEmotion(emotion);
+    if (isNewChar || !existingWrapper) {
+      targetBox.innerHTML = this.renderCharacterHtml(charId, emotion);
+    } else {
+      this.setEmotion(emotion);
+    }
 
     if (motion) {
       this.playMotion(motion);
@@ -68,15 +121,19 @@ class BoxCharacterController {
       this.playMotion('enter');
     }
 
-    this.stage.classList.remove('hidden');
-    this.stage.classList.add('visible');
+    if (this.stage) {
+      this.stage.classList.remove('hidden');
+      this.stage.classList.add('visible');
+    }
   }
 
   hide() {
     this.currentCharId = null;
     this.hideEmotionBubble();
-    this.stage.classList.remove('visible');
-    this.stage.classList.add('hidden');
+    if (this.stage) {
+      this.stage.classList.remove('visible');
+      this.stage.classList.add('hidden');
+    }
     setTimeout(() => {
       if (!this.currentCharId && (this.spriteBox || this.stage)) {
         (this.spriteBox || this.stage).innerHTML = '';
@@ -111,16 +168,48 @@ class BoxCharacterController {
 
     let emotion = explicitEmotion || mapping.emotion;
 
-    // テキスト内容からの感情自動推定
+    // テキスト文脈からの感情自動推定（セリフごとに最適な表情差分を自動選出）
     if (!explicitEmotion) {
-      if (text.includes('！？') || text.includes('馬鹿な') || text.includes('な、何だと')) {
-        emotion = 'shock';
-      } else if (text.includes('……') || text.includes('考えろ') || text.includes('待てよ')) {
-        emotion = 'thinking';
-      } else if (text.includes('！！') || text.includes('だ！') || text.includes('これだ')) {
-        emotion = 'confident';
-      } else if (text.includes('怖い') || text.includes('どうしよう') || text.includes('ひっ')) {
-        emotion = 'panic';
+      const charId = mapping.id;
+
+      if (charId === 'yuta') {
+        if (text.includes('！？') || text.includes('馬鹿な') || text.includes('な、何だと') || text.includes('嘘だろ') || text.includes('まずい')) {
+          emotion = 'shock';
+        } else if (text.includes('これだ') || text.includes('違います') || text.includes('見てください') || text.includes('証明') || text.includes('確信') || text.includes('理由が')) {
+          emotion = 'confident';
+        } else if (text.includes('よかった') || text.includes('ふぅ') || text.includes('助かった') || text.includes('ありがとう') || text.includes('解決')) {
+          emotion = 'smile';
+        } else if (text.includes('……') || text.includes('考えろ') || text.includes('待てよ') || text.includes('なぜ')) {
+          emotion = 'thinking';
+        }
+      } else if (charId === 'shibata') {
+        if (text.includes('貴様') || text.includes('ふざけるな') || text.includes('逮捕') || text.includes('言い訳') || text.includes('容疑者') || text.includes('黙れ')) {
+          emotion = 'angry';
+        } else if (text.includes('なっ！？') || text.includes('何だと……！？') || text.includes('馬鹿な……') || text.includes('そんなはずは') || text.includes('本当なのか')) {
+          emotion = 'shock';
+        } else if (text.includes('ふっ') || text.includes('なるほど') || text.includes('見事だ') || text.includes('君の勝ちだ') || text.includes('筋は通っている')) {
+          emotion = 'smile';
+        } else if (text.includes('……') || text.includes('鑑識') || text.includes('推測')) {
+          emotion = 'thinking';
+        }
+      } else if (charId === 'aoi') {
+        if (text.includes('怖い') || text.includes('どうしよう') || text.includes('ひっ') || text.includes('きゃっ') || text.includes('助けて') || text.includes('！？')) {
+          emotion = 'panic';
+        } else if (text.includes('ありがとう') || text.includes('よかった') || text.includes('嬉しい') || text.includes('安心')) {
+          emotion = 'smile';
+        }
+      } else if (charId === 'yaegashi') {
+        if (text.includes('がはは') || text.includes('わはは') || text.includes('いいぞ') || text.includes('頼もしい') || text.includes('安心した')) {
+          emotion = 'laugh';
+        } else if (text.includes('退去') || text.includes('勝手な') || text.includes('ふざけるな') || text.includes('おい！')) {
+          emotion = 'angry';
+        }
+      } else if (charId === 'mimi') {
+        if (text.includes('消える') || text.includes('ノイズ') || text.includes('痛い') || text.includes('エラー') || text.includes('……っ') || text.includes('たすけて')) {
+          emotion = 'glitch';
+        } else if (text.includes('ありがとう') || text.includes('うれしい') || text.includes('あたたかい') || text.includes('わたしは、ここに')) {
+          emotion = 'smile';
+        }
       }
     }
 
@@ -133,6 +222,10 @@ class BoxCharacterController {
       this.showEmotionBubble('question');
     } else if (emotion === 'confident') {
       this.showEmotionBubble('lightbulb');
+    } else if (emotion === 'panic' || emotion === 'glitch') {
+      this.showEmotionBubble('sweat');
+    } else if (emotion === 'smile' || emotion === 'laugh') {
+      this.showEmotionBubble('sparkle');
     }
   }
 
@@ -142,8 +235,15 @@ class BoxCharacterController {
     const wrapper = targetBox ? targetBox.querySelector('.char-avatar') : null;
     if (!wrapper) return;
 
-    wrapper.classList.remove('emotion-normal', 'emotion-thinking', 'emotion-shock', 'emotion-confident', 'emotion-panic', 'emotion-glow');
-    wrapper.classList.add(`emotion-${emotion}`);
+    wrapper.className = `char-avatar char-wrapper-${this.currentCharId} emotion-${emotion}`;
+
+    const spriteImg = wrapper.querySelector('.char-sprite-img');
+    if (spriteImg && this.currentCharId) {
+      const nextSrc = this.getSpriteSrc(this.currentCharId, emotion);
+      if (nextSrc && !spriteImg.src.endsWith(nextSrc)) {
+        spriteImg.src = nextSrc;
+      }
+    }
   }
 
   playMotion(motion) {
@@ -182,22 +282,14 @@ class BoxCharacterController {
   }
 
   // ----------------------------------------------------
-  // キャラクター立ち絵レンダリング (Nano Banana 2.1 高解像度スプライト)
+  // キャラクター立ち絵レンダリング (Nano Banana 2.1 高解像度差分スプライト)
   // ----------------------------------------------------
-  renderCharacterHtml(charId) {
-    const assetMap = {
-      yuta: 'assets/characters/yuta.png',
-      shibata: 'assets/characters/shibata.png',
-      aoi: 'assets/characters/aoi.png',
-      yaegashi: 'assets/characters/yaegashi.png',
-      mimi: 'assets/characters/mimi.png'
-    };
-
-    const imgSrc = assetMap[charId];
+  renderCharacterHtml(charId, emotion = 'normal') {
+    const imgSrc = this.getSpriteSrc(charId, emotion);
     if (!imgSrc) return '';
 
     return `
-      <div class="char-avatar char-wrapper-${charId} emotion-normal">
+      <div class="char-avatar char-wrapper-${charId} emotion-${emotion}">
         <img class="char-sprite-img char-img-${charId}" src="${imgSrc}" alt="${charId}" />
       </div>
     `;

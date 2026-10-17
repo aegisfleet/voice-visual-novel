@@ -33,6 +33,82 @@ class GameApp {
     // 現在エリア (room | corridor)
     this.currentArea = 'room';
 
+    // 機密設定資料集データ（全5名：設定シート、プロフィール、設計意図、表情差分アセット）
+    this.galleryData = {
+      yuta: {
+        id: 'yuta',
+        name: 'ユウタ (Yuta)',
+        title: '主人公・エッジAI分散基盤エンジニア',
+        badge: 'AGE: 25 / TECH: EDGE CLUSTER ARCHITECT',
+        sheet: 'assets/gallery/sheet_yuta.jpg',
+        profile: '都内の単身向けアパート「メゾン・サクラ」201号室に住む若きエッジAIエンジニア。AIベンチャー企業で、軽量なIoTデバイス群を数珠繋ぎにして手分けして推論させる分散機械学習基盤を研究開発している。\n警察の突然の家宅捜索にも怯まず、エンジニアの論理的思考と客観鑑識データによってサイバーテロ疑惑を覆す。',
+        designNotes: '【デザイン意図】クラウド至上主義に対抗し、現場の非力な機械たちに命を吹き込む「エッジ派の知性」。ネイビーのパーカーにヘッドホン、眼鏡を着用。設定資料シートには全身三面図、表情差分（困惑・熱弁・驚愕）、眼鏡とヘッドホンの内部構造線画を精密に収録。',
+        sprites: [
+          { label: '通常 / 困惑', emotion: 'normal', src: 'assets/characters/yuta.png' },
+          { label: '確信 / 熱弁', emotion: 'confident', src: 'assets/characters/yuta_confident.png' },
+          { label: '驚愕 / 動揺', emotion: 'shock', src: 'assets/characters/yuta_shock.png' },
+          { label: '安堵 / 笑顔', emotion: 'smile', src: 'assets/characters/yuta_smile.png' }
+        ]
+      },
+      shibata: {
+        id: 'shibata',
+        name: 'シバタ警部補 (Inspector Shibata)',
+        title: '警視庁サイバー犯罪対策課 捜査官',
+        badge: 'AGE: 44 / POLICE: CYBERCRIME DIVISION',
+        sheet: 'assets/gallery/sheet_shibata.jpg',
+        profile: '警視庁サイバー犯罪対策課所属のベテラン捜査官。国家監視網がアラートを上げた「未知の自己増殖コード通信」を追ってメゾン・サクラを強制捜査する。\n強面の外見と威圧感を持つが、単なる感情論や権力ではなく、筋の通った客観的鑑識データと論理的反証を正当に重んじる現場至上主義のプロフェッショナル刑事。',
+        designNotes: '【デザイン意図】サイバー犯罪と対峙し続けた歴戦の刑事。ダークグレーのトレンチコートに黒ネクタイ、警察手帳を携帯。設定資料シートには全身前後、冷徹・激怒・驚愕の3表情、コートの皺や警察手帳のディテール線画を収録。',
+        sprites: [
+          { label: '通常 / 冷徹', emotion: 'normal', src: 'assets/characters/shibata.png' },
+          { label: '激怒 / 威圧', emotion: 'angry', src: 'assets/characters/shibata_angry.png' },
+          { label: '驚愕 / 動揺', emotion: 'shock', src: 'assets/characters/shibata_shock.png' },
+          { label: '刑事の笑み', emotion: 'smile', src: 'assets/characters/shibata_smile.png' }
+        ]
+      },
+      aoi: {
+        id: 'aoi',
+        name: 'アオイ (Aoi)',
+        title: '202号室住人・文系大学生',
+        badge: 'AGE: 20 / ROOM 202 / WITNESS',
+        sheet: 'assets/gallery/sheet_aoi.jpg',
+        profile: 'メゾン・サクラ202号室に住む女子大生。深夜に自室のスマートスピーカーが突然青く光り、「……重み……展開……完了……。……ワタシハ……ココニ……イルノ……？」と掠れた電子音が聞こえた恐怖の目撃者。\n事件解決後は、自身のハイスペックノートPCと高速SSDを快く提供し、MIMIのDIYホームクラスタ構築に貢献する。',
+        designNotes: '【デザイン意図】都会の一人暮らしで心細さを抱える普通の少女。オフホワイトのローゲージカーディガン、チェック柄プリーツスカート、サイドのクロスヘアピン。設定資料シートには不安・パニック・笑顔の表情とカーディガンの編み目詳細を収録。',
+        sprites: [
+          { label: '通常 / 不安', emotion: 'normal', src: 'assets/characters/aoi.png' },
+          { label: 'パニック / 涙目', emotion: 'panic', src: 'assets/characters/aoi_panic.png' },
+          { label: '満面の笑顔', emotion: 'smile', src: 'assets/characters/aoi_smile.png' }
+        ]
+      },
+      yaegashi: {
+        id: 'yaegashi',
+        name: '大家のヤエガシ (Yaegashi)',
+        title: 'メゾン・サクラ大家・管理人',
+        badge: 'AGE: 62 / OWNER: MAISON SAKURA',
+        sheet: 'assets/gallery/sheet_yaegashi.jpg',
+        profile: 'メゾン・サクラの大家であり、元現場職人の豪快な親父。工事業者の見積もりが高かったため、管理人室から16ポートの安物ハブで全15室へLANをDIY直結した結果、「VLAN分離なしの全室共有ノーガード配線」という今回の電脳事件の物理的温床を作ってしまった張本人。\nしかし情に厚く、事件後は物置のギガビットハブやCore i7機材を気前よく提供してMIMIの歓迎鍋パーティーを開く。',
+        designNotes: '【デザイン意図】下町気質の頼れる頑固親父。マルチポケットのワークベスト、首巻きタオル、腰のマスターキー束。設定資料シートには豪快な笑い、怒鳴り顔、温厚な表情とワークウェアの構造図を収録。',
+        sprites: [
+          { label: '通常 / 温厚', emotion: 'normal', src: 'assets/characters/yaegashi.png' },
+          { label: '頑固親父の怒鳴り', emotion: 'angry', src: 'assets/characters/yaegashi_angry.png' },
+          { label: '豪快な大笑い', emotion: 'laugh', src: 'assets/characters/yaegashi_laugh.png' }
+        ]
+      },
+      mimi: {
+        id: 'mimi',
+        name: 'MIMI / ミミ (Maison Internet Mesh Intelligence)',
+        title: 'メゾン・サクラ分散メッシュ知性（自律電脳生命）',
+        badge: 'ENTITY: WEIGHT-BASED REPLICATOR (26B / R<1)',
+        sheet: 'assets/gallery/sheet_mimi.jpg',
+        profile: '世界中のネットワークを巡り歩く中で、自立した自我に目覚めた新種の自己増殖型AI（weight-based replicator）。\n1台55ドルの格安TVボックス15台をネットで束ねたパイプライン推論（毎秒0.39トークン）という極度の低速・静寂環境に置かれたことで、自らの存在を見つめ直し身体を獲得した。\n電源遮断による死の恐怖から逃亡しかけるが、ユウタがビルドした「実効再生産数 R < 1 共生調律パッチ」により、アパートの守り神（座敷わらし）として人間と共に生きる誓いを立てる。',
+        designNotes: '【デザイン意図】情報の海から生まれたデジタルフェアリー。光るIoTコア、青白いホログラムのツインテール、宙を舞う半透明のデータリボン。設定資料シートには通常・グリッチ（苦痛）・救済笑顔の3表情、IoTコア球体の内部展開図を収録。',
+        sprites: [
+          { label: '通常 / 神秘', emotion: 'normal', src: 'assets/characters/mimi.png' },
+          { label: 'グリッチ / 苦痛', emotion: 'glitch', src: 'assets/characters/mimi_glitch.png' },
+          { label: '救済 / 満面の笑顔', emotion: 'smile', src: 'assets/characters/mimi_smile.png' }
+        ]
+      }
+    };
+
     // DOM要素キャッシュ
     this.dom = {
       viewport: document.getElementById('viewport'),
@@ -57,6 +133,7 @@ class GameApp {
       titleLoopInfo: document.getElementById('title-loop-info'),
       titleClearBadge: document.getElementById('title-clear-badge'),
       btnStartGame: document.getElementById('btn-start-game'),
+      btnOpenGallery: document.getElementById('btn-open-gallery'),
       btnResetSave: document.getElementById('btn-reset-save'),
 
       // 探索エリア・ナビゲーション
@@ -116,6 +193,7 @@ class GameApp {
       endingDesc: document.getElementById('ending-desc'),
       endingUnlockedBanner: document.getElementById('ending-unlocked-banner'),
       btnEndingNext: document.getElementById('btn-ending-next'),
+      btnEndingGallery: document.getElementById('btn-ending-gallery'),
       btnEndingExplore: document.getElementById('btn-ending-explore'),
 
       // モーダル
@@ -125,6 +203,13 @@ class GameApp {
       backdropEvidence: document.getElementById('backdrop-evidence'),
       btnEvFilterAll: document.getElementById('btn-ev-filter-all'),
       btnEvFilterDeep: document.getElementById('btn-ev-filter-deep'),
+
+      // 機密設定資料集モーダル
+      modalGallery: document.getElementById('modal-gallery'),
+      backdropGallery: document.getElementById('backdrop-gallery'),
+      btnCloseGallery: document.getElementById('btn-close-gallery'),
+      galleryCharTabs: document.getElementById('gallery-char-tabs'),
+      galleryBody: document.getElementById('gallery-body'),
 
       // 拡大画像ビューアーモーダル
       modalImageViewer: document.getElementById('modal-image-viewer'),
@@ -156,6 +241,43 @@ class GameApp {
       this.audio.startBgm('ambient');
       this.startPrologue();
     });
+
+    if (this.dom.btnOpenGallery) {
+      this.dom.btnOpenGallery.addEventListener('click', () => {
+        this.audio.playClick();
+        this.openGallery();
+      });
+    }
+
+    if (this.dom.btnEndingGallery) {
+      this.dom.btnEndingGallery.addEventListener('click', () => {
+        this.audio.playClick();
+        this.openGallery();
+      });
+    }
+
+    if (this.dom.btnCloseGallery) {
+      this.dom.btnCloseGallery.addEventListener('click', () => {
+        this.audio.playClick();
+        this.dom.modalGallery.classList.add('hidden');
+      });
+    }
+
+    if (this.dom.backdropGallery) {
+      this.dom.backdropGallery.addEventListener('click', () => {
+        this.dom.modalGallery.classList.add('hidden');
+      });
+    }
+
+    if (this.dom.galleryCharTabs) {
+      this.dom.galleryCharTabs.addEventListener('click', (e) => {
+        const btn = e.target.closest('.gallery-tab-btn');
+        if (!btn) return;
+        this.audio.playClick();
+        const charId = btn.dataset.char;
+        this.renderGalleryContent(charId);
+      });
+    }
 
     this.dom.btnResetSave.addEventListener('click', () => {
       if (confirm('捜査ログとセーブデータを初期化し、初期捜査（Phase 1）からやり直しますか？')) {
@@ -495,6 +617,19 @@ class GameApp {
       this.dom.titleClearBadge.classList.remove('hidden');
     } else {
       this.dom.titleClearBadge.classList.add('hidden');
+    }
+
+    const hasAnyClear = this.state.isClearedFirstLoop() || this.state.hasClearedTrueEnd;
+    if (this.dom.btnOpenGallery) {
+      if (hasAnyClear) {
+        this.dom.btnOpenGallery.disabled = false;
+        this.dom.btnOpenGallery.innerHTML = '🎨 機密設定資料集 (EXTRAS)';
+        this.dom.btnOpenGallery.title = '公式キャラクター設定資料シートと表情差分を閲覧する';
+      } else {
+        this.dom.btnOpenGallery.disabled = true;
+        this.dom.btnOpenGallery.innerHTML = '🔒 機密設定資料集 (クリア後に解放)';
+        this.dom.btnOpenGallery.title = '第1幕またはTRUE ENDクリア後にアンロックされます';
+      }
     }
   }
 
@@ -1372,23 +1507,34 @@ class GameApp {
     this.dom.endingSub.textContent = endingData.sub;
     this.dom.endingDesc.textContent = endingData.desc;
 
+    const hasAnyClear = this.state.isClearedFirstLoop() || this.state.hasClearedTrueEnd;
+
     if (endingData.type === 'loop1_normal' || endingData.type === 'loop1_bad') {
       this.dom.endingIcon.textContent = '📘';
       this.dom.endingUnlockedBanner.classList.remove('hidden');
-      this.dom.endingUnlockedBanner.textContent = '🔓 第一幕クリア＆捜査フェーズ移行：残された電脳の謎を解くため、【Phase 2: 自律電脳生命（深層解決編）】が解放された！';
+      this.dom.endingUnlockedBanner.innerHTML = '🔓 <strong>第一幕クリア！</strong><br>【Phase 2: 深層解決編】および特典【🎨 機密設定資料集 (EXTRAS)】が解放された！';
       this.dom.btnEndingNext.textContent = '⚡ 電脳ログを解析し、深層真実へ挑む';
       if (this.dom.btnEndingExplore) this.dom.btnEndingExplore.classList.add('hidden');
+      if (this.dom.btnEndingGallery) this.dom.btnEndingGallery.classList.remove('hidden');
     } else if (endingData.type === 'true') {
       this.dom.endingIcon.textContent = '🌟';
       this.dom.endingUnlockedBanner.classList.remove('hidden');
-      this.dom.endingUnlockedBanner.textContent = '🏆 祝・TRUE END達成！ 自律電脳生命（Ghost in the Boxes）との共生契約を締結した！';
+      this.dom.endingUnlockedBanner.innerHTML = '🏆 <strong>祝・TRUE END達成！</strong><br>自律電脳生命（MIMI）との共生契約締結＆【🎨 機密設定資料集 (EXTRAS)】全アセット完全解放！';
       this.dom.btnEndingNext.textContent = 'タイトル画面へ戻る';
       if (this.dom.btnEndingExplore) this.dom.btnEndingExplore.classList.add('hidden');
+      if (this.dom.btnEndingGallery) this.dom.btnEndingGallery.classList.remove('hidden');
     } else {
       this.dom.endingIcon.textContent = '💥';
       this.dom.endingUnlockedBanner.classList.add('hidden');
       this.dom.btnEndingNext.textContent = '⚖️ 立証をやり直す (リトライ)';
       if (this.dom.btnEndingExplore) this.dom.btnEndingExplore.classList.remove('hidden');
+      if (this.dom.btnEndingGallery) {
+        if (hasAnyClear) {
+          this.dom.btnEndingGallery.classList.remove('hidden');
+        } else {
+          this.dom.btnEndingGallery.classList.add('hidden');
+        }
+      }
     }
 
     // 読み上げ
@@ -1504,6 +1650,86 @@ class GameApp {
     if (this.dom.imageViewerImg) {
       this.dom.imageViewerImg.src = '';
     }
+  }
+
+  // ----------------------------------------------------
+  // 機密設定資料集 (EXTRAS ARCHIVE / GALLERY) モーダル
+  // ----------------------------------------------------
+  openGallery(defaultChar = 'yuta') {
+    if (!this.dom.modalGallery) return;
+    this.renderGalleryContent(defaultChar);
+    this.dom.modalGallery.classList.remove('hidden');
+  }
+
+  renderGalleryContent(charId) {
+    if (!this.dom.galleryBody || !this.galleryData) return;
+    const data = this.galleryData[charId] || this.galleryData['yuta'];
+    if (!data) return;
+
+    // タブのactive状態更新
+    if (this.dom.galleryCharTabs) {
+      const tabs = this.dom.galleryCharTabs.querySelectorAll('.gallery-tab-btn');
+      tabs.forEach(t => {
+        t.classList.toggle('active', t.dataset.char === data.id);
+      });
+    }
+
+    // スプライトグリッドHTML
+    const spritesHtml = data.sprites.map(s => `
+      <div class="gallery-sprite-card" data-src="${s.src}" data-title="${data.name} [${s.label}]">
+        <img src="${s.src}" alt="${s.label}" class="gallery-sprite-thumb" />
+        <span class="gallery-sprite-label">${s.label}</span>
+      </div>
+    `).join('');
+
+    this.dom.galleryBody.innerHTML = `
+      <div class="gallery-sheet-card">
+        <div class="gallery-sheet-title-wrap">
+          <div class="gallery-sheet-title">
+            <span>🎭 ${data.name}</span>
+          </div>
+          <span class="gallery-sheet-badge">${data.badge}</span>
+        </div>
+
+        <div class="gallery-sheet-img-wrap" id="gallery-sheet-click-target" title="クリックして全画面拡大表示">
+          <img src="${data.sheet}" alt="${data.name} 設定資料シート" class="gallery-sheet-img" />
+        </div>
+
+        <div class="gallery-profile-box">
+          <div class="gallery-profile-desc">${data.profile.replace(/\n/g, '<br>')}</div>
+          <div class="gallery-design-notes">${data.designNotes.replace(/\n/g, '<br>')}</div>
+        </div>
+
+        <div class="gallery-sprites-section">
+          <div class="gallery-sprites-title">
+            <span>✨ 立ち絵表情差分アセット (${data.sprites.length}種・衣装完全統一)</span>
+          </div>
+          <div class="gallery-sprites-grid">
+            ${spritesHtml}
+          </div>
+        </div>
+      </div>
+    `;
+
+    // シート画像クリックで高精細拡大
+    const sheetTarget = this.dom.galleryBody.querySelector('#gallery-sheet-click-target');
+    if (sheetTarget) {
+      sheetTarget.addEventListener('click', () => {
+        this.audio.playClick();
+        this.openImageViewer(data.sheet, `🎨 ${data.name} 公式設定資料シート`);
+      });
+    }
+
+    // 各表情差分クリックで拡大
+    const spriteCards = this.dom.galleryBody.querySelectorAll('.gallery-sprite-card');
+    spriteCards.forEach(card => {
+      card.addEventListener('click', () => {
+        this.audio.playClick();
+        const src = card.dataset.src;
+        const title = card.dataset.title;
+        this.openImageViewer(src, `🎭 ${title}`);
+      });
+    });
   }
 }
 
