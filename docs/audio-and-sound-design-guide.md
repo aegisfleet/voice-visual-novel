@@ -151,6 +151,24 @@ _playSynthCutin() {
 }
 ```
 
+### 3.3 証拠品獲得チャイム（ピロン♪）の音響工学・4パターン設計
+
+ADVゲームにおいて、プレイヤーが現場で証拠品を発見・取得した瞬間のSEは「達成感」「ひらめき」「ゲームのテンポ」を決定づける最重要サウンドである。
+単調なビープ音ではなく、自然な減衰特性（Exponential Decay）と音楽的倍音構造（Harmonics）を持つ以下の4パターンを物理合成し提供している：
+
+| パターン | 音源名 | 音階・音程構造 | 倍音構成・音響特性 | ゲーム演出効果 |
+| :--- | :--- | :--- | :--- | :--- |
+| **パターンB【ゲーム内正式採用】** | `sfx_evidence_b.mp3`<br>（`sfx_evidence.mp3` に適用） | **E6 (1319Hz) $\to$ G#6 (1661Hz) $\to$ B6 (1976Hz)**<br>長3和音アルペジオ（3音） | セレスタ／グロッケンシュピール倍音（急減衰アタック＋長減衰サステイン） | **爽やかピロリン♪**。きらめく音粒が駆け上がり、重要な手がかりや決定打を発見した知的好奇心を心地よく刺激。 |
+| **パターンA** | `sfx_evidence_a.mp3` | **D6 (1175Hz) $\to$ A6 (1760Hz)**<br>完全5度上行（2音） | クリスタルガラス倍音（基音1.0, 2次0.25, 3次0.1, 4.2次0.05） | **王道ピロン♪**。最も爽快感と直感的快楽原則が高く、耳馴染みの良いクラシックな発見音。 |
+| **パターンC** | `sfx_evidence_c.mp3` | **C#6 (1109Hz) $\to$ F#6 (1480Hz)**<br>完全4度上行（2音） | 非整数倍音（3.1次、4.5次）を含むハイテクメタル構造 | **電脳サイバー・ピロン♪**。電子基板やARホログラムUIとシンクロする先鋭的かつソリッドなSFX。 |
+| **パターンD** | `sfx_evidence_d.mp3` | **A5 (880Hz) $\to$ E6 (1319Hz)**<br>完全5度上行（2音） | 奇数倍音を抑えた温かいフェルト・ベル構造 | **優しいソフト・ピロン♪**。高域の金属的刺激を排除し、長時間の探索でも聴き疲れしない親和性。 |
+
+* **生成ツール**: [`scripts/generate_piron_sfx.py`](file:///d:/Work/voice-visual-novel/scripts/generate_piron_sfx.py)
+* **マスタリングと音量最適化**:
+  * 証拠品SE: EBU R128（-19.0 LUFS, TP -0.5dB）により、BGM（-18.0 LUFS）やセリフ読み上げに対して出しゃばりすぎず、耳に優しく上品な音圧に設定。ゲーム内再生ボリュームも `0.45` に調整。
+  * カットイン激突音: サブベースとメタリッククラッシュの音圧を -4.5dB 減衰し、ゲーム内再生ボリュームを `0.45`（旧 0.8）に抑制。劇的な衝撃感を保ちながら耳への刺激を大幅に緩和。
+* **試聴・切り替え**: [`box/samples.html`](file:///d:/Work/voice-visual-novel/box/samples.html) の「シネマティック効果音 (SFX)」セクションにて全4パターンの比較試聴が可能。
+
 ---
 
 ## 4. BGM冒頭の違和感解消（ソフトS字フェードイン）
@@ -194,6 +212,7 @@ AI音楽生成において、プロンプトの単語選定はゲームジャン
 ## 6. 関連ファイル一覧
 
 * **BGM・効果音生成スクリプト**: [`scripts/generate_box_bgm.py`](file:///d:/Work/voice-visual-novel/scripts/generate_box_bgm.py)
+* **ピロン効果音（SFX）物理合成スクリプト**: [`scripts/generate_piron_sfx.py`](file:///d:/Work/voice-visual-novel/scripts/generate_piron_sfx.py)
 * **ゲームオーディオ制御エンジン**: [`box/js/audio.js`](file:///d:/Work/voice-visual-novel/box/js/audio.js)
 * **ゲーム内メイン制御**: [`box/js/app.js`](file:///d:/Work/voice-visual-novel/box/js/app.js)
 * **試聴・音響アーカイブ室**: [`box/samples.html`](file:///d:/Work/voice-visual-novel/box/samples.html)

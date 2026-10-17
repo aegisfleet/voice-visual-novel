@@ -314,14 +314,14 @@ class AudioManager {
     osc.stop(this.ctx.currentTime + 0.05);
   }
 
-  // 証拠発見 / ひらめき音
+  // 証拠発見 / ひらめき音（パターンB: 爽やかピロリン♪）
   playFound() {
     if (!this.seEnabled) return;
     this.ensureContext();
 
     try {
-      const audio = new Audio('assets/audio/sfx_evidence.mp3');
-      audio.volume = 0.6;
+      const audio = new Audio('assets/audio/sfx_evidence.mp3?v=20261018_rev82');
+      audio.volume = 0.45;
       audio.play().catch(() => this._playSynthFound());
     } catch (_e) {
       this._playSynthFound();
@@ -330,23 +330,29 @@ class AudioManager {
 
   _playSynthFound() {
     if (!this.ctx) return;
-    const notes = [523.25, 659.25, 783.99, 1046.5]; // C5, E5, G5, C6
-    notes.forEach((freq, idx) => {
+    const now = this.ctx.currentTime;
+    // パターンB: E6 (1318.51Hz) -> G#6 (1661.22Hz) -> B6 (1975.53Hz) のセレスタ・アルペジオ
+    const notes = [
+      { freq: 1318.51, delay: 0, duration: 0.35, gain: 0.08 },
+      { freq: 1661.22, delay: 0.065, duration: 0.4, gain: 0.10 },
+      { freq: 1975.53, delay: 0.13, duration: 0.6, gain: 0.12 },
+    ];
+    notes.forEach((note) => {
       const osc = this.ctx.createOscillator();
       const gain = this.ctx.createGain();
 
-      osc.type = 'triangle';
-      osc.frequency.setValueAtTime(freq, this.ctx.currentTime + idx * 0.07);
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(note.freq, now + note.delay);
 
-      gain.gain.setValueAtTime(0, this.ctx.currentTime + idx * 0.07);
-      gain.gain.linearRampToValueAtTime(0.18, this.ctx.currentTime + idx * 0.07 + 0.02);
-      gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + idx * 0.07 + 0.25);
+      gain.gain.setValueAtTime(0, now + note.delay);
+      gain.gain.linearRampToValueAtTime(note.gain, now + note.delay + 0.005);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + note.delay + note.duration);
 
       osc.connect(gain);
       gain.connect(this.ctx.destination);
 
-      osc.start(this.ctx.currentTime + idx * 0.07);
-      osc.stop(this.ctx.currentTime + idx * 0.07 + 0.25);
+      osc.start(now + note.delay);
+      osc.stop(now + note.delay + note.duration);
     });
   }
 
@@ -363,7 +369,7 @@ class AudioManager {
     osc.frequency.setValueAtTime(1200, this.ctx.currentTime);
     osc.frequency.setValueAtTime(1800, this.ctx.currentTime + 0.03);
 
-    gain.gain.setValueAtTime(0.05, this.ctx.currentTime);
+    gain.gain.setValueAtTime(0.04, this.ctx.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.08);
 
     osc.connect(gain);
@@ -379,8 +385,8 @@ class AudioManager {
     this.ensureContext();
 
     try {
-      const audio = new Audio('assets/audio/sfx_cutin.mp3');
-      audio.volume = 0.8;
+      const audio = new Audio('assets/audio/sfx_cutin.mp3?v=20261018_rev82');
+      audio.volume = 0.45;
       audio.play().catch(() => this._playSynthCutin());
     } catch (_e) {
       this._playSynthCutin();
@@ -391,14 +397,14 @@ class AudioManager {
     if (!this.ctx) return;
     const now = this.ctx.currentTime;
 
-    // 低音インパクト
+    // 低音インパクト（音量を控えめに調整）
     const subOsc = this.ctx.createOscillator();
     const subGain = this.ctx.createGain();
     subOsc.type = 'sawtooth';
     subOsc.frequency.setValueAtTime(150, now);
     subOsc.frequency.exponentialRampToValueAtTime(35, now + 0.4);
 
-    subGain.gain.setValueAtTime(0.35, now);
+    subGain.gain.setValueAtTime(0.18, now);
     subGain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
 
     subOsc.connect(subGain);
@@ -406,7 +412,7 @@ class AudioManager {
     subOsc.start(now);
     subOsc.stop(now + 0.4);
 
-    // 高音金属クラッシュ
+    // 高音金属クラッシュ（音量を控えめに調整）
     const noiseBuffer = this.ctx.createBuffer(1, this.ctx.sampleRate * 0.3, this.ctx.sampleRate);
     const output = noiseBuffer.getChannelData(0);
     for (let i = 0; i < noiseBuffer.length; i++) {
@@ -421,7 +427,7 @@ class AudioManager {
     filter.Q.setValueAtTime(3, now);
 
     const noiseGain = this.ctx.createGain();
-    noiseGain.gain.setValueAtTime(0.25, now);
+    noiseGain.gain.setValueAtTime(0.12, now);
     noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
 
     noise.connect(filter);

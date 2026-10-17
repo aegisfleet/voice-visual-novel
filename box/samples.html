@@ -647,29 +647,73 @@
       <div class="char-header">
         <div class="char-name-group">
           <div class="char-name" style="color: #bae6fd;">ゲーム内 シネマティック効果音</div>
-          <div class="char-role">カットイン論破激突音 ＆ 証拠データ入手チャイム</div>
+          <div class="char-role">カットイン論破激突音 ＆ 証拠データ入手チャイム（ピロン♪ 4パターン）</div>
         </div>
-        <span class="char-badge" style="background: rgba(56, 189, 248, 0.2); border-color: #38bdf8; color: #bae6fd;">Hybrid SFX Architecture</span>
+        <span class="char-badge" style="background: rgba(56, 189, 248, 0.2); border-color: #38bdf8; color: #bae6fd;">Cinematic Sound Design</span>
       </div>
       <div class="char-desc">
-        カットイン激突時の重低音サブベースドロップと鋭いメタリックスライス、証拠入手時のサイバーチャイム。遅延ゼロのWeb Audio APIフォールバックと高音質MP3の二重構造。
+        反証カットイン激突時の重低音サブベースドロップ、および捜査パートで証拠品を獲得した瞬間の心地よい「ピロン♪」チャイム音。自然な倍音減衰合成とEBU R128（-19.0 LUFS）マスタリングにより耳に優しく上品な音圧に調整された専用効果音です。
       </div>
       <div class="voice-list">
         <div class="voice-item">
           <div class="voice-meta">
             <span class="voice-title">1. 「客観的反証があります！」カットイン激突音</span>
-            <span class="voice-badge">sfx_cutin.mp3 (2.0s)</span>
+            <span class="voice-badge">sfx_cutin.mp3 (2.0s / -4.5dB調整済)</span>
           </div>
-          <div class="voice-text">シバタ捜査官に決定的な反証を突きつける瞬間の、空気を震わせるシネマティック・インパクト音。</div>
-          <audio controls preload="none" src="assets/audio/sfx_cutin.mp3"></audio>
+          <div class="voice-text">シバタ捜査官に決定的な反証を突きつける瞬間の、空気を震わせるシネマティック・インパクト音。BGMとのバランスを最適化し、音圧を上品に抑制。</div>
+          <audio controls preload="none" src="assets/audio/sfx_cutin.mp3?v=20261018_rev82"></audio>
         </div>
+
+        <!-- 証拠品取得SE: パターンA -->
         <div class="voice-item">
           <div class="voice-meta">
-            <span class="voice-title">2. 電脳鑑識ログ・証拠獲得チャイム</span>
-            <span class="voice-badge">sfx_evidence.mp3 (1.6s)</span>
+            <span class="voice-title">2-A. 王道ピロン♪（クリスタル・ベル）</span>
+            <span class="voice-badge">Pattern A / 0.8s</span>
           </div>
-          <div class="voice-text">自室や廊下で新たなパケットログ・ハードウェア証拠を発見した際の、澄んだ高音質サイバーチャイム音。</div>
-          <audio controls preload="none" src="assets/audio/sfx_evidence.mp3"></audio>
+          <div class="voice-text">
+            <strong>音階:</strong> D6 (1175Hz) &rarr; A6 (1760Hz) [完全5度上行]<br>
+            <strong>特徴:</strong> 澄んだクリスタルガラスの倍音を持つ2音チャイム。最もADVのアイテム入手音として直感的な心地よさと爽快感がある王道サウンド。
+          </div>
+          <audio controls preload="none" src="assets/audio/sfx_evidence_a.mp3?v=20261018_rev82"></audio>
+        </div>
+
+        <!-- 証拠品取得SE: パターンB -->
+        <div class="voice-item" style="border: 1px solid rgba(56, 189, 248, 0.5); background: rgba(8, 28, 44, 0.6);">
+          <div class="voice-meta">
+            <span class="voice-title">2-B. 【ゲーム内適用中】爽やかピロリン♪（セレスタ・アルペジオ）</span>
+            <span class="voice-badge" style="background: #0284c7; color: #ffffff;">DEFAULT / 0.9s</span>
+          </div>
+          <div class="voice-text">
+            <strong>音階:</strong> E6 (1319Hz) &rarr; G#6 (1661Hz) &rarr; B6 (1976Hz) [長3和音3音アルペジオ]<br>
+            <strong>特徴:</strong> きらびやかな3連符の音粒が駆け上がる華やかなセレスタチャイム。重要な手がかりを発見した時のひらめき感を心地よく強調。
+          </div>
+          <audio controls preload="none" src="assets/audio/sfx_evidence_b.mp3?v=20261018_rev82"></audio>
+        </div>
+
+        <!-- 証拠品取得SE: パターンC -->
+        <div class="voice-item">
+          <div class="voice-meta">
+            <span class="voice-title">2-C. 電脳サイバー・ピロン♪（ハイテクUIホログラム）</span>
+            <span class="voice-badge">Pattern C / 0.7s</span>
+          </div>
+          <div class="voice-text">
+            <strong>音階:</strong> C#6 (1109Hz) &rarr; F#6 (1480Hz) [完全4度上行・非整数倍音]<br>
+            <strong>特徴:</strong> 電子基板やホログラムUIを想起させる微細な金属倍音を含むシャープな近未来系ピロン音。BOX WORMのサイバー鑑識の世界観に適合。
+          </div>
+          <audio controls preload="none" src="assets/audio/sfx_evidence_c.mp3?v=20261018_rev82"></audio>
+        </div>
+
+        <!-- 証拠品取得SE: パターンD -->
+        <div class="voice-item">
+          <div class="voice-meta">
+            <span class="voice-title">2-D. 優しいソフト・ピロン♪（フェルト・チャイム）</span>
+            <span class="voice-badge">Pattern D / 0.8s</span>
+          </div>
+          <div class="voice-text">
+            <strong>音階:</strong> A5 (880Hz) &rarr; E6 (1319Hz) [完全5度上行・低次倍音]<br>
+            <strong>特徴:</strong> 高域の金属的な角を落とし、耳に優しい温かみのあるフェルト調の柔らかなピロン音。長時間の捜査でも耳が疲れにくい設計。
+          </div>
+          <audio controls preload="none" src="assets/audio/sfx_evidence_d.mp3?v=20261018_rev82"></audio>
         </div>
       </div>
     </div>
