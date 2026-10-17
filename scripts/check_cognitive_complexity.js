@@ -115,6 +115,12 @@ function calcSonarCognitiveComplexity(lines) {
 }
 
 const targetNames = [
+  'bindEvents', 'bindTitleEvents', 'bindGalleryEvents', 'bindHudEvents', 'bindEvidenceModalEvents',
+  'bindExploreEvents', 'bindDebateEvents', 'bindDialogueEvents', 'bindIllustrationViewerEvents',
+  'bindEndingEvents', 'bindKeyboardEvents', 'bindPointerEvents',
+  'handleKeydown', 'handleEscapeKey', 'handleBackKey', 'handleAdvanceKey', 'handleAreaSwitchKey',
+  'handleNumberKey', 'handleModalShortcutKey', 'onTouchMoveGuard',
+  'updateAudioButtons', 'updateAudioToggleButton', 'showScreen',
   'handleTalkNpc', 'onNpcChoiceSelected', 'onNpcDialogueComplete',
   'updateEvidenceCounter', 'setDebateButtonVisible', 'getExploreProgressInfo',
   'showNextDialogue', 'handleDialogueQueueEmpty', 'hideDialogueIllustration', 'updateDialogueIllustration', 'renderDialogueItem',

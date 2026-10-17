@@ -727,9 +727,46 @@ class AudioController {
     }
   }
 
+  _canSpeak(sessionId) {
+    return Boolean(this.synth) && this.playSessionId === sessionId && !this.isMuted;
+  }
+
+  _createUtterance(lineData) {
+    const text = lineData.text || '';
+    const config = lineData.speechConfig || {};
+    const utter = new SpeechSynthesisUtterance(text);
+
+    const isEnglish = lineData.lang === 'en';
+    const defaultRate = isEnglish ? 1.0 : 1.05;
+    utter.lang = isEnglish ? 'en-US' : 'ja-JP';
+    utter.pitch = config.pitch !== undefined ? config.pitch : 1.0;
+    utter.rate = config.rate !== undefined ? config.rate : defaultRate;
+
+    const voice = isEnglish
+      ? this.getEnglishVoice(config.gender || 'female')
+      : this.getJapaneseVoice(config.gender || 'female');
+    if (voice) utter.voice = voice;
+
+    return utter;
+  }
+
+  _detachUtterance(utter) {
+    clearInterval(this.resumeTimer);
+    utter.onstart = null;
+    utter.onend = null;
+    utter.onerror = null;
+
+    if (window.__activeUtterance === utter) {
+      window.__activeUtterance = null;
+    }
+    if (this.currentUtterance === utter) {
+      this.currentUtterance = null;
+    }
+  }
+
   _playWebSpeech(lineData, sessionId) {
     return new Promise((resolve) => {
-      if (!this.synth || this.playSessionId !== sessionId || this.isMuted) {
+      if (!this._canSpeak(sessionId)) {
         this.isPlaying = false;
         if (this.playSessionId === sessionId && this.onSpeechEnd) this.onSpeechEnd();
         resolve();
@@ -742,41 +779,15 @@ class AudioController {
         }
       } catch {}
 
-      const text = lineData.text || '';
-      const config = lineData.speechConfig || {};
-      const utter = new SpeechSynthesisUtterance(text);
-
-      const isEnglish = lineData.lang === 'en';
-      const defaultRate = isEnglish ? 1.0 : 1.05;
-      utter.lang = isEnglish ? 'en-US' : 'ja-JP';
-      utter.pitch = config.pitch !== undefined ? config.pitch : 1.0;
-      utter.rate = config.rate !== undefined ? config.rate : defaultRate;
-
-      const voice = isEnglish
-        ? this.getEnglishVoice(config.gender || 'female')
-        : this.getJapaneseVoice(config.gender || 'female');
-      if (voice) utter.voice = voice;
-
+      const utter = this._createUtterance(lineData);
       window.__activeUtterance = utter;
       this.currentUtterance = utter;
 
       let hasFinished = false;
-      let resumeTimer = null;
-
       const finish = () => {
         if (hasFinished) return;
         hasFinished = true;
-        clearInterval(resumeTimer);
-        utter.onstart = null;
-        utter.onend = null;
-        utter.onerror = null;
-
-        if (window.__activeUtterance === utter) {
-          window.__activeUtterance = null;
-        }
-        if (this.currentUtterance === utter) {
-          this.currentUtterance = null;
-        }
+        this._detachUtterance(utter);
 
         if (this.playSessionId === sessionId) {
           this.isPlaying = false;
@@ -785,29 +796,7 @@ class AudioController {
         resolve();
       };
 
-      utter.onstart = () => {
-        if (this.playSessionId !== sessionId) {
-          try {
-            this.synth.cancel();
-          } catch {}
-          return;
-        }
-        this.isPlaying = true;
-        if (this.onSpeechStart) this.onSpeechStart();
-
-        // iOS Safari対策: 長文発話途中でSpeechSynthesisが停止するバグの防止
-        clearInterval(resumeTimer);
-        resumeTimer = setInterval(() => {
-          if (this.synth?.speaking && !hasFinished) {
-            try {
-              this.synth.resume();
-            } catch {}
-          } else {
-            clearInterval(resumeTimer);
-          }
-        }, 3000);
-      };
-
+      utter.onstart = () => this._handleUtteranceStart(sessionId, () => !hasFinished);
       utter.onend = finish;
       utter.onerror = finish;
 
@@ -819,9 +808,33 @@ class AudioController {
     });
   }
 
+  // iOS Safari対策: 長文発話途中でSpeechSynthesisが停止するバグの防止
+  _handleUtteranceStart(sessionId, isActive) {
+    if (this.playSessionId !== sessionId) {
+      try {
+        this.synth.cancel();
+      } catch {}
+      return;
+    }
+    this.isPlaying = true;
+    if (this.onSpeechStart) this.onSpeechStart();
+
+    clearInterval(this.resumeTimer);
+    this.resumeTimer = setInterval(() => {
+      if (this.synth?.speaking && isActive()) {
+        try {
+          this.synth.resume();
+        } catch {}
+      } else {
+        clearInterval(this.resumeTimer);
+      }
+    }, 3000);
+  }
+
   stop() {
     this.playSessionId++; // 世代を進めて過去の非同期待機・コールバックを全て無効化
     this.isPlaying = false;
+    clearInterval(this.resumeTimer);
     this._stopVoiceAnalysis();
 
     if (this.currentAudio) {

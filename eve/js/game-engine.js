@@ -876,23 +876,29 @@ class GameEngine {
 
     if (this.fx) {
       this.fx.setHologramMode(charId === 'eve', 0.8);
-
-      if (motion === 'desk-slam') {
-        this.fx.triggerShake(14, 450);
-        this.audio.playObjectionImpact();
-      } else if (motion === 'hop') {
-        this.fx.triggerShake(4, 250);
-      }
+      this._applyMotionFx(motion);
     }
 
-    if (this.rive) {
-      if (scene.character.expression === 'angry') {
-        this.rive.setAlertLevel('critical');
-      } else if (scene.character.expression === 'shocked') {
-        this.rive.setAlertLevel('warning');
-      } else {
-        this.rive.setAlertLevel('normal');
-      }
+    this._applyRiveAlertLevel(scene.character.expression);
+  }
+
+  _applyMotionFx(motion) {
+    if (motion === 'desk-slam') {
+      this.fx.triggerShake(14, 450);
+      this.audio.playObjectionImpact();
+    } else if (motion === 'hop') {
+      this.fx.triggerShake(4, 250);
+    }
+  }
+
+  _applyRiveAlertLevel(expression) {
+    if (!this.rive) return;
+    if (expression === 'angry') {
+      this.rive.setAlertLevel('critical');
+    } else if (expression === 'shocked') {
+      this.rive.setAlertLevel('warning');
+    } else {
+      this.rive.setAlertLevel('normal');
     }
   }
 

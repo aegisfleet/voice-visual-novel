@@ -122,7 +122,7 @@ body.game-active {
   position: relative;
   z-index: 1;
   width: 100%;
-  max-width: 960px;
+  max-width: 1020px;
   margin: 0 auto;
   overflow-x: hidden;
   min-height: 100dvh;
@@ -998,6 +998,7 @@ body.dialogue-active .explore-pin {
   box-shadow: none;
 }
 
+
 /* ----------------------------------------------------
    会話ステージ & ノベルウィンドウ
 ---------------------------------------------------- */
@@ -1007,7 +1008,7 @@ body.dialogue-active .explore-pin {
   left: 50%;
   transform: translateX(-50%);
   width: 100%;
-  max-width: 960px;
+  max-width: 1020px;
   height: 100dvh;
   z-index: 45;
   display: flex;
@@ -1028,21 +1029,44 @@ body.dialogue-active .explore-pin {
   z-index: 1;
 }
 
+.dialogue-visual-area {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  position: relative;
+  z-index: 5;
+  pointer-events: none;
+  overflow: hidden;
+}
+
 .character-stage {
   position: absolute;
-  bottom: calc(184px + max(16px, env(safe-area-inset-bottom, 0px)) + 2px);
+  bottom: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 520px;
-  max-width: 90vw;
-  height: 540px;
-  max-height: calc(100dvh - 256px);
+  width: min(490px, 66dvh, 90vw);
+  aspect-ratio: 1 / 1;
+  height: auto;
+  max-height: min(520px, calc(100% - 46px));
   display: flex;
   align-items: flex-end;
   justify-content: center;
   pointer-events: none;
   z-index: 5;
-  transition: all 0.3s ease;
+  transition:
+    left 0.32s cubic-bezier(0.16, 1, 0.3, 1),
+    width 0.32s ease,
+    height 0.32s ease,
+    transform 0.32s ease;
+}
+
+/* PCで鑑識データ図が表示されている時は、立ち絵を左・図解モニターを右へ協調配置して顔被りを完全解消 */
+.dialogue-stage.has-illustration .character-stage {
+  left: 23%;
+  transform: translateX(-50%);
+  width: min(390px, 52dvh, 42vw);
+  aspect-ratio: 1 / 1;
+  height: auto;
 }
 
 .character-sprite-box {
@@ -1095,7 +1119,7 @@ body.dialogue-active .explore-pin {
 .emotion-bubble {
   position: absolute;
   top: 15px;
-  right: clamp(40px, 14%, 90px);
+  right: clamp(24px, 12%, 75px);
   background: #fff;
   color: #030712;
   font-size: 1.45rem;
@@ -1122,14 +1146,15 @@ body.dialogue-active .explore-pin {
   }
 }
 
-/* 鑑識データ図・イメージ図ステージ (会話中表示) */
+/* 鑑識データ図・イメージ図ステージ (会話中表示：PCでは右側パネルに配置) */
 .dialogue-illustration-stage {
   position: absolute;
-  bottom: 202px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 92vw;
-  max-width: 620px;
+  bottom: 14px;
+  right: 20px;
+  left: auto;
+  transform: none;
+  width: 53%;
+  max-width: 530px;
   z-index: 12;
   display: flex;
   justify-content: center;
@@ -1205,6 +1230,7 @@ body.dialogue-active .explore-pin {
 }
 
 .illustration-img-container {
+  position: relative;
   width: 100%;
   display: flex;
   justify-content: center;
@@ -1222,10 +1248,24 @@ body.dialogue-active .explore-pin {
   box-sizing: border-box;
 }
 
+.illustration-zoom-hint {
+  position: absolute;
+  bottom: 6px;
+  right: 8px;
+  background: rgba(3, 7, 18, 0.88);
+  border: 1px solid rgba(0, 243, 255, 0.45);
+  color: var(--neon-cyan);
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 4px;
+  pointer-events: none;
+}
+
 .dialogue-illustration-img {
   width: 100%;
   height: auto;
-  max-height: clamp(160px, 34dvh, 320px);
+  max-height: clamp(160px, 32dvh, 290px);
   object-fit: contain;
   display: block;
   transition:
@@ -1248,9 +1288,9 @@ body.dialogue-active .explore-pin {
 .novel-window {
   position: relative;
   z-index: 10;
-  height: 184px;
+  height: auto;
   min-height: 184px;
-  max-height: 184px;
+  max-height: min(240px, 36dvh);
   margin: 0 16px max(16px, env(safe-area-inset-bottom, 0px)) 16px;
   background: rgba(15, 23, 42, 0.96);
   border: 1px solid var(--border-cyan);
@@ -2266,36 +2306,67 @@ body.dialogue-active .explore-pin {
     box-shadow: 0 4px 15px rgba(2, 132, 199, 0.45);
   }
 
-  /* 会話ノベルウィンドウ (スマホ最適化: テキストウィンドウ上端接地 + 見切れ防止最大化) */
+  /* 会話ノベルウィンドウ (スマホ最適化: 図解モニター上部・立ち絵下部で顔被りゼロ + 可変高ウィンドウ) */
   .character-stage {
-    bottom: calc(198px + max(14px, env(safe-area-inset-bottom, 0px)) + 2px);
-    width: 420px;
-    max-width: 95vw;
-    height: 420px;
-    max-height: calc(100dvh - 264px);
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(380px, 56dvh, 92vw);
+    aspect-ratio: 1 / 1;
+    height: auto;
+    max-height: min(400px, calc(100% - 44px));
+  }
+  .dialogue-stage.has-illustration .character-stage {
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(220px, 33dvh, 64vw);
+    aspect-ratio: 1 / 1;
+    height: auto;
+    max-height: calc(100% - 216px);
+    min-height: 120px;
   }
   .dialogue-illustration-stage {
-    bottom: calc(198px + max(14px, env(safe-area-inset-bottom, 0px)) + 6px);
-    width: 95vw;
+    top: 44px;
+    bottom: auto;
+    right: auto;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 94vw;
+    max-width: 94vw;
+  }
+  .illustration-frame {
+    padding: 6px 10px 8px 10px;
+  }
+  .illustration-header {
+    margin-bottom: 4px;
+    padding-bottom: 3px;
+  }
+  .illustration-img-container {
+    padding: 5px;
   }
   .dialogue-illustration-img {
-    max-height: 28dvh;
+    max-height: clamp(110px, 20dvh, 165px);
+  }
+  .illustration-caption {
+    margin-top: 4px;
+    font-size: 0.68rem;
   }
   .character-sprite-box {
     width: 100%;
     height: 100%;
   }
   .emotion-bubble {
-    top: 10px;
-    right: clamp(24px, 12%, 50px);
-    width: 38px;
-    height: 38px;
-    font-size: 1.25rem;
+    top: 8px;
+    right: clamp(18px, 10%, 44px);
+    width: 36px;
+    height: 36px;
+    font-size: 1.2rem;
   }
   .novel-window {
-    height: 198px;
-    min-height: 198px;
-    max-height: 198px;
+    height: auto;
+    min-height: 176px;
+    max-height: 36dvh;
     margin: 0 10px max(14px, env(safe-area-inset-bottom, 0px)) 10px;
     width: calc(100% - 20px);
     border-radius: 14px;
@@ -2310,8 +2381,8 @@ body.dialogue-active .explore-pin {
   }
   .novel-window.has-choices {
     height: auto;
-    min-height: 198px;
-    max-height: 50dvh;
+    min-height: 176px;
+    max-height: 48dvh;
     margin: 0 10px max(14px, env(safe-area-inset-bottom, 0px)) 10px;
     width: calc(100% - 20px);
     border-radius: 14px;
@@ -2326,13 +2397,13 @@ body.dialogue-active .explore-pin {
     font-size: clamp(0.85rem, 3.6vw, 0.95rem);
   }
   .dialogue-ctrl-btn {
-    font-size: 0.68rem;
-    padding: 2px 6px;
+    font-size: 0.7rem;
+    padding: 4px 8px;
   }
   .dialogue-body {
     font-size: clamp(0.85rem, 3.7vw, 0.92rem);
     line-height: 1.5;
-    min-height: unset;
+    min-height: 68px;
     margin-bottom: 2px;
     flex: 1;
     overflow-wrap: break-word;

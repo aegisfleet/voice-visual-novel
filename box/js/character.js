@@ -76,6 +76,152 @@ class BoxCharacterController {
       電子の声: { id: 'mimi', emotion: 'glow' },
     };
 
+    // テキスト文脈からの感情自動推定ルール（キーワード→感情の優先順位付きリスト）
+    this.emotionRules = {
+      yuta: [
+        {
+          emotion: 'shock',
+          keywords: ['！？', '!?', '馬鹿な', 'な、何だと', '嘘だろ', 'まずい', '押収', 'まさか'],
+        },
+        {
+          emotion: 'confident',
+          keywords: [
+            'これだ',
+            '違います',
+            '見てください',
+            '証明',
+            '確信',
+            '理由が',
+            'そうです！',
+            '研究',
+            'エンジニア',
+            '保護しています',
+            'ありません！',
+            'ええ',
+            '！',
+          ],
+        },
+        {
+          emotion: 'smile',
+          keywords: ['よかった', 'ふぅ', '助かった', 'ありがとう', '解決', '暮らそう', '安心'],
+        },
+        { emotion: 'thinking', keywords: ['……', '考えろ', '待てよ', 'なぜ'] },
+      ],
+      shibata: [
+        {
+          emotion: 'angry',
+          keywords: [
+            '貴様',
+            'ふざけるな',
+            '逮捕',
+            '言い訳',
+            '容疑者',
+            '黙れ',
+            '開けなさい',
+            '連行',
+            '断定',
+            '兵器',
+            '的外れ',
+          ],
+        },
+        {
+          emotion: 'shock',
+          keywords: [
+            'なっ！？',
+            '何だと……！？',
+            '馬鹿な……',
+            'そんなはずは',
+            '本当なのか',
+            '！？',
+            '!?',
+            '何……',
+            '信じられん',
+          ],
+        },
+        {
+          emotion: 'smile',
+          keywords: ['ふっ', 'なるほど', '見事だ', '君の勝ちだ', '筋は通っている', '大切にな'],
+        },
+        { emotion: 'thinking', keywords: ['……', '鑑識', '推測', 'プロトコル'] },
+      ],
+      aoi: [
+        {
+          emotion: 'panic',
+          keywords: [
+            '怖い',
+            'どうしよう',
+            'ひっ',
+            'きゃっ',
+            '助けて',
+            '！？',
+            '!?',
+            '事件',
+            '恐ろしい',
+            'お化け',
+            '気味の悪い',
+          ],
+        },
+        {
+          emotion: 'smile',
+          keywords: ['ありがとう', 'よかった', '嬉しい', '安心', '綺麗', '温かい', '手伝います'],
+        },
+      ],
+      yaegashi: [
+        {
+          emotion: 'laugh',
+          keywords: [
+            'がはは',
+            'わはは',
+            'いいぞ',
+            '頼もしい',
+            '安心した',
+            'カッカッカ',
+            'くれてやる',
+            'パーティー',
+          ],
+        },
+        {
+          emotion: 'angry',
+          keywords: [
+            '退去',
+            '勝手な',
+            'ふざけるな',
+            'おい！',
+            '家宅捜索',
+            '責任',
+            'バカ言え',
+            '損害賠償',
+          ],
+        },
+      ],
+      mimi: [
+        {
+          emotion: 'glitch',
+          keywords: [
+            '消える',
+            'ノイズ',
+            '痛い',
+            'エラー',
+            '……っ',
+            'たすけて',
+            'タイヘ……ン',
+            '暗イ',
+          ],
+        },
+        {
+          emotion: 'smile',
+          keywords: [
+            'ありがとう',
+            'うれしい',
+            'あたたかい',
+            'わたしは、ここに',
+            '守るね',
+            '思い浮かぶ',
+          ],
+        },
+      ],
+    };
+
     this.preloadAll();
   }
 
@@ -151,214 +297,72 @@ class BoxCharacterController {
     }, 250);
   }
 
+  findSpeakerMapping(speaker) {
+    for (const [key, val] of Object.entries(this.speakerMap)) {
+      if (speaker.includes(key)) {
+        return val;
+      }
+    }
+    return null;
+  }
+
+  detectEmotionFromText(charId, text) {
+    const rules = this.emotionRules[charId];
+    if (!rules) return null;
+    for (const rule of rules) {
+      if (rule.keywords.some((keyword) => text.includes(keyword))) {
+        return rule.emotion;
+      }
+    }
+    return null;
+  }
+
+  resolveEmotion(dialogueItem, mapping, text) {
+    if (dialogueItem.emotion) return dialogueItem.emotion;
+    return this.detectEmotionFromText(mapping.id, text) || mapping.emotion;
+  }
+
   showForDialogue(dialogueItem) {
     if (!dialogueItem) return;
 
     const speaker = dialogueItem.speaker || '';
     const text = dialogueItem.text || '';
-    const explicitEmotion = dialogueItem.emotion || null;
 
     if (speaker.includes('ナレーション')) {
       this.hide();
       return;
     }
 
-    let mapping = null;
-    for (const [key, val] of Object.entries(this.speakerMap)) {
-      if (speaker.includes(key)) {
-        mapping = val;
-        break;
-      }
-    }
-
+    const mapping = this.findSpeakerMapping(speaker);
     if (!mapping) {
       this.hide();
       return;
     }
 
-    let emotion = explicitEmotion || mapping.emotion;
-
-    // テキスト文脈からの感情自動推定（セリフごとに最適な表情差分を自動選出）
-    if (!explicitEmotion) {
-      const charId = mapping.id;
-
-      if (charId === 'yuta') {
-        if (
-          text.includes('！？') ||
-          text.includes('!?') ||
-          text.includes('馬鹿な') ||
-          text.includes('な、何だと') ||
-          text.includes('嘘だろ') ||
-          text.includes('まずい') ||
-          text.includes('押収') ||
-          text.includes('まさか')
-        ) {
-          emotion = 'shock';
-        } else if (
-          text.includes('これだ') ||
-          text.includes('違います') ||
-          text.includes('見てください') ||
-          text.includes('証明') ||
-          text.includes('確信') ||
-          text.includes('理由が') ||
-          text.includes('そうです！') ||
-          text.includes('研究') ||
-          text.includes('エンジニア') ||
-          text.includes('保護しています') ||
-          text.includes('ありません！') ||
-          text.includes('ええ') ||
-          text.includes('！')
-        ) {
-          emotion = 'confident';
-        } else if (
-          text.includes('よかった') ||
-          text.includes('ふぅ') ||
-          text.includes('助かった') ||
-          text.includes('ありがとう') ||
-          text.includes('解決') ||
-          text.includes('暮らそう') ||
-          text.includes('安心')
-        ) {
-          emotion = 'smile';
-        } else if (
-          text.includes('……') ||
-          text.includes('考えろ') ||
-          text.includes('待てよ') ||
-          text.includes('なぜ')
-        ) {
-          emotion = 'thinking';
-        }
-      } else if (charId === 'shibata') {
-        if (
-          text.includes('貴様') ||
-          text.includes('ふざけるな') ||
-          text.includes('逮捕') ||
-          text.includes('言い訳') ||
-          text.includes('容疑者') ||
-          text.includes('黙れ') ||
-          text.includes('開けなさい') ||
-          text.includes('連行') ||
-          text.includes('断定') ||
-          text.includes('兵器') ||
-          text.includes('的外れ')
-        ) {
-          emotion = 'angry';
-        } else if (
-          text.includes('なっ！？') ||
-          text.includes('何だと……！？') ||
-          text.includes('馬鹿な……') ||
-          text.includes('そんなはずは') ||
-          text.includes('本当なのか') ||
-          text.includes('！？') ||
-          text.includes('!?') ||
-          text.includes('何……') ||
-          text.includes('信じられん')
-        ) {
-          emotion = 'shock';
-        } else if (
-          text.includes('ふっ') ||
-          text.includes('なるほど') ||
-          text.includes('見事だ') ||
-          text.includes('君の勝ちだ') ||
-          text.includes('筋は通っている') ||
-          text.includes('大切にな')
-        ) {
-          emotion = 'smile';
-        } else if (
-          text.includes('……') ||
-          text.includes('鑑識') ||
-          text.includes('推測') ||
-          text.includes('プロトコル')
-        ) {
-          emotion = 'thinking';
-        }
-      } else if (charId === 'aoi') {
-        if (
-          text.includes('怖い') ||
-          text.includes('どうしよう') ||
-          text.includes('ひっ') ||
-          text.includes('きゃっ') ||
-          text.includes('助けて') ||
-          text.includes('！？') ||
-          text.includes('!?') ||
-          text.includes('事件') ||
-          text.includes('恐ろしい') ||
-          text.includes('お化け') ||
-          text.includes('気味の悪い')
-        ) {
-          emotion = 'panic';
-        } else if (
-          text.includes('ありがとう') ||
-          text.includes('よかった') ||
-          text.includes('嬉しい') ||
-          text.includes('安心') ||
-          text.includes('綺麗') ||
-          text.includes('温かい') ||
-          text.includes('手伝います')
-        ) {
-          emotion = 'smile';
-        }
-      } else if (charId === 'yaegashi') {
-        if (
-          text.includes('がはは') ||
-          text.includes('わはは') ||
-          text.includes('いいぞ') ||
-          text.includes('頼もしい') ||
-          text.includes('安心した') ||
-          text.includes('カッカッカ') ||
-          text.includes('くれてやる') ||
-          text.includes('パーティー')
-        ) {
-          emotion = 'laugh';
-        } else if (
-          text.includes('退去') ||
-          text.includes('勝手な') ||
-          text.includes('ふざけるな') ||
-          text.includes('おい！') ||
-          text.includes('家宅捜索') ||
-          text.includes('責任') ||
-          text.includes('バカ言え') ||
-          text.includes('損害賠償')
-        ) {
-          emotion = 'angry';
-        }
-      } else if (charId === 'mimi') {
-        if (
-          text.includes('消える') ||
-          text.includes('ノイズ') ||
-          text.includes('痛い') ||
-          text.includes('エラー') ||
-          text.includes('……っ') ||
-          text.includes('たすけて') ||
-          text.includes('タイヘ……ン') ||
-          text.includes('暗イ')
-        ) {
-          emotion = 'glitch';
-        } else if (
-          text.includes('ありがとう') ||
-          text.includes('うれしい') ||
-          text.includes('あたたかい') ||
-          text.includes('わたしは、ここに') ||
-          text.includes('守るね') ||
-          text.includes('思い浮かぶ')
-        ) {
-          emotion = 'smile';
-        }
-      }
-    }
-
+    const emotion = this.resolveEmotion(dialogueItem, mapping, text);
     this.show(mapping.id, emotion);
+    this.showContextEmotionBubble(emotion, text);
+  }
 
-    // 感情バルーンの表示
+  // 感情に応じた感情バルーン（絵文字）の表示
+  showContextEmotionBubble(emotion, text) {
     if (emotion === 'shock' || text.includes('！？')) {
       this.showEmotionBubble('exclamation');
-    } else if (emotion === 'thinking' || text.includes('……')) {
+      return;
+    }
+    if (emotion === 'thinking' || text.includes('……')) {
       this.showEmotionBubble('question');
-    } else if (emotion === 'confident') {
+      return;
+    }
+    if (emotion === 'confident') {
       this.showEmotionBubble('lightbulb');
-    } else if (emotion === 'panic' || emotion === 'glitch') {
+      return;
+    }
+    if (emotion === 'panic' || emotion === 'glitch') {
       this.showEmotionBubble('sweat');
-    } else if (emotion === 'smile' || emotion === 'laugh') {
+      return;
+    }
+    if (emotion === 'smile' || emotion === 'laugh') {
       this.showEmotionBubble('sparkle');
     }
   }

@@ -744,29 +744,41 @@ class CharacterController {
 
   _applySpecificExpression(expression) {
     if (expression === 'smile') {
-      const layerEyesClosed = this.container.querySelector('#layerEyesClosed');
-      if (layerEyesClosed) layerEyesClosed.classList.add('active');
-      const eyesNormal = this.container.querySelector('#eyesNormal');
-      const eyesSmile = this.container.querySelector('#eyesSmile');
-      if (eyesNormal && eyesSmile) {
-        eyesNormal.style.display = 'none';
-        eyesSmile.style.display = 'block';
-      }
-      const blush = this.container.querySelector('#partBlush');
-      if (blush) blush.style.opacity = '0.7';
+      this._applySmileExpression();
     } else if (expression === 'shocked' || expression === 'surprised') {
-      const eyesNormal = this.container.querySelector('#eyesNormal');
-      const eyesShocked = this.container.querySelector('#eyesShocked');
-      if (eyesNormal && eyesShocked) {
-        eyesNormal.style.display = 'none';
-        eyesShocked.style.display = 'block';
-      }
-      const sweatDrop = this.container.querySelector('#sweatDrop');
-      if (sweatDrop) sweatDrop.style.display = 'block';
+      this._applyShockedExpression();
     } else if (expression === 'worried' || expression === 'sad') {
-      const sweatDrop = this.container.querySelector('#sweatDrop');
-      if (sweatDrop) sweatDrop.style.display = 'block';
+      this._applyWorriedExpression();
     }
+  }
+
+  _applySmileExpression() {
+    const layerEyesClosed = this.container.querySelector('#layerEyesClosed');
+    if (layerEyesClosed) layerEyesClosed.classList.add('active');
+    const eyesNormal = this.container.querySelector('#eyesNormal');
+    const eyesSmile = this.container.querySelector('#eyesSmile');
+    if (eyesNormal && eyesSmile) {
+      eyesNormal.style.display = 'none';
+      eyesSmile.style.display = 'block';
+    }
+    const blush = this.container.querySelector('#partBlush');
+    if (blush) blush.style.opacity = '0.7';
+  }
+
+  _applyShockedExpression() {
+    const eyesNormal = this.container.querySelector('#eyesNormal');
+    const eyesShocked = this.container.querySelector('#eyesShocked');
+    if (eyesNormal && eyesShocked) {
+      eyesNormal.style.display = 'none';
+      eyesShocked.style.display = 'block';
+    }
+    const sweatDrop = this.container.querySelector('#sweatDrop');
+    if (sweatDrop) sweatDrop.style.display = 'block';
+  }
+
+  _applyWorriedExpression() {
+    const sweatDrop = this.container.querySelector('#sweatDrop');
+    if (sweatDrop) sweatDrop.style.display = 'block';
   }
 
   resetExpressionStyle() {
@@ -846,58 +858,61 @@ class CharacterController {
     this.isAudioDriven = true;
 
     // 1. 音量連動リップシンク (Audio-Driven Lip Sync)
-    // 音量上昇は即座に反応、減衰は滑らかにディケイ (0.80)
-    if (volume > this.audioSmoothVolume) {
-      this.audioSmoothVolume = volume;
-    } else {
-      this.audioSmoothVolume = this.audioSmoothVolume * 0.8;
-    }
+    this._updateSmoothVolume(volume);
 
-    // 音量に応じた多段階口パク切り替え + ゆったりとした音節フラップ変調
-    // 周期約 300ms (秒間約3.3拍) の落ち着いた自然なアニメーションテンポ
-    let targetStage = 0;
+    // 2. 音量に応じた多段階口パク切り替えと、3. 音声連動目パチ
     const now = performance.now();
+    const targetStage = this._computeTargetMouthStage(now);
+    this._applyMouthStage(targetStage, now);
+    this._updateAutoBlink(isSilence, silenceDuration, now);
+  }
 
-    if (this.audioSmoothVolume >= 0.22) {
-      // 大音量持続時: 周期約 300ms (0.021 rad/ms)
-      // 全開(3)を約65%の時間ゆったりホールドし、半開(2)を約35%の時間挟んで自然に開閉
-      const flapPhase = Math.sin(now * 0.021);
-      targetStage = flapPhase > -0.3 ? 3 : 2;
-    } else if (this.audioSmoothVolume >= 0.09) {
-      // 中音量持続時: 周期約 300ms
-      const flapPhase = Math.sin(now * 0.021);
-      targetStage = flapPhase > 0 ? 2 : 1;
-    } else if (this.audioSmoothVolume >= 0.035) {
-      targetStage = 1; // 微開 (mouth_small)
-    } else {
-      targetStage = 0; // 閉口 (base)
+  // 音量上昇は即座に反応、減衰は滑らかにディケイ (0.80)
+  _updateSmoothVolume(volume) {
+    this.audioSmoothVolume =
+      volume > this.audioSmoothVolume ? volume : this.audioSmoothVolume * 0.8;
+  }
+
+  // 音量に応じた多段階口パク切り替え + 周期約300msの音節フラップ変調
+  _computeTargetMouthStage(now) {
+    const v = this.audioSmoothVolume;
+    if (v >= 0.22) {
+      // 大音量持続時: 全開(3)を約65%、半開(2)を約35%の時間で自然に開閉
+      return Math.sin(now * 0.021) > -0.3 ? 3 : 2;
     }
-
-    // チャタリング・チラつき防止: ステージ変更後は最低 90ms 維持して落ち着いたコマ送りに
-    // ただし無音(0)への復帰は切れ味よく即座に反映
-    if (targetStage !== this.currentMouthStage) {
-      const timeSinceChange = now - this.lastMouthStageChangeTime;
-      if (targetStage === 0 || timeSinceChange >= 90) {
-        this.currentMouthStage = targetStage;
-        this.lastMouthStageChangeTime = now;
-        this.setMouthStage(targetStage);
-      }
+    if (v >= 0.09) {
+      return Math.sin(now * 0.021) > 0 ? 2 : 1;
     }
+    if (v >= 0.035) {
+      return 1; // 微開 (mouth_small)
+    }
+    return 0; // 閉口 (base)
+  }
 
-    // 2. 音声連動目パチ (息継ぎ・読点ポーズの自動瞬き)
+  // チャタリング・チラつき防止: 変更後は最低90ms維持、無音(0)への復帰は即座に反映
+  _applyMouthStage(targetStage, now) {
+    if (targetStage === this.currentMouthStage) return;
+    const timeSinceChange = now - this.lastMouthStageChangeTime;
+    if (targetStage !== 0 && timeSinceChange < 90) return;
+    this.currentMouthStage = targetStage;
+    this.lastMouthStageChangeTime = now;
+    this.setMouthStage(targetStage);
+  }
+
+  // 音声連動目パチ (息継ぎ・読点ポーズの自動瞬き)
+  _updateAutoBlink(isSilence, silenceDuration, now) {
     if (!isSilence) {
-      // 発声中: 息継ぎフラグをリセット
       this.hasBlinkedInCurrentPause = false;
-    } else {
-      // 無音区間が 220ms 以上継続した場合（息継ぎ・読点ポーズ）
-      if (
-        silenceDuration >= 220 &&
-        !this.hasBlinkedInCurrentPause &&
-        now - this.lastBlinkTime > 1800
-      ) {
-        this.hasBlinkedInCurrentPause = true;
-        this.triggerSingleBlink();
-      }
+      return;
+    }
+    // 無音区間が 220ms 以上継続した場合（息継ぎ・読点ポーズ）
+    if (
+      silenceDuration >= 220 &&
+      !this.hasBlinkedInCurrentPause &&
+      now - this.lastBlinkTime > 1800
+    ) {
+      this.hasBlinkedInCurrentPause = true;
+      this.triggerSingleBlink();
     }
   }
 
