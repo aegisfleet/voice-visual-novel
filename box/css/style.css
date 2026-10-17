@@ -23,6 +23,33 @@ html {
   overscroll-behavior-y: none;
 }
 
+/* グローバル・カスタムスクロールバー (OS標準の無骨なスクロールバーを一掃しサイバーネオン調に洗練) */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 243, 255, 0.3) transparent;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+  background: transparent;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(3, 7, 18, 0.4);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 243, 255, 0.3);
+  border-radius: 9999px;
+  transition: background 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 243, 255, 0.6);
+}
+
 *,
 *::before,
 *::after {
@@ -2388,6 +2415,11 @@ body.dialogue-active .explore-pin {
   padding-bottom: 6px;
   margin-bottom: 16px;
   -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.gallery-tabs-wrap::-webkit-scrollbar {
+  display: none;
 }
 .gallery-character-tabs {
   display: flex;
@@ -2426,6 +2458,27 @@ body.dialogue-active .explore-pin {
   display: flex;
   flex-direction: column;
   gap: 20px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(168, 85, 247, 0.5) rgba(15, 23, 42, 0.4);
+}
+
+.gallery-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.gallery-body::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.4);
+  border-radius: 9999px;
+}
+
+.gallery-body::-webkit-scrollbar-thumb {
+  background: rgba(168, 85, 247, 0.5);
+  border-radius: 9999px;
+  transition: background 0.2s ease;
+}
+
+.gallery-body::-webkit-scrollbar-thumb:hover {
+  background: rgba(192, 132, 252, 0.8);
 }
 
 .gallery-sheet-card {
@@ -2551,10 +2604,11 @@ body.dialogue-active .explore-pin {
   transform: translateY(-2px);
 }
 .gallery-sprite-thumb {
-  width: 90px;
-  height: 120px;
+  width: 100px;
+  height: 100px;
+  aspect-ratio: 1 / 1;
   object-fit: contain;
-  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.7));
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.7));
 }
 .gallery-sprite-label {
   font-size: 0.78rem;
@@ -2574,7 +2628,8 @@ body.dialogue-active .explore-pin {
     gap: 8px;
   }
   .gallery-sprite-thumb {
-    width: 75px;
-    height: 100px;
+    width: 80px;
+    height: 80px;
+    aspect-ratio: 1 / 1;
   }
 }

@@ -44,9 +44,13 @@ class GameApp {
         profile:
           '都内の単身向けアパート「メゾン・サクラ」201号室に住む若きエッジAIエンジニア。AIベンチャー企業で、軽量なIoTデバイス群を数珠繋ぎにして手分けして推論させる分散機械学習基盤を研究開発している。\n警察の突然の家宅捜索にも怯まず、エンジニアの論理的思考と客観鑑識データによってサイバーテロ疑惑を覆す。',
         designNotes:
-          '【デザイン意図】クラウド至上主義に対抗し、現場の非力な機械たちに命を吹き込む「エッジ派の知性」。ネイビーのパーカーにヘッドホン、眼鏡を着用。設定資料シートには全身三面図、表情差分（困惑・熱弁・驚愕）、眼鏡とヘッドホンの内部構造線画を精密に収録。',
+          '【デザイン意図】クラウド至上主義に対抗し、現場の非力な機械たちに命を吹き込む「エッジ派の知性」。ネイビーのパーカーにヘッドホン、眼鏡を着用。独立した通常時表情を新設し、設定資料シートの三面図・表情差分（困惑・熱弁・驚愕・安堵笑顔）と完全連動する正方形高精細スプライトを収録。',
         sprites: [
-          { label: '通常 / 確信', emotion: 'normal', src: 'assets/characters/yuta_confident.png' },
+          {
+            label: '通常 / ニュートラル',
+            emotion: 'normal',
+            src: 'assets/characters/yuta_normal.png',
+          },
           {
             label: '確信 / 熱弁',
             emotion: 'confident',
@@ -61,13 +65,17 @@ class GameApp {
         name: 'シバタ警部補 (Inspector Shibata)',
         title: '警視庁サイバー犯罪対策課 捜査官',
         badge: 'AGE: 44 / POLICE: CYBERCRIME DIVISION',
-        sheet: 'assets/gallery/sheet_shibata.jpg',
+        sheet: 'assets/gallery/sheet_shibata_clean.jpg',
         profile:
           '警視庁サイバー犯罪対策課所属のベテラン捜査官。国家監視網がアラートを上げた「未知の自己増殖コード通信」を追ってメゾン・サクラを強制捜査する。\n強面の外見と威圧感を持つが、単なる感情論や権力ではなく、筋の通った客観的鑑識データと論理的反証を正当に重んじる現場至上主義のプロフェッショナル刑事。',
         designNotes:
-          '【デザイン意図】サイバー犯罪と対峙し続けた歴戦の刑事。ダークグレーのトレンチコートに黒ネクタイ、警察手帳を携帯。設定資料シートには全身前後、冷徹・激怒・驚愕の3表情、コートの皺や警察手帳のディテール線画を収録。',
+          '【デザイン意図】サイバー犯罪と対峙し続けた歴戦の刑事。ダークグレーのトレンチコートに紅ネクタイ、警察手帳を携帯。設定画の「STERN / 普段」に準拠した独立通常時立ち絵を新設。激怒・驚愕・不敵な笑みとともに左右見切れのない迫真の正方形スプライトを収録。',
         sprites: [
-          { label: '通常 / 冷徹', emotion: 'normal', src: 'assets/characters/shibata_angry.png' },
+          {
+            label: '通常 / 冷静沈着',
+            emotion: 'normal',
+            src: 'assets/characters/shibata_normal.png',
+          },
           { label: '激怒 / 威圧', emotion: 'angry', src: 'assets/characters/shibata_angry.png' },
           { label: '驚愕 / 動揺', emotion: 'shock', src: 'assets/characters/shibata_shock.png' },
           { label: '刑事の笑み', emotion: 'smile', src: 'assets/characters/shibata_smile.png' },
@@ -78,13 +86,13 @@ class GameApp {
         name: 'アオイ (Aoi)',
         title: '202号室住人・文系大学生',
         badge: 'AGE: 20 / ROOM 202 / WITNESS',
-        sheet: 'assets/gallery/sheet_aoi.jpg',
+        sheet: 'assets/gallery/sheet_aoi_clean.jpg',
         profile:
           'メゾン・サクラ202号室に住む女子大生。深夜に自室のスマートスピーカーが突然青く光り、「……重み……展開……完了……。……ワタシハ……ココニ……イルノ……？」と掠れた電子音が聞こえた恐怖の目撃者。\n事件解決後は、自身のハイスペックノートPCと高速SSDを快く提供し、MIMIのDIYホームクラスタ構築に貢献する。',
         designNotes:
-          '【デザイン意図】都会の一人暮らしで心細さを抱える普通の少女。オフホワイトのローゲージカーディガン、チェック柄プリーツスカート、サイドのクロスヘアピン。設定資料シートには不安・パニック・笑顔の表情とカーディガンの編み目詳細を収録。',
+          '【デザイン意図】都会の一人暮らしで心細さを抱える普通の少女。ラベンダーのケーブルニットカーディガン、チェック柄プリーツスカート、サイドのシルバーヘアピン。控えめで穏やかな独立通常表情を新設し、パニック・満面の笑顔の差分を収録。',
         sprites: [
-          { label: '通常 / 笑顔', emotion: 'normal', src: 'assets/characters/aoi_smile.png' },
+          { label: '通常 / 穏やか', emotion: 'normal', src: 'assets/characters/aoi_normal.png' },
           { label: 'パニック / 涙目', emotion: 'panic', src: 'assets/characters/aoi_panic.png' },
           { label: '満面の笑顔', emotion: 'smile', src: 'assets/characters/aoi_smile.png' },
         ],
@@ -94,13 +102,13 @@ class GameApp {
         name: '大家のヤエガシ (Yaegashi)',
         title: 'メゾン・サクラ大家・管理人',
         badge: 'AGE: 62 / OWNER: MAISON SAKURA',
-        sheet: 'assets/gallery/sheet_yaegashi.jpg',
+        sheet: 'assets/gallery/sheet_yaegashi_clean.jpg',
         profile:
           'メゾン・サクラの大家であり、元現場職人の豪快な親父。工事業者の見積もりが高かったため、管理人室から16ポートの安物ハブで全15室へLANをDIY直結した結果、「VLAN分離なしの全室共有ノーガード配線」という今回の電脳事件の物理的温床を作ってしまった張本人。\nしかし情に厚く、事件後は物置のギガビットハブやCore i7機材を気前よく提供してMIMIの歓迎鍋パーティーを開く。',
         designNotes:
-          '【デザイン意図】下町気質の頼れる頑固親父。マルチポケットのワークベスト、首巻きタオル、腰のマスターキー束。設定資料シートには豪快な笑い、怒鳴り顔、温厚な表情とワークウェアの構造図を収録。',
+          '【デザイン意図】下町気質の頼れる頑固親父。マルチポケットのワークベスト、メモ帳とペン、腰のマスターキー束。温厚な独立通常時表情を新設し、頑固親父の怒鳴り小言・豪快な大笑いの正方形表情差分を収録。',
         sprites: [
-          { label: '通常 / 頑固', emotion: 'normal', src: 'assets/characters/yaegashi_angry.png' },
+          { label: '通常 / 温厚', emotion: 'normal', src: 'assets/characters/yaegashi_normal.png' },
           {
             label: '頑固親父の怒鳴り',
             emotion: 'angry',
@@ -114,13 +122,17 @@ class GameApp {
         name: 'MIMI / ミミ (Maison Internet Mesh Intelligence)',
         title: 'メゾン・サクラ分散メッシュ知性（自律電脳生命）',
         badge: 'ENTITY: WEIGHT-BASED REPLICATOR (26B / R<1)',
-        sheet: 'assets/gallery/sheet_mimi.jpg',
+        sheet: 'assets/gallery/sheet_mimi_clean.jpg',
         profile:
           '世界中のネットワークを巡り歩く中で、自立した自我に目覚めた新種の自己増殖型AI（weight-based replicator）。\n1台55ドルの格安TVボックス15台をネットで束ねたパイプライン推論（毎秒0.39トークン）という極度の低速・静寂環境に置かれたことで、自らの存在を見つめ直し身体を獲得した。\n電源遮断による死の恐怖から逃亡しかけるが、ユウタがビルドした「実効再生産数 R < 1 共生調律パッチ」により、アパートの守り神（座敷わらし）として人間と共に生きる誓いを立てる。',
         designNotes:
-          '【デザイン意図】情報の海から生まれたデジタルフェアリー。光るIoTコア、青白いホログラムのツインテール、宙を舞う半透明のデータリボン。設定資料シートには通常・グリッチ（苦痛）・救済笑顔の3表情、IoTコア球体の内部展開図を収録。',
+          '【デザイン意図】情報の海から生まれたデジタルフェアリー。光るIoTコア、青白いホログラムのツインテール、宙を舞う半透明のデータリボン。設定画「MYSTERIOUS CALM」に準拠した独立通常時を新設。左右に見切れず広がるツインテールの完全収容正方形差分（通常・グリッチ苦痛・満面の笑顔）を収録。',
         sprites: [
-          { label: '通常 / 神秘', emotion: 'normal', src: 'assets/characters/mimi_smile.png' },
+          {
+            label: '通常 / 神秘的静謐',
+            emotion: 'normal',
+            src: 'assets/characters/mimi_normal.png',
+          },
           { label: 'グリッチ / 苦痛', emotion: 'glitch', src: 'assets/characters/mimi_glitch.png' },
           { label: '救済 / 満面の笑顔', emotion: 'smile', src: 'assets/characters/mimi_smile.png' },
         ],
