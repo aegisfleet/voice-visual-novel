@@ -249,7 +249,7 @@ class GameApp {
     ];
     list.forEach(src => {
       const img = new Image();
-      img.src = `${src}?v=20261017_rev49`;
+      img.src = `${src}?v=20261017_rev50`;
     });
   }
 
@@ -430,7 +430,7 @@ class GameApp {
     if (this.dom.illustrationImgContainer) {
       this.dom.illustrationImgContainer.addEventListener('click', (e) => {
         e.stopPropagation();
-        if (this.dom.dialogueIllustrationImg && this.dom.dialogueIllustrationImg.src) {
+        if (this.dom.dialogueIllustrationImg?.src) {
           this.audio.playClick();
           this.openImageViewer(
             this.dom.dialogueIllustrationImg.src,
@@ -727,7 +727,9 @@ class GameApp {
       this.dom.screenDebate,
       this.dom.screenEnding
     ];
-    screens.forEach(s => s.classList.remove('active'));
+    screens.forEach(s => {
+      s.classList.remove('active');
+    });
 
     if (screenName === 'title') {
       document.body.classList.remove('game-active');
@@ -855,7 +857,7 @@ class GameApp {
           : '<span class="pin-status-badge new">NEW</span>';
 
         const iconContent = spot.image
-          ? `<img src="${spot.image}?v=20261017_rev47" alt="${spot.name}" class="pin-icon-img" />`
+          ? `<img src="${spot.image}?v=20261017_rev50" alt="${spot.name}" class="pin-icon-img" />`
           : spot.icon;
 
         el.innerHTML = `
@@ -866,7 +868,7 @@ class GameApp {
           <div class="pin-label">${spot.name}</div>
         `;
         el.addEventListener('click', () => {
-          if (document.activeElement && document.activeElement.blur) {
+          if (document.activeElement?.blur) {
             document.activeElement.blur();
           }
           this.handleInspectSpot(spot);
@@ -888,7 +890,7 @@ class GameApp {
           : '<span class="pin-status-badge new">TALK</span>';
 
         const iconContent = npc.image
-          ? `<img src="${npc.image}?v=20261017_rev47" alt="${npc.name}" class="pin-icon-img" />`
+          ? `<img src="${npc.image}?v=20261017_rev50" alt="${npc.name}" class="pin-icon-img" />`
           : npc.icon;
 
         el.innerHTML = `
@@ -899,7 +901,7 @@ class GameApp {
           <div class="pin-label">${npc.name}</div>
         `;
         el.addEventListener('click', () => {
-          if (document.activeElement && document.activeElement.blur) {
+          if (document.activeElement?.blur) {
             document.activeElement.blur();
           }
           this.handleTalkNpc(npc);
@@ -915,7 +917,7 @@ class GameApp {
   // スポット調査処理
   handleInspectSpot(spot) {
     if (this.isDialogueActive || this.isChoiceActive) return;
-    if (document.activeElement && document.activeElement.blur) {
+    if (document.activeElement?.blur) {
       document.activeElement.blur();
     }
     this.audio.playClick();
@@ -936,7 +938,7 @@ class GameApp {
   // NPC会話処理
   handleTalkNpc(npc) {
     if (this.isDialogueActive || this.isChoiceActive) return;
-    if (document.activeElement && document.activeElement.blur) {
+    if (document.activeElement?.blur) {
       document.activeElement.blur();
     }
     this.audio.playClick();
@@ -1013,7 +1015,7 @@ class GameApp {
   // 会話・ノベルウィンドウ演出 (タイピング & 音声)
   // ----------------------------------------------------
   playDialogueSequence(dialogueList, onComplete = null, keepStageOpen = false) {
-    if (document.activeElement && document.activeElement.blur) {
+    if (document.activeElement?.blur) {
       document.activeElement.blur();
     }
     this.stopSkipMode();
@@ -1083,7 +1085,7 @@ class GameApp {
       }
 
       if (img && stage) {
-        const v = '?v=20261017_rev49';
+        const v = '?v=20261017_rev50';
         const targetUrl = nextSrc.includes('?') ? nextSrc : `${nextSrc}${v}`;
         const currentSrc = img.getAttribute('src');
 
@@ -1382,7 +1384,7 @@ class GameApp {
     if (!this.dom.debateShibataAvatar) return;
     const img = this.dom.debateShibataAvatar.querySelector('img');
     if (!img) return;
-    const v = '?v=20261017_rev47';
+    const v = '?v=20261017_rev50';
     const mapping = {
       normal: `assets/characters/shibata_angry.png${v}`,
       angry: `assets/characters/shibata_angry.png${v}`,
@@ -1455,7 +1457,7 @@ class GameApp {
       }
 
       const iconHtml = ev.image
-        ? `<img src="${ev.image}?v=20261017_rev47" alt="${ev.name}" class="evidence-icon-img" />`
+        ? `<img src="${ev.image}?v=20261017_rev50" alt="${ev.name}" class="evidence-icon-img" />`
         : ev.icon;
 
       const badgeHtml = isAlreadySubmitted
@@ -1710,7 +1712,7 @@ class GameApp {
 
       const item = document.createElement('div');
       item.className = `evidence-modal-item ${isDeep ? 'deep-cyber' : ''}`;
-      const v = '?v=20261017_rev47';
+      const v = '?v=20261017_rev50';
       const imgSrc = ev.image ? `${ev.image}${v}` : '';
       const iconHtml = ev.image
         ? `<img src="${imgSrc}" alt="${ev.name}" class="ev-modal-icon-img" />`
@@ -1778,7 +1780,7 @@ class GameApp {
 
   renderGalleryContent(charId) {
     if (!this.dom.galleryBody || !this.galleryData) return;
-    const data = this.galleryData[charId] || this.galleryData['yuta'];
+    const data = this.galleryData[charId] || this.galleryData.yuta;
     if (!data) return;
 
     // タブのactive状態更新

@@ -93,7 +93,7 @@ class BoxCharacterController {
   getSpriteSrc(charId, emotion = 'normal') {
     const charMap = this.characterImages[charId];
     if (!charMap) return '';
-    return charMap[emotion] || charMap['normal'] || '';
+    return charMap[emotion] || charMap.normal || '';
   }
 
   show(charId, emotion = 'normal', motion = null) {

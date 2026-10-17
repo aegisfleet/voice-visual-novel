@@ -144,7 +144,7 @@ class AudioManager {
     if (this.currentVoiceAbortController) {
       try {
         this.currentVoiceAbortController.abort();
-      } catch (e) {}
+      } catch (_e) {}
       this.currentVoiceAbortController = null;
     }
 
@@ -153,7 +153,7 @@ class AudioManager {
         this.currentVoiceAudio.pause();
         this.currentVoiceAudio.removeAttribute('src'); // 通信バッファリング停止
         this.currentVoiceAudio.load(); // 接続を即時解放
-      } catch (e) {}
+      } catch (_e) {}
       this.currentVoiceAudio = null;
     }
   }
@@ -435,7 +435,7 @@ class AudioManager {
     const tempo = mode === 'tension' ? 220 : 380; // ms per step
 
     this.bgmTimer = setInterval(() => {
-      if (!this.ctx || this.ctx.state !== 'running' || !this.bgmGain) return;
+      if (this.ctx?.state !== 'running' || !this.bgmGain) return;
 
       const chord = progression[chordIdx];
       const freq = chord[step % chord.length];
@@ -472,7 +472,7 @@ class AudioManager {
     if (this.bgmGain && this.ctx) {
       try {
         this.bgmGain.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 0.2);
-      } catch (e) {
+      } catch (_e) {
         // ignore
       }
       setTimeout(() => {

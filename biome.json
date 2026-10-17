@@ -12,6 +12,9 @@
       "eve/js/**/*.js",
       "eve/css/**/*.css",
       "eve/**/*.html",
+      "box/js/**/*.js",
+      "box/css/**/*.css",
+      "box/**/*.html",
       "*.html",
       "*.json",
       "!package-lock.json"
