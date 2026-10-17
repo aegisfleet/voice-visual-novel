@@ -2629,6 +2629,42 @@ body.dialogue-active .explore-pin {
   transform: scale(1.02);
 }
 
+.gallery-no-sheet-banner {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 27, 75, 0.9));
+  border: 1px dashed rgba(168, 85, 247, 0.45);
+  border-radius: 8px;
+  padding: 18px 20px;
+  box-shadow: inset 0 0 16px rgba(168, 85, 247, 0.08);
+}
+.gallery-no-sheet-icon {
+  font-size: 2.2rem;
+  line-height: 1;
+  flex-shrink: 0;
+  filter: drop-shadow(0 0 8px rgba(192, 132, 252, 0.5));
+}
+.gallery-no-sheet-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+.gallery-no-sheet-title {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #f3e8ff;
+  letter-spacing: 0.04em;
+  font-family: var(--font-mono);
+}
+.gallery-no-sheet-desc {
+  font-size: 0.84rem;
+  color: #cbd5e1;
+  line-height: 1.55;
+  overflow-wrap: break-word;
+}
+
 .gallery-profile-box {
   background: #0f172a;
   border-left: 3px solid #c084fc;

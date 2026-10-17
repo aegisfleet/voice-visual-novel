@@ -230,7 +230,7 @@ class GameApp {
         name: 'ナレーター (Narrator)',
         title: '世界観・プロローグナレーション',
         badge: 'VOICE: 4 CANDIDATES / SYSTEM NARRATION',
-        sheet: 'assets/gallery/sheet_yuta.jpg',
+        sheet: null,
         profile:
           '『BOX WORM 〜55ドルの自己増殖知性〜』の重厚なサイバーパンク世界を紡ぐ語り手。\n東京近郊の閑静なアパート「メゾン・サクラ」で巻き起こる日常と非日常の境界、自己増殖知性の目覚めをドラマティックに演出する。',
         designNotes:
@@ -2242,10 +2242,31 @@ class GameApp {
       .join('');
   }
 
+  generateGallerySheetHtml(data) {
+    if (data.sheet) {
+      return `
+        <div class="gallery-sheet-img-wrap" id="gallery-sheet-click-target" title="クリックして全画面拡大表示">
+          <img src="${data.sheet}" alt="${data.name} 設定資料シート" class="gallery-sheet-img" />
+        </div>
+      `;
+    }
+    return `
+      <div class="gallery-no-sheet-banner">
+        <span class="gallery-no-sheet-icon">🎙️</span>
+        <div class="gallery-no-sheet-body">
+          <div class="gallery-no-sheet-title">VOICE ONLY / キャラクター画像なし</div>
+          <div class="gallery-no-sheet-desc">
+            ナレーターは姿を持たない電脳世界のシステム音声・世界観語り手のため、キャラクター画像（設定資料シート・立ち絵）はありません。本編および下記の試聴サンプル音声をお楽しみください。
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
   attachGalleryEventListeners(data) {
     // 設定資料シート拡大
     const sheetTarget = this.dom.galleryBody.querySelector('#gallery-sheet-click-target');
-    if (sheetTarget) {
+    if (sheetTarget && data.sheet) {
       sheetTarget.addEventListener('click', () => {
         this.audio.playClick();
         this.openImageViewer(data.sheet, `🎨 ${data.name} 公式設定資料シート`);
@@ -2282,6 +2303,7 @@ class GameApp {
     if (!data) return;
 
     this.updateGalleryTabs(data.id);
+    const sheetHtml = this.generateGallerySheetHtml(data);
     const spritesHtml = this.generateGallerySpritesHtml(data);
     const voicesHtml = this.generateGalleryVoicesHtml(data);
 
@@ -2304,18 +2326,18 @@ class GameApp {
         ? `🎙️ ナレーションボイス候補 (${data.voiceSamples?.length || 0}種 / Gemini 3.8 Flash TTS)`
         : `🎙️ 公式キャラクターボイス (${data.voiceSamples?.length || 0}種 / Gemini 3.8 Flash TTS)`;
 
+    const charIcon = data.id === 'narrator' ? '🎙️' : '🎭';
+
     this.dom.galleryBody.innerHTML = `
       <div class="gallery-sheet-card">
         <div class="gallery-sheet-title-wrap">
           <div class="gallery-sheet-title">
-            <span>🎭 ${data.name}</span>
+            <span>${charIcon} ${data.name}</span>
           </div>
           <span class="gallery-sheet-badge">${data.badge}</span>
         </div>
 
-        <div class="gallery-sheet-img-wrap" id="gallery-sheet-click-target" title="クリックして全画面拡大表示">
-          <img src="${data.sheet}" alt="${data.name} 設定資料シート" class="gallery-sheet-img" />
-        </div>
+        ${sheetHtml}
 
         <div class="gallery-profile-box">
           <div class="gallery-profile-desc">${data.profile.replace(/\n/g, '<br>')}</div>
