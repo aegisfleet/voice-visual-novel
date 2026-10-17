@@ -19,6 +19,8 @@ html {
   width: 100%;
   max-width: 100%;
   -webkit-text-size-adjust: 100%;
+  overscroll-behavior: none;
+  overscroll-behavior-y: none;
 }
 
 *, *::before, *::after {
@@ -41,6 +43,16 @@ body {
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
+  overscroll-behavior: none;
+  overscroll-behavior-y: none;
+}
+
+/* ゲーム進行中の誤操作プルリフレッシュ完全防止 */
+body.game-active {
+  overflow: hidden;
+  height: 100vh;
+  height: 100dvh;
+  touch-action: pan-x pan-y;
 }
 
 /* 汎用非表示クラス（すべての要素で最優先） */
@@ -584,6 +596,32 @@ body.dialogue-active .explore-pin {
   border-color: #64748b;
   opacity: 0.8;
   box-shadow: none;
+}
+
+.pin-status-badge {
+  position: absolute;
+  top: -6px;
+  right: -8px;
+  padding: 1px 6px;
+  font-size: 0.65rem;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  border-radius: 10px;
+  z-index: 15;
+  white-space: nowrap;
+  pointer-events: none;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.7);
+}
+.pin-status-badge.new {
+  background: var(--neon-cyan);
+  color: #030712;
+  border: 1px solid #fff;
+  box-shadow: 0 0 10px rgba(0, 243, 255, 0.7);
+}
+.pin-status-badge.inspected {
+  background: rgba(30, 41, 59, 0.95);
+  color: #94a3b8;
+  border: 1px solid rgba(255, 255, 255, 0.25);
 }
 
 .pin-label {
@@ -1525,6 +1563,8 @@ body.dialogue-active .explore-pin {
 .modal-list {
   flex: 1;
   overflow-y: auto;
+  overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -1961,31 +2001,44 @@ body.dialogue-active .explore-pin {
     word-break: keep-all;
     overflow-wrap: break-word;
   }
-  #area-room {
-    background-position: 64% center !important;
+  .area-map {
+    background-size: 100% 100% !important;
+    background-position: center center !important;
+  }
+  #area-room, #area-corridor {
+    background-position: center center !important;
+    background-size: 100% 100% !important;
   }
   .explore-stage {
-    height: auto;
-    min-height: 250px;
-    max-height: 54vh;
-    max-height: 54dvh;
-    aspect-ratio: 16 / 10;
+    width: 100%;
+    aspect-ratio: 16 / 9 !important;
+    height: auto !important;
+    min-height: unset !important;
+    max-height: none !important;
+    flex: none !important;
+    border-radius: 12px;
   }
   .explore-pin {
     padding: 0;
     touch-action: manipulation;
     width: max-content;
-    max-width: 110px;
+    max-width: 100px;
   }
   .pin-icon {
-    width: 44px;
-    height: 44px;
-    font-size: 1.3rem;
+    width: 38px;
+    height: 38px;
+    font-size: 1.15rem;
+  }
+  .pin-status-badge {
+    font-size: 0.6rem;
+    padding: 1px 4px;
+    top: -5px;
+    right: -8px;
   }
   .pin-label {
-    font-size: 0.68rem;
+    font-size: 0.65rem;
     padding: 2px 6px;
-    margin-top: 3px;
+    margin-top: 2px;
     white-space: nowrap;
     border-radius: 6px;
   }
@@ -2304,6 +2357,8 @@ body.dialogue-active .explore-pin {
 .gallery-body {
   flex: 1;
   overflow-y: auto;
+  overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
   padding-right: 6px;
   display: flex;
   flex-direction: column;

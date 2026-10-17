@@ -249,7 +249,7 @@ class GameApp {
     ];
     list.forEach(src => {
       const img = new Image();
-      img.src = `${src}?v=20261017_rev48`;
+      img.src = `${src}?v=20261017_rev49`;
     });
   }
 
@@ -595,6 +595,42 @@ class GameApp {
         }
       }
     }, { passive: true });
+
+    // iOS / モバイル環境での下スワイプ（プル・トゥ・リフレッシュ / リロード）誤操作完全防止
+    let touchStartY = 0;
+    window.addEventListener('touchstart', (e) => {
+      if (e.touches && e.touches.length > 0) {
+        touchStartY = e.touches[0].clientY;
+      }
+    }, { passive: true });
+
+    window.addEventListener('touchmove', (e) => {
+      // タイトル画面以外（ゲーム進行中）のみリロードを無効化
+      if (!document.body.classList.contains('game-active')) return;
+      if (!e.touches || e.touches.length === 0) return;
+
+      const touchCurrentY = e.touches[0].clientY;
+      const isPullDown = touchCurrentY > touchStartY;
+
+      // スクロールを許可する要素（証拠手帳、バックログ、設定資料集、立証カードリスト）
+      const scrollable = e.target.closest(
+        '.modal-list, .gallery-body, .log-content, .debate-evidence-list, .modal-body, .character-gallery-modal'
+      );
+
+      if (!scrollable) {
+        // ゲームステージや背景、会話ウィンドウ等の非スクロール領域ではプルダウンによる画面揺れ・リロードを完全防止
+        if (e.cancelable) {
+          e.preventDefault();
+        }
+      } else {
+        // スクロール可能要素であっても、最上部（scrollTop <= 0）でさらに下へ引っ張った場合はプルリフレッシュを無効化
+        if (isPullDown && scrollable.scrollTop <= 0) {
+          if (e.cancelable) {
+            e.preventDefault();
+          }
+        }
+      }
+    }, { passive: false });
   }
 
   // 深層鑑識データ（人形遣い・自己増殖AI関連）の判定
@@ -694,12 +730,14 @@ class GameApp {
     screens.forEach(s => s.classList.remove('active'));
 
     if (screenName === 'title') {
+      document.body.classList.remove('game-active');
       this.dom.screenTitle.classList.add('active');
       this.dom.hud.classList.add('hidden');
       if (this.dom.btnHudGotoDebate) this.dom.btnHudGotoDebate.classList.add('hidden');
       if (this.dom.btnHudBackToExplore) this.dom.btnHudBackToExplore.classList.add('hidden');
       if (this.dom.keyboardGuide) this.dom.keyboardGuide.classList.add('hidden');
     } else if (screenName === 'explore') {
+      document.body.classList.add('game-active');
       this.dom.screenExplore.classList.add('active');
       this.dom.hud.classList.remove('hidden');
       this.dom.hudLifeContainer.classList.add('hidden');
@@ -711,6 +749,7 @@ class GameApp {
       if (this.dom.keyboardGuide) this.dom.keyboardGuide.classList.remove('hidden');
       this.updateEvidenceCounter();
     } else if (screenName === 'debate') {
+      document.body.classList.add('game-active');
       this.dom.screenDebate.classList.add('active');
       this.dom.hud.classList.remove('hidden');
       this.dom.hudLifeContainer.classList.remove('hidden');
@@ -723,6 +762,7 @@ class GameApp {
       if (this.dom.keyboardGuide) this.dom.keyboardGuide.classList.remove('hidden');
       this.updateHearts();
     } else if (screenName === 'ending') {
+      document.body.classList.add('game-active');
       this.dom.screenEnding.classList.add('active');
       this.dom.hud.classList.add('hidden');
       if (this.dom.dialogueStage) this.dom.dialogueStage.classList.add('hidden');
@@ -1043,7 +1083,7 @@ class GameApp {
       }
 
       if (img && stage) {
-        const v = '?v=20261017_rev48';
+        const v = '?v=20261017_rev49';
         const targetUrl = nextSrc.includes('?') ? nextSrc : `${nextSrc}${v}`;
         const currentSrc = img.getAttribute('src');
 
