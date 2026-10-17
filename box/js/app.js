@@ -430,6 +430,16 @@ class GameApp {
 
   // タイトル画面の操作
   bindTitleEvents() {
+    // 初回ユーザーインタラクションでのAudioContextアンロックとタイトルBGM開始
+    const unlockAudioAndPlayTitle = () => {
+      this.audio.ensureContext();
+      if (!this.audio.currentBgmTrack && this.audio.bgmEnabled) {
+        this.audio.startBgm('title');
+      }
+    };
+    document.addEventListener('click', unlockAudioAndPlayTitle, { once: true });
+    document.addEventListener('keydown', unlockAudioAndPlayTitle, { once: true });
+
     this.dom.btnStartGame.addEventListener('click', () => {
       this.audio.playClick();
       this.audio.startBgm('ambient');
@@ -964,6 +974,7 @@ class GameApp {
     this.dom.hud.classList.add('hidden');
     this.hideHudNavButtons();
     if (this.dom.keyboardGuide) this.dom.keyboardGuide.classList.add('hidden');
+    this.audio.startBgm('title');
   }
 
   applyExploreScreen() {

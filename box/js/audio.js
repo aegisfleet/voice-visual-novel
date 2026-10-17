@@ -6,11 +6,19 @@ class AudioManager {
     this.voiceEnabled = true;
     this.seEnabled = true;
     this.bgmEnabled = true;
-    this.bgmGain = null;
-    this.bgmTimer = null;
+    this.bgmVolume = 0.35; // ノベルゲーム背景音として最適なミキシングバランス
+    this.currentBgmMode = 'title'; // title | ambient | explore | tension | truth
+    this.currentBgmTrack = null; // { audio, source, gain, url, mode }
+    this.bgmMasterGain = null;
+    this.bgmTracks = {
+      title: 'assets/audio/bgm_title.mp3',
+      ambient: 'assets/audio/bgm_investigation.mp3',
+      explore: 'assets/audio/bgm_investigation.mp3',
+      tension: 'assets/audio/bgm_crisis.mp3',
+      truth: 'assets/audio/bgm_truth.mp3',
+    };
     this.currentUtterance = null;
     this.selectedVoice = null;
-    this.currentBgmMode = 'ambient'; // ambient | tension | truth
     this.isSkipActive = false; // スキップモード追従フラグ（通信量完全ガード用）
     this.currentVoiceAudio = null; // 再生中のMP3 Audio要素
     this.currentVoiceAbortController = null; // ロード中の中断用 AbortController
@@ -28,6 +36,11 @@ class AudioManager {
     }
     if (this.ctx && this.ctx.state === 'suspended') {
       this.ctx.resume();
+    }
+    if (this.ctx && !this.bgmMasterGain) {
+      this.bgmMasterGain = this.ctx.createGain();
+      this.bgmMasterGain.gain.setValueAtTime(this.bgmVolume, this.ctx.currentTime);
+      this.bgmMasterGain.connect(this.ctx.destination);
     }
   }
 
@@ -427,100 +440,125 @@ class AudioManager {
   }
 
   // ----------------------------------------------------
-  // Web Audio API によるサイバーBGM自動生成
+  // Google DeepMind Lyria 3 生成音源によるBGM再生システム
+  // (Web Audio API スムーズクロスフェード & シームレスループ)
   // ----------------------------------------------------
 
   startBgm(mode = 'ambient') {
-    if (!this.bgmEnabled) return;
-    this.ensureContext();
-    if (!this.ctx) return;
-
-    this.stopBgm();
     this.currentBgmMode = mode;
+    if (!this.bgmEnabled) return;
 
-    this.bgmGain = this.ctx.createGain();
-    this.bgmGain.gain.setValueAtTime(0.1, this.ctx.currentTime);
-    this.bgmGain.connect(this.ctx.destination);
+    const url = this.bgmTracks[mode] || this.bgmTracks.ambient;
+    if (!url) return;
 
-    // モードに応じたコード進行と音階
-    // ambient: 静かなサイバー空間 (Cm9 -> Abmaj7 -> Fm9 -> G7)
-    // tension: 緊迫の立証対決 (Fm -> Ddim -> Bbm -> C7)
-    // truth: 真相・感動 (Eb -> Bb/D -> Cm -> Ab)
-    let progression;
-    if (mode === 'tension') {
-      progression = [
-        [174.61, 207.65, 261.63, 349.23], // Fm
-        [146.83, 174.61, 207.65, 293.66], // Ddim
-        [116.54, 138.59, 174.61, 233.08], // Bbm
-        [130.81, 164.81, 196.0, 261.63], // C7
-      ];
-    } else if (mode === 'truth') {
-      progression = [
-        [155.56, 196.0, 233.08, 311.13], // Eb
-        [146.83, 174.61, 220.0, 293.66], // Bb/D
-        [130.81, 155.56, 196.0, 261.63], // Cm
-        [103.83, 130.81, 155.56, 207.65], // Ab
-      ];
-    } else {
-      progression = [
-        [130.81, 155.56, 196.0, 293.66], // Cm9
-        [103.83, 130.81, 155.56, 261.63], // Abmaj7
-        [87.31, 103.83, 130.81, 220.0], // Fm9
-        [98.0, 123.47, 146.83, 246.94], // G7
-      ];
+    this.ensureContext();
+
+    // 既に同一URLのBGMが再生中の場合は再ロードせず継続
+    if (
+      this.currentBgmTrack &&
+      this.currentBgmTrack.url === url &&
+      !this.currentBgmTrack.audio.paused
+    ) {
+      return;
     }
 
-    let chordIdx = 0;
-    let step = 0;
-    const tempo = mode === 'tension' ? 220 : 380; // ms per step
+    const previousTrack = this.currentBgmTrack;
+    if (previousTrack) {
+      this._fadeOutAndCleanTrack(previousTrack, 0.8);
+    }
 
-    this.bgmTimer = setInterval(() => {
-      if (this.ctx?.state !== 'running' || !this.bgmGain) return;
+    const audio = new Audio(url);
+    audio.loop = true;
+    audio.crossOrigin = 'anonymous';
 
-      const chord = progression[chordIdx];
-      const freq = chord[step % chord.length];
+    let sourceNode = null;
+    let trackGain = null;
 
-      // アルペジオ用オシレーター
-      const osc = this.ctx.createOscillator();
-      const noteGain = this.ctx.createGain();
+    if (this.ctx && this.bgmMasterGain) {
+      try {
+        sourceNode = this.ctx.createMediaElementSource(audio);
+        trackGain = this.ctx.createGain();
+        const now = this.ctx.currentTime;
+        trackGain.gain.setValueAtTime(0.0001, now);
+        trackGain.gain.linearRampToValueAtTime(1.0, now + 0.8);
 
-      osc.type = mode === 'tension' ? 'sawtooth' : 'sine';
-      osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
-
-      const duration = (tempo / 1000) * 1.8;
-      noteGain.gain.setValueAtTime(0.03, this.ctx.currentTime);
-      noteGain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + duration);
-
-      osc.connect(noteGain);
-      noteGain.connect(this.bgmGain);
-
-      osc.start();
-      osc.stop(this.ctx.currentTime + duration);
-
-      step++;
-      if (step % 8 === 0) {
-        chordIdx = (chordIdx + 1) % progression.length;
+        sourceNode.connect(trackGain);
+        trackGain.connect(this.bgmMasterGain);
+      } catch (err) {
+        console.warn('[AudioManager] Web Audio connection fallback to HTMLAudioElement:', err);
       }
-    }, tempo);
+    }
+
+    // Web Audio非接続時のフォールバック音量設定
+    if (!trackGain) {
+      audio.volume = this.bgmVolume;
+    }
+
+    const trackObj = {
+      audio,
+      source: sourceNode,
+      gain: trackGain,
+      url,
+      mode,
+    };
+    this.currentBgmTrack = trackObj;
+
+    const playPromise = audio.play();
+    if (playPromise !== undefined) {
+      playPromise.catch((err) => {
+        console.warn('[AudioManager] BGM autoplay blocked or interrupted:', err);
+      });
+    }
   }
 
-  stopBgm() {
-    if (this.bgmTimer) {
-      clearInterval(this.bgmTimer);
-      this.bgmTimer = null;
-    }
-    if (this.bgmGain && this.ctx) {
+  _fadeOutAndCleanTrack(track, fadeSec = 0.8) {
+    if (!track) return;
+    const { audio, gain, source } = track;
+
+    if (gain && this.ctx) {
       try {
-        this.bgmGain.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 0.2);
+        const now = this.ctx.currentTime;
+        gain.gain.setValueAtTime(gain.gain.value, now);
+        gain.gain.linearRampToValueAtTime(0.0001, now + fadeSec);
       } catch (_e) {
         // ignore
       }
-      setTimeout(() => {
-        if (this.bgmGain) {
-          this.bgmGain.disconnect();
-          this.bgmGain = null;
+    } else {
+      try {
+        audio.volume = 0;
+      } catch (_e) {
+        // ignore
+      }
+    }
+
+    setTimeout(
+      () => {
+        try {
+          audio.pause();
+          audio.removeAttribute('src');
+          audio.load();
+        } catch (_e) {
+          // ignore
         }
-      }, 250);
+        if (source) {
+          try {
+            source.disconnect();
+          } catch (_e) {}
+        }
+        if (gain) {
+          try {
+            gain.disconnect();
+          } catch (_e) {}
+        }
+      },
+      Math.max(100, Math.floor(fadeSec * 1000) + 50),
+    );
+  }
+
+  stopBgm(fadeSec = 0.8) {
+    if (this.currentBgmTrack) {
+      this._fadeOutAndCleanTrack(this.currentBgmTrack, fadeSec);
+      this.currentBgmTrack = null;
     }
   }
 }
