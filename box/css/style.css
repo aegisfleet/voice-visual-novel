@@ -1030,13 +1030,13 @@ body.dialogue-active .explore-pin {
 
 .character-stage {
   position: absolute;
-  bottom: 70px;
+  bottom: calc(184px + max(16px, env(safe-area-inset-bottom, 0px)) + 2px);
   left: 50%;
   transform: translateX(-50%);
   width: 520px;
-  max-width: 92vw;
-  height: 680px;
-  max-height: 76dvh;
+  max-width: 90vw;
+  height: 540px;
+  max-height: calc(100dvh - 256px);
   display: flex;
   align-items: flex-end;
   justify-content: center;
@@ -2266,13 +2266,13 @@ body.dialogue-active .explore-pin {
     box-shadow: 0 4px 15px rgba(2, 132, 199, 0.45);
   }
 
-  /* 会話ノベルウィンドウ (スマホ最適化: 立ち絵の迫力拡大 + 下部ウィンドウ潜り込み) */
+  /* 会話ノベルウィンドウ (スマホ最適化: テキストウィンドウ上端接地 + 見切れ防止最大化) */
   .character-stage {
-    bottom: calc(56px + max(14px, env(safe-area-inset-bottom, 0px)));
-    width: 380px;
+    bottom: calc(198px + max(14px, env(safe-area-inset-bottom, 0px)) + 2px);
+    width: 420px;
     max-width: 95vw;
-    height: 520px;
-    max-height: 66dvh;
+    height: 420px;
+    max-height: calc(100dvh - 264px);
   }
   .dialogue-illustration-stage {
     bottom: calc(198px + max(14px, env(safe-area-inset-bottom, 0px)) + 6px);
