@@ -1,6 +1,4 @@
 {
-  "editor.defaultFormatter": "biomejs.biome",
-  "editor.formatOnSave": true,
   "sonarlint.output.showVerboseLogs": true,
   "sonarlint.output.showAnalyzerLogs": true,
   "sonarlint.rules": {
