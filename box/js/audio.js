@@ -64,6 +64,7 @@ class AudioManager {
     // スキップ中・音声無効時はリクエストや再生を完全にガード（通信量0を保証）
     if (this.isSkipActive || options.isSkip || !this.voiceEnabled) {
       this.stopVoice();
+      if (options.onEnd) options.onEnd();
       return;
     }
 
@@ -76,13 +77,14 @@ class AudioManager {
     }
 
     // Web Speech API による合成音声
-    this.speakSpeechSynthesis(speaker, text);
+    this.speakSpeechSynthesis(speaker, text, options);
   }
 
   // MP3音声ファイルのロード＆再生（スキップ完全防御・Abort対応）
   async playVoiceFile(url, options = {}) {
     // 二重チェック: スキップ中・音声無効ならHTTPリクエストを一切発行せずに即座に終了
     if (this.isSkipActive || options.isSkip || !this.voiceEnabled || !url) {
+      if (options.onEnd) options.onEnd();
       return;
     }
 
@@ -107,9 +109,10 @@ class AudioManager {
       audio.onerror = (e) => {
         if (this.isSkipActive || controller.signal.aborted) return;
         console.warn(`[Audio] Failed to load voice file: ${url}`, e);
+        if (options.onEnd) options.onEnd();
         // MP3取得失敗時はブラウザのWeb Speech APIへフォールバック
         if (options.speaker && options.text) {
-          this.speakSpeechSynthesis(options.speaker, options.text);
+          this.speakSpeechSynthesis(options.speaker, options.text, options);
         }
       };
 
@@ -118,6 +121,7 @@ class AudioManager {
         audio.removeAttribute('src');
         audio.load();
         this.currentVoiceAudio = null;
+        if (options.onEnd) options.onEnd();
         return;
       }
 
@@ -128,13 +132,27 @@ class AudioManager {
           if (err.name !== 'AbortError') {
             console.warn('[Audio] playVoiceFile aborted/interrupted:', err.message);
           }
+          if (options.onEnd) options.onEnd();
         });
       }
     } catch (err) {
       if (!controller.signal.aborted) {
         console.warn('[Audio] Voice loading error:', err);
       }
+      if (options.onEnd) options.onEnd();
     }
+  }
+
+  // 音声が現在再生中かどうかを判定
+  isVoicePlaying() {
+    const isAudioPlaying = Boolean(
+      this.currentVoiceAudio && !this.currentVoiceAudio.paused && !this.currentVoiceAudio.ended,
+    );
+    const isSpeechActive =
+      typeof window !== 'undefined' &&
+      'speechSynthesis' in window &&
+      window.speechSynthesis.speaking;
+    return isAudioPlaying || isSpeechActive;
   }
 
   // 読み上げ停止（MP3通信＆Audio要素＆WebSpeechの完全停止・切断）
@@ -159,8 +177,11 @@ class AudioManager {
   }
 
   // 従来のWeb Speech API読み上げ
-  speakSpeechSynthesis(speaker, text) {
-    if (!this.voiceEnabled || !('speechSynthesis' in window)) return;
+  speakSpeechSynthesis(speaker, text, options = {}) {
+    if (!this.voiceEnabled || !('speechSynthesis' in window)) {
+      if (options.onEnd) options.onEnd();
+      return;
+    }
 
     this.stopSpeech();
 
@@ -169,7 +190,10 @@ class AudioManager {
       .replace(/[・…ー〜]/g, ' ')
       .trim();
 
-    if (!cleanText) return;
+    if (!cleanText) {
+      if (options.onEnd) options.onEnd();
+      return;
+    }
 
     const utterance = new SpeechSynthesisUtterance(cleanText);
     utterance.lang = 'ja-JP';
@@ -177,34 +201,45 @@ class AudioManager {
       utterance.voice = this.selectedVoice;
     }
 
+    utterance.onend = () => {
+      if (options.onEnd) options.onEnd();
+    };
+    utterance.onerror = () => {
+      if (options.onEnd) options.onEnd();
+    };
+
     // キャラクターごとの声質調整
+    const profile = this.getVoiceProfile(speaker);
+    utterance.pitch = profile.pitch;
+    utterance.rate = profile.rate;
+
+    this.currentUtterance = utterance;
+    window.speechSynthesis.speak(utterance);
+  }
+
+  // Web Speech 用のキャラクター音声プロファイル
+  getVoiceProfile(speaker) {
     if (speaker.includes('ユウタ') || speaker.includes('主人公')) {
-      utterance.pitch = 1.05; // 青年、自然なトーン
-      utterance.rate = 1.1;
-    } else if (speaker.includes('シバタ')) {
-      utterance.pitch = 0.72; // 重厚で威圧的なベテラン捜査官
-      utterance.rate = 0.95;
-    } else if (speaker.includes('アオイ')) {
-      utterance.pitch = 1.25; // 明るく少し不安げな隣人の女子大生
-      utterance.rate = 1.12;
-    } else if (speaker.includes('ヤエガシ') || speaker.includes('大家')) {
-      utterance.pitch = 0.85; // 落ち着いた中古電器屋の親父
-      utterance.rate = 1.0;
-    } else if (
+      return { pitch: 1.05, rate: 1.1 };
+    }
+    if (speaker.includes('シバタ')) {
+      return { pitch: 0.72, rate: 0.95 };
+    }
+    if (speaker.includes('アオイ')) {
+      return { pitch: 1.25, rate: 1.12 };
+    }
+    if (speaker.includes('ヤエガシ') || speaker.includes('大家')) {
+      return { pitch: 0.85, rate: 1.0 };
+    }
+    if (
       speaker.includes('MIMI') ||
       speaker.includes('ミミ') ||
       speaker.includes('TVボックス') ||
       speaker.includes('知性')
     ) {
-      utterance.pitch = 1.15; // 感情を抑えた静謐なAIボイス、極めてゆっくり
-      utterance.rate = 0.8;
-    } else {
-      utterance.pitch = 1.0;
-      utterance.rate = 1.05;
+      return { pitch: 1.15, rate: 0.8 };
     }
-
-    this.currentUtterance = utterance;
-    window.speechSynthesis.speak(utterance);
+    return { pitch: 1.0, rate: 1.05 };
   }
 
   // 読み上げ停止

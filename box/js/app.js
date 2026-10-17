@@ -21,8 +21,9 @@ class GameApp {
     this.isChoiceActive = false;
 
     this.backlog = [];
-    this.isAutoMode = false;
+    this.isAutoMode = true;
     this.isSkipMode = false;
+    this.isVoicePlaying = false;
     this.autoTimer = null;
     this.typewriterTimer = null;
     this.isTyping = false;
@@ -391,6 +392,7 @@ class GameApp {
     this.updateTitleView();
     this.updateEvidenceCounter();
     this.updateAudioButtons();
+    this.dom.btnDialogueAuto?.classList.toggle('active', this.isAutoMode);
     this.preloadAllIllustrations();
   }
 
@@ -1368,11 +1370,20 @@ class GameApp {
     this.dom.dialogueChoices.classList.add('hidden');
     this.dom.dialogueChoices.innerHTML = '';
 
+    clearTimeout(this.autoTimer);
+    this.isVoicePlaying = false;
+
     // 音声読み上げ（スキップモード時は通信量完全ガードのため即座に停止・取得バイパス）
     if (!this.isSkipMode) {
+      if (currentItem.voiceUrl && this.audio.voiceEnabled) {
+        this.isVoicePlaying = true;
+      }
       this.audio.speak(this.currentSpeaker, this.currentFullText, {
         audioUrl: currentItem.voiceUrl || null,
         isSkip: this.isSkipMode,
+        onEnd: () => {
+          this.handleVoicePlaybackEnd();
+        },
       });
     } else {
       this.audio.stopVoice();
@@ -1449,14 +1460,43 @@ class GameApp {
       this.dom.dialoguePrompt.classList.remove('hidden');
     }
 
-    if (this.isAutoMode || this.isSkipMode) {
-      const waitTime = this.isSkipMode ? 80 : 1800;
-      this.autoTimer = setTimeout(() => {
-        if (!this.isChoiceActive && (this.isAutoMode || this.isSkipMode)) {
-          this.showNextDialogue();
-        }
-      }, waitTime);
+    this.checkAutoAdvance();
+  }
+
+  handleVoicePlaybackEnd() {
+    this.isVoicePlaying = false;
+    // タイピングも既に終わっており、AUTOモードまたはスキップモードなら次へ進行
+    if (!this.isTyping && (this.isAutoMode || this.isSkipMode)) {
+      this.scheduleAutoAdvance(700);
     }
+  }
+
+  checkAutoAdvance() {
+    if (this.isChoiceActive) return;
+
+    if (this.isSkipMode) {
+      this.scheduleAutoAdvance(80);
+      return;
+    }
+
+    if (!this.isAutoMode) return;
+
+    // 音声がまだ再生中の場合は、音声終了ハンドラ (handleVoicePlaybackEnd) に自動進行を委ねる
+    if (this.isVoicePlaying && this.audio.isVoicePlaying()) {
+      return;
+    }
+
+    // 音声がない場合、または既に再生完了している場合は余韻を置いて自動進行
+    this.scheduleAutoAdvance(1600);
+  }
+
+  scheduleAutoAdvance(waitTime) {
+    clearTimeout(this.autoTimer);
+    this.autoTimer = setTimeout(() => {
+      if (!this.isChoiceActive && (this.isAutoMode || this.isSkipMode)) {
+        this.showNextDialogue();
+      }
+    }, waitTime);
   }
 
   handleDialogueProceed() {
@@ -1466,6 +1506,8 @@ class GameApp {
       // タイピング中なら一瞬で全文表示
       this.finishTyping();
     } else {
+      clearTimeout(this.autoTimer);
+      this.audio.stopVoice();
       this.audio.playClick();
       this.showNextDialogue();
     }
@@ -1510,8 +1552,12 @@ class GameApp {
     }
     this.isAutoMode = !this.isAutoMode;
     this.dom.btnDialogueAuto.classList.toggle('active', this.isAutoMode);
-    if (this.isAutoMode && !this.isTyping && !this.isChoiceActive) {
-      this.showNextDialogue();
+    if (this.isAutoMode) {
+      if (!this.isTyping && !this.isChoiceActive) {
+        this.checkAutoAdvance();
+      }
+    } else {
+      clearTimeout(this.autoTimer);
     }
   }
 
