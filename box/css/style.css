@@ -370,20 +370,22 @@ body {
 
 .btn-primary {
   padding: 14px 28px;
-  background: linear-gradient(135deg, var(--neon-cyan) 0%, #2563eb 100%);
-  color: #030712;
+  background: linear-gradient(135deg, #0284c7 0%, #1d4ed8 50%, #1e40af 100%);
+  color: #ffffff;
   font-size: 1.05rem;
   font-weight: 800;
   letter-spacing: 0.05em;
-  border: none;
+  border: 1px solid rgba(56, 189, 248, 0.6);
   border-radius: 30px;
   cursor: pointer;
-  box-shadow: 0 0 20px rgba(0, 243, 255, 0.4);
+  box-shadow: 0 4px 20px rgba(2, 132, 199, 0.45);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
   transition: all 0.2s;
 }
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 0 30px rgba(0, 243, 255, 0.7);
+  background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 50%, #1d4ed8 100%);
+  box-shadow: 0 6px 25px rgba(56, 189, 248, 0.6);
 }
 
 .btn-subtle {
@@ -882,16 +884,21 @@ body.dialogue-active .explore-pin {
 
 .btn-present {
   padding: 14px;
-  background: linear-gradient(135deg, var(--neon-cyan) 0%, #2563eb 100%);
-  color: #030712;
+  background: linear-gradient(135deg, #0284c7 0%, #1d4ed8 50%, #1e40af 100%);
+  color: #ffffff;
   font-size: 1.1rem;
   font-weight: 900;
   letter-spacing: 0.05em;
-  border: none;
+  border: 1px solid rgba(56, 189, 248, 0.6);
   border-radius: 12px;
   cursor: pointer;
-  box-shadow: 0 0 20px rgba(0, 243, 255, 0.4);
+  box-shadow: 0 4px 20px rgba(2, 132, 199, 0.45);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
   transition: all 0.2s;
+}
+.btn-present:hover:not(:disabled) {
+  background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 50%, #1d4ed8 100%);
+  box-shadow: 0 6px 25px rgba(56, 189, 248, 0.6);
 }
 .btn-present:disabled {
   opacity: 0.4;
@@ -2078,7 +2085,7 @@ body.dialogue-active .explore-pin {
     position: static;
     margin-top: 4px;
     flex-shrink: 0;
-    box-shadow: 0 4px 15px rgba(0, 243, 255, 0.4);
+    box-shadow: 0 4px 15px rgba(2, 132, 199, 0.45);
   }
 
   /* 会話ノベルウィンドウ (スマホ最適化: 198px十分な高さ + 5行テキスト対応 + ホームバー余裕浮動カード) */
