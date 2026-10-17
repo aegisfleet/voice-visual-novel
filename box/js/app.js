@@ -1284,6 +1284,20 @@ class GameApp {
       : this.scenario.debate.stepsLoop1;
   }
 
+  setDebateShibataEmotion(emotion = 'angry') {
+    if (!this.dom.debateShibataAvatar) return;
+    const img = this.dom.debateShibataAvatar.querySelector('img');
+    if (!img) return;
+    const mapping = {
+      normal: 'assets/characters/shibata.png',
+      angry: 'assets/characters/shibata_angry.png',
+      shock: 'assets/characters/shibata_shock.png',
+      smile: 'assets/characters/shibata_smile.png'
+    };
+    const src = mapping[emotion] || mapping.normal;
+    img.src = src;
+  }
+
   renderDebateTurn() {
     const steps = this.getDebateSteps();
     const currentStep = steps[this.state.currentDebateStep];
@@ -1294,6 +1308,7 @@ class GameApp {
       return;
     }
 
+    this.setDebateShibataEmotion('angry');
     this.selectedEvidenceId = null;
     this.dom.btnPresentEvidence.disabled = true;
     this.dom.selectedEvidencePreview.textContent = '提示する鑑識データを手帳から選択してください';
@@ -1407,7 +1422,8 @@ class GameApp {
     const isCorrect = (submittedId === currentStep.correctEvidenceId);
 
     if (isCorrect) {
-      // 正解演出！カットイン
+      // 正解演出！カットイン＆相手動揺
+      this.setDebateShibataEmotion('shock');
       this.triggerCutin('客観的反証があります！', () => {
         this.playDialogueSequence(currentStep.successReactions, () => {
           this.state.currentDebateStep++;
@@ -1415,7 +1431,8 @@ class GameApp {
         }, false);
       });
     } else {
-      // 失敗演出！ショック音＆ハート減少
+      // 失敗演出！ショック音＆ハート減少＆相手怒り
+      this.setDebateShibataEmotion('angry');
       this.audio.playShock();
       const remainLife = this.state.decreaseLife();
       this.updateHearts();
@@ -1463,6 +1480,7 @@ class GameApp {
 
   // 立証勝利
   handleDebateVictory() {
+    this.setDebateShibataEmotion('smile');
     const isLoop2 = this.state.isClearedFirstLoop();
 
     if (isLoop2) {

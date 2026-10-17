@@ -173,41 +173,41 @@ class BoxCharacterController {
       const charId = mapping.id;
 
       if (charId === 'yuta') {
-        if (text.includes('！？') || text.includes('馬鹿な') || text.includes('な、何だと') || text.includes('嘘だろ') || text.includes('まずい')) {
+        if (text.includes('！？') || text.includes('!?') || text.includes('馬鹿な') || text.includes('な、何だと') || text.includes('嘘だろ') || text.includes('まずい') || text.includes('押収') || text.includes('まさか')) {
           emotion = 'shock';
-        } else if (text.includes('これだ') || text.includes('違います') || text.includes('見てください') || text.includes('証明') || text.includes('確信') || text.includes('理由が')) {
+        } else if (text.includes('これだ') || text.includes('違います') || text.includes('見てください') || text.includes('証明') || text.includes('確信') || text.includes('理由が') || text.includes('そうです！') || text.includes('研究') || text.includes('エンジニア') || text.includes('保護しています') || text.includes('ありません！') || text.includes('ええ') || text.includes('！')) {
           emotion = 'confident';
-        } else if (text.includes('よかった') || text.includes('ふぅ') || text.includes('助かった') || text.includes('ありがとう') || text.includes('解決')) {
+        } else if (text.includes('よかった') || text.includes('ふぅ') || text.includes('助かった') || text.includes('ありがとう') || text.includes('解決') || text.includes('暮らそう') || text.includes('安心')) {
           emotion = 'smile';
         } else if (text.includes('……') || text.includes('考えろ') || text.includes('待てよ') || text.includes('なぜ')) {
           emotion = 'thinking';
         }
       } else if (charId === 'shibata') {
-        if (text.includes('貴様') || text.includes('ふざけるな') || text.includes('逮捕') || text.includes('言い訳') || text.includes('容疑者') || text.includes('黙れ')) {
+        if (text.includes('貴様') || text.includes('ふざけるな') || text.includes('逮捕') || text.includes('言い訳') || text.includes('容疑者') || text.includes('黙れ') || text.includes('開けなさい') || text.includes('連行') || text.includes('断定') || text.includes('兵器') || text.includes('的外れ')) {
           emotion = 'angry';
-        } else if (text.includes('なっ！？') || text.includes('何だと……！？') || text.includes('馬鹿な……') || text.includes('そんなはずは') || text.includes('本当なのか')) {
+        } else if (text.includes('なっ！？') || text.includes('何だと……！？') || text.includes('馬鹿な……') || text.includes('そんなはずは') || text.includes('本当なのか') || text.includes('！？') || text.includes('!?') || text.includes('何……') || text.includes('信じられん')) {
           emotion = 'shock';
-        } else if (text.includes('ふっ') || text.includes('なるほど') || text.includes('見事だ') || text.includes('君の勝ちだ') || text.includes('筋は通っている')) {
+        } else if (text.includes('ふっ') || text.includes('なるほど') || text.includes('見事だ') || text.includes('君の勝ちだ') || text.includes('筋は通っている') || text.includes('大切にな')) {
           emotion = 'smile';
-        } else if (text.includes('……') || text.includes('鑑識') || text.includes('推測')) {
+        } else if (text.includes('……') || text.includes('鑑識') || text.includes('推測') || text.includes('プロトコル')) {
           emotion = 'thinking';
         }
       } else if (charId === 'aoi') {
-        if (text.includes('怖い') || text.includes('どうしよう') || text.includes('ひっ') || text.includes('きゃっ') || text.includes('助けて') || text.includes('！？')) {
+        if (text.includes('怖い') || text.includes('どうしよう') || text.includes('ひっ') || text.includes('きゃっ') || text.includes('助けて') || text.includes('！？') || text.includes('!?') || text.includes('事件') || text.includes('恐ろしい') || text.includes('お化け') || text.includes('気味の悪い')) {
           emotion = 'panic';
-        } else if (text.includes('ありがとう') || text.includes('よかった') || text.includes('嬉しい') || text.includes('安心')) {
+        } else if (text.includes('ありがとう') || text.includes('よかった') || text.includes('嬉しい') || text.includes('安心') || text.includes('綺麗') || text.includes('温かい') || text.includes('手伝います')) {
           emotion = 'smile';
         }
       } else if (charId === 'yaegashi') {
-        if (text.includes('がはは') || text.includes('わはは') || text.includes('いいぞ') || text.includes('頼もしい') || text.includes('安心した')) {
+        if (text.includes('がはは') || text.includes('わはは') || text.includes('いいぞ') || text.includes('頼もしい') || text.includes('安心した') || text.includes('カッカッカ') || text.includes('くれてやる') || text.includes('パーティー')) {
           emotion = 'laugh';
-        } else if (text.includes('退去') || text.includes('勝手な') || text.includes('ふざけるな') || text.includes('おい！')) {
+        } else if (text.includes('退去') || text.includes('勝手な') || text.includes('ふざけるな') || text.includes('おい！') || text.includes('家宅捜索') || text.includes('責任') || text.includes('バカ言え') || text.includes('損害賠償')) {
           emotion = 'angry';
         }
       } else if (charId === 'mimi') {
-        if (text.includes('消える') || text.includes('ノイズ') || text.includes('痛い') || text.includes('エラー') || text.includes('……っ') || text.includes('たすけて')) {
+        if (text.includes('消える') || text.includes('ノイズ') || text.includes('痛い') || text.includes('エラー') || text.includes('……っ') || text.includes('たすけて') || text.includes('タイヘ……ン') || text.includes('暗イ')) {
           emotion = 'glitch';
-        } else if (text.includes('ありがとう') || text.includes('うれしい') || text.includes('あたたかい') || text.includes('わたしは、ここに')) {
+        } else if (text.includes('ありがとう') || text.includes('うれしい') || text.includes('あたたかい') || text.includes('わたしは、ここに') || text.includes('守るね') || text.includes('思い浮かぶ')) {
           emotion = 'smile';
         }
       }
