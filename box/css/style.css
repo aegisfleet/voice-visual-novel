@@ -1970,42 +1970,66 @@ body.dialogue-active .explore-pin {
 
   /* 立証パートのモバイル親指レイアウト */
   #screen-debate {
-    padding: 8px;
+    padding: 6px;
+    padding-bottom: max(8px, env(safe-area-inset-bottom, 8px));
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
   }
   .debate-stage {
-    gap: 8px;
-    padding: 10px 12px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 8px 10px;
+    min-height: 0;
+    box-sizing: border-box;
     overflow: visible;
   }
   .opponent-box {
-    padding: 8px 10px;
-    gap: 8px;
+    padding: 6px 8px;
+    gap: 6px;
+    flex-shrink: 0;
   }
   .opponent-avatar {
-    width: 48px;
-    height: 48px;
+    width: 44px;
+    height: 44px;
     flex-shrink: 0;
   }
   .opponent-speech-bubble p {
-    font-size: 0.82rem;
-    line-height: 1.4;
+    font-size: 0.80rem;
+    line-height: 1.35;
   }
   .debate-hint {
-    padding: 4px 8px;
-    font-size: 0.72rem;
+    padding: 3px 8px;
+    font-size: 0.70rem;
+    flex-shrink: 0;
+  }
+  .evidence-selection-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    gap: 6px;
   }
   .preview-box {
-    padding: 8px 10px;
-    font-size: 0.82rem;
+    padding: 6px 10px;
+    font-size: 0.80rem;
+    line-height: 1.35;
+    flex-shrink: 0;
   }
 
   /* 証拠カード一覧（縦1列で指でタップしやすいカード） */
   .debate-evidence-grid {
     grid-template-columns: 1fr;
-    gap: 6px;
-    max-height: 180px;
+    gap: 5px;
+    flex: 1;
+    min-height: 0;
+    max-height: none;
+    align-content: start;
     overflow-y: auto;
     overflow-x: hidden !important;
     touch-action: pan-y;
@@ -2014,8 +2038,8 @@ body.dialogue-active .explore-pin {
     box-sizing: border-box;
   }
   .debate-evidence-card {
-    padding: 8px 10px;
-    min-height: 46px;
+    padding: 6px 8px;
+    min-height: 42px;
     border-radius: 8px;
     touch-action: manipulation;
     box-sizing: border-box;
@@ -2024,19 +2048,19 @@ body.dialogue-active .explore-pin {
     overflow: hidden;
   }
   .evidence-icon {
-    width: 30px;
-    height: 30px;
-    font-size: 1.25rem;
+    width: 26px;
+    height: 26px;
+    font-size: 1.15rem;
   }
   .evidence-icon-img {
-    width: 28px;
-    height: 28px;
+    width: 26px;
+    height: 26px;
   }
   .evidence-name {
-    font-size: 0.85rem;
+    font-size: 0.80rem;
   }
   .evidence-type {
-    font-size: 0.70rem;
+    font-size: 0.67rem;
   }
   .card-badge-container {
     margin-left: 4px;
@@ -2048,11 +2072,12 @@ body.dialogue-active .explore-pin {
 
   /* 提示ボタンの親指ワンタップ最適化 */
   .btn-present {
-    padding: 12px;
-    font-size: 1rem;
-    border-radius: 12px;
+    padding: 11px;
+    font-size: 0.96rem;
+    border-radius: 10px;
     position: static;
     margin-top: 4px;
+    flex-shrink: 0;
     box-shadow: 0 4px 15px rgba(0, 243, 255, 0.4);
   }
 
