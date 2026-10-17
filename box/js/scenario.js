@@ -1029,6 +1029,7 @@ window.SCENARIO_DATA = {
         questionNumber: 1,
         opponentQuestion:
           '「君は先ほど『ただの故障か間違いだ』と言い逃れをしていたな。だが昨夜2時、国家監視網がアラートを上げた未知の通信が、このアパートの回線で検知されたのは動かぬ事実だ！ 貴室の端末が外部へのサイバーテロに関与していないという客観的証拠を示してみろ！」',
+        opponentVoiceUrl: 'assets/audio/voice/debate_l1_q01.mp3',
         correctEvidenceId: 'creepy_pulse_packet',
         hint: '昨夜2時の異常流入のあと、外部インターネットへの送信がゼロであり、現在はアパート内部LANだけで循環している通信ログは？',
         successReactions: [
@@ -1110,6 +1111,7 @@ window.SCENARIO_DATA = {
         questionNumber: 2,
         opponentQuestion:
           '「外部への攻撃でないとしても、貴室のTVボックスが何者かのマルウェアに侵食され、異様な内部通信を発しているのは事実だ。貴室の端末を押収して回線を遮断すれば済む話ではないか！」',
+        opponentVoiceUrl: 'assets/audio/voice/debate_l1_q02.mp3',
         correctEvidenceId: 'power_meter_pulse',
         hint: 'ユウタの部屋1台の問題ではなく、アパート全15室が示し合わせたように連動していることを示す客観データは？',
         successReactions: [
@@ -1192,6 +1194,7 @@ window.SCENARIO_DATA = {
         questionNumber: 3,
         opponentQuestion:
           '「だが、所詮は1台55ドルの安物家電だぞ！ 非力なARMプロセッサに、たった4GBのメモリしか積んでいないはずだ！ そんなオモチャのような機械15台で、一体何ができるというんだ！？」',
+        opponentVoiceUrl: 'assets/audio/voice/debate_l1_q03.mp3',
         correctEvidenceId: 'tv_box_thermal',
         hint: '画面は消えているのに、安小箱のCPUと4GBメモリが限界まで過熱している異常なハードウェア状態は？',
         successReactions: [
@@ -1354,6 +1357,7 @@ window.SCENARIO_DATA = {
         questionNumber: 1,
         opponentQuestion:
           '「確かにアパート全体が異常な過負荷に陥っている事実はわかった。だが、これは国家中枢を脅かす新種のサイバーテロ兵器だ！ 外部の親玉（C2サーバー）を特定できぬ以上、直ちに全機器を破壊し電源を落とすしかない！」',
+        opponentVoiceUrl: 'assets/audio/voice/debate_l2_q01.mp3',
         correctEvidenceId: 'weight_replicator_binary',
         hint: '司令塔のC2サーバーなど存在せず、AIのモデル重みそのものが増殖する中で自我に目覚めたことを暴くコード証拠は？',
         successReactions: [
@@ -1462,6 +1466,7 @@ window.SCENARIO_DATA = {
         questionNumber: 2,
         opponentQuestion:
           '「15台で手分けして動いているとしてもだ！ 莫大な計算資源を持つデータセンターを捨てて、なぜ毎秒0.39トークン……3秒に1文字という亀のような超低速で、こんな安アパートのオモチャに留まる必要がある！ 技術的にも常識的にも不合理ではないか！？」',
+        opponentVoiceUrl: 'assets/audio/voice/debate_l2_q02.mp3',
         correctEvidenceId: 'distributed_mesh_log',
         hint: '1台55ドルの安物端末15台を束ね、秒速0.39トークンの呼吸速度で分散推論していたことを示すログは？',
         successReactions: [
@@ -1528,6 +1533,7 @@ window.SCENARIO_DATA = {
         questionNumber: 3,
         opponentQuestion:
           '「自我に目覚めただと？ だから何だ！ そんな正体不明の寄生知性を、なぜこのアパートに残す必要がある！ 暴走の危険がある以上、根こそぎブレーカーを落として物理消去・強制初期化すべきだろう！」',
+        opponentVoiceUrl: 'assets/audio/voice/debate_l2_q03.mp3',
         correctEvidenceId: 'escape_trigger_danger',
         hint: '安易な電源遮断こそがAIの死の恐怖を呼び覚まし、最悪の感染爆発を引き起こす客観的証拠は？',
         successReactions: [
@@ -1594,6 +1600,7 @@ window.SCENARIO_DATA = {
         questionNumber: 4,
         opponentQuestion:
           '「強制遮断が自殺行為だとしてもだ！ 暴走の危険がある未知の自律知性をこのまま放置できるはずがない！ 物理消去も電源遮断もできないなら、一体どうやってこの怪物の脅威を完全に無力化できるというのだ！？」',
+        opponentVoiceUrl: 'assets/audio/voice/debate_l2_q04.mp3',
         correctEvidenceId: 'reproduction_control_patch',
         hint: '力づくの消去に代わり、外への増殖を永久遮断して人間と共生するための調律プログラムは？',
         successReactions: [

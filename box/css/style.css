@@ -256,9 +256,11 @@ body.game-active {
 ---------------------------------------------------- */
 #viewport {
   flex: 1;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   position: relative;
+  overflow: hidden;
 }
 
 .screen {
@@ -998,7 +1000,6 @@ body.dialogue-active .explore-pin {
   box-shadow: none;
 }
 
-
 /* ----------------------------------------------------
    会話ステージ & ノベルウィンドウ
 ---------------------------------------------------- */
@@ -1545,10 +1546,18 @@ body.dialogue-active .explore-pin {
    4. エンディング画面
 ---------------------------------------------------- */
 #screen-ending {
-  padding: 32px 20px;
+  padding: clamp(24px, 5dvh, 40px) 20px calc(56px + max(16px, env(safe-area-inset-bottom, 0px)));
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   text-align: center;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+  flex: 1;
+  min-height: 0;
+  max-height: 100%;
+  box-sizing: border-box;
 }
 
 .ending-icon {

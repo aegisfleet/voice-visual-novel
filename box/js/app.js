@@ -821,9 +821,9 @@ class GameApp {
     if (!e.touches || e.touches.length === 0) return;
 
     const isPullDown = e.touches[0].clientY > this.touchStartY;
-    // スクロールを許可する要素（証拠手帳、バックログ、設定資料集、立証カードリスト、会話長文）
+    // スクロールを許可する要素（エンディング画面、証拠手帳、バックログ、設定資料集、立証カードリスト、会話長文）
     const scrollable = e.target.closest(
-      '.modal-list, .gallery-body, .log-content, .debate-evidence-list, .debate-evidence-grid, .dialogue-body, .opponent-speech-bubble, .modal-body, .character-gallery-modal',
+      '#screen-ending, .modal-list, .gallery-body, .log-content, .debate-evidence-list, .debate-evidence-grid, .dialogue-body, .opponent-speech-bubble, .modal-body, .character-gallery-modal',
     );
 
     // 非スクロール領域は常に防止、スクロール可能要素でも最上部でさらに下へ引っ張る場合は防止
@@ -1750,8 +1750,10 @@ class GameApp {
     this.dom.debateOpponentSpeech.textContent = currentStep.opponentQuestion;
     this.dom.debateHintText.textContent = `💡 鑑識ポイント: ${currentStep.hint}`;
 
-    // 相手の発言を読み上げ
-    this.audio.speak('シバタ捜査官', currentStep.opponentQuestion);
+    // 相手の発言を読み上げ（MP3優先 / Web Speechフォールバック）
+    this.audio.speak('シバタ捜査官', currentStep.opponentQuestion, {
+      audioUrl: currentStep.opponentVoiceUrl || null,
+    });
 
     // 所持証拠一覧をレンダリング
     this.renderDebateEvidenceList();
