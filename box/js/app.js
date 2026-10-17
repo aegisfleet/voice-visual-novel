@@ -771,6 +771,7 @@ class GameApp {
     if (this.state.isClearedFirstLoop()) {
       return this.state.collectedEvidence.has('weight_replicator_binary') &&
              this.state.collectedEvidence.has('distributed_mesh_log') &&
+             this.state.collectedEvidence.has('escape_trigger_danger') &&
              this.state.collectedEvidence.has('reproduction_control_patch');
     }
     return this.state.collectedEvidence.size >= 3;
@@ -782,20 +783,20 @@ class GameApp {
     this.dom.evidenceCount.textContent = count;
 
     if (isLoop2) {
-      const loop2Keys = ['weight_replicator_binary', 'distributed_mesh_log', 'reproduction_control_patch'];
+      const loop2Keys = ['weight_replicator_binary', 'distributed_mesh_log', 'escape_trigger_danger', 'reproduction_control_patch'];
       const hasCount = loop2Keys.filter(k => this.state.collectedEvidence.has(k)).length;
       const canProceed = this.canStartDebate();
 
       if (canProceed) {
         this.dom.btnGoToDebate.classList.remove('hidden');
         if (this.dom.btnHudGotoDebate) this.dom.btnHudGotoDebate.classList.remove('hidden');
-        this.dom.exploreStatusText.textContent = `⚖️ 深層鑑識データが揃った！ (${count}件) シバタ捜査官に電脳生命の真実を提示できるぞ！`;
+        this.dom.exploreStatusText.textContent = `⚖️ 深層鑑識データ全4件が揃った！ (${count}件) シバタ捜査官に電脳生命の真実を提示できるぞ！`;
         this.dom.evidenceNeededCounter.textContent = '提示可能！';
       } else {
         this.dom.btnGoToDebate.classList.add('hidden');
         if (this.dom.btnHudGotoDebate) this.dom.btnHudGotoDebate.classList.add('hidden');
-        this.dom.exploreStatusText.textContent = `深層真実の鍵（自律増殖体コード・分散推論ログ・調律パッチ）を解析しよう（必須深層データ: ${hasCount} / 3件）`;
-        this.dom.evidenceNeededCounter.textContent = `${hasCount} / 3`;
+        this.dom.exploreStatusText.textContent = `深層真実の鍵（自律増殖体・分散推論・給電遮断トリガー・調律パッチ）を解析しよう（必須深層データ: ${hasCount} / 4件）`;
+        this.dom.evidenceNeededCounter.textContent = `${hasCount} / 4`;
       }
     } else {
       // 1周目：最低3件必要
@@ -1084,7 +1085,7 @@ class GameApp {
     if (!this.canStartDebate()) {
       if (this.audio.playShock) this.audio.playShock();
       alert(this.state.isClearedFirstLoop()
-        ? '【深層鑑識データ不足】シバタ捜査官に真実を提示するには、深層データ（『自律増殖体コード』『分散推論ログ』『共生調律パッチ』）をすべて解析して揃える必要があります！'
+        ? '【深層鑑識データ不足】シバタ捜査官に真実を提示するには、深層データ（『自律増殖体コード』『分散推論ログ』『給電遮断トリガー』『共生調律パッチ』）の全4件を解析して揃える必要があります！'
         : '【証拠不足】シバタ捜査官に客観的反証を提示するには、最低3件の鑑識データが必要です！現場を再調査して証拠を集めてください。');
       return;
     }

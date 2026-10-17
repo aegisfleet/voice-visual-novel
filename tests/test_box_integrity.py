@@ -133,6 +133,17 @@ class TestBoxScenarioAndAssets(unittest.TestCase):
         q2 = steps[1]
         self.assertEqual(q2.get("correctEvidenceId"), "power_meter_pulse")
 
+    def test_debate_loop2_questions(self):
+        """2周目の立証が4問構成で、問3がescape_trigger_danger、問4がreproduction_control_patchであること"""
+        steps = self.scenario.get("debate", {}).get("stepsLoop2", [])
+        self.assertEqual(len(steps), 4, "stepsLoop2 must have 4 questions")
+        self.assertEqual(steps[0].get("correctEvidenceId"), "weight_replicator_binary")
+        self.assertEqual(steps[1].get("correctEvidenceId"), "distributed_mesh_log")
+        self.assertEqual(steps[2].get("correctEvidenceId"), "escape_trigger_danger")
+        self.assertEqual(steps[3].get("correctEvidenceId"), "reproduction_control_patch")
+        self.assertIn("物理消去", steps[2].get("opponentQuestion", ""))
+        self.assertIn("無力化", steps[3].get("opponentQuestion", ""))
+
     def test_pin_distances_rule5(self):
         """探索ピンのユークリッド距離が20%以上離れていること（AGENT PROTOCOLルール5）"""
         spots = self.scenario.get("spots", [])
