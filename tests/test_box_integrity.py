@@ -85,8 +85,19 @@ class TestBoxScenarioAndAssets(unittest.TestCase):
         self.assertEqual(pulse_ev.get("id"), "power_meter_pulse")
         self.assertTrue(pulse_ev.get("image"))
 
-        # 画像ファイル実在確認
         img_path = BOX_DIR / pulse_ev["image"]
+        self.assertTrue(img_path.exists(), f"Image file not found: {img_path}")
+        self.assertGreater(img_path.stat().st_size, 1000, "Image file is too small")
+
+    def test_router_packet_evidence_exists(self):
+        """微弱通信ログ証拠品が登録されており画像が存在すること"""
+        evidence = self.scenario.get("evidence", {})
+        self.assertIn("creepy_pulse_packet", evidence)
+        packet_ev = evidence["creepy_pulse_packet"]
+        self.assertEqual(packet_ev.get("id"), "creepy_pulse_packet")
+        self.assertTrue(packet_ev.get("image"))
+
+        img_path = BOX_DIR / packet_ev["image"]
         self.assertTrue(img_path.exists(), f"Image file not found: {img_path}")
         self.assertGreater(img_path.stat().st_size, 1000, "Image file is too small")
 

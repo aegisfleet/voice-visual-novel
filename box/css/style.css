@@ -1638,7 +1638,16 @@ body.dialogue-active .explore-pin {
   pointer-events: none;
 }
 
-/* 拡大画像ビューアーモーダル */
+/* 拡大画像ビューアーモーダル (証拠手帳モーダルなど全UIの最前面に表示) */
+#modal-image-viewer.modal {
+  z-index: 100 !important;
+}
+#modal-image-viewer .modal-backdrop {
+  background: rgba(3, 7, 18, 0.88);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
 .modal-content-image {
   max-width: 96vw;
   width: 920px;
@@ -1647,6 +1656,7 @@ body.dialogue-active .explore-pin {
   padding: 16px;
   display: flex;
   flex-direction: column;
+  z-index: 2;
 }
 .image-viewer-body {
   margin-top: 10px;

@@ -219,23 +219,6 @@
       </div>
     </main>
 
-    <!-- 拡大画像ビューアーモーダル -->
-    <div id="modal-image-viewer" class="modal hidden">
-      <div id="backdrop-image-viewer" class="modal-backdrop"></div>
-      <div class="modal-content modal-content-image">
-        <div class="modal-header">
-          <div class="modal-title-wrap">
-            <h3 id="image-viewer-title" class="modal-title">📊 証拠画像詳細</h3>
-            <span class="modal-sub-title">HIGH RESOLUTION FORENSIC VIEW</span>
-          </div>
-          <button type="button" id="btn-close-image-viewer" class="btn-close">✕</button>
-        </div>
-        <div class="image-viewer-body">
-          <img id="image-viewer-img" src="" alt="拡大画像" class="image-viewer-img" />
-        </div>
-      </div>
-    </div>
-
     <!-- 証拠手帳モーダル -->
     <div id="modal-evidence" class="modal hidden">
       <div id="backdrop-evidence" class="modal-backdrop"></div>
@@ -267,6 +250,23 @@
       </div>
     </div>
 
+    <!-- 拡大画像ビューアーモーダル (全モーダルの最前面に配置) -->
+    <div id="modal-image-viewer" class="modal modal-image-viewer hidden">
+      <div id="backdrop-image-viewer" class="modal-backdrop"></div>
+      <div class="modal-content modal-content-image">
+        <div class="modal-header">
+          <div class="modal-title-wrap">
+            <h3 id="image-viewer-title" class="modal-title">📊 証拠画像詳細</h3>
+            <span class="modal-sub-title">HIGH RESOLUTION FORENSIC VIEW</span>
+          </div>
+          <button type="button" id="btn-close-image-viewer" class="btn-close">✕</button>
+        </div>
+        <div class="image-viewer-body">
+          <img id="image-viewer-img" src="" alt="拡大画像" class="image-viewer-img" />
+        </div>
+      </div>
+    </div>
+
     <!-- キーボード操作ガイドバー -->
     <footer id="keyboard-guide" class="keyboard-guide">
       <div class="key-hint"><span class="key-tag">Space / Enter</span> 会話送り・決定</div>
@@ -279,10 +279,10 @@
   </div>
 
   <!-- スクリプト群 -->
-  <script src="js/state.js?v=20261016_rev35"></script>
-  <script src="js/audio.js?v=20261016_rev35"></script>
-  <script src="js/character.js?v=20261016_rev35"></script>
-  <script src="js/scenario.js?v=20261016_rev35"></script>
-  <script src="js/app.js?v=20261016_rev35"></script>
+  <script src="js/state.js?v=20261017_rev36"></script>
+  <script src="js/audio.js?v=20261017_rev36"></script>
+  <script src="js/character.js?v=20261017_rev36"></script>
+  <script src="js/scenario.js?v=20261017_rev36"></script>
+  <script src="js/app.js?v=20261017_rev36"></script>
 </body>
 </html>
