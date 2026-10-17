@@ -14,45 +14,45 @@ class BoxCharacterController {
     this.currentEmotion = 'normal';
     this.bubbleTimeout = null;
 
-    // 各キャラクターの感情差分画像マッピング（新デザイン統一版）
+    // 各キャラクターの感情差分画像マッピング（正方形1:1 高精細統一版）
     this.characterImages = {
       yuta: {
-        normal: 'assets/characters/yuta_confident.png',
+        normal: 'assets/characters/yuta_normal.png',
         confident: 'assets/characters/yuta_confident.png',
         shock: 'assets/characters/yuta_shock.png',
         smile: 'assets/characters/yuta_smile.png',
-        thinking: 'assets/characters/yuta_confident.png',
+        thinking: 'assets/characters/yuta_normal.png',
       },
       shibata: {
-        normal: 'assets/characters/shibata_angry.png',
+        normal: 'assets/characters/shibata_normal.png',
         angry: 'assets/characters/shibata_angry.png',
         shock: 'assets/characters/shibata_shock.png',
         smile: 'assets/characters/shibata_smile.png',
-        thinking: 'assets/characters/shibata_angry.png',
+        thinking: 'assets/characters/shibata_normal.png',
       },
       aoi: {
-        normal: 'assets/characters/aoi_smile.png',
+        normal: 'assets/characters/aoi_normal.png',
         panic: 'assets/characters/aoi_panic.png',
         smile: 'assets/characters/aoi_smile.png',
         shock: 'assets/characters/aoi_panic.png',
-        thinking: 'assets/characters/aoi_panic.png',
+        thinking: 'assets/characters/aoi_normal.png',
       },
       yaegashi: {
-        normal: 'assets/characters/yaegashi_angry.png',
+        normal: 'assets/characters/yaegashi_normal.png',
         angry: 'assets/characters/yaegashi_angry.png',
         laugh: 'assets/characters/yaegashi_laugh.png',
         smile: 'assets/characters/yaegashi_laugh.png',
         shock: 'assets/characters/yaegashi_angry.png',
-        thinking: 'assets/characters/yaegashi_angry.png',
+        thinking: 'assets/characters/yaegashi_normal.png',
       },
       mimi: {
-        normal: 'assets/characters/mimi_smile.png',
+        normal: 'assets/characters/mimi_normal.png',
         glitch: 'assets/characters/mimi_glitch.png',
         panic: 'assets/characters/mimi_glitch.png',
         smile: 'assets/characters/mimi_smile.png',
-        glow: 'assets/characters/mimi_smile.png',
+        glow: 'assets/characters/mimi_normal.png',
         shock: 'assets/characters/mimi_glitch.png',
-        thinking: 'assets/characters/mimi_smile.png',
+        thinking: 'assets/characters/mimi_normal.png',
       },
     };
 
