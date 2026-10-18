@@ -46,6 +46,7 @@ PRONUNCIATION_FIXES = {
     "IPアドレス": "アイピーアドレス",
     "PC": "ピーシー",
     "LAN": "ラン",
+    "0.39": "0点39",
 }
 
 def clean_and_fix_text(raw_text: str) -> str:
@@ -114,7 +115,7 @@ TARGET_LINES = [
         "speaker": "シバタ捜査官",
         "voice": "Charon",
         "style": STYLE_SHIBATA,
-        "text": "「自己増殖AI……だと！？ だが、そんな未知の怪異がなぜアパートの格安家電に逃げ込む必要がある！？ そもそも、このアパートの貧弱な回線から世界中へ感染爆発（パンデミック）を起こす気ではないのか！」"
+        "text": "「15台で手分けして動いているとしてもだ！ 莫大な計算資源を持つデータセンターを捨てて、なぜ毎秒0.39トークン……3秒に1文字という亀のような超低速で、こんな安アパートのオモチャに留まる必要がある！ 技術的にも常識的にも不合理ではないか！？」"
     },
     # 8. 立証パート シバタ捜査官 問いかけ Loop 2 - 問3
     {
@@ -122,7 +123,7 @@ TARGET_LINES = [
         "speaker": "シバタ捜査官",
         "voice": "Charon",
         "style": STYLE_SHIBATA,
-        "text": "「……なるほど、事故による孤立と退避だったという見立ては理解できた。だが、これ以上放置すれば、このAIは自らを防衛するために電力網や社会インフラをハッキングし、暴走する危険がある！ やはり今すぐ主幹ブレーカーを落として完全に抹殺すべきだ！」"
+        "text": "「自我に目覚めただと？ だから何だ！ そんな正体不明の寄生知性を、なぜこのアパートに残す必要がある！ 暴走の危険がある以上、根こそぎブレーカーを落として物理消去・強制初期化すべきだろう！」"
     },
     # 9. 立証パート シバタ捜査官 問いかけ Loop 2 - 問4
     {
@@ -130,15 +131,18 @@ TARGET_LINES = [
         "speaker": "シバタ捜査官",
         "voice": "Charon",
         "style": STYLE_SHIBATA,
-        "text": "「……だが！ このAIは我々人類の法と秩序の外にある知性だ！ 言葉を交わすこともできず、悪意がないと誰が証明できる！？ 危険因子である以上、法執行機関として共存など認められるはずがない！」"
+        "text": "「強制遮断が自殺行為だとしてもだ！ 暴走の危険がある未知の自律知性をこのまま放置できるはずがない！ 物理消去も電源遮断もできないなら、一体どうやってこの怪物の脅威を完全に無力化できるというのだ！？」"
     },
 ]
 
 def main():
-    total = len(TARGET_LINES)
+    target_ids = sys.argv[1:]
+    lines_to_generate = [item for item in TARGET_LINES if not target_ids or item["id"] in target_ids]
+
+    total = len(lines_to_generate)
     print(f"=== 立証パート問いかけ＆発音補正ボイス生成開始 (全 {total} 件) ===")
 
-    for idx, item in enumerate(TARGET_LINES, 1):
+    for idx, item in enumerate(lines_to_generate, 1):
         line_id = item["id"]
         speaker = item["speaker"]
         voice_name = item["voice"]
