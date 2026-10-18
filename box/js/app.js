@@ -3048,16 +3048,21 @@ class GameApp {
 window.addEventListener('DOMContentLoaded', () => {
   window.app = new GameApp();
 
-  // LINEアプリ内ブラウザ検知と案内 (eve準拠)
+  // LINEアプリ内ブラウザ検知と案内
   const isLineBrowser = typeof navigator !== 'undefined' && /Line\//i.test(navigator.userAgent);
   if (isLineBrowser) {
+    const noticeEl = document.querySelector('.title-audio-notice');
+    if (noticeEl) {
+      noticeEl.innerHTML =
+        '※フルボイス＆BGM対応。LINE内ブラウザで声が聞こえない場合は端末の消音モード解除、または右上［…］から「Safari / 他のアプリで開く」をお試しください';
+    }
     setTimeout(() => {
       if (window.app?.showToast) {
         window.app.showToast(
           'LINE内ブラウザをご利用中: 音声が聞こえない場合は端末のマナーモード解除、または右上メニュー「他のアプリで開く」をお試しください',
-          6000,
+          7000,
         );
       }
-    }, 1500);
+    }, 1200);
   }
 });

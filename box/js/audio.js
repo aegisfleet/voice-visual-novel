@@ -24,11 +24,11 @@ class AudioManager {
     this.bgmMasterGain = null; // BGM用ゲイン
     this.voiceGainNode = null; // ボイス用ゲイン (Web Audio API接続用)
     this.sfxGainNode = null; // 効果音用ゲイン
-    this.voiceSourceNode = null; // ボイスMediaElementSourceノード
-    this.currentVoiceAudio = null; // 再生中のMP3 Audio要素
+    this.audioBufferCache = new Map(); // URL -> AudioBuffer (通信量0・高速セリフ再生キャッシュ)
+    this.maxBufferCacheSize = 60; // LRUキャッシュ上限
+    this.currentVoiceSourceNode = null; // 再生中のAudioBufferSourceNode
+    this.currentVoiceAudio = null; // フォールバック用再生中Audio要素
     this.currentVoiceAbortController = null; // ロード中の中断用 AbortController
-    this.voiceAudio = null; // LINE内ブラウザ/iOS Safari自動再生制限対策・再利用Audio要素
-    this.isVoiceAudioUnlocked = false; // ボイスAudioアンロック済みフラグ
     this.pendingBgmMode = null; // 自動再生制限時の保留中BGMモード
     this.isAudioUnlocked = false; // オーディオアンロック済みフラグ
     this.isSpeechUnlocked = false; // WebSpeechアンロック済みフラグ
@@ -61,7 +61,7 @@ class AudioManager {
     window.addEventListener('beforeunload', handleHide);
   }
 
-  // 画面初回タッチ/クリック時の早期アンロック (LINE内ブラウザAutoplay制限の完全突破)
+  // 画面初回タッチ/クリック時の早期アンロック (LINE内ブラウザAutoplay制限の完全突破・touchend対応)
   setupEarlyUnlock() {
     if (typeof window === 'undefined') return;
 
@@ -69,11 +69,13 @@ class AudioManager {
       this.unlockAudio();
       window.removeEventListener('click', earlyUnlock, true);
       window.removeEventListener('touchstart', earlyUnlock, true);
+      window.removeEventListener('touchend', earlyUnlock, true);
       window.removeEventListener('keydown', earlyUnlock, true);
     };
 
     window.addEventListener('click', earlyUnlock, true);
     window.addEventListener('touchstart', earlyUnlock, true);
+    window.addEventListener('touchend', earlyUnlock, true);
     window.addEventListener('keydown', earlyUnlock, true);
   }
 
@@ -208,78 +210,120 @@ class AudioManager {
     return this.playVoiceFile(url, options);
   }
 
-  // ボイス再生用Audio要素の初期化 (単一要素の先行作成とWeb Audio API接続・再利用 - eve完全準拠)
-  // 重要: Web Audio APIのDestinationに接続することで、LINE内蔵ブラウザ(WebKit)における
-  // BGMとの排他消音・マナーモード消音を完全に回避し、同一ストリームとして明瞭に再生する
-  initVoiceAudio() {
-    if (this.voiceAudio) return;
-    if (typeof Audio === 'undefined') return;
+  // 音声ファイルの非同期ロード＆Web Audio APIデコード（メモリキャッシュ付き）
+  async loadVoiceAudioBuffer(url) {
+    if (this.audioBufferCache.has(url)) {
+      const cached = this.audioBufferCache.get(url);
+      this.audioBufferCache.delete(url);
+      this.audioBufferCache.set(url, cached);
+      return cached;
+    }
 
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status} when fetching ${url}`);
+    }
+    const arrayBuffer = await response.arrayBuffer();
+    this.ensureContext();
+    if (!this.ctx) {
+      throw new Error('AudioContext not available');
+    }
+
+    const audioBuffer = await new Promise((resolve, reject) => {
+      this.ctx.decodeAudioData(arrayBuffer, resolve, reject);
+    });
+
+    if (this.audioBufferCache.size >= this.maxBufferCacheSize) {
+      const firstKey = this.audioBufferCache.keys().next().value;
+      if (firstKey) this.audioBufferCache.delete(firstKey);
+    }
+    this.audioBufferCache.set(url, audioBuffer);
+    return audioBuffer;
+  }
+
+  // Web Audio API によるボイス波形再生（Autoplay制限を完全回避しタイマー駆動・AUTO進行でも確実に鳴動）
+  executeVoiceBufferPlay(buffer, options, sessionId) {
     try {
-      this.voiceAudio = new Audio();
-      this.voiceAudio.preload = 'auto';
-      this.voiceAudio.crossOrigin = 'anonymous';
+      const source = this.ctx.createBufferSource();
+      source.buffer = buffer;
+      source.connect(this.voiceGainNode || this.ctx.destination);
+      this.currentVoiceSourceNode = source;
 
-      this.ensureContext();
-      if (this.ctx && this.voiceGainNode && !this.voiceSourceNode) {
-        try {
-          this.voiceSourceNode = this.ctx.createMediaElementSource(this.voiceAudio);
-          this.voiceSourceNode.connect(this.voiceGainNode);
-        } catch (e) {
-          console.warn('[AudioManager] createMediaElementSource fallback to HTMLAudio:', e);
+      source.onended = () => {
+        if (this.playSessionId !== sessionId) return;
+        if (this.currentVoiceSourceNode === source) {
+          this.currentVoiceSourceNode = null;
         }
-      }
-    } catch (e) {
-      console.warn('[AudioManager] Failed to init voiceAudio:', e);
+        this.dispatchVoiceState(false);
+        if (options.onEnd) options.onEnd();
+      };
+
+      source.start(0);
+      this.dispatchVoiceState(true, options.speaker || '');
+    } catch (err) {
+      console.warn('[Audio] BufferSource start failed:', err);
+      this.currentVoiceSourceNode = null;
+      this.dispatchVoiceState(false);
+      if (options.onEnd) options.onEnd();
     }
   }
 
-  bindVoiceAudioEvents(audio, options, controller, url, sessionId) {
-    audio.onended = () => {
-      if (this.playSessionId !== sessionId) return;
-      if (this.currentVoiceAudio === audio) {
-        this.currentVoiceAudio = null;
-      }
-      this.dispatchVoiceState(false);
-      if (options.onEnd) options.onEnd();
-    };
-
-    audio.onerror = (e) => {
-      if (this.playSessionId !== sessionId) return;
-      this.dispatchVoiceState(false);
-      if (this.isSkipActive || controller.signal.aborted) return;
-      console.warn(`[Audio] Failed to load voice file: ${url}`, e);
-      if (options.onEnd) options.onEnd();
-      // MP3取得失敗時はブラウザのWeb Speech APIへフォールバック
-      if (options.speaker && options.text) {
-        this.speakSpeechSynthesis(options.speaker, options.text, options);
-      }
-    };
+  isVoiceCancelled(sessionId, controller) {
+    return this.isSkipActive || controller.signal.aborted || this.playSessionId !== sessionId;
   }
 
-  executeVoicePlay(audio, options, controller, sessionId) {
-    const playPromise = audio.play();
-    if (playPromise === undefined) return;
+  handleFallbackPlaySuccess(audio, controller, sessionId, speaker) {
+    if (this.isVoiceCancelled(sessionId, controller)) {
+      try {
+        audio.pause();
+      } catch (_e) {}
+      return;
+    }
+    this.dispatchVoiceState(true, speaker || '');
+  }
 
-    playPromise
-      .then(() => {
-        if (this.playSessionId !== sessionId || controller.signal.aborted || this.isSkipActive) {
-          try {
-            audio.pause();
-            audio.currentTime = 0;
-          } catch (_e) {}
-          return;
-        }
-        this.dispatchVoiceState(true, options.speaker || '');
-      })
-      .catch((err) => {
+  handleFallbackError(options, sessionId) {
+    if (this.playSessionId !== sessionId) return;
+    this.dispatchVoiceState(false);
+    if (options.speaker && options.text) {
+      this.speakSpeechSynthesis(options.speaker, options.text, options);
+    } else if (options.onEnd) {
+      options.onEnd();
+    }
+  }
+
+  // ネイティブ HTMLAudioElement による安全なフォールバック再生（Web Audio非対応環境用・createMediaElementSource不使用）
+  playVoiceHtmlFallback(url, options, controller, sessionId) {
+    try {
+      const audio = new Audio();
+      this.currentVoiceAudio = audio;
+
+      audio.onended = () => {
         if (this.playSessionId !== sessionId) return;
+        this.currentVoiceAudio = null;
         this.dispatchVoiceState(false);
-        if (err.name !== 'AbortError') {
-          console.warn('[Audio] playVoiceFile aborted/interrupted:', err.message);
-        }
         if (options.onEnd) options.onEnd();
-      });
+      };
+
+      audio.onerror = () => {
+        this.currentVoiceAudio = null;
+        this.handleFallbackError(options, sessionId);
+      };
+
+      audio.src = url;
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => {
+            this.handleFallbackPlaySuccess(audio, controller, sessionId, options.speaker);
+          })
+          .catch(() => {
+            this.handleFallbackError(options, sessionId);
+          });
+      }
+    } catch (_e) {
+      this.handleFallbackError(options, sessionId);
+    }
   }
 
   isVoicePlaybackBlocked(url, options) {
@@ -288,25 +332,29 @@ class AudioManager {
     return false;
   }
 
-  cancelVoiceAudioPlayback(audio, options) {
+  async tryWebAudioVoicePlay(url, options, controller, sessionId) {
+    if (!this.ctx || !this.voiceGainNode) return false;
     try {
-      audio.pause();
-      audio.currentTime = 0;
-    } catch (_e) {}
-    this.currentVoiceAudio = null;
-    this.dispatchVoiceState(false);
-    if (options.onEnd) options.onEnd();
-  }
+      const buffer = await this.loadVoiceAudioBuffer(url);
 
-  handleVoicePlayCatch(err, controller, options) {
-    this.dispatchVoiceState(false);
-    if (!controller?.signal?.aborted) {
-      console.warn('[Audio] Voice loading error:', err);
+      if (this.isVoiceCancelled(sessionId, controller)) {
+        if (options.onEnd) options.onEnd();
+        return true;
+      }
+
+      this.executeVoiceBufferPlay(buffer, options, sessionId);
+      return true;
+    } catch (err) {
+      if (this.isVoiceCancelled(sessionId, controller)) {
+        if (options.onEnd) options.onEnd();
+        return true;
+      }
+      console.warn('[Audio] Web Audio decode failed, fallback to HTMLAudio:', err);
+      return false;
     }
-    if (options.onEnd) options.onEnd();
   }
 
-  // MP3音声ファイルのロード＆再生（世代管理・単一Audio要素再利用・LINE内ブラウザ完全対応）
+  // MP3音声ファイルのロード＆再生（Web Audio API AudioBuffer ＋ フォールバック完全対応）
   async playVoiceFile(url, options = {}) {
     if (this.isVoicePlaybackBlocked(url, options)) {
       if (options.onEnd) options.onEnd();
@@ -319,48 +367,28 @@ class AudioManager {
     const controller = new AbortController();
     this.currentVoiceAbortController = controller;
 
-    try {
-      this.ensureContext();
-      this.initVoiceAudio();
+    this.ensureContext();
+    const played = await this.tryWebAudioVoicePlay(url, options, controller, sessionId);
+    if (played) return;
 
-      // LINE内ブラウザ/iOS Safari対策: アンロック済みの単一Audio要素を再利用
-      const audio = this.voiceAudio || new Audio();
-      audio.crossOrigin = 'anonymous';
-      this.currentVoiceAudio = audio;
-      this.isVoiceAudioUnlocked = true; // この直接再生自体がアンロックになる
-
-      this.bindVoiceAudioEvents(audio, options, controller, url, sessionId);
-
-      // 直前にスキップが押されていたら通信を完全破棄
-      if (this.isSkipActive || controller.signal.aborted || this.playSessionId !== sessionId) {
-        this.cancelVoiceAudioPlayback(audio, options);
-        return;
-      }
-
-      audio.src = url;
-      try {
-        audio.currentTime = 0;
-      } catch (_e) {}
-
-      this.executeVoicePlay(audio, options, controller, sessionId);
-    } catch (err) {
-      this.handleVoicePlayCatch(err, controller, options);
-    }
+    this.playVoiceHtmlFallback(url, options, controller, sessionId);
   }
 
   // 音声が現在再生中かどうかを判定
   isVoicePlaying() {
+    const isBufferPlaying = Boolean(this.currentVoiceSourceNode);
     const isAudioPlaying = Boolean(
       this.currentVoiceAudio && !this.currentVoiceAudio.paused && !this.currentVoiceAudio.ended,
     );
-    const isSpeechActive =
+    const isSpeechActive = Boolean(
       typeof window !== 'undefined' &&
-      'speechSynthesis' in window &&
-      window.speechSynthesis.speaking;
-    return isAudioPlaying || isSpeechActive;
+        'speechSynthesis' in window &&
+        window.speechSynthesis?.speaking,
+    );
+    return isBufferPlaying || isAudioPlaying || isSpeechActive;
   }
 
-  // 読み上げ停止（MP3通信＆Audio要素＆WebSpeechの完全停止・世代進行による過去コールバック遮断）
+  // 読み上げ停止（Web Audio Buffer ＆ MP3 Audio ＆ WebSpeechの完全停止）
   stopVoice() {
     this.playSessionId++; // 世代を進めて過去の非同期待機やPromise解決コールバックをすべて無効化
     this.stopSpeech();
@@ -370,6 +398,15 @@ class AudioManager {
         this.currentVoiceAbortController.abort();
       } catch (_e) {}
       this.currentVoiceAbortController = null;
+    }
+
+    if (this.currentVoiceSourceNode) {
+      try {
+        this.currentVoiceSourceNode.onended = null;
+        this.currentVoiceSourceNode.stop();
+        this.currentVoiceSourceNode.disconnect();
+      } catch (_e) {}
+      this.currentVoiceSourceNode = null;
     }
 
     if (this.currentVoiceAudio) {
@@ -689,10 +726,8 @@ class AudioManager {
   }
 
   unlockVoiceAudio() {
-    // ボイス用Audio要素のインスタンスを確実に先行生成
-    this.initVoiceAudio();
-    // 重要: 無音WAVを同一要素に二重ロードするとWebKitでAbortErrorが発生し
-    // 後続のセリフ音声デコーダーがデッドロックするため、セリフ直接再生による正当アンロックを採用する
+    // 後方互換用: Web Audio API (AudioBuffer) 移行により単一Audioの事前無音ロードは不要
+    this.isVoiceAudioUnlocked = true;
   }
 
   unlockSpeechSynthesis() {
@@ -709,8 +744,6 @@ class AudioManager {
   // ユーザー操作によるオーディオアンロック & 保留中BGM再開 (LINE内ブラウザ完全対応)
   unlockAudio() {
     this.ensureContext();
-    this.initVoiceAudio();
-
     this.unlockWebAudio();
     this.unlockVoiceAudio();
     this.unlockSpeechSynthesis();
@@ -746,30 +779,13 @@ class AudioManager {
       this._fadeOutAndCleanTrack(previousTrack, 1.0);
     }
 
+    // LINE内蔵ブラウザ(WebKit)におけるcreateMediaElementSourceの無音化バグを回避するため、
+    // BGMは最も安定して鳴るネイティブHTMLAudioElementパイプラインで直接再生する
     const audio = new Audio(url);
     audio.loop = true;
-    audio.crossOrigin = 'anonymous';
     audio.volume = 0.001; // フェードイン開始初期音量
 
-    let sourceNode = null;
-    let trackGain = null;
-
-    if (this.ctx && this.bgmMasterGain) {
-      try {
-        sourceNode = this.ctx.createMediaElementSource(audio);
-        trackGain = this.ctx.createGain();
-        const now = this.ctx.currentTime;
-        trackGain.gain.setValueAtTime(0.0001, now);
-        trackGain.gain.linearRampToValueAtTime(1.0, now + 1.2);
-
-        sourceNode.connect(trackGain);
-        trackGain.connect(this.bgmMasterGain);
-      } catch (err) {
-        console.warn('[AudioManager] Web Audio connection fallback to HTMLAudioElement:', err);
-      }
-    }
-
-    // HTMLAudioElement側のスムーズフェードイン (Web Audio非接続時のフォールバック兼用)
+    // スムーズフェードイン
     const targetVol = this.bgmVolume;
     const fadeSteps = 12;
     const stepInterval = 1200 / fadeSteps;
@@ -790,8 +806,6 @@ class AudioManager {
 
     const trackObj = {
       audio,
-      source: sourceNode,
-      gain: trackGain,
       url,
       mode,
     };
@@ -808,19 +822,9 @@ class AudioManager {
 
   _fadeOutAndCleanTrack(track, fadeSec = 0.8) {
     if (!track) return;
-    const { audio, gain, source } = track;
+    const { audio } = track;
 
-    if (gain && this.ctx) {
-      try {
-        const now = this.ctx.currentTime;
-        gain.gain.setValueAtTime(gain.gain.value, now);
-        gain.gain.linearRampToValueAtTime(0.0001, now + fadeSec);
-      } catch (_e) {
-        // ignore
-      }
-    }
-
-    // HTMLAudioElement自体の音量もフェードアウト
+    // HTMLAudioElement自体の音量をフェードアウト
     const startVol = audio.volume;
     const steps = 8;
     const stepTime = (fadeSec * 1000) / steps;
@@ -847,16 +851,6 @@ class AudioManager {
           audio.load();
         } catch (_e) {
           // ignore
-        }
-        if (source) {
-          try {
-            source.disconnect();
-          } catch (_e) {}
-        }
-        if (gain) {
-          try {
-            gain.disconnect();
-          } catch (_e) {}
         }
       },
       Math.max(100, Math.floor(fadeSec * 1000) + 50),

@@ -49,7 +49,7 @@ async def run_tests():
     # 1. ローカルテスト用HTTPサーバーの自動起動
     print(f"[1/5] ローカルHTTPサーバーを起動中 (ポート: {TEST_PORT})...")
     server_process = subprocess.Popen(
-        [sys.executable, "-m", "http.server", str(TEST_PORT), "--directory", WORKSPACE_ROOT],
+        [sys.executable, "-m", "http.server", str(TEST_PORT), "--bind", "127.0.0.1", "--directory", WORKSPACE_ROOT],
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL
     )
@@ -61,7 +61,10 @@ async def run_tests():
         print(" -> サーバー起動完了")
 
         async with async_playwright() as p:
-            browser = await p.chromium.launch(headless=True)
+            browser = await p.chromium.launch(
+                headless=True,
+                args=['--disable-gpu', '--no-sandbox']
+            )
             context = await browser.new_context()
 
             # -----------------------------------------------------------
