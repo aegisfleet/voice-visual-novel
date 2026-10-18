@@ -1665,9 +1665,11 @@ class GameApp {
     if (speaker.includes('ヤエガシ')) return 'yaegashi';
     if (
       speaker.includes('ミミ') ||
+      speaker.includes('MIMI') ||
       speaker.includes('BOX') ||
       speaker.includes('AI') ||
-      speaker.includes('知性')
+      speaker.includes('知性') ||
+      speaker.includes('電子')
     ) {
       return 'mimi';
     }
