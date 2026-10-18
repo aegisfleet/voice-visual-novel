@@ -209,7 +209,97 @@ AI音楽生成において、プロンプトの単語選定はゲームジャン
 
 ---
 
-## 6. 関連ファイル一覧
+## 6. LINE内ブラウザおよびiOS WKWebViewにおけるボイス再生設計
+
+WebノベルゲームをSNS（特にLINEやX）経由で配信・共有する際、**「BGMは鳴るのにキャラクターの音声だけ鳴らない」**という重大な音声再生障害が発生しやすい。本セクションでは、その根本原因と確立された完全解決アーキテクチャを記録する。
+
+### 6.1 WebKit（iOS / LINE内ブラウザ）における4大トラップ
+
+1. **Web Speech API 初期化時のフラグ誤爆（最大の盲点）**:
+   ```javascript
+   // ❌ 過去の致命的アンチパターン
+   initSpeech() {
+     if (!('speechSynthesis' in window)) {
+       this.voiceEnabled = false; // ← LINE内ブラウザ等で録音済みMP3ボイスまで全停止する！
+     }
+   }
+   ```
+   * iOS LINEアプリ内ブラウザ（WKWebView）では `window.speechSynthesis` が利用できない環境が多い。
+   * ここで `voiceEnabled`（ユーザーの音声ON/OFF設定）を `false` に倒してしまうと、**録音済みMP3ボイスの再生パイプラインまで完全にブロックされる**。BGMは別フラグ（`bgmEnabled`）のため鳴り、「BGMだけ鳴って声が出ない」原因となる。
+   * **解決策**: `speechSynthesisAvailable` のみ管理し、`this.voiceEnabled` は常にユーザー設定として保護する。
+
+2. **24kHz MPEG-2 MP3 に対する `decodeAudioData` の拒絶**:
+   * 音声合成TTS（Edge TTSやGoogle Cloud TTS等）から出力されるMP3ボイスは、**24,000Hz (24kHz) モノラル・MPEG-2 Layer 3** 形式であることが多い。
+   * iOS WebKit の `AudioContext.decodeAudioData` は 44.1kHz / 48kHz（MPEG-1 Layer 3）しか受け付けず、24kHz MP3 を渡すと `EncodingError: The string did not match the expected pattern.` を投げて失敗する。
+
+3. **非同期境界跨ぎによる User Gesture Token（操作権限）の失効**:
+   * WebKit では、ユーザーのタップ/クリックイベントハンドラ内で同期的に呼び出された `Audio.play()` のみが再生を許可される。
+   * `await fetch()` や `await decodeAudioData()` などの非同期タスク境界を跨いだ後のフォールバックで `new Audio().play()` を呼んでも、**User Gesture Token が失効しているため `NotAllowedError` で確実に拒絶**される。
+
+4. **`createMediaElementSource` の無音化バグ**:
+   * iOS WKWebView では `audioContext.createMediaElementSource(audio)` を接続すると、WebKit の内部バグ（Bug 168239 / 197464）および CORS 制限により音声出力が強制的に 0（完全無音）になる。
+
+### 6.2 確立されたボイス再生アーキテクチャ（同期直接再生パイプライン）
+
+以上の制約をすべてクリアするため、ボイス再生は **「単一 `HTMLAudioElement` の再利用 ＋ 同期直接再生」** に一本化する。
+
+```javascript
+// box/js/audio.js における確立された実装構造
+class AudioManager {
+  constructor() {
+    this.voiceAudio = typeof Audio !== 'undefined' ? new Audio() : null;
+    if (this.voiceAudio) this.voiceAudio.preload = 'auto';
+    this.currentVoiceAudio = null;
+    this.playSessionId = 0;
+  }
+
+  // ユーザーのタップ/クリック時に非同期待機を挟まず同期的に呼び出す
+  playVoiceFile(url, options = {}) {
+    if (this.isVoicePlaybackBlocked(url, options)) return;
+    this.stopVoice();
+
+    const sessionId = ++this.playSessionId;
+    const audio = this.voiceAudio || new Audio();
+    this.currentVoiceAudio = audio;
+
+    this.executeDirectVoicePlay(audio, url, options, sessionId);
+  }
+
+  executeDirectVoicePlay(audio, url, options, sessionId) {
+    audio.onended = () => this.handleVoiceEnded(audio, options, sessionId);
+    audio.onerror = (e) => this.handleVoiceLoadError(url, options, sessionId, e);
+
+    audio.src = url;
+    try { audio.currentTime = 0; } catch (_e) {}
+
+    // WebKitのUser Gesture Tokenが有効な瞬間に同期的にplay()を発火
+    const playPromise = audio.play();
+    if (playPromise !== undefined) {
+      playPromise
+        .then(() => this.handleVoicePlaySuccess(audio, options, sessionId))
+        .catch((err) => this.handleVoicePlayFailure(err, options, sessionId));
+    }
+  }
+}
+```
+
+* ネイティブのメディアプレーヤーエンジン（AVFoundation）は 24kHz MPEG-2 MP3 を完全にサポートしているため、デコードエラーを起こさず即座に鳴動する。
+* セッションID（`playSessionId`）により、セリフスキップや連打時の競合・過去コールバックの暴走を確実にシャットアウトする。
+
+### 6.3 LINEアプリ内ブラウザ（物理消音モード）の回避導線
+
+* **物理マナーモード問題**: iOS LINE アプリ内ブラウザの `AVAudioSession` は `ambient` 設定のため、端末側面の「消音スイッチ（マナーモード）」が ON の場合、JavaScript の工夫に関わらず OS レベルで全音声が消音される。
+* **解決策**: LINE アプリ内ブラウザを検知（`/Line\//i.test(navigator.userAgent)`）した際、タイトル画面に **「🌐 Safari / 外部ブラウザで開く（推奨）」ボタン** を自動表示する。
+  ```html
+  <a href="?openExternalBrowser=1" class="btn-external-browser" target="_blank" rel="noopener">
+    🌐 Safari / 外部ブラウザで開く（推奨）
+  </a>
+  ```
+* LINE アプリ内ブラウザは URL に `?openExternalBrowser=1` が含まれるリンクを踏むと、LINE を抜けて自動的に OS 標準ブラウザ（iOS: Safari / Android: Chrome）を起動する。Safari であればマナーモード時でもメディア音量に応じて音声が再生されるため、最高の体験を提供できる。
+
+---
+
+## 7. 関連ファイル一覧
 
 * **BGM・効果音生成スクリプト**: [`scripts/generate_box_bgm.py`](file:///d:/Work/voice-visual-novel/scripts/generate_box_bgm.py)
 * **ピロン効果音（SFX）物理合成スクリプト**: [`scripts/generate_piron_sfx.py`](file:///d:/Work/voice-visual-novel/scripts/generate_piron_sfx.py)
@@ -217,3 +307,5 @@ AI音楽生成において、プロンプトの単語選定はゲームジャン
 * **ゲーム内メイン制御**: [`box/js/app.js`](file:///d:/Work/voice-visual-novel/box/js/app.js)
 * **試聴・音響アーカイブ室**: [`box/samples.html`](file:///d:/Work/voice-visual-novel/box/samples.html)
 * **作品仕様書**: [`box/README.md`](file:///d:/Work/voice-visual-novel/box/README.md)
+* **AIエージェント開発プロトコル**: [`docs/agent-novel-game-dev-protocol.md`](file:///d:/Work/voice-visual-novel/docs/agent-novel-game-dev-protocol.md)
+

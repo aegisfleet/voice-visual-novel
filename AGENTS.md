@@ -21,3 +21,7 @@
    - **CSS詳細度（S9423）**: `!important` を乱用せず、CSS詳細度（Specificity）とカスケード構造でスタイルを制御すること。
    - **コントラスト比（S7924）**: 背景色と文字色は WCAG AA 基準（4.5:1 以上、推奨 7:1〜10:1 以上）を確保すること。
    - **標準CSS（S1874）**: `word-break: break-word` 等の非推奨構文を避け、`overflow-wrap: break-word` 等の最新標準仕様を採用すること。
+8. **LINE・iOS WKWebViewでの音声再生保証**:
+   - **WebSpeech初期化誤爆の禁止**: `speechSynthesis` が利用できない環境でも、ユーザーの音声設定 `this.voiceEnabled` を `false` に書き換えて録音MP3ボイスまで停止させないこと。
+   - **同期直接再生パイプラインの厳守**: 24kHz MPEG-2 MP3 に対する `decodeAudioData` の `EncodingError` や、非同期タスク跨ぎによる User Gesture Token（操作権限）の失効を避けるため、セリフ進行タップ時に同期的に `HTMLAudioElement.play()` を呼ぶ単一再利用 Audio 設計を維持すること。
+   - **マナーモード回避導線の常設**: LINE内ブラウザの消音スイッチ（`ambient`）対策として、タイトル画面等に `?openExternalBrowser=1` を付与した Safari / 外部ブラウザ起動リンクを常設すること。

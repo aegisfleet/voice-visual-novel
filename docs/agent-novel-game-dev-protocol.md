@@ -4,7 +4,7 @@
 
 ---
 
-## 1. エージェントが陥りがちな「8大過誤」と防止策
+## 1. エージェントが陥りがちな「9大過誤」と防止策
 
 過去の開発において、エージェントが引き起こした重大な設計欠陥と、その防止策を以下に定義する。これらを二度と繰り返してはならない。
 
@@ -61,6 +61,17 @@
   - **CSS詳細度（S9423）**: `!important` の使用は原則禁止。コンポーネントクラスや詳細度（Specificity）の設計でカスケード競合を解決する。
   - **コントラスト比（S7924）**: テキスト色と背景色は WCAG AA 基準（通常文字 4.5:1 以上、大文字 3:1 以上、推奨 7:1〜10:1 以上）を確保する。背景に半透明を使う場合でもフォールバック背景色（ソリッド暗色等）を定義する。
   - **標準CSS（S1874）**: `word-break: break-word` などの非推奨構文を撤廃し、`overflow-wrap: break-word` 等の標準CSS仕様を採用する。
+
+### ❌ 過誤 9: 「LINE等のアプリ内ブラウザ（WKWebView）における音声無音化・User Gesture失効トラップ」
+- **現象**:
+  1. `initSpeech()` で Web Speech API 非対応環境を判定する際、`this.voiceEnabled = false` と誤爆してしまい、録音済み MP3 キャラクターボイスまで門前払いで全停止させる（BGM は別フラグのため鳴り、「BGM は鳴るのにボイスだけ鳴らない」怪現象が発生）。
+  2. 24kHz モノラル MPEG-2 Layer 3 形式のボイスファイルを WebKit の `decodeAudioData`（44.1kHz/48kHz のみ対応）でデコードしようとして `EncodingError` で失敗する。
+  3. 非同期（`await fetch` & `await decodeAudioData`）を経由した後のフォールバックで `new Audio().play()` を呼ぶと、WebKit の User Gesture Token（ユーザー操作権限）が失効しており `NotAllowedError` で拒絶される。
+  4. iOS LINE アプリ内ブラウザの消音スイッチ（マナーモード・`AVAudioSession` が `ambient`）によって OS レベルで消音され、ユーザーが「壊れている」と誤認する。
+- **防止策**:
+  - **WebSpeech 有無による voiceEnabled 誤爆の完全禁止**: ブラウザが合成音声 API を持っていなくても、MP3 ボイスは再生可能であるため、`this.voiceEnabled` を勝手に `false` に変更しないこと。
+  - **同期的直接再生パイプラインの徹底**: `decodeAudioData` に頼らず、ユーザー操作（タップ・クリック）の瞬間に同期的に `this.voiceAudio.src = url; this.voiceAudio.play();` を呼ぶ単一再利用 Audio 要素パイプラインを採用すること。
+  - **外部ブラウザ起動導線の常設**: LINE 等のアプリ内ブラウザ判定時には、タイトル画面に `?openExternalBrowser=1` を付与した「🌐 Safari / 外部ブラウザで開く（推奨）」ボタンを自動表示し、物理マナーモードや WebView 制約を確実に回避できる導線を常設すること。
 
 ---
 
