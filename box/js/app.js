@@ -2382,7 +2382,11 @@ class GameApp {
   // 証拠手帳モーダルオープン
   openEvidenceModal() {
     this.renderEvidenceModalItems();
-    this.dom.modalEvidence.classList.remove('hidden');
+    if (this.dom.modalEvidence) this.dom.modalEvidence.classList.remove('hidden');
+  }
+
+  closeEvidenceModal() {
+    if (this.dom.modalEvidence) this.dom.modalEvidence.classList.add('hidden');
   }
 
   getEvidenceModalIconHtml(ev, imgSrc) {
@@ -2497,6 +2501,11 @@ class GameApp {
       this.updateGalleryTabs(defaultChar);
       this.updateGalleryTabArrows();
     }, 40);
+  }
+
+  closeGallery() {
+    if (!this.dom.modalGallery) return;
+    this.dom.modalGallery.classList.add('hidden');
   }
 
   updateGalleryTabs(activeId) {
@@ -2716,6 +2725,27 @@ class GameApp {
     }
   }
 
+  resetToTitleState() {
+    this.stopSkipMode();
+    this.audio.stopVoice();
+    this.dialogueQueue = [];
+    this.isDialogueActive = false;
+    this.isChoiceActive = false;
+    this.activeNpcInScene = false;
+    if (this.dom.dialogueStage) this.dom.dialogueStage.classList.add('hidden');
+    document.body.classList.remove('dialogue-active');
+    if (this.character) this.character.hide();
+    if (this.dom.characterStage) this.dom.characterStage.classList.add('hidden');
+    this.hideDialogueIllustration();
+    this.closeBacklog();
+    this.closeEvidenceModal();
+    this.closeGallery();
+    this.closeImageViewer();
+    this.showScreen('title');
+    this.updateTitleView();
+    this.showToast('捜査状況を保存してタイトルへ戻りました。');
+  }
+
   returnToTitleWithConfirm() {
     this.audio.playClick();
     this.showConfirmModal({
@@ -2723,17 +2753,7 @@ class GameApp {
       message: '現在の捜査進捗は自動保存されています。\nタイトル画面に戻りますか？',
       confirmText: 'タイトルへ戻る',
       cancelText: '調査を続ける',
-      onConfirm: () => {
-        this.stopSkipMode();
-        this.audio.stopVoice();
-        this.closeBacklog();
-        this.closeEvidenceModal();
-        this.closeGallery();
-        this.closeImageViewer();
-        this.showScreen('title');
-        this.updateTitleView();
-        this.showToast('捜査状況を保存してタイトルへ戻りました。');
-      },
+      onConfirm: () => this.resetToTitleState(),
     });
   }
 

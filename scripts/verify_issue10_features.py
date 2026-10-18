@@ -74,7 +74,17 @@ with sync_playwright() as p:
     page.wait_for_timeout(400)
     page.screenshot(path=str(OUT / "2_return_title_confirm_mobile.png"))
     print("Saved 2_return_title_confirm_mobile.png")
-    page.evaluate("window.app.closeConfirmModal()")
+
+    # モーダルの「タイトルへ戻る」ボタンをクリックし、実際にタイトル画面へ遷移するか検証
+    page.click("#btn-confirm-ok")
+    page.wait_for_timeout(400)
+    is_title = page.evaluate("() => window.app.dom.screenTitle.classList.contains('active')")
+    assert is_title, "Failed: Title screen was not active after clicking confirm return to title!"
+    print("Verified: Successfully returned to title screen after confirming!")
+
+    # 後続テストのため探索画面を再開
+    page.click("#btn-continue-game")
+    page.wait_for_timeout(400)
 
     # ----------------------------------------------------
     # 3. 会話画面 (NPC立ち絵維持 + モノローグ視覚差別化 + 発話インジケーター)
