@@ -1127,7 +1127,9 @@ class GameApp {
     let phaseDetail = '探索フェーズ: 201号室';
     if (session.activePhase === 'debate') {
       const stepNum = (session.currentDebateStep || 0) + 1;
-      phaseDetail = '立証フェーズ: 問答 ' + stepNum + '/3';
+      const isLoop2 = session.currentLoop >= 2 || this.state.isClearedFirstLoop();
+      const totalSteps = isLoop2 ? 4 : 3;
+      phaseDetail = `立証フェーズ: 問答 ${stepNum}/${totalSteps}`;
     } else if (session.currentArea === 'corridor') {
       phaseDetail = '探索フェーズ: 外廊下・共用部';
     }
@@ -1582,7 +1584,7 @@ class GameApp {
     if (!this.keepStageOpen) {
       this.dom.dialogueStage.classList.add('hidden');
       document.body.classList.remove('dialogue-active');
-      this.character.hide();
+      this.character?.hide();
       this.isDialogueActive = false;
     }
     if (this.currentDialogueCallback) {
@@ -2399,12 +2401,16 @@ class GameApp {
   renderEndingContent(endingData) {
     const hasAnyClear = this.state.isClearedFirstLoop() || this.state.hasClearedTrueEnd;
 
-    if (endingData.type === 'loop1_normal') {
-      this.dom.endingIcon.textContent = '📘';
+    if (endingData.type === 'loop1_normal' || endingData.type === 'loop1_clear') {
+      this.dom.endingIcon.textContent = '🔓';
       this.dom.endingUnlockedBanner.classList.remove('hidden');
       this.dom.endingUnlockedBanner.innerHTML =
         '🔓 <strong>第一幕クリア！</strong><br>【Phase 2: 深層解決編】および特典【🎨 機密設定資料集 (EXTRAS)】が解放された！';
-      this.dom.btnEndingNext.textContent = '⚡ 電脳ログを解析し、深層真実へ挑む';
+      this.setCyberButtonLabels(
+        this.dom.btnEndingNext,
+        '⚡ PHASE 02 UNLOCKED',
+        '電脳ログを解析し、深層真実へ挑む',
+      );
       if (this.dom.btnEndingGallery) this.dom.btnEndingGallery.classList.remove('hidden');
       return;
     }
@@ -2438,7 +2444,11 @@ class GameApp {
     this.isDialogueActive = false;
     this.currentEndingType = endingData.type;
 
-    if (endingData.type !== 'bad') {
+    if (endingData.type === 'bad' || endingData.type === 'gameover') {
+      this.state.currentDebateStep = 0;
+      this.state.life = 3;
+      this.state.saveSessionProgress('debate');
+    } else {
       this.state.clearSessionProgress();
     }
 
@@ -2544,10 +2554,11 @@ class GameApp {
   }
 
   getEvidenceModalIconHtml(ev, imgSrc) {
-    if (ev.image) {
-      return `<img src="${imgSrc}" alt="${ev.name}" class="ev-modal-icon-img" />`;
+    const src = imgSrc || ev?.image;
+    if (src) {
+      return `<img src="${src}" alt="${ev.name}" class="ev-modal-icon-img" />`;
     }
-    return ev.icon;
+    return ev?.icon || '📦';
   }
 
   getEvidenceModalDiagramHtml(ev, imgSrc) {
@@ -2938,20 +2949,26 @@ class GameApp {
     }, duration);
   }
 
-  showEvidenceToast(_evId, evData) {
+  showEvidenceToast(evId, evData) {
     if (!this.dom.evidenceToast) return;
     const toast = this.dom.evidenceToast;
-    const icon = evData?.icon || '📦';
-    const name = evData?.name || '鑑識データ入手';
+    const ev = evData || this.scenario.evidence?.[evId];
+    const iconHtml = ev ? this.getEvidenceModalIconHtml(ev, ev.image) : '📦';
+    const name = ev?.name || '鑑識データ入手';
 
     toast.innerHTML = [
-      '<span class="toast-icon">' + icon + '</span>',
+      `<span class="toast-icon">${iconHtml}</span>`,
       '<div class="toast-content">',
       '  <span class="toast-title">EVIDENCE ACQUIRED / 鑑識データ獲得</span>',
-      '  <span class="toast-name">' + name + '</span>',
+      `  <span class="toast-name">${name}</span>`,
       '</div>',
-      '<span class="toast-action-hint">[E: 証拠手帳で確認]</span>',
+      '<span class="toast-action-hint">手帳を開く ↗</span>',
     ].join('\n');
+
+    toast.onclick = () => {
+      this.openEvidenceModal();
+      toast.classList.remove('visible');
+    };
 
     toast.classList.remove('hidden');
     toast.classList.add('visible');

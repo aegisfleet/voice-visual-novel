@@ -692,6 +692,13 @@ button.hidden,
   border-color: rgba(255, 255, 255, 0.4);
 }
 
+.btn-link-plate {
+  text-decoration: none;
+  text-align: center;
+  box-sizing: border-box;
+  width: 100%;
+}
+
 /* ----------------------------------------------------
    2. 探索画面
 ---------------------------------------------------- */
@@ -764,6 +771,18 @@ button.hidden,
   border: 1px solid var(--border-cyan);
   background: #090d16;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+}
+
+/* 探索・立証ステージおよび会話ウィンドウ共通の四隅L字サイバーレティクル */
+.explore-stage::after,
+.debate-stage::after,
+.novel-window::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 20;
   background-image:
     linear-gradient(to right, var(--neon-cyan) 2px, transparent 2px),
     linear-gradient(to bottom, var(--neon-cyan) 2px, transparent 2px),
@@ -855,14 +874,25 @@ body.dialogue-active .explore-pin {
   justify-content: center;
 }
 
-/* 未調査ピン外周のARソナー波紋＆回転レティクル */
+/* 八角形ピンの外周発光（clip-pathによるbox-shadow打ち消しへの対策） */
+.explore-pin:not(.inspected):not(.talked) .pin-icon-wrap {
+  filter: drop-shadow(0 0 8px rgba(0, 243, 255, 0.45));
+}
+.explore-pin.npc-pin:not(.talked) .pin-icon-wrap {
+  filter: drop-shadow(0 0 8px rgba(192, 132, 252, 0.45));
+}
+
+/* 未調査ピン外周のARソナー波紋＆回転レティクル（正円50%・下端ピンアイコン基準で配置） */
 .explore-pin:not(.inspected):not(.talked) .pin-icon-wrap::before {
   content: "";
   position: absolute;
-  inset: -6px;
-  border-radius: inherit;
+  bottom: -5px;
+  left: 50%;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
   border: 1.5px dashed var(--neon-cyan);
-  opacity: 0.75;
+  opacity: 0.78;
   animation: pin-reticle-spin 8s linear infinite;
   pointer-events: none;
 }
@@ -873,10 +903,10 @@ body.dialogue-active .explore-pin {
 
 @keyframes pin-reticle-spin {
   from {
-    transform: rotate(0deg);
+    transform: translateX(-50%) rotate(0deg);
   }
   to {
-    transform: rotate(360deg);
+    transform: translateX(-50%) rotate(360deg);
   }
 }
 
@@ -994,26 +1024,6 @@ body.dialogue-active .explore-pin {
   position: relative;
   overflow: visible;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7);
-  background-image:
-    linear-gradient(to right, var(--neon-cyan) 2px, transparent 2px),
-    linear-gradient(to bottom, var(--neon-cyan) 2px, transparent 2px),
-    linear-gradient(to left, var(--neon-cyan) 2px, transparent 2px),
-    linear-gradient(to bottom, var(--neon-cyan) 2px, transparent 2px),
-    linear-gradient(to right, var(--neon-cyan) 2px, transparent 2px),
-    linear-gradient(to top, var(--neon-cyan) 2px, transparent 2px),
-    linear-gradient(to left, var(--neon-cyan) 2px, transparent 2px),
-    linear-gradient(to top, var(--neon-cyan) 2px, transparent 2px);
-  background-repeat: no-repeat;
-  background-size: 14px 14px;
-  background-position:
-    0 0,
-    0 0,
-    100% 0,
-    100% 0,
-    0 100%,
-    0 100%,
-    100% 100%,
-    100% 100%;
 }
 
 .debate-top-bar {
@@ -1636,26 +1646,6 @@ body.dialogue-active .explore-pin {
   cursor: pointer;
   box-shadow: 0 0 25px rgba(0, 0, 0, 0.85);
   flex-shrink: 0;
-  background-image:
-    linear-gradient(to right, var(--neon-cyan) 2px, transparent 2px),
-    linear-gradient(to bottom, var(--neon-cyan) 2px, transparent 2px),
-    linear-gradient(to left, var(--neon-cyan) 2px, transparent 2px),
-    linear-gradient(to bottom, var(--neon-cyan) 2px, transparent 2px),
-    linear-gradient(to right, var(--neon-cyan) 2px, transparent 2px),
-    linear-gradient(to top, var(--neon-cyan) 2px, transparent 2px),
-    linear-gradient(to left, var(--neon-cyan) 2px, transparent 2px),
-    linear-gradient(to top, var(--neon-cyan) 2px, transparent 2px);
-  background-repeat: no-repeat;
-  background-size: 14px 14px;
-  background-position:
-    0 0,
-    0 0,
-    100% 0,
-    100% 0,
-    0 100%,
-    0 100%,
-    100% 100%,
-    100% 100%;
 }
 .novel-window.has-choices {
   height: auto;
@@ -2612,7 +2602,9 @@ body.dialogue-active .explore-pin {
     font-size: 1.1rem;
   }
   .explore-pin:not(.inspected):not(.talked) .pin-icon-wrap::before {
-    inset: -4px;
+    bottom: -4px;
+    width: 44px;
+    height: 44px;
   }
   .pin-status-badge {
     position: relative;

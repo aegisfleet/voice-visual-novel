@@ -69,17 +69,30 @@
         "isPartOf": {
           "@id": "https://aegisfleet.github.io/voice-visual-novel/#website"
         },
-        "about": {
-          "@type": "SoftwareApplication",
-          "name": "PROJECT EVE: 家族のためのハッキング",
-          "applicationCategory": "GameApplication",
-          "operatingSystem": "All modern browsers (Chrome, Safari, Edge, Firefox)",
-          "offers": {
-            "@type": "Offer",
-            "price": "0",
-            "priceCurrency": "JPY"
+        "about": [
+          {
+            "@type": "SoftwareApplication",
+            "name": "PROJECT EVE: 家族のためのハッキング",
+            "applicationCategory": "GameApplication",
+            "operatingSystem": "All modern browsers (Chrome, Safari, Edge, Firefox)",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "JPY"
+            }
+          },
+          {
+            "@type": "SoftwareApplication",
+            "name": "BOX WORM: 55ドルの自己増殖知性",
+            "applicationCategory": "GameApplication",
+            "operatingSystem": "All modern browsers (Chrome, Safari, Edge, Firefox)",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "JPY"
+            }
           }
-        }
+        ]
       }
     ]
   }
@@ -613,7 +626,7 @@
     <section>
       <div class="section-header">
         <h2 class="section-title">GAMES ARCHIVE</h2>
-        <span class="games-count">1 TITLE AVAILABLE</span>
+        <span class="games-count">2 TITLES AVAILABLE</span>
       </div>
 
       <div class="game-grid">
@@ -653,7 +666,41 @@
           </div>
         </article>
 
-        <!-- 第2作: 次回作予告 (開発中・COMING SOON) -->
+        <!-- 第2作: BOX WORM (完成・公開中) -->
+        <article class="game-card" id="cardBox">
+          <div class="card-thumb">
+            <img src="box/assets/backgrounds/bg_title.jpg" alt="BOX WORM 〜55ドルの自己増殖知性〜">
+            <span class="status-badge available">● 公開中 (PLAYABLE)</span>
+            <span class="playtime-badge">⏱ 約10〜15分</span>
+          </div>
+          <div class="card-body">
+            <h3 class="game-title" style="color: #38bdf8;">BOX WORM</h3>
+            <p class="game-sub" style="color: #00f3ff;">〜 55ドルの自己増殖知性 〜</p>
+
+            <div class="game-tags">
+              <span class="game-tag">エッジAI・自己増殖知性</span>
+              <span class="game-tag">フルボイス (全253セリフ)</span>
+              <span class="game-tag">現場鑑識・論戦立証</span>
+              <span class="game-tag">Phase 1 / 2 二部構成</span>
+            </div>
+
+            <p class="game-desc">
+              アリエクで買った55ドルのTVボックスが異常発熱し、秒速0.39トークンの微弱パケットを放つ。警察の強制家宅捜索が迫る中、自室と外廊下を調べて自己増殖AIの真相を立証せよ！<br>
+              Gemini 3.8 Flash TTSによる全編フルボイスと論理的鑑識推理が織りなすサイバーミステリー。
+            </p>
+
+            <div class="card-actions">
+              <a href="box/" class="btn-play" id="btnPlayBox">
+                <span>⚡ 部屋の調査を開始する (PLAY)</span>
+              </a>
+              <div class="sub-actions">
+                <a href="box/samples.html" class="btn-sub" id="btnSamplesBox">🎙️ ボイス試聴室</a>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- 第3作: 次回作予告 (開発中・COMING SOON) -->
         <article class="game-card disabled" id="cardNext">
           <div class="card-thumb">
             <div style="width: 100%; height: 100%; background: linear-gradient(135deg, #090e1a 0%, #172033 100%); display: flex; align-items: center; justify-content: center;">
@@ -720,8 +767,10 @@
     <footer class="portal-footer">
       <div class="footer-links">
         <a href="./eve/">🎮 PROJECT EVE 本編</a>
+        <a href="./box/">📺 BOX WORM 本編</a>
+        <a href="./box/samples.html">🎙️ BOX WORM ボイス試聴室</a>
         <a href="./eve/novel.html">📖 EVE トゥルーエンド小説</a>
-        <a href="./eve/samples.html">🎧 ボイス＆BGM試聴室</a>
+        <a href="./eve/samples.html">🎧 EVE ボイス＆BGM試聴室</a>
         <a href="https://github.com/aegisfleet/voice-visual-novel" target="_blank" rel="noopener noreferrer">🐙 GitHub リポジトリ</a>
       </div>
       <div class="footer-env">
