@@ -1561,12 +1561,15 @@ class GameApp {
     // 前回の図解イラストの残像を確実に消去
     this.hideDialogueIllustration();
     this.dialogueQueue = [...dialogueList];
-    const npcItem = (dialogueList || []).find((item) => {
-      const s = item.speaker || '';
-      return s && !s.includes('ユウタ') && !s.includes('ナレーション');
-    });
-    const npcId = npcItem ? this.resolveNpcId(npcItem.speaker) : null;
-    this.activeNpcInScene = npcId || Boolean(npcItem);
+    const nonYutaNpcIds = new Set(
+      (dialogueList || [])
+        .map((item) => item.speaker || '')
+        .filter((s) => s && !s.includes('ユウタ') && !s.includes('ナレーション'))
+        .map((s) => this.resolveNpcId(s))
+        .filter(Boolean),
+    );
+    // 複数NPCが登場する群像劇（エピローグやプロローグ等）では特定のNPCを固定せず、単一NPC対話時のみ設定
+    this.activeNpcInScene = nonYutaNpcIds.size === 1 ? Array.from(nonYutaNpcIds)[0] : false;
     this.currentDialogueCallback = onComplete;
     this.keepStageOpen = keepStageOpen;
     this.isDialogueActive = true;
