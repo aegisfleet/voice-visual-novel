@@ -623,8 +623,8 @@ window.SCENARIO_DATA = {
               {
                 speaker: 'アオイ',
                 emotion: 'panic',
-                text: '「お化けかと思って怖かったんですけど……なんだか、暗闇の中で自分が誰だかわからなくて震えている子供みたいな声で……思わずコンセントを抜いちゃいました……」',
-                voiceUrl: 'assets/audio/voice/npc_aoi_c0_04.mp3',
+                text: '「お化けかと思って怖かったんですけど……なんだか、暗闇の中で自分が誰だかわからなくて震えている子供みたいな声で……思わずスマートスピーカーのコンセントを引っこ抜いて、毛布をかぶって朝まで震えてました……」',
+                voiceUrl: 'assets/audio/voice/npc_aoi_c0_04.mp3?v=20261018_rev92',
               },
               {
                 speaker: 'ユウタ（心の声）',
