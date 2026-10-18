@@ -73,6 +73,7 @@ PRONUNCIATION_FIXES = {
     "2.56秒": "2点56秒",
     "0.39": "0点39",
     "100%": "100パーセント",
+    "辿り着いた": "たどり着いた",
 }
 
 def clean_and_fix_text(speaker: str, raw_text: str) -> str:

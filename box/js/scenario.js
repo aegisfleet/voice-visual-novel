@@ -1397,7 +1397,7 @@ window.SCENARIO_DATA = {
           {
             speaker: 'ユウタ',
             emotion: 'confident',
-            text: '「辿り着いた機械の頭脳に合わせて、自分で手足を作ってプログラムを動かし、次の機械へ自分を増やして広がっていきます」',
+            text: '「たどり着いた機械の頭脳に合わせて、自分で手足を作ってプログラムを動かし、次の機械へ自分を増やして広がっていきます」',
             voiceUrl: 'assets/audio/voice/debate_l2_s1_succ_06.mp3',
           },
           {
