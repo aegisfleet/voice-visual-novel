@@ -390,34 +390,116 @@
       flex-grow: 1;
     }
 
-    /* カードアクションボタン */
+    /* カードアクションボタン (BOX WORM風サイバープレート・チャンファーカット) */
     .card-actions {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 12px;
     }
 
     .btn-play {
-      display: inline-flex;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 8px;
+      gap: 3px;
       width: 100%;
-      padding: 14px;
-      background: linear-gradient(135deg, var(--neon-cyan) 0%, var(--neon-mint) 100%);
-      color: #030712;
-      font-family: var(--font-hud);
-      font-size: 1.05rem;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      border-radius: 30px;
+      padding: 12px 18px;
+      border-radius: 4px;
+      clip-path: polygon(
+        12px 0,
+        100% 0,
+        100% calc(100% - 12px),
+        calc(100% - 12px) 100%,
+        0 100%,
+        0 12px
+      );
+      border: 1px solid rgba(56, 189, 248, 0.75);
+      border-left: 4px solid var(--neon-cyan);
+      background: linear-gradient(135deg, #0369a1 0%, #0f172a 100%);
+      color: #f8fafc;
       text-decoration: none;
-      box-shadow: 0 0 25px rgba(0, 243, 255, 0.4);
-      transition: all 0.2s ease;
+      cursor: pointer;
+      box-shadow:
+        0 6px 20px rgba(0, 0, 0, 0.65),
+        inset 0 1px 0 rgba(255, 255, 255, 0.22),
+        inset 0 0 16px rgba(0, 243, 255, 0.18);
+      transition:
+        transform 0.15s cubic-bezier(0.2, 0.8, 0.2, 1),
+        box-shadow 0.2s ease,
+        border-color 0.2s ease,
+        background 0.2s ease;
     }
+
+    /* シネマティックスイープ（ホバー時の斜め光沢走査） */
+    .btn-play::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -120%;
+      width: 60%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+      transform: skewX(-25deg);
+      transition: left 0.45s ease;
+      pointer-events: none;
+    }
+
+    .btn-play:hover::before {
+      left: 140%;
+    }
+
     .btn-play:hover {
-      transform: scale(1.02);
-      box-shadow: 0 0 35px rgba(0, 243, 255, 0.6);
+      transform: translateY(-2px);
+      background: linear-gradient(135deg, #0284c7 0%, #0c4a6e 100%);
+      border-color: var(--neon-cyan);
+      box-shadow:
+        0 8px 25px rgba(0, 243, 255, 0.4),
+        inset 0 0 20px rgba(0, 243, 255, 0.28);
+    }
+
+    .btn-play:active {
+      transform: translateY(2px) scale(0.985);
+    }
+
+    .btn-play .btn-play-tag {
+      font-family: var(--font-hud);
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      color: #7dd3fc;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: color 0.2s ease, text-shadow 0.2s ease;
+    }
+
+    .btn-play:hover .btn-play-tag {
+      color: #bae6fd;
+      text-shadow: 0 0 8px rgba(56, 189, 248, 0.6);
+    }
+
+    .btn-play .btn-play-title {
+      font-family: var(--font-body);
+      font-size: 1.02rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+    }
+
+    #cardEve .btn-play {
+      border-left-color: var(--neon-cyan);
+    }
+
+    #cardBox .btn-play {
+      border-left-color: #38bdf8;
     }
 
     .sub-actions {
@@ -430,23 +512,26 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 4px;
-      padding: 8px;
+      gap: 5px;
+      padding: 9px 12px;
       background: rgba(15, 23, 42, 0.75);
-      border: 1px solid rgba(0, 243, 255, 0.3);
-      color: var(--neon-cyan);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      color: #7dd3fc;
       font-family: var(--font-hud);
       font-size: 0.78rem;
       font-weight: 600;
-      border-radius: 10px;
+      letter-spacing: 0.04em;
+      border-radius: 4px;
       text-decoration: none;
       transition: all 0.2s ease;
     }
+
     .btn-sub:hover {
-      background: var(--neon-cyan);
+      background: rgba(14, 165, 233, 0.2);
       border-color: var(--neon-cyan);
-      color: #030712;
-      box-shadow: 0 0 15px rgba(0, 243, 255, 0.4);
+      color: #ffffff;
+      box-shadow: 0 0 14px rgba(0, 243, 255, 0.3);
+      transform: translateY(-1px);
     }
 
     /* カミングスーンカードの調整 */
@@ -459,16 +544,35 @@
       border-color: rgba(255, 255, 255, 0.2);
       box-shadow: none;
     }
-    .btn-disabled {
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px dashed rgba(255, 255, 255, 0.2);
-      color: #64748b;
+
+    .btn-play.btn-disabled {
+      background: rgba(15, 23, 42, 0.65);
+      border: 1px dashed rgba(148, 163, 184, 0.3);
+      border-left: 4px solid rgba(148, 163, 184, 0.35);
+      box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.4);
       cursor: not-allowed;
-      box-shadow: none;
+      opacity: 0.85;
     }
-    .btn-disabled:hover {
+
+    .btn-play.btn-disabled::before {
+      display: none;
+    }
+
+    .btn-play.btn-disabled:hover {
       transform: none;
-      box-shadow: none;
+      background: rgba(15, 23, 42, 0.65);
+      border-color: rgba(148, 163, 184, 0.3);
+      border-left-color: rgba(148, 163, 184, 0.35);
+      box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.4);
+    }
+
+    .btn-play.btn-disabled .btn-play-tag {
+      color: #64748b;
+    }
+
+    .btn-play.btn-disabled .btn-play-title {
+      color: #94a3b8;
+      font-weight: 700;
     }
 
     /* 特徴セクション */
@@ -660,7 +764,8 @@
 
             <div class="card-actions">
               <a href="eve/" class="btn-play" id="btnPlayEve">
-                <span>🎮 事件の捜査を開始する (PLAY)</span>
+                <span class="btn-play-tag">▶ START INVESTIGATION</span>
+                <span class="btn-play-title">🎮 事件の捜査を開始する</span>
               </a>
               <div class="sub-actions">
                 <a href="eve/samples.html" class="btn-sub" id="btnSamplesEve">🎧 ボイス試聴室</a>
@@ -695,7 +800,8 @@
 
             <div class="card-actions">
               <a href="box/" class="btn-play" id="btnPlayBox">
-                <span>⚡ 部屋の調査を開始する (PLAY)</span>
+                <span class="btn-play-tag">▶ START INVESTIGATION</span>
+                <span class="btn-play-title">⚡ 部屋の調査を開始する</span>
               </a>
               <div class="sub-actions">
                 <a href="box/samples.html" class="btn-sub" id="btnSamplesBox">🎙️ ボイス試聴室</a>
@@ -727,8 +833,9 @@
             </p>
 
             <div class="card-actions">
-              <div class="btn-play btn-disabled">
-                <span>🔒 鋭意制作中 (COMING SOON)</span>
+              <div class="btn-play btn-disabled" id="btnPlayNext">
+                <span class="btn-play-tag">🔒 UNDER DEVELOPMENT</span>
+                <span class="btn-play-title">鋭意制作中 (COMING SOON)</span>
               </div>
             </div>
           </div>
