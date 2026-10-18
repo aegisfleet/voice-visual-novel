@@ -1224,6 +1224,7 @@ class GameApp {
     this.hideLocationBadge();
     if (this.dom.keyboardGuide) this.dom.keyboardGuide.classList.remove('hidden');
     this.updateEvidenceCounter();
+    this.audio.startBgm('explore');
   }
 
   applyDebateScreen() {
@@ -1236,6 +1237,7 @@ class GameApp {
     this.hideHudNavButtons();
     if (this.dom.keyboardGuide) this.dom.keyboardGuide.classList.remove('hidden');
     this.updateHearts();
+    this.audio.startBgm('tension');
   }
 
   applyEndingScreen() {
@@ -2899,6 +2901,7 @@ class GameApp {
     this.audio.playClick();
 
     if (session.activePhase === 'debate') {
+      this.audio.startBgm('tension');
       this.showScreen('debate');
       this.renderDebateTurn();
       this.showToast('立証フェーズを再開しました。');
