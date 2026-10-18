@@ -989,48 +989,76 @@ class GameApp {
   // タイトル画面の表示更新
   updateTitleView() {
     const isLoop2 = this.state.isClearedFirstLoop();
-    this.dom.hudLoopBadge.innerHTML = `<span class="phase-title">Phase ${isLoop2 ? '2' : '1'}</span><span class="phase-desc-text">: ${isLoop2 ? '電脳生命の自我' : '異常事態捜査'}</span>`;
+    if (this.dom.hudLoopBadge) {
+      this.dom.hudLoopBadge.innerHTML = `<span class="phase-title">Phase ${isLoop2 ? '2' : '1'}</span><span class="phase-desc-text">: ${isLoop2 ? '電脳生命の自我' : '異常事態捜査'}</span>`;
+      this.dom.hudLoopBadge.classList.toggle('phase-2', isLoop2);
+    }
 
+    this.updateTitlePhaseInfo(isLoop2);
+    this.updateTitleClearBadge();
+    this.updateTitleGalleryButton();
+    this.updateTitleContinueButton();
+  }
+
+  updateTitlePhaseInfo(isLoop2) {
+    if (!this.dom.titleLoopInfo) return;
     if (isLoop2) {
-      this.dom.hudLoopBadge.classList.add('phase-2');
       this.dom.titleLoopInfo.className = 'title-loop-info phase-2-box';
       this.dom.titleLoopInfo.innerHTML = `
-        <span class="loop-tag loop-2">PHASE 02: 自律電脳生命の創発（深層解決編）</span>
+        <span class="loop-tag loop-2">PHASE 02: 自律電脳生命の創発（深層解決編 / LOOP 2）</span>
         <p class="loop-desc">残された電脳ログとスマートフォンの微弱パケットを解析せよ。重み分散推論や知性の自己言及を解き明かし、共生調律パッチを適用して電脳生命との共生へ導け！</p>
       `;
-      this.dom.btnStartGame.textContent = '⚡ 電脳ログを解析し、深層真実へ挑む';
+      if (this.dom.btnStartGame) this.dom.btnStartGame.textContent = '⚡ 電脳ログを解析し、深層真実へ挑む';
     } else {
-      this.dom.hudLoopBadge.classList.remove('phase-2');
       this.dom.titleLoopInfo.className = 'title-loop-info';
       this.dom.titleLoopInfo.innerHTML = `
-        <span class="loop-tag loop-1">PHASE 01: 未知の電子怪異（初期捜査編）</span>
+        <span class="loop-tag loop-1">PHASE 01: 未知の電子怪異（初期捜査編 / LOOP 1）</span>
         <p class="loop-desc">部屋とアパートを侵食する不可解な怪現象を調査し、シバタ捜査官による全機器押収とネットワーク遮断を阻止せよ！</p>
       `;
-      this.dom.btnStartGame.textContent = '🔍 部屋の怪異を調査する';
+      if (this.dom.btnStartGame) this.dom.btnStartGame.textContent = '🔍 部屋の怪異を調査する';
     }
+  }
 
-    if (this.state.hasClearedTrueEnd) {
-      this.dom.titleClearBadge.classList.remove('hidden');
-    } else {
-      this.dom.titleClearBadge.classList.add('hidden');
-    }
+  updateTitleClearBadge() {
+    if (!this.dom.titleClearBadge) return;
+    // TRUE END達成証明書は、2周目のトゥルーエンド（共生プロトコル締結）達成時のみ表示
+    const isTrueEndCleared = Boolean(this.state.hasClearedTrueEnd);
+    this.dom.titleClearBadge.classList.toggle('hidden', !isTrueEndCleared);
+  }
 
+  updateTitleGalleryButton() {
+    if (!this.dom.btnOpenGallery) return;
     const hasAnyClear = this.state.isClearedFirstLoop() || this.state.hasClearedTrueEnd;
-    if (this.dom.btnOpenGallery) {
-      if (hasAnyClear) {
-        this.dom.btnOpenGallery.disabled = false;
-        this.dom.btnOpenGallery.innerHTML = '🎨 機密設定資料集 (EXTRAS)';
-        this.dom.btnOpenGallery.title = '公式キャラクター設定資料シートと表情差分を閲覧する';
-      } else {
-        this.dom.btnOpenGallery.disabled = true;
-        this.dom.btnOpenGallery.innerHTML = '🔒 機密設定資料集 (クリア後に解放)';
-        this.dom.btnOpenGallery.title = '第1幕またはTRUE ENDクリア後にアンロックされます';
-      }
+    if (hasAnyClear) {
+      this.dom.btnOpenGallery.disabled = false;
+      this.dom.btnOpenGallery.innerHTML = '🎨 機密設定資料集 (EXTRAS)';
+      this.dom.btnOpenGallery.title = '公式キャラクター設定資料シートと表情差分を閲覧する';
+    } else {
+      this.dom.btnOpenGallery.disabled = true;
+      this.dom.btnOpenGallery.innerHTML = '🔒 機密設定資料集 (クリア後に解放)';
+      this.dom.btnOpenGallery.title = '第1幕またはTRUE ENDクリア後にアンロックされます';
+    }
+  }
+
+  updateTitleContinueButton() {
+    if (!this.dom.btnContinueGame) return;
+    const hasSaved = this.state.hasSavedSession();
+    this.dom.btnContinueGame.classList.toggle('hidden', !hasSaved);
+    if (!hasSaved) return;
+
+    const session = this.state.loadSessionProgress();
+    let phaseDetail = '探索フェーズ: 201号室';
+    if (session && session.activePhase === 'debate') {
+      const stepNum = (session.currentDebateStep || 0) + 1;
+      phaseDetail = '立証フェーズ: 問答 ' + stepNum + '/3';
+    } else if (session && session.currentArea === 'corridor') {
+      phaseDetail = '探索フェーズ: 外廊下・共用部';
     }
 
-    if (this.dom.btnContinueGame) {
-      this.dom.btnContinueGame.classList.toggle('hidden', !this.state.hasSavedSession());
-    }
+    this.dom.btnContinueGame.innerHTML = [
+      '<span class="btn-text">▶ CONTINUED INVESTIGATION</span>',
+      '<span class="btn-subtext">前回の続きから再開（' + phaseDetail + '）</span>',
+    ].join('\n');
   }
 
   // 音声・SE・BGMトグルボタン1つ分の表示更新
@@ -2672,33 +2700,6 @@ class GameApp {
     `;
 
     this.attachGalleryEventListeners(data);
-  }
-
-  updateTitleView() {
-    if (this.dom.titleLoopInfo) {
-      this.dom.titleLoopInfo.textContent = 'LOOP: ' + (this.state.currentLoop || 1);
-    }
-    if (this.dom.titleClearBadge) {
-      this.dom.titleClearBadge.classList.toggle('hidden', !this.state.hasClearedLoop1);
-    }
-    if (this.dom.btnContinueGame) {
-      const hasSaved = this.state.hasSavedSession();
-      this.dom.btnContinueGame.classList.toggle('hidden', !hasSaved);
-      if (hasSaved) {
-        const session = this.state.loadSessionProgress();
-        let phaseDetail = '探索フェーズ: 201号室';
-        if (session && session.activePhase === 'debate') {
-          const stepNum = (session.currentDebateStep || 0) + 1;
-          phaseDetail = '立証フェーズ: 問答 ' + stepNum + '/3';
-        } else if (session && session.currentArea === 'corridor') {
-          phaseDetail = '探索フェーズ: 外廊下・共用部';
-        }
-        this.dom.btnContinueGame.innerHTML = [
-          '<span class="btn-text">▶ CONTINUED INVESTIGATION</span>',
-          '<span class="btn-subtext">前回の続きから再開（' + phaseDetail + '）</span>',
-        ].join('\n');
-      }
-    }
   }
 
   continueGame() {
