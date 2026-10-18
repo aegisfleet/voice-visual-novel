@@ -28,9 +28,9 @@ class AudioManager {
     this.isAudioUnlocked = false; // オーディオアンロック済みフラグ
     this.isSpeechUnlocked = false; // WebSpeechアンロック済みフラグ
     this.wasBgmPlayingBeforeHide = false; // 画面非表示前のBGM再生状態退避
+    this.playSessionId = 0; // 音声再生世代カウンタ (競合・中断防止)
 
     this.initSpeech();
-    this.initVoiceAudio();
     this.setupLifecycleListeners();
     this.setupEarlyUnlock();
   }
@@ -189,6 +189,8 @@ class AudioManager {
   }
 
   // ボイス再生用Audio要素の初期化 (単一要素の先行作成と再利用)
+  // 重要: Web Audio APIのMediaElementAudioSourceNodeはiOS WebKitでの無音化バグやCORS制約を招くため接続せず、
+  // 最も安定して鳴るネイティブHTMLAudioElementパイプラインで確実に再生する
   initVoiceAudio() {
     if (this.voiceAudio) return;
     if (typeof Audio === 'undefined') return;
@@ -196,14 +198,14 @@ class AudioManager {
     try {
       this.voiceAudio = new Audio();
       this.voiceAudio.preload = 'auto';
-      this.voiceAudio.crossOrigin = 'anonymous';
     } catch (e) {
       console.warn('[AudioManager] Failed to init voiceAudio:', e);
     }
   }
 
-  bindVoiceAudioEvents(audio, options, controller, url) {
+  bindVoiceAudioEvents(audio, options, controller, url, sessionId) {
     audio.onended = () => {
+      if (this.playSessionId !== sessionId) return;
       if (this.currentVoiceAudio === audio) {
         this.currentVoiceAudio = null;
       }
@@ -212,6 +214,7 @@ class AudioManager {
     };
 
     audio.onerror = (e) => {
+      if (this.playSessionId !== sessionId) return;
       this.dispatchVoiceState(false);
       if (this.isSkipActive || controller.signal.aborted) return;
       console.warn(`[Audio] Failed to load voice file: ${url}`, e);
@@ -223,13 +226,13 @@ class AudioManager {
     };
   }
 
-  executeVoicePlay(audio, options, controller) {
+  executeVoicePlay(audio, options, controller, sessionId) {
     const playPromise = audio.play();
     if (playPromise === undefined) return;
 
     playPromise
       .then(() => {
-        if (controller.signal.aborted || this.isSkipActive) {
+        if (this.playSessionId !== sessionId || controller.signal.aborted || this.isSkipActive) {
           try {
             audio.pause();
             audio.currentTime = 0;
@@ -239,6 +242,7 @@ class AudioManager {
         this.dispatchVoiceState(true, options.speaker || '');
       })
       .catch((err) => {
+        if (this.playSessionId !== sessionId) return;
         this.dispatchVoiceState(false);
         if (err.name !== 'AbortError') {
           console.warn('[Audio] playVoiceFile aborted/interrupted:', err.message);
@@ -271,7 +275,7 @@ class AudioManager {
     if (options.onEnd) options.onEnd();
   }
 
-  // MP3音声ファイルのロード＆再生（スキップ完全防御・Abort対応・LINE内ブラウザ再利用）
+  // MP3音声ファイルのロード＆再生（世代管理・単一Audio要素再利用・LINE内ブラウザ完全対応）
   async playVoiceFile(url, options = {}) {
     if (this.isVoicePlaybackBlocked(url, options)) {
       if (options.onEnd) options.onEnd();
@@ -280,6 +284,7 @@ class AudioManager {
 
     this.stopVoice();
 
+    const sessionId = ++this.playSessionId;
     const controller = new AbortController();
     this.currentVoiceAbortController = controller;
 
@@ -289,13 +294,13 @@ class AudioManager {
 
       // LINE内ブラウザ/iOS Safari対策: アンロック済みの単一Audio要素を再利用
       const audio = this.voiceAudio || new Audio();
-      audio.crossOrigin = 'anonymous';
       this.currentVoiceAudio = audio;
+      this.isVoiceAudioUnlocked = true; // この直接再生自体がアンロックになる
 
-      this.bindVoiceAudioEvents(audio, options, controller, url);
+      this.bindVoiceAudioEvents(audio, options, controller, url, sessionId);
 
       // 直前にスキップが押されていたら通信を完全破棄
-      if (this.isSkipActive || controller.signal.aborted) {
+      if (this.isSkipActive || controller.signal.aborted || this.playSessionId !== sessionId) {
         this.cancelVoiceAudioPlayback(audio, options);
         return;
       }
@@ -305,7 +310,7 @@ class AudioManager {
         audio.currentTime = 0;
       } catch (_e) {}
 
-      this.executeVoicePlay(audio, options, controller);
+      this.executeVoicePlay(audio, options, controller, sessionId);
     } catch (err) {
       this.handleVoicePlayCatch(err, controller, options);
     }
@@ -323,8 +328,9 @@ class AudioManager {
     return isAudioPlaying || isSpeechActive;
   }
 
-  // 読み上げ停止（MP3通信＆Audio要素＆WebSpeechの完全停止・アンロック状態維持）
+  // 読み上げ停止（MP3通信＆Audio要素＆WebSpeechの完全停止・世代進行による過去コールバック遮断）
   stopVoice() {
+    this.playSessionId++; // 世代を進めて過去の非同期待機やPromise解決コールバックをすべて無効化
     this.stopSpeech();
 
     if (this.currentVoiceAbortController) {
@@ -635,12 +641,7 @@ class AudioManager {
   // (Web Audio API スムーズクロスフェード & シームレスループ)
   // ----------------------------------------------------
 
-  // ユーザー操作によるオーディオアンロック & 保留中BGM再開 (LINE内ブラウザ完全対応)
-  unlockAudio() {
-    this.ensureContext();
-    this.initVoiceAudio();
-
-    // iOS Safari / LINE内ブラウザ用: Web Audio完全アンロック (無音バッファ再生)
+  unlockWebAudio() {
     if (this.ctx && !this.isAudioUnlocked) {
       try {
         const buffer = this.ctx.createBuffer(1, 1, 22050);
@@ -650,22 +651,31 @@ class AudioManager {
         source.start(0);
       } catch (_e) {}
     }
+  }
 
-    // LINE内ブラウザ / iOS Safari用: ボイス専用Audio要素の先行アンロック (無音再生)
-    if (this.voiceAudio && !this.isVoiceAudioUnlocked) {
+  unlockVoiceAudio() {
+    if (!this.voiceAudio || this.isVoiceAudioUnlocked || this.currentVoiceAudio) return;
+    this.isVoiceAudioUnlocked = true;
+
+    const unlockSessionId = ++this.playSessionId;
+    try {
       this.voiceAudio.src =
         'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA';
       const p = this.voiceAudio.play();
       if (p !== undefined) {
         p.then(() => {
-          this.voiceAudio.pause();
-          this.voiceAudio.currentTime = 0;
+          if (this.playSessionId === unlockSessionId && this.voiceAudio?.src?.startsWith('data:')) {
+            try {
+              this.voiceAudio.pause();
+              this.voiceAudio.currentTime = 0;
+            } catch (_e) {}
+          }
         }).catch(() => {});
       }
-      this.isVoiceAudioUnlocked = true;
-    }
+    } catch (_e) {}
+  }
 
-    // Web Speech APIの無音ダミー発話で音声エンジンを早期アンロック
+  unlockSpeechSynthesis() {
     if ('speechSynthesis' in window && !this.isSpeechUnlocked) {
       try {
         const dummy = new SpeechSynthesisUtterance('');
@@ -674,7 +684,16 @@ class AudioManager {
       } catch (_e) {}
       this.isSpeechUnlocked = true;
     }
+  }
 
+  // ユーザー操作によるオーディオアンロック & 保留中BGM再開 (LINE内ブラウザ完全対応)
+  unlockAudio() {
+    this.ensureContext();
+    this.initVoiceAudio();
+
+    this.unlockWebAudio();
+    this.unlockVoiceAudio();
+    this.unlockSpeechSynthesis();
     this.isAudioUnlocked = true;
 
     if (this.pendingBgmMode && this.bgmEnabled) {

@@ -697,6 +697,7 @@ class GameApp {
   // 会話ノベルウィンドウの操作
   bindDialogueEvents() {
     this.dom.dialogueStage.addEventListener('click', (e) => {
+      this.audio.unlockAudio();
       if (
         e.target.closest('.dialogue-ctrl-btn') ||
         e.target.closest('.choice-btn') ||
@@ -713,6 +714,7 @@ class GameApp {
 
     this.dom.btnDialogueAuto.addEventListener('click', (e) => {
       e.stopPropagation();
+      this.audio.unlockAudio();
       this.toggleAutoMode();
     });
 
@@ -3045,4 +3047,17 @@ class GameApp {
 // 起動
 window.addEventListener('DOMContentLoaded', () => {
   window.app = new GameApp();
+
+  // LINEアプリ内ブラウザ検知と案内 (eve準拠)
+  const isLineBrowser = typeof navigator !== 'undefined' && /Line\//i.test(navigator.userAgent);
+  if (isLineBrowser) {
+    setTimeout(() => {
+      if (window.app?.showToast) {
+        window.app.showToast(
+          'LINE内ブラウザをご利用中: 音声が聞こえない場合は端末のマナーモード解除、または右上メニュー「他のアプリで開く」をお試しください',
+          6000,
+        );
+      }
+    }, 1500);
+  }
 });
