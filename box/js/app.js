@@ -365,7 +365,6 @@ class GameApp {
       endingUnlockedBanner: document.getElementById('ending-unlocked-banner'),
       btnEndingNext: document.getElementById('btn-ending-next'),
       btnEndingGallery: document.getElementById('btn-ending-gallery'),
-      btnEndingExplore: document.getElementById('btn-ending-explore'),
 
       // モーダル
       modalEvidence: document.getElementById('modal-evidence'),
@@ -683,9 +682,6 @@ class GameApp {
       this.backToExploration();
     });
     this.bindClickIfPresent(this.dom.btnHudBackToExplore, () => {
-      this.backToExploration();
-    });
-    this.bindClickIfPresent(this.dom.btnEndingExplore, () => {
       this.backToExploration();
     });
     this.bindClickIfPresent(this.dom.btnReplayDebateVoice, () => {
@@ -1112,15 +1108,27 @@ class GameApp {
   updateTitleContinueButton() {
     if (!this.dom.btnContinueGame) return;
     const hasSaved = this.state.hasSavedSession();
-    this.dom.btnContinueGame.classList.toggle('hidden', !hasSaved);
-    if (!hasSaved) return;
+    if (!hasSaved) {
+      this.dom.btnContinueGame.classList.add('hidden');
+      this.dom.btnContinueGame.style.display = 'none';
+      return;
+    }
 
     const session = this.state.loadSessionProgress();
+    if (!session) {
+      this.dom.btnContinueGame.classList.add('hidden');
+      this.dom.btnContinueGame.style.display = 'none';
+      return;
+    }
+
+    this.dom.btnContinueGame.classList.remove('hidden');
+    this.dom.btnContinueGame.style.display = '';
+
     let phaseDetail = '探索フェーズ: 201号室';
-    if (session && session.activePhase === 'debate') {
+    if (session.activePhase === 'debate') {
       const stepNum = (session.currentDebateStep || 0) + 1;
       phaseDetail = '立証フェーズ: 問答 ' + stepNum + '/3';
-    } else if (session && session.currentArea === 'corridor') {
+    } else if (session.currentArea === 'corridor') {
       phaseDetail = '探索フェーズ: 外廊下・共用部';
     }
 
@@ -2397,7 +2405,6 @@ class GameApp {
       this.dom.endingUnlockedBanner.innerHTML =
         '🔓 <strong>第一幕クリア！</strong><br>【Phase 2: 深層解決編】および特典【🎨 機密設定資料集 (EXTRAS)】が解放された！';
       this.dom.btnEndingNext.textContent = '⚡ 電脳ログを解析し、深層真実へ挑む';
-      if (this.dom.btnEndingExplore) this.dom.btnEndingExplore.classList.add('hidden');
       if (this.dom.btnEndingGallery) this.dom.btnEndingGallery.classList.remove('hidden');
       return;
     }
@@ -2408,7 +2415,6 @@ class GameApp {
       this.dom.endingUnlockedBanner.innerHTML =
         '🏆 <strong>祝・TRUE END達成！</strong><br>自律電脳生命（MIMI）との共生契約締結＆【🎨 機密設定資料集 (EXTRAS)】全アセット完全解放！';
       this.setCyberButtonLabels(this.dom.btnEndingNext, 'RETURN TO TITLE', 'タイトル画面へ戻る');
-      if (this.dom.btnEndingExplore) this.dom.btnEndingExplore.classList.add('hidden');
       if (this.dom.btnEndingGallery) this.dom.btnEndingGallery.classList.remove('hidden');
       return;
     }
@@ -2420,7 +2426,6 @@ class GameApp {
       'RETRY FORENSICS',
       '立証をやり直す (リトライ)',
     );
-    if (this.dom.btnEndingExplore) this.dom.btnEndingExplore.classList.remove('hidden');
     if (this.dom.btnEndingGallery) {
       this.dom.btnEndingGallery.classList.toggle('hidden', !hasAnyClear);
     }
