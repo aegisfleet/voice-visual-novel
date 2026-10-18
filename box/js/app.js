@@ -951,8 +951,18 @@ class GameApp {
   }
 
   // ----------------------------------------------------
-  // ポインター操作（ホイール / モバイルのプルリフレッシュ防止）
+  // ポインター操作（ホイール / モバイルのプルリフレッシュ防止 / タップ波紋）
   // ----------------------------------------------------
+  spawnTapRipple(clientX, clientY) {
+    if (typeof document === 'undefined' || clientX == null || clientY == null) return;
+    const ripple = document.createElement('span');
+    ripple.className = 'cyber-tap-ripple';
+    ripple.style.left = `${clientX}px`;
+    ripple.style.top = `${clientY}px`;
+    document.body.appendChild(ripple);
+    ripple.addEventListener('animationend', () => ripple.remove(), { once: true });
+  }
+
   bindPointerEvents() {
     window.addEventListener('wheel', (e) => this.onWheelNavigate(e), { passive: true });
 
@@ -970,8 +980,15 @@ class GameApp {
     // iOS / モバイル環境での下スワイプ（プル・トゥ・リフレッシュ）誤操作完全防止
     window.addEventListener('touchmove', (e) => this.onTouchMoveGuard(e), { passive: false });
 
-    // ユーザー操作時に保留中のBGM再開やAudioContextアンロックを自動補足
-    document.addEventListener('pointerdown', () => this.audio.unlockAudio(), { passive: true });
+    // ユーザー操作時に保留中のBGM再開やAudioContextアンロックを自動補足 ＋ タッチリップル生成
+    document.addEventListener(
+      'pointerdown',
+      (e) => {
+        this.audio.unlockAudio();
+        this.spawnTapRipple(e.clientX, e.clientY);
+      },
+      { passive: true },
+    );
   }
 
   // マウスホイールでの会話送り・バックログ
@@ -1035,6 +1052,11 @@ class GameApp {
     this.updateTitleContinueButton();
   }
 
+  setCyberButtonLabels(btnEl, enLabel, jaLabel) {
+    if (!btnEl) return;
+    btnEl.innerHTML = `<span class="btn-text">${enLabel}</span><span class="btn-subtext">${jaLabel}</span>`;
+  }
+
   updateTitlePhaseInfo(isLoop2) {
     if (!this.dom.titleLoopInfo) return;
     if (isLoop2) {
@@ -1043,15 +1065,22 @@ class GameApp {
         <span class="loop-tag loop-2">PHASE 02: 自律電脳生命の創発（深層解決編 / LOOP 2）</span>
         <p class="loop-desc">残された電脳ログとスマートフォンの微弱パケットを解析せよ。重み分散推論や知性の自己言及を解き明かし、共生調律パッチを適用して電脳生命との共生へ導け！</p>
       `;
-      if (this.dom.btnStartGame)
-        this.dom.btnStartGame.textContent = '⚡ 電脳ログを解析し、深層真実へ挑む';
+      this.setCyberButtonLabels(
+        this.dom.btnStartGame,
+        '⚡ DEEP LAYER ANALYSIS',
+        '電脳ログを解析し、深層真実へ挑む',
+      );
     } else {
       this.dom.titleLoopInfo.className = 'title-loop-info';
       this.dom.titleLoopInfo.innerHTML = `
         <span class="loop-tag loop-1">PHASE 01: 未知の電子怪異（初期捜査編 / LOOP 1）</span>
         <p class="loop-desc">部屋とアパートを侵食する不可解な怪現象を調査し、シバタ捜査官による全機器押収とネットワーク遮断を阻止せよ！</p>
       `;
-      if (this.dom.btnStartGame) this.dom.btnStartGame.textContent = '🔍 部屋の怪異を調査する';
+      this.setCyberButtonLabels(
+        this.dom.btnStartGame,
+        '▶ START INVESTIGATION',
+        '部屋の怪異を調査する',
+      );
     }
   }
 
@@ -1067,11 +1096,15 @@ class GameApp {
     const hasAnyClear = this.state.isClearedFirstLoop() || this.state.hasClearedTrueEnd;
     if (hasAnyClear) {
       this.dom.btnOpenGallery.disabled = false;
-      this.dom.btnOpenGallery.innerHTML = '🎨 機密設定資料集 (EXTRAS)';
+      this.setCyberButtonLabels(
+        this.dom.btnOpenGallery,
+        '◆ EXTRAS ARCHIVE',
+        '機密設定資料集・ボイス試聴',
+      );
       this.dom.btnOpenGallery.title = '公式キャラクター設定資料シートと表情差分を閲覧する';
     } else {
       this.dom.btnOpenGallery.disabled = true;
-      this.dom.btnOpenGallery.innerHTML = '🔒 機密設定資料集 (クリア後に解放)';
+      this.setCyberButtonLabels(this.dom.btnOpenGallery, '🔒 EXTRAS ARCHIVE', 'クリア後に解放');
       this.dom.btnOpenGallery.title = '第1幕またはTRUE ENDクリア後にアンロックされます';
     }
   }
@@ -1204,13 +1237,19 @@ class GameApp {
     if (this.dom.keyboardGuide) this.dom.keyboardGuide.classList.add('hidden');
   }
 
-  // ライフハート表示更新
+  // ライフ表示更新（3連精神防壁・エネルギーセルゲージ）
   updateHearts() {
-    let heartsStr = '';
-    for (let i = 0; i < 3; i++) {
-      heartsStr += i < this.state.life ? '❤️' : '🖤';
+    if (!this.dom.hudHearts) return;
+    const maxLives = 3;
+    const currentLives = this.state.life ?? 3;
+    const cells = [];
+    for (let i = 0; i < maxLives; i++) {
+      const isAlive = i < currentLives;
+      const stateClass = isAlive ? 'integrity-cell active' : 'integrity-cell lost';
+      cells.push(`<span class="${stateClass}" aria-hidden="true"></span>`);
     }
-    this.dom.hudHearts.textContent = heartsStr;
+    this.dom.hudHearts.innerHTML = cells.join('');
+    this.dom.hudHearts.setAttribute('aria-label', `残りライフ ${currentLives} / ${maxLives}`);
   }
 
   // ----------------------------------------------------
@@ -1599,6 +1638,23 @@ class GameApp {
     }
   }
 
+  resolveSpeakerTheme(speaker) {
+    if (!speaker || speaker.includes('ナレーション')) return 'narration';
+    if (speaker.includes('ユウタ')) return 'yuta';
+    if (speaker.includes('シバタ')) return 'shibata';
+    if (speaker.includes('アオイ')) return 'aoi';
+    if (speaker.includes('ヤエガシ')) return 'yaegashi';
+    if (
+      speaker.includes('ミミ') ||
+      speaker.includes('BOX') ||
+      speaker.includes('AI') ||
+      speaker.includes('知性')
+    ) {
+      return 'mimi';
+    }
+    return 'default';
+  }
+
   renderDialogueItem(currentItem) {
     this.character.showForDialogue(currentItem, this.activeNpcInScene);
     this.updateDialogueIllustration(currentItem.illustration, currentItem.caption);
@@ -1612,6 +1668,7 @@ class GameApp {
       !currentItem.speaker;
     if (this.dom.novelWindow) {
       this.dom.novelWindow.classList.toggle('is-monologue', isMonologue);
+      this.dom.novelWindow.dataset.speakerTheme = this.resolveSpeakerTheme(this.currentSpeaker);
     }
 
     // バックログ記録 (ボイスURLも保持)
@@ -2350,7 +2407,7 @@ class GameApp {
       this.dom.endingUnlockedBanner.classList.remove('hidden');
       this.dom.endingUnlockedBanner.innerHTML =
         '🏆 <strong>祝・TRUE END達成！</strong><br>自律電脳生命（MIMI）との共生契約締結＆【🎨 機密設定資料集 (EXTRAS)】全アセット完全解放！';
-      this.dom.btnEndingNext.textContent = 'タイトル画面へ戻る';
+      this.setCyberButtonLabels(this.dom.btnEndingNext, 'RETURN TO TITLE', 'タイトル画面へ戻る');
       if (this.dom.btnEndingExplore) this.dom.btnEndingExplore.classList.add('hidden');
       if (this.dom.btnEndingGallery) this.dom.btnEndingGallery.classList.remove('hidden');
       return;
@@ -2358,7 +2415,11 @@ class GameApp {
 
     this.dom.endingIcon.textContent = '💥';
     this.dom.endingUnlockedBanner.classList.add('hidden');
-    this.dom.btnEndingNext.textContent = '⚖️ 立証をやり直す (リトライ)';
+    this.setCyberButtonLabels(
+      this.dom.btnEndingNext,
+      'RETRY FORENSICS',
+      '立証をやり直す (リトライ)',
+    );
     if (this.dom.btnEndingExplore) this.dom.btnEndingExplore.classList.remove('hidden');
     if (this.dom.btnEndingGallery) {
       this.dom.btnEndingGallery.classList.toggle('hidden', !hasAnyClear);
@@ -2397,14 +2458,35 @@ class GameApp {
     this.showScreen('title');
   }
 
+  getCyberIconSvg(iconName) {
+    const icons = {
+      voice:
+        '<svg class="cyber-svg-icon" viewBox="0 0 24 24"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>',
+      se: '<svg class="cyber-svg-icon" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>',
+      bgm: '<svg class="cyber-svg-icon" viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>',
+      title:
+        '<svg class="cyber-svg-icon" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>',
+      evidence:
+        '<svg class="cyber-svg-icon" viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>',
+      debate:
+        '<svg class="cyber-svg-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="22" y1="12" x2="18" y2="12"/><line x1="6" y1="12" x2="2" y2="12"/><line x1="12" y1="6" x2="12" y2="2"/><line x1="12" y1="22" x2="12" y2="18"/></svg>',
+      explore:
+        '<svg class="cyber-svg-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>',
+      room: '<svg class="cyber-svg-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="9" y1="3" x2="9" y2="21"/></svg>',
+      corridor:
+        '<svg class="cyber-svg-icon" viewBox="0 0 24 24"><path d="M3 21h18M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16"/><circle cx="15" cy="12" r="1"/></svg>',
+    };
+    return icons[iconName] || '';
+  }
+
   // ----------------------------------------------------
   // エリアタブの未調査バッジ更新
   // ----------------------------------------------------
   updateAreaTabBadges() {
     const roomRemaining = this.countRemainingInArea('room');
     const corridorRemaining = this.countRemainingInArea('corridor');
-    this.setTabBadgeText(this.dom.btnAreaRoom, '🏠 201号室 (自室)', roomRemaining);
-    this.setTabBadgeText(this.dom.btnAreaCorridor, '🚪 外廊下・共用部', corridorRemaining);
+    this.setTabBadgeText(this.dom.btnAreaRoom, 'room', '201号室 (自室)', roomRemaining);
+    this.setTabBadgeText(this.dom.btnAreaCorridor, 'corridor', '外廊下・共用部', corridorRemaining);
   }
 
   countRemainingInArea(areaId) {
@@ -2421,11 +2503,12 @@ class GameApp {
     return remainingSpots.length + remainingNpcs.length;
   }
 
-  setTabBadgeText(btnEl, baseLabel, count) {
+  setTabBadgeText(btnEl, iconName, baseLabel, count) {
     if (!btnEl) return;
     const badgeClass = count > 0 ? 'area-tab-badge has-remaining' : 'area-tab-badge is-complete';
     const badgeText = count > 0 ? `未調査 ${count}` : '✔ 完了';
-    btnEl.innerHTML = `${baseLabel} <span class="${badgeClass}">${badgeText}</span>`;
+    const iconSvg = this.getCyberIconSvg(iconName);
+    btnEl.innerHTML = `${iconSvg} <span>${baseLabel}</span> <span class="${badgeClass}">${badgeText}</span>`;
   }
 
   // ----------------------------------------------------
