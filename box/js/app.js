@@ -2401,27 +2401,24 @@ class GameApp {
   // エリアタブの未調査バッジ更新
   // ----------------------------------------------------
   updateAreaTabBadges() {
-    const scenarioData = this.getCurrentScenario();
-    const roomRemaining = this.countRemainingInArea(scenarioData, 'room');
-    const corridorRemaining = this.countRemainingInArea(scenarioData, 'corridor');
+    const roomRemaining = this.countRemainingInArea('room');
+    const corridorRemaining = this.countRemainingInArea('corridor');
     this.setTabBadgeText(this.dom.btnAreaRoom, '🏠 201号室 (自室)', roomRemaining);
     this.setTabBadgeText(this.dom.btnAreaCorridor, '🚪 外廊下・共用部', corridorRemaining);
   }
 
-  getCurrentScenario() {
-    const loopKey = `loop${this.state.currentLoop}`;
-    return this.scenario[loopKey] || this.scenario.loop1;
-  }
-
-  countRemainingInArea(scenarioData, areaId) {
-    if (!scenarioData) return 0;
-    const spots = (this.scenario.spots || []).filter(
-      (s) => (s.area || 'room') === areaId && !this.state.isSpotInspected(s.id),
+  countRemainingInArea(areaId) {
+    const isCleared = this.state.isClearedFirstLoop();
+    const remainingSpots = (this.scenario.spots || []).filter(
+      (s) =>
+        (s.area || 'room') === areaId &&
+        (!s.isSecretLoop2 || isCleared) &&
+        !this.state.isSpotInspected(s.id),
     );
-    const npcs = (this.scenario.npcs || []).filter(
+    const remainingNpcs = (this.scenario.npcs || []).filter(
       (n) => (n.area || 'room') === areaId && !this.state.isNpcTalked(n.id),
     );
-    return spots.length + npcs.length;
+    return remainingSpots.length + remainingNpcs.length;
   }
 
   setTabBadgeText(btnEl, baseLabel, count) {
