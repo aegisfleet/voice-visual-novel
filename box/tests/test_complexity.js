@@ -1,6 +1,9 @@
+// box/tests/test_complexity.js - SonarQube準拠 認知複雑度(Cognitive Complexity <= 15)チェッカー
 const fs = require('fs');
+const path = require('path');
 
-const targetFile = process.argv[2] || 'box/js/app.js';
+const repoRoot = path.resolve(__dirname, '../..');
+const targetFile = process.argv[2] || path.resolve(repoRoot, 'box/js/app.js');
 const content = fs.readFileSync(targetFile, 'utf8');
 
 function stripStringsAndComments(src) {
@@ -82,11 +85,11 @@ if (currentMethod) {
   methods.push(currentMethod);
 }
 
-function calcSonarCognitiveComplexity(lines) {
+function calcSonarCognitiveComplexity(methodLines) {
   let complexity = 0;
   let nesting = 0;
 
-  lines.forEach(line => {
+  methodLines.forEach(line => {
     // 制御構文の検出 (if, for, while, do, catch, switch, ternary)
     const ifMatches = (line.match(/\bif\b/g) || []).length;
     const loopMatches = (line.match(/\b(for|while|do)\b/g) || []).length;
@@ -130,8 +133,18 @@ const targetNames = [
 ];
 
 console.log('--- REFACTORED METHODS SONAR COGNITIVE COMPLEXITY ---');
+let hasFailure = false;
 methods.filter(m => targetNames.includes(m.name)).forEach(m => {
   const cc = calcSonarCognitiveComplexity(m.lines);
-  const status = cc <= 15 ? 'PASS (<=15)' : 'FAIL (>15)';
+  const pass = cc <= 15;
+  if (!pass) hasFailure = true;
+  const status = pass ? 'PASS (<=15)' : 'FAIL (>15)';
   console.log(`${m.name.padEnd(32)} Line: ${String(m.startLine).padStart(4)}  CC: ${String(cc).padStart(2)}  ${status}`);
 });
+
+if (hasFailure) {
+  console.error('\n❌ 認知複雑度 (<= 15) ルール違反が検出されました。');
+  process.exit(1);
+} else {
+  console.log('\n✅ 全対象メソッドが認知複雑度基準 (<= 15) をクリアしています。');
+}

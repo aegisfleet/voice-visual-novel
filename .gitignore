@@ -26,3 +26,6 @@ scratch/
 
 # Node.js
 node_modules/
+
+# Test Artifacts
+box/tests/screenshots/
