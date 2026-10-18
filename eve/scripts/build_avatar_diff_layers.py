@@ -19,7 +19,7 @@ from pathlib import Path
 import cv2
 import numpy as np
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 CONFIGS = {
     "iris": {

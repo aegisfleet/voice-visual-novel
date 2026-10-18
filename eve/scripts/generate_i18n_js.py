@@ -7,15 +7,25 @@ import json
 import sys
 from pathlib import Path
 
-# Add project root to sys.path
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+# Add script dir and repo root to sys.path
+REPO_ROOT = Path(__file__).resolve().parent.parent.parent
+sys.path.insert(0, str(REPO_ROOT))
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from scripts.english_translations import (
-    ENGLISH_SCENES,
-    CHOICES_TRANSLATIONS,
-    ENDINGS_TRANSLATIONS,
-    EVIDENCE_TRANSLATIONS
-)
+try:
+    from english_translations import (
+        ENGLISH_SCENES,
+        CHOICES_TRANSLATIONS,
+        ENDINGS_TRANSLATIONS,
+        EVIDENCE_TRANSLATIONS
+    )
+except ImportError:
+    from eve.scripts.english_translations import (
+        ENGLISH_SCENES,
+        CHOICES_TRANSLATIONS,
+        ENDINGS_TRANSLATIONS,
+        EVIDENCE_TRANSLATIONS
+    )
 
 def main():
     scenes_map = {}
@@ -131,7 +141,7 @@ if (typeof window !== 'undefined') {{
 }}
 """
 
-    out_file = Path("eve/js/i18n.js")
+    out_file = REPO_ROOT / "eve/js/i18n.js"
     with open(out_file, "w", encoding="utf-8") as f:
         f.write(content)
     print(f"Generated {out_file} successfully.")

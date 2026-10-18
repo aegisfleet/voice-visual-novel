@@ -10,8 +10,9 @@ import json
 from pathlib import Path
 
 def main():
-    scenario_path = Path("box/js/scenario.js")
-    dialogues_path = Path("scripts/all_dialogues.json")
+    repo_root = Path(__file__).resolve().parent.parent.parent
+    scenario_path = repo_root / "box/js/scenario.js"
+    dialogues_path = Path(__file__).parent / "all_dialogues.json"
 
     with open(dialogues_path, "r", encoding="utf-8") as f:
         dialogues = json.load(f)

@@ -22,7 +22,11 @@ client = genai.Client(
     location=location
 )
 
-output_dir = Path("assets/audio")
+REPO_ROOT = Path(__file__).resolve().parent.parent.parent
+sys.path.insert(0, str(REPO_ROOT))
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+output_dir = REPO_ROOT / "assets/audio"
 output_dir.mkdir(parents=True, exist_ok=True)
 
 BGM_TRACKS = [

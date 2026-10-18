@@ -11,8 +11,10 @@ import tempfile
 import subprocess
 from pathlib import Path
 
-# Add project root to sys.path
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+# Add script dir and repo root to sys.path
+REPO_ROOT = Path(__file__).resolve().parent.parent.parent
+sys.path.insert(0, str(REPO_ROOT))
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 # Reconfigure stdout/stderr to UTF-8 for Windows console
 if sys.platform == "win32":
@@ -23,7 +25,10 @@ from dotenv import load_dotenv
 from google import genai
 from google.genai import types
 
-from scripts.english_translations import ENGLISH_SCENES
+try:
+    from english_translations import ENGLISH_SCENES
+except ImportError:
+    from eve.scripts.english_translations import ENGLISH_SCENES
 
 load_dotenv()
 project_id = os.environ.get("GOOGLE_CLOUD_PROJECT")
@@ -39,7 +44,7 @@ client = genai.Client(
     location=location
 )
 
-output_dir = Path("eve/assets/audio/en")
+output_dir = REPO_ROOT / "eve/assets/audio/en"
 output_dir.mkdir(parents=True, exist_ok=True)
 
 def generate_scene_voice(scene, index, total, force=False):

@@ -31,10 +31,11 @@ client = genai.Client(
     location=location
 )
 
-OUTPUT_DIR = Path("box/assets/audio/voice")
+REPO_ROOT = Path(__file__).resolve().parent.parent.parent
+OUTPUT_DIR = REPO_ROOT / "box/assets/audio/voice"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
-PROLOGUE_DIR = Path("box/assets/audio/prologue")
+PROLOGUE_DIR = REPO_ROOT / "box/assets/audio/prologue"
 
 # ----------------------------------------------------
 # キャラクターごとの統一基本スタイル定義 (一貫性の担保)
@@ -112,9 +113,9 @@ def get_voice_and_style(speaker: str):
         return "Fenrir", STYLE_NARRATOR
 
 def main():
-    dialogues_path = Path("scripts/all_dialogues.json")
+    dialogues_path = Path(__file__).parent / "all_dialogues.json"
     if not dialogues_path.exists():
-        print("エラー: scripts/all_dialogues.json が見つかりません。")
+        print(f"エラー: {dialogues_path} が見つかりません。")
         sys.exit(1)
 
     with open(dialogues_path, "r", encoding="utf-8") as f:

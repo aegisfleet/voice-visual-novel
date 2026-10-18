@@ -1,7 +1,7 @@
 import os
 from PIL import Image, ImageDraw, ImageFilter
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 bg_path = os.path.join(BASE_DIR, "box/assets/backgrounds/bg_room.jpg")
 yuta_path = os.path.join(BASE_DIR, "box/assets/characters/yuta_confident.png")
 out_dir = os.path.join(BASE_DIR, "box/assets/images")
