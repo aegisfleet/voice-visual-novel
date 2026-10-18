@@ -23,6 +23,7 @@ class GameApp {
     this.backlog = [];
     this.isAutoMode = true;
     this.isSkipMode = false;
+    this.wasAutoBeforeSkip = false;
     this.isVoicePlaying = false;
     this.autoTimer = null;
     this.typewriterTimer = null;
@@ -1766,6 +1767,7 @@ class GameApp {
   }
 
   toggleAutoMode() {
+    this.wasAutoBeforeSkip = false;
     if (this.isSkipMode) {
       this.stopSkipMode();
     }
@@ -1781,36 +1783,57 @@ class GameApp {
   }
 
   toggleSkipMode() {
-    if (this.isAutoMode) {
-      this.isAutoMode = false;
-      this.dom.btnDialogueAuto.classList.remove('active');
-    }
-    this.isSkipMode = !this.isSkipMode;
-    this.audio.setSkipMode(this.isSkipMode);
-    this.updateSkipButtonUI();
-
     if (this.isSkipMode) {
-      this.audio.stopVoice();
-      if (!this.isChoiceActive) {
-        if (this.isTyping) {
-          this.finishTyping();
-        } else {
-          this.showNextDialogue();
-        }
-      }
-    } else {
-      clearTimeout(this.autoTimer);
+      this.stopSkipMode();
       clearInterval(this.typewriterTimer);
       this.finishTyping();
+      return;
+    }
+
+    // スキップ開始前のAUTO状態を記録して一時退避
+    this.wasAutoBeforeSkip = Boolean(this.isAutoMode);
+    if (this.isAutoMode) {
+      this.isAutoMode = false;
+      if (this.dom.btnDialogueAuto) {
+        this.dom.btnDialogueAuto.classList.remove('active');
+      }
+    }
+
+    this.isSkipMode = true;
+    this.audio.setSkipMode(true);
+    this.updateSkipButtonUI();
+    this.audio.stopVoice();
+
+    if (!this.isChoiceActive) {
+      if (this.isTyping) {
+        this.finishTyping();
+      } else {
+        this.showNextDialogue();
+      }
     }
   }
 
   stopSkipMode() {
-    if (this.isSkipMode) {
-      this.isSkipMode = false;
-      this.audio.setSkipMode(false);
-      this.updateSkipButtonUI();
-      clearTimeout(this.autoTimer);
+    if (!this.isSkipMode) return;
+    this.isSkipMode = false;
+    this.audio.setSkipMode(false);
+    this.updateSkipButtonUI();
+    clearTimeout(this.autoTimer);
+
+    // スキップ開始時にAUTOだった場合は自動でAUTOを復元
+    if (this.wasAutoBeforeSkip) {
+      this.restoreAutoMode();
+    }
+  }
+
+  restoreAutoMode() {
+    this.isAutoMode = true;
+    this.wasAutoBeforeSkip = false;
+    if (this.dom.btnDialogueAuto) {
+      this.dom.btnDialogueAuto.classList.add('active');
+    }
+    if (!this.isTyping && !this.isChoiceActive) {
+      this.checkAutoAdvance();
     }
   }
 
@@ -2728,6 +2751,7 @@ class GameApp {
 
   resetToTitleState() {
     this.stopSkipMode();
+    this.wasAutoBeforeSkip = false;
     this.audio.stopVoice();
     this.dialogueQueue = [];
     this.isDialogueActive = false;

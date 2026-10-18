@@ -19,8 +19,6 @@ html {
   width: 100%;
   max-width: 100%;
   -webkit-text-size-adjust: 100%;
-  overscroll-behavior: none;
-  overscroll-behavior-y: none;
 }
 
 /* グローバル・カスタムスクロールバー (OS標準の無骨なスクロールバーを一掃しサイバーネオン調に洗練) */
@@ -71,8 +69,6 @@ body {
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
-  overscroll-behavior: none;
-  overscroll-behavior-y: none;
 }
 
 /* ゲーム進行中の誤操作プルリフレッシュ完全防止 */
@@ -80,6 +76,8 @@ body.game-active {
   overflow: hidden;
   height: 100dvh;
   touch-action: pan-x pan-y;
+  overscroll-behavior: none;
+  overscroll-behavior-y: none;
 }
 
 /* 汎用非表示クラス（セレクタ詳細度により確実に非表示） */
@@ -294,15 +292,16 @@ body.game-active {
    1. タイトル画面
 ---------------------------------------------------- */
 #screen-title {
-  padding: 40px 20px;
+  padding: clamp(24px, 5dvh, 48px) 20px calc(48px + max(16px, env(safe-area-inset-bottom, 0px)));
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   text-align: center;
   position: relative;
   background:
     linear-gradient(180deg, rgba(3, 7, 18, 0.72) 0%, rgba(3, 7, 18, 0.9) 100%),
     url("../assets/backgrounds/bg_title.jpg") center center / cover no-repeat;
   min-height: 100vh;
+  box-sizing: border-box;
 }
 
 .title-badge-top {
