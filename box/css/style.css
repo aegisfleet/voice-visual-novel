@@ -548,6 +548,72 @@ button.hidden,
   margin: 0 auto;
 }
 
+/* LINE内ブラウザ用 外部ブラウザ（Safari/Chrome）起動推奨バナー */
+.line-external-notice {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 14px;
+  background: rgba(6, 78, 59, 0.55);
+  border: 1px solid #10b981;
+  border-radius: 6px;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.line-external-notice.hidden {
+  display: none;
+}
+
+.line-notice-text {
+  font-size: 0.75rem;
+  line-height: 1.45;
+  color: #a7f3d0;
+  margin: 0;
+  overflow-wrap: break-word;
+}
+
+.btn-external-browser {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: linear-gradient(135deg, #047857 0%, #064e3b 100%);
+  border: 1px solid #10b981;
+  border-radius: 4px;
+  color: #ffffff;
+  font-size: 0.88rem;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    transform 0.15s ease,
+    box-shadow 0.2s ease;
+  box-shadow: 0 4px 14px rgba(6, 78, 59, 0.6);
+  overflow-wrap: break-word;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.btn-external-browser:hover,
+.btn-external-browser:focus-visible {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(16, 185, 129, 0.6);
+  outline: 2px solid #6ee7b7;
+  outline-offset: 2px;
+}
+
+.btn-external-browser:active {
+  transform: translateY(1px);
+}
+
+.btn-external-icon {
+  font-size: 1.1rem;
+}
+
 /* コンシューマ機風・斜めカット（チャンファー）ボタン共通基盤 */
 .btn-primary,
 .btn-gallery,

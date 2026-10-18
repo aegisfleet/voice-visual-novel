@@ -24,11 +24,10 @@ class AudioManager {
     this.bgmMasterGain = null; // BGM用ゲイン
     this.voiceGainNode = null; // ボイス用ゲイン (Web Audio API接続用)
     this.sfxGainNode = null; // 効果音用ゲイン
-    this.audioBufferCache = new Map(); // URL -> AudioBuffer (通信量0・高速セリフ再生キャッシュ)
-    this.maxBufferCacheSize = 60; // LRUキャッシュ上限
-    this.currentVoiceSourceNode = null; // 再生中のAudioBufferSourceNode
-    this.currentVoiceAudio = null; // フォールバック用再生中Audio要素
-    this.currentVoiceAbortController = null; // ロード中の中断用 AbortController
+    this.voiceAudio = typeof Audio !== 'undefined' ? new Audio() : null; // LINE内ブラウザ/iOS Safari自動再生対策・単一再利用Audio要素
+    if (this.voiceAudio) this.voiceAudio.preload = 'auto';
+    this.currentVoiceAudio = null; // 再生中Audio要素
+    this.isVoiceAudioUnlocked = false; // ボイスAudioアンロック済みフラグ
     this.pendingBgmMode = null; // 自動再生制限時の保留中BGMモード
     this.isAudioUnlocked = false; // オーディオアンロック済みフラグ
     this.isSpeechUnlocked = false; // WebSpeechアンロック済みフラグ
@@ -79,22 +78,28 @@ class AudioManager {
     window.addEventListener('keydown', earlyUnlock, true);
   }
 
-  // 画面非表示・ブラウザ終了（LINE内ブラウザ「×」含む）時の全音声即時停止
-  pauseAll() {
-    this.stopVoice();
-
+  pauseCurrentBgm() {
     if (this.currentBgmTrack?.audio && !this.currentBgmTrack.audio.paused) {
       this.wasBgmPlayingBeforeHide = true;
       try {
         this.currentBgmTrack.audio.pause();
       } catch (_e) {}
     }
+  }
 
+  suspendAudioContext() {
     if (this.ctx && this.ctx.state === 'running') {
       try {
         this.ctx.suspend();
       } catch (_e) {}
     }
+  }
+
+  // 画面非表示・ブラウザ終了（LINE内ブラウザ「×」含む）時の全音声即時停止
+  pauseAll() {
+    this.stopVoice();
+    this.pauseCurrentBgm();
+    this.suspendAudioContext();
   }
 
   // 画面復帰時の音声再開
@@ -123,8 +128,7 @@ class AudioManager {
     }
   }
 
-  // AudioContext の初期化 (ユーザー操作時に呼出・eve準拠の統合ノードグラフ)
-  ensureContext() {
+  initContextDestination() {
     if (!this.ctx) {
       const AudioCtx = window.AudioContext || window.webkitAudioContext;
       if (AudioCtx) {
@@ -134,35 +138,45 @@ class AudioManager {
     if (this.ctx && this.ctx.state === 'suspended') {
       this.ctx.resume();
     }
-    if (this.ctx && !this.masterGainNode) {
+  }
+
+  initGainNodes() {
+    if (!this.ctx) return;
+    if (!this.masterGainNode) {
       this.masterGainNode = this.ctx.createGain();
       this.masterGainNode.gain.setValueAtTime(1.0, this.ctx.currentTime);
       this.masterGainNode.connect(this.ctx.destination);
     }
-    if (this.ctx && !this.bgmMasterGain) {
+    if (!this.bgmMasterGain) {
       this.bgmMasterGain = this.ctx.createGain();
       this.bgmMasterGain.gain.setValueAtTime(this.bgmVolume, this.ctx.currentTime);
       this.bgmMasterGain.connect(this.masterGainNode);
     }
-    if (this.ctx && !this.voiceGainNode) {
+    if (!this.voiceGainNode) {
       this.voiceGainNode = this.ctx.createGain();
       this.voiceGainNode.gain.setValueAtTime(1.0, this.ctx.currentTime);
       this.voiceGainNode.connect(this.masterGainNode);
     }
-    if (this.ctx && !this.sfxGainNode) {
+    if (!this.sfxGainNode) {
       this.sfxGainNode = this.ctx.createGain();
       this.sfxGainNode.gain.setValueAtTime(1.0, this.ctx.currentTime);
       this.sfxGainNode.connect(this.masterGainNode);
     }
   }
 
+  // AudioContext の初期化 (ユーザー操作時に呼出・eve準拠の統合ノードグラフ)
+  ensureContext() {
+    this.initContextDestination();
+    this.initGainNodes();
+  }
+
   // Web Speech API の初期化
   initSpeech() {
-    if (!('speechSynthesis' in window)) {
-      console.warn('Web Speech API is not supported in this browser.');
-      this.voiceEnabled = false;
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
+      this.speechSynthesisAvailable = false;
       return;
     }
+    this.speechSynthesisAvailable = true;
 
     const updateVoices = () => {
       const voices = window.speechSynthesis.getVoices();
@@ -210,81 +224,20 @@ class AudioManager {
     return this.playVoiceFile(url, options);
   }
 
-  // 音声ファイルの非同期ロード＆Web Audio APIデコード（メモリキャッシュ付き）
-  async loadVoiceAudioBuffer(url) {
-    if (this.audioBufferCache.has(url)) {
-      const cached = this.audioBufferCache.get(url);
-      this.audioBufferCache.delete(url);
-      this.audioBufferCache.set(url, cached);
-      return cached;
+  handleVoiceEnded(audio, options, sessionId) {
+    if (this.playSessionId !== sessionId) return;
+    if (this.currentVoiceAudio === audio) {
+      this.currentVoiceAudio = null;
     }
-
-    const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status} when fetching ${url}`);
-    }
-    const arrayBuffer = await response.arrayBuffer();
-    this.ensureContext();
-    if (!this.ctx) {
-      throw new Error('AudioContext not available');
-    }
-
-    const audioBuffer = await new Promise((resolve, reject) => {
-      this.ctx.decodeAudioData(arrayBuffer, resolve, reject);
-    });
-
-    if (this.audioBufferCache.size >= this.maxBufferCacheSize) {
-      const firstKey = this.audioBufferCache.keys().next().value;
-      if (firstKey) this.audioBufferCache.delete(firstKey);
-    }
-    this.audioBufferCache.set(url, audioBuffer);
-    return audioBuffer;
+    this.dispatchVoiceState(false);
+    if (options.onEnd) options.onEnd();
   }
 
-  // Web Audio API によるボイス波形再生（Autoplay制限を完全回避しタイマー駆動・AUTO進行でも確実に鳴動）
-  executeVoiceBufferPlay(buffer, options, sessionId) {
-    try {
-      const source = this.ctx.createBufferSource();
-      source.buffer = buffer;
-      source.connect(this.voiceGainNode || this.ctx.destination);
-      this.currentVoiceSourceNode = source;
-
-      source.onended = () => {
-        if (this.playSessionId !== sessionId) return;
-        if (this.currentVoiceSourceNode === source) {
-          this.currentVoiceSourceNode = null;
-        }
-        this.dispatchVoiceState(false);
-        if (options.onEnd) options.onEnd();
-      };
-
-      source.start(0);
-      this.dispatchVoiceState(true, options.speaker || '');
-    } catch (err) {
-      console.warn('[Audio] BufferSource start failed:', err);
-      this.currentVoiceSourceNode = null;
-      this.dispatchVoiceState(false);
-      if (options.onEnd) options.onEnd();
-    }
-  }
-
-  isVoiceCancelled(sessionId, controller) {
-    return this.isSkipActive || controller.signal.aborted || this.playSessionId !== sessionId;
-  }
-
-  handleFallbackPlaySuccess(audio, controller, sessionId, speaker) {
-    if (this.isVoiceCancelled(sessionId, controller)) {
-      try {
-        audio.pause();
-      } catch (_e) {}
-      return;
-    }
-    this.dispatchVoiceState(true, speaker || '');
-  }
-
-  handleFallbackError(options, sessionId) {
+  handleVoiceLoadError(url, options, sessionId, error) {
     if (this.playSessionId !== sessionId) return;
     this.dispatchVoiceState(false);
+    if (this.isSkipActive) return;
+    console.warn(`[Audio] Failed to load voice file: ${url}`, error);
     if (options.speaker && options.text) {
       this.speakSpeechSynthesis(options.speaker, options.text, options);
     } else if (options.onEnd) {
@@ -292,37 +245,45 @@ class AudioManager {
     }
   }
 
-  // ネイティブ HTMLAudioElement による安全なフォールバック再生（Web Audio非対応環境用・createMediaElementSource不使用）
-  playVoiceHtmlFallback(url, options, controller, sessionId) {
-    try {
-      const audio = new Audio();
-      this.currentVoiceAudio = audio;
+  handleVoicePlaySuccess(audio, options, sessionId) {
+    if (this.playSessionId !== sessionId || this.isSkipActive) {
+      try {
+        audio.pause();
+        audio.currentTime = 0;
+      } catch (_e) {}
+      return;
+    }
+    this.dispatchVoiceState(true, options.speaker || '');
+  }
 
-      audio.onended = () => {
-        if (this.playSessionId !== sessionId) return;
-        this.currentVoiceAudio = null;
-        this.dispatchVoiceState(false);
-        if (options.onEnd) options.onEnd();
-      };
-
-      audio.onerror = () => {
-        this.currentVoiceAudio = null;
-        this.handleFallbackError(options, sessionId);
-      };
-
-      audio.src = url;
-      const playPromise = audio.play();
-      if (playPromise !== undefined) {
-        playPromise
-          .then(() => {
-            this.handleFallbackPlaySuccess(audio, controller, sessionId, options.speaker);
-          })
-          .catch(() => {
-            this.handleFallbackError(options, sessionId);
-          });
+  handleVoicePlayFailure(err, options, sessionId) {
+    if (this.playSessionId !== sessionId) return;
+    this.dispatchVoiceState(false);
+    if (err.name !== 'AbortError') {
+      console.warn('[Audio] playVoiceFile aborted/interrupted:', err.message);
+      if (options.speaker && options.text) {
+        this.speakSpeechSynthesis(options.speaker, options.text, options);
+        return;
       }
-    } catch (_e) {
-      this.handleFallbackError(options, sessionId);
+    }
+    if (options.onEnd) options.onEnd();
+  }
+
+  // ネイティブ HTMLAudioElement による同期ボイス再生（WebKitのUser Gestureを一切失わず直接鳴動・MPEG-2 24kHz完全対応）
+  executeDirectVoicePlay(audio, url, options, sessionId) {
+    audio.onended = () => this.handleVoiceEnded(audio, options, sessionId);
+    audio.onerror = (e) => this.handleVoiceLoadError(url, options, sessionId, e);
+
+    audio.src = url;
+    try {
+      audio.currentTime = 0;
+    } catch (_e) {}
+
+    const playPromise = audio.play();
+    if (playPromise !== undefined) {
+      playPromise
+        .then(() => this.handleVoicePlaySuccess(audio, options, sessionId))
+        .catch((err) => this.handleVoicePlayFailure(err, options, sessionId));
     }
   }
 
@@ -332,30 +293,8 @@ class AudioManager {
     return false;
   }
 
-  async tryWebAudioVoicePlay(url, options, controller, sessionId) {
-    if (!this.ctx || !this.voiceGainNode) return false;
-    try {
-      const buffer = await this.loadVoiceAudioBuffer(url);
-
-      if (this.isVoiceCancelled(sessionId, controller)) {
-        if (options.onEnd) options.onEnd();
-        return true;
-      }
-
-      this.executeVoiceBufferPlay(buffer, options, sessionId);
-      return true;
-    } catch (err) {
-      if (this.isVoiceCancelled(sessionId, controller)) {
-        if (options.onEnd) options.onEnd();
-        return true;
-      }
-      console.warn('[Audio] Web Audio decode failed, fallback to HTMLAudio:', err);
-      return false;
-    }
-  }
-
-  // MP3音声ファイルのロード＆再生（Web Audio API AudioBuffer ＋ フォールバック完全対応）
-  async playVoiceFile(url, options = {}) {
+  // MP3音声ファイルのロード＆再生（単一Audio要素再利用・同期的直接再生・LINE内ブラウザ完全適合）
+  playVoiceFile(url, options = {}) {
     if (this.isVoicePlaybackBlocked(url, options)) {
       if (options.onEnd) options.onEnd();
       return;
@@ -364,19 +303,24 @@ class AudioManager {
     this.stopVoice();
 
     const sessionId = ++this.playSessionId;
-    const controller = new AbortController();
-    this.currentVoiceAbortController = controller;
-
     this.ensureContext();
-    const played = await this.tryWebAudioVoicePlay(url, options, controller, sessionId);
-    if (played) return;
 
-    this.playVoiceHtmlFallback(url, options, controller, sessionId);
+    // LINE内ブラウザ/iOS Safari対策: アンロック済みの単一Audio要素を再利用
+    if (!this.voiceAudio && typeof Audio !== 'undefined') {
+      try {
+        this.voiceAudio = new Audio();
+        this.voiceAudio.preload = 'auto';
+      } catch (_e) {}
+    }
+
+    const audio = this.voiceAudio || new Audio();
+    this.currentVoiceAudio = audio;
+
+    this.executeDirectVoicePlay(audio, url, options, sessionId);
   }
 
   // 音声が現在再生中かどうかを判定
   isVoicePlaying() {
-    const isBufferPlaying = Boolean(this.currentVoiceSourceNode);
     const isAudioPlaying = Boolean(
       this.currentVoiceAudio && !this.currentVoiceAudio.paused && !this.currentVoiceAudio.ended,
     );
@@ -385,29 +329,13 @@ class AudioManager {
         'speechSynthesis' in window &&
         window.speechSynthesis?.speaking,
     );
-    return isBufferPlaying || isAudioPlaying || isSpeechActive;
+    return isAudioPlaying || isSpeechActive;
   }
 
-  // 読み上げ停止（Web Audio Buffer ＆ MP3 Audio ＆ WebSpeechの完全停止）
+  // 読み上げ停止（Audio要素＆WebSpeechの完全停止・世代進行による過去コールバック遮断）
   stopVoice() {
     this.playSessionId++; // 世代を進めて過去の非同期待機やPromise解決コールバックをすべて無効化
     this.stopSpeech();
-
-    if (this.currentVoiceAbortController) {
-      try {
-        this.currentVoiceAbortController.abort();
-      } catch (_e) {}
-      this.currentVoiceAbortController = null;
-    }
-
-    if (this.currentVoiceSourceNode) {
-      try {
-        this.currentVoiceSourceNode.onended = null;
-        this.currentVoiceSourceNode.stop();
-        this.currentVoiceSourceNode.disconnect();
-      } catch (_e) {}
-      this.currentVoiceSourceNode = null;
-    }
 
     if (this.currentVoiceAudio) {
       const audio = this.currentVoiceAudio;
@@ -422,25 +350,15 @@ class AudioManager {
     this.dispatchVoiceState(false);
   }
 
-  // 従来のWeb Speech API読み上げ
-  speakSpeechSynthesis(speaker, text, options = {}) {
-    if (!this.voiceEnabled || !('speechSynthesis' in window)) {
-      if (options.onEnd) options.onEnd();
-      return;
-    }
-
-    this.stopSpeech();
-
-    const cleanText = text
+  cleanSpeechText(text) {
+    if (!text) return '';
+    return text
       .replace(/[（）()「」『』]/g, ' ')
       .replace(/[・…ー〜]/g, ' ')
       .trim();
+  }
 
-    if (!cleanText) {
-      if (options.onEnd) options.onEnd();
-      return;
-    }
-
+  setupSpeechUtterance(cleanText, speaker, options) {
     const utterance = new SpeechSynthesisUtterance(cleanText);
     utterance.lang = 'ja-JP';
     if (this.selectedVoice) {
@@ -459,11 +377,28 @@ class AudioManager {
       if (options.onEnd) options.onEnd();
     };
 
-    // キャラクターごとの声質調整
     const profile = this.getVoiceProfile(speaker);
     utterance.pitch = profile.pitch;
     utterance.rate = profile.rate;
+    return utterance;
+  }
 
+  // 従来のWeb Speech API読み上げ
+  speakSpeechSynthesis(speaker, text, options = {}) {
+    if (!this.voiceEnabled || !('speechSynthesis' in window)) {
+      if (options.onEnd) options.onEnd();
+      return;
+    }
+
+    this.stopSpeech();
+
+    const cleanText = this.cleanSpeechText(text);
+    if (!cleanText) {
+      if (options.onEnd) options.onEnd();
+      return;
+    }
+
+    const utterance = this.setupSpeechUtterance(cleanText, speaker, options);
     this.currentUtterance = utterance;
     window.speechSynthesis.speak(utterance);
   }
@@ -756,39 +691,9 @@ class AudioManager {
     }
   }
 
-  startBgm(mode = 'ambient') {
-    this.currentBgmMode = mode;
-    if (!this.bgmEnabled) return;
-
-    const url = this.bgmTracks[mode] || this.bgmTracks.ambient;
-    if (!url) return;
-
-    this.ensureContext();
-
-    // 既に同一URLのBGMが再生中の場合は再ロードせず継続
-    if (
-      this.currentBgmTrack &&
-      this.currentBgmTrack.url === url &&
-      !this.currentBgmTrack.audio.paused
-    ) {
-      return;
-    }
-
-    const previousTrack = this.currentBgmTrack;
-    if (previousTrack) {
-      this._fadeOutAndCleanTrack(previousTrack, 1.0);
-    }
-
-    // LINE内蔵ブラウザ(WebKit)におけるcreateMediaElementSourceの無音化バグを回避するため、
-    // BGMは最も安定して鳴るネイティブHTMLAudioElementパイプラインで直接再生する
-    const audio = new Audio(url);
-    audio.loop = true;
-    audio.volume = 0.001; // フェードイン開始初期音量
-
-    // スムーズフェードイン
-    const targetVol = this.bgmVolume;
+  fadeInAudio(audio, targetVol, durationMs = 1200) {
     const fadeSteps = 12;
-    const stepInterval = 1200 / fadeSteps;
+    const stepInterval = durationMs / fadeSteps;
     let stepCount = 0;
     const inTimer = setInterval(() => {
       stepCount++;
@@ -803,13 +708,24 @@ class AudioManager {
         } catch (_e) {}
       }
     }, stepInterval);
+  }
 
-    const trackObj = {
-      audio,
-      url,
-      mode,
-    };
-    this.currentBgmTrack = trackObj;
+  isBgmAlreadyPlaying(url) {
+    return Boolean(
+      this.currentBgmTrack &&
+        this.currentBgmTrack.url === url &&
+        !this.currentBgmTrack.audio.paused,
+    );
+  }
+
+  createAndPlayBgmTrack(url, mode) {
+    const audio = new Audio(url);
+    audio.loop = true;
+    audio.volume = 0.001; // フェードイン開始初期音量
+
+    this.fadeInAudio(audio, this.bgmVolume);
+
+    this.currentBgmTrack = { audio, url, mode };
 
     const playPromise = audio.play();
     if (playPromise !== undefined) {
@@ -820,14 +736,25 @@ class AudioManager {
     }
   }
 
-  _fadeOutAndCleanTrack(track, fadeSec = 0.8) {
-    if (!track) return;
-    const { audio } = track;
+  startBgm(mode = 'ambient') {
+    this.currentBgmMode = mode;
+    if (!this.bgmEnabled) return;
 
-    // HTMLAudioElement自体の音量をフェードアウト
-    const startVol = audio.volume;
-    const steps = 8;
-    const stepTime = (fadeSec * 1000) / steps;
+    const url = this.bgmTracks[mode] || this.bgmTracks.ambient;
+    if (!url) return;
+
+    this.ensureContext();
+
+    if (this.isBgmAlreadyPlaying(url)) return;
+
+    if (this.currentBgmTrack) {
+      this._fadeOutAndCleanTrack(this.currentBgmTrack, 1.0);
+    }
+
+    this.createAndPlayBgmTrack(url, mode);
+  }
+
+  _applyFadeOutSteps(audio, startVol, steps, stepTime) {
     let currentStep = 0;
     const fadeTimer = setInterval(() => {
       currentStep++;
@@ -842,19 +769,29 @@ class AudioManager {
         } catch (_e) {}
       }
     }, stepTime);
+  }
 
-    setTimeout(
-      () => {
-        try {
-          audio.pause();
-          audio.removeAttribute('src');
-          audio.load();
-        } catch (_e) {
-          // ignore
-        }
-      },
-      Math.max(100, Math.floor(fadeSec * 1000) + 50),
-    );
+  _scheduleAudioTeardown(audio, delayMs) {
+    setTimeout(() => {
+      try {
+        audio.pause();
+        audio.removeAttribute('src');
+        audio.load();
+      } catch (_e) {}
+    }, delayMs);
+  }
+
+  _fadeOutAndCleanTrack(track, fadeSec = 0.8) {
+    if (!track) return;
+    const { audio } = track;
+
+    const startVol = audio.volume;
+    const steps = 8;
+    const stepTime = (fadeSec * 1000) / steps;
+    this._applyFadeOutSteps(audio, startVol, steps, stepTime);
+
+    const delayMs = Math.max(100, Math.floor(fadeSec * 1000) + 50);
+    this._scheduleAudioTeardown(audio, delayMs);
   }
 
   stopBgm(fadeSec = 0.8) {

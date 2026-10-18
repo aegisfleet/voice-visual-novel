@@ -3044,25 +3044,42 @@ class GameApp {
   }
 }
 
+function setupLineBrowserNotice() {
+  const isLineBrowser = typeof navigator !== 'undefined' && /Line\//i.test(navigator.userAgent);
+  if (!isLineBrowser) return;
+
+  const lineNotice = document.getElementById('line-external-notice');
+  if (lineNotice) {
+    lineNotice.classList.remove('hidden');
+    const openBtn = document.getElementById('btn-line-external-open');
+    if (openBtn) {
+      if (window.CyberShare?.buildExternalBrowserUrl) {
+        openBtn.href = window.CyberShare.buildExternalBrowserUrl(window.location.href);
+      } else {
+        const sep = window.location.href.includes('?') ? '&' : '?';
+        openBtn.href = `${window.location.href}${sep}openExternalBrowser=1`;
+      }
+    }
+  }
+
+  const noticeEl = document.querySelector('.title-audio-notice');
+  if (noticeEl) {
+    noticeEl.innerHTML =
+      '※フルボイス＆BGM対応。LINE内ブラウザで声が聞こえない場合は端末の消音モード解除、または上記の「Safari / 外部ブラウザで開く」をお試しください';
+  }
+
+  setTimeout(() => {
+    if (window.app?.showToast) {
+      window.app.showToast(
+        'LINEをご利用中: 声が聞こえない場合は端末の消音スイッチ解除、または「Safari / 外部ブラウザで開く」をお試しください',
+        7000,
+      );
+    }
+  }, 1200);
+}
+
 // 起動
 window.addEventListener('DOMContentLoaded', () => {
   window.app = new GameApp();
-
-  // LINEアプリ内ブラウザ検知と案内
-  const isLineBrowser = typeof navigator !== 'undefined' && /Line\//i.test(navigator.userAgent);
-  if (isLineBrowser) {
-    const noticeEl = document.querySelector('.title-audio-notice');
-    if (noticeEl) {
-      noticeEl.innerHTML =
-        '※フルボイス＆BGM対応。LINE内ブラウザで声が聞こえない場合は端末の消音モード解除、または右上［…］から「Safari / 他のアプリで開く」をお試しください';
-    }
-    setTimeout(() => {
-      if (window.app?.showToast) {
-        window.app.showToast(
-          'LINE内ブラウザをご利用中: 音声が聞こえない場合は端末のマナーモード解除、または右上メニュー「他のアプリで開く」をお試しください',
-          7000,
-        );
-      }
-    }, 1200);
-  }
+  setupLineBrowserNotice();
 });

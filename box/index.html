@@ -48,7 +48,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20261018_rev83">
+  <link rel="stylesheet" href="css/style.css?v=20261018_rev87">
 </head>
 <body>
   <div class="bg-grid"></div>
@@ -129,6 +129,13 @@
             <span class="btn-text">▶ START INVESTIGATION</span>
             <span class="btn-subtext">部屋の調査を開始する</span>
           </button>
+          <aside id="line-external-notice" class="line-external-notice hidden" aria-label="外部ブラウザ起動の案内">
+            <p class="line-notice-text">【LINEでプレイ中の方へ】音声が鳴らない場合は端末のマナーモードを解除するか、外部ブラウザでの起動を推奨します</p>
+            <a id="btn-line-external-open" href="?openExternalBrowser=1" class="btn-external-browser" target="_blank" rel="noopener">
+              <span class="btn-external-icon">🌐</span>
+              <span class="btn-external-text">Safari / 外部ブラウザで開く（推奨）</span>
+            </a>
+          </aside>
           <p class="title-audio-notice" style="font-size: 0.76rem; color: #94a3b8; text-align: center; margin: 4px 0 10px; line-height: 1.4;">
             ※フルボイス＆BGM対応。iPhone等で声が聞こえない場合は本体側面の消音モード（マナーモード）を解除してください
           </p>
@@ -455,12 +462,12 @@
     </footer>
   </div>
 
-  <!-- スクリプト群 (キャッシュバスティング: rev86 - Web Audio Buffer化) -->
-  <script src="../assets/js/share.js?v=20261018_rev86"></script>
-  <script src="js/state.js?v=20261018_rev86"></script>
-  <script src="js/audio.js?v=20261018_rev86"></script>
-  <script src="js/character.js?v=20261018_rev86"></script>
-  <script src="js/scenario.js?v=20261018_rev86"></script>
-  <script src="js/app.js?v=20261018_rev86"></script>
+  <!-- スクリプト群 (キャッシュバスティング: rev87 - LINE同期パイプライン & 外部ブラウザ誘導) -->
+  <script src="../assets/js/share.js?v=20261018_rev87"></script>
+  <script src="js/state.js?v=20261018_rev87"></script>
+  <script src="js/audio.js?v=20261018_rev87"></script>
+  <script src="js/character.js?v=20261018_rev87"></script>
+  <script src="js/scenario.js?v=20261018_rev87"></script>
+  <script src="js/app.js?v=20261018_rev87"></script>
 </body>
 </html>

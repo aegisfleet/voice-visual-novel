@@ -60,6 +60,34 @@ class TestBoxHtmlStructure(unittest.TestCase):
         self.assertIn('id="modal-evidence"', self.html_content)
         self.assertIn('id="modal-evidence-list"', self.html_content)
 
+    def test_line_notice_present(self):
+        """LINE等アプリ内ブラウザ用外部ブラウザ起動導線が存在すること"""
+        self.assertIn('id="line-external-notice"', self.html_content)
+        self.assertIn('id="btn-line-external-open"', self.html_content)
+        self.assertIn('openExternalBrowser=1', self.html_content)
+
+
+class TestBoxAudioPipeline(unittest.TestCase):
+    """box/js/audio.js の単一Audio再利用・同期直接再生パイプラインの検証"""
+
+    @classmethod
+    def setUpClass(cls):
+        audio_path = BOX_DIR / "js" / "audio.js"
+        cls.audio_content = audio_path.read_text(encoding="utf-8")
+
+    def test_audio_reuses_single_element(self):
+        """LINE内ブラウザ/iOS Safari用に単一Audio要素(this.voiceAudio)が用意されていること"""
+        self.assertIn("this.voiceAudio", self.audio_content)
+        self.assertIn("this.executeDirectVoicePlay", self.audio_content)
+
+    def test_no_create_media_element_source(self):
+        """WebKitの無音化バグを引き起こすcreateMediaElementSourceが使用されていないこと"""
+        self.assertNotIn("createMediaElementSource", self.audio_content)
+
+    def test_sync_play_voice_file(self):
+        """playVoiceFileが非同期decodeAudioData待機を行わず同期的にAudioを再生すること"""
+        self.assertNotIn("decodeAudioData", self.audio_content)
+
 
 class TestBoxScenarioAndAssets(unittest.TestCase):
     """box/js/scenario.js のシナリオデータとアセットの整合性検証"""
