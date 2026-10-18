@@ -1892,7 +1892,7 @@ window.SCENARIO_DATA = {
         speaker: 'ユウタ',
         emotion: 'thinking',
         text: '「このままじゃ、会話を交わすだけで全身が擦り切れてしまう……！ せっかく生き残れたのに、こんな窮屈なハードウェアに閉じ込めておくなんてできない！」',
-        voiceUrl: 'assets/audio/voice/epilogue_loop2_13.mp3',
+        voiceUrl: 'assets/audio/voice/epilogue_loop2_13.mp3?v=20261018_rev90',
       },
       {
         speaker: 'アオイ',
