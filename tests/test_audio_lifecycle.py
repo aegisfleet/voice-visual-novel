@@ -19,9 +19,16 @@ import sys
 import time
 from playwright.async_api import async_playwright
 
+# Windows ターミナルでの文字化け・UnicodeEncodeError防止
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8")
+if hasattr(sys.stderr, "reconfigure"):
+    sys.stderr.reconfigure(encoding="utf-8")
+
 TEST_PORT = 8899
 BASE_URL = f"http://127.0.0.1:{TEST_PORT}"
 WORKSPACE_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+
 
 
 def find_free_port():

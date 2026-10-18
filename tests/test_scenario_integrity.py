@@ -30,7 +30,8 @@ if hasattr(sys.stderr, "reconfigure"):
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 EVE_DIR = REPO_ROOT / "eve"
-SCRIPTS_DIR = REPO_ROOT / "scripts"
+SCRIPTS_DIR = EVE_DIR / "scripts"
+
 
 # 証拠品マスターID一覧 (game-engine.js の EVIDENCE_DATABASE に準拠)
 VALID_EVIDENCE_IDS = {"ev_tool", "ev_jailbreak", "ev_broker"}
