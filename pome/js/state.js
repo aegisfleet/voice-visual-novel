@@ -1,8 +1,8 @@
-// state.js - ゲーム状態と永続化（localStorage）の管理
+// state.js - ゲーム状態と永続化（localStorage）の管理（1周完結版）
 
 class GameState {
   constructor() {
-    this.STORAGE_KEY = 'vvn_pomeranian_save_v2';
+    this.STORAGE_KEY = 'vvn_pomeranian_save_v3';
     this.resetTransientState();
     this.loadPersistentState();
   }
@@ -11,10 +11,10 @@ class GameState {
   resetTransientState() {
     this.currentPhase = 'TITLE'; // 'TITLE', 'PROLOGUE', 'EXPLORATION', 'DEBATE', 'ENDING'
     this.life = 3; // 立証パートのライフ (最大3)
-    this.currentDebateStep = 0; // 立証パートの問答番号
+    this.currentDebateStep = 0; // 立証パートの問答番号 (0〜3の全4問)
     this.evidence = []; // 所持している証拠IDリスト
     this.examinedSpots = []; // 調査済みスポット・NPCリスト
-    this.endingType = null; // 'BAD', 'HAPPY', 'TRUE'
+    this.endingType = null; // 'BAD', 'HAPPY'
   }
 
   applyDefaultPersistentState() {
@@ -64,9 +64,14 @@ class GameState {
     }
   }
 
-  // 2周目以降かどうかの判定 (1回以上通常クリア済み)
+  // クリア済みかどうかの判定
+  isCleared() {
+    return this.clearCount >= 1 || this.trueEndUnlocked;
+  }
+
+  // 後方互換用メソッド（常に1周目で裏の真実まで到達可能）
   isSecondLoopOrLater() {
-    return this.clearCount >= 1;
+    return true;
   }
 
   // 証拠を獲得したか
@@ -94,21 +99,20 @@ class GameState {
     return this.examinedSpots.includes(id);
   }
 
-  // 立証パートに進む準備ができたか判定
+  // 立証パートに進む準備ができたか判定（全4問それぞれの正解証拠を保持しているか）
   isReadyForDebate() {
     const hasPoint1 = this.hasEvidence('cotton_micro');
     const hasPoint2 = this.hasEvidence('flower_footprint') || this.hasEvidence('caretaker_alibi');
     const hasPoint3 = this.hasEvidence('tree_nest') || this.hasEvidence('poppo_eyewitness');
+    const hasPoint4 = this.hasEvidence('kitten_ribbon');
 
-    return hasPoint1 && hasPoint2 && hasPoint3;
+    return hasPoint1 && hasPoint2 && hasPoint3 && hasPoint4;
   }
 
-  // クリア記録
+  // クリア記録（1周完結でHAPPY END＝真の結末に到達）
   recordClear(endingType) {
-    if (endingType === 'HAPPY') {
+    if (endingType === 'HAPPY' || endingType === 'TRUE') {
       this.clearCount = Math.max(1, this.clearCount + 1);
-    } else if (endingType === 'TRUE') {
-      this.clearCount++;
       this.trueEndUnlocked = true;
     }
     this.savePersistentState();

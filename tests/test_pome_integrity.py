@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 """
-ひだまりベンチ占拠事件 (pome) - 対話シーン・キャラクターSVGアニメーション・整合性テストスイート
+ひだまりベンチ占拠事件 (pome) - 1周完結シナリオ・SVGアニメーション・整合性テストスイート
 ----------------------------------------------------------------------------------
 目的:
   - 主人公「パム」（オレンジセーブル＋黒マズル）のSVG造形およびシナリオ整合性検証
   - 対話シーンのセンターキャラクター配置、バックログ、AUTO/SKIP、立証ヒントUIのDOM構造検証
   - character.js の全9キャラクターSVG・表情・SVGパーツアニメーションクラスの検証
   - シナリオ全セリフのキャラクターコントローラーマッピング検証
-  - 立証パートおよび全証拠品（囮証拠含む）のヒント（hintText）整合性検証
+  - 1周完結（全4問：表の事件解決＋裏の真実サプライズ解明）の進行・証拠ヒント整合性検証
 """
 
 import json
@@ -76,12 +76,14 @@ class TestPomeHtmlStructure(unittest.TestCase):
         self.assertIn('id="portal-to-grove"', self.html_content)
         self.assertIn('id="portal-to-plaza"', self.html_content)
         self.assertIn('id="spot_fountain"', self.html_content)
+        self.assertIn('id="spot_secret_bush"', self.html_content)
         self.assertIn('id="debate-selected-hint"', self.html_content)
         self.assertIn('id="btn-back-to-explore"', self.html_content)
 
     def test_css_svg_animation_and_no_important(self):
-        """style.css にSVGパーツアニメーションが定義され、!important が含まれないこと"""
+        """style.css にSVGパーツアニメーションが定義され、!important や非推奨構文が含まれないこと"""
         self.assertNotIn("!important", self.css_content)
+        self.assertNotIn("word-break: break-word", self.css_content)
         self.assertIn("@keyframes svg-tail-wag", self.css_content)
         self.assertIn("@keyframes svg-eye-blink", self.css_content)
         self.assertIn("@keyframes svg-lip-sync", self.css_content)
@@ -177,7 +179,6 @@ class TestPomeCharacterController(unittest.TestCase):
           testQueue(st.successReactions);
           testQueue(st.failureReactions);
         });
-        testQueue(scenario.debate.secretStep.successReactions);
         Object.values(scenario.endings).forEach(list => testQueue(list));
 
         console.log(JSON.stringify({ total: count }));
@@ -188,21 +189,38 @@ class TestPomeCharacterController(unittest.TestCase):
 
 
 class TestPomeScenarioIntegrity(unittest.TestCase):
-    """pome/js/scenario.js の主人公パム呼称・立証・全証拠品ヒント整合性検証"""
+    """pome/js/scenario.js および state.js の1周完結・全4問構成・ヒント整合性検証"""
 
     @classmethod
     def setUpClass(cls):
         code = """
         const fs = require('fs');
         const scenJs = fs.readFileSync('pome/js/scenario.js', 'utf8');
+        const stateJs = fs.readFileSync('pome/js/state.js', 'utf8');
         const win = {};
-        new Function('window', scenJs)(win);
-        console.log(JSON.stringify(win.SCENARIO_DATA));
+        const mockStorage = { getItem: ()=>null, setItem: ()=>{}, removeItem: ()=>{} };
+        new Function('window', 'localStorage', scenJs + '; ' + stateJs)(win, mockStorage);
+        const st = win.gameState;
+        const readyInitially = st.isReadyForDebate();
+        st.addEvidence('cotton_micro');
+        st.addEvidence('caretaker_alibi');
+        st.addEvidence('tree_nest');
+        const readyWithThree = st.isReadyForDebate();
+        st.addEvidence('kitten_ribbon');
+        const readyWithAllFour = st.isReadyForDebate();
+        console.log(JSON.stringify({
+          scenario: win.SCENARIO_DATA,
+          readyInitially,
+          readyWithThree,
+          readyWithAllFour
+        }));
         """
-        cls.scenario = json.loads(run_node(code))
+        data = json.loads(run_node(code))
+        cls.scenario = data["scenario"]
+        cls.state_checks = data
 
     def test_evidence_keys_and_hints(self):
-        """全10種の証拠品（正解・囮・真実）が保持され、すべてに初心者向け hintText が存在すること"""
+        """全10種の証拠品が保持され、すべてに初心者向け hintText が存在すること"""
         ev = self.scenario["evidence"]
         expected_ids = [
             "cotton_micro",
@@ -225,16 +243,21 @@ class TestPomeScenarioIntegrity(unittest.TestCase):
         prologue_speakers = [line["speaker"] for line in self.scenario["prologue"]]
         self.assertIn("パム（心の声）", prologue_speakers)
 
-    def test_debate_step_evidence_links(self):
-        """立証パートの各ステップの正解証拠IDおよびリトライガイドが存在すること"""
+    def test_single_playthrough_four_debate_steps(self):
+        """1周完結の全4問構成（表の解決1〜3＋裏の真実解明4）が定義され、証拠リンクが正しいこと"""
         ev = self.scenario["evidence"]
-        for step in self.scenario["debate"]["steps"]:
+        steps = self.scenario["debate"]["steps"]
+        self.assertEqual(len(steps), 4, "Debate should have 4 steps in a single playthrough")
+        for step in steps:
             self.assertIn(step["correctEvidenceId"], ev)
             self.assertTrue(step.get("retryGuide"))
             if "alternativeCorrectEvidenceId" in step:
                 self.assertIn(step["alternativeCorrectEvidenceId"], ev)
 
-        self.assertIn(self.scenario["debate"]["secretStep"]["correctEvidenceId"], ev)
+        self.assertEqual(steps[3]["correctEvidenceId"], "kitten_ribbon")
+        self.assertFalse(self.state_checks["readyInitially"])
+        self.assertFalse(self.state_checks["readyWithThree"])
+        self.assertTrue(self.state_checks["readyWithAllFour"])
 
 
 if __name__ == "__main__":

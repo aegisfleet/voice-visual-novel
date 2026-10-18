@@ -1,4 +1,4 @@
-// app.js - メインゲームコントローラ（主人公パム・全SVGアニメーション・初心者サポート対応版）
+// app.js - メインゲームコントローラ（主人公パム・全SVGアニメーション・1周完結シナリオ版）
 
 class GameApp {
   constructor() {
@@ -134,7 +134,7 @@ class GameApp {
     });
 
     this.dom.btnResetSave.addEventListener('click', () => {
-      if (confirm('セーブデータを初期化して1周目に戻しますか？')) {
+      if (confirm('セーブデータを初期化して最初から遊びますか？')) {
         this.state.resetAllData();
         this.updateTitleView();
         alert('セーブデータを初期化しました。');
@@ -307,16 +307,16 @@ class GameApp {
   }
 
   updateTitleView() {
-    const isSecondLoop = this.state.isSecondLoopOrLater();
-    if (isSecondLoop) {
-      this.dom.titleLoopInfo.textContent = `🌟 名探偵パムモード（${this.state.clearCount + 1}周目）- 2周目ひみつルート解放中！`;
+    const cleared = this.state.isCleared();
+    if (cleared) {
+      this.dom.titleLoopInfo.textContent = '🌟 クリア済み：ひだまり公園の名誉ボス犬パム';
       this.dom.titleLoopInfo.style.background = '#ffe8d6';
       this.dom.titleLoopInfo.style.color = '#7a3e10';
     } else {
-      this.dom.titleLoopInfo.textContent = '✨ はじめての捜査（1周目）';
+      this.dom.titleLoopInfo.textContent = '✨ 全4問・1周完結のハートフル推理ノベル';
     }
 
-    this.dom.titleClearBadge.classList.toggle('hidden', !this.state.trueEndUnlocked);
+    this.dom.titleClearBadge.classList.toggle('hidden', !cleared);
 
     this.audio.voiceEnabled = this.state.voiceEnabled;
     this.audio.seEnabled = this.state.seEnabled;
@@ -544,9 +544,12 @@ class GameApp {
     this.state.resetTransientState();
     this.dom.hud.classList.remove('hidden');
     this.dom.hudLifeContainer.classList.add('hidden');
-    const loopNum = this.state.clearCount + 1;
-    this.dom.hudLoopBadge.textContent = this.state.isSecondLoopOrLater() ? `${loopNum}周目` : '1周目';
+    this.dom.hudLoopBadge.textContent = '🐾 お散歩導入';
     this.updateEvidenceCounter();
+
+    document.querySelectorAll('.spot-object, .npc-actor').forEach((el) => {
+      el.classList.remove('is-examined');
+    });
 
     this.playDialogueQueue(this.scenario.prologue, () => {
       this.startExploration();
@@ -556,11 +559,13 @@ class GameApp {
   startExploration() {
     this.state.currentPhase = 'EXPLORATION';
     this.dom.hudLifeContainer.classList.add('hidden');
+    this.dom.hudLoopBadge.textContent = '🔍 捜査パート';
     this.showScreen('screenExplore');
     this.switchArea(this.currentArea || 'plaza');
 
-    const showSecret = this.state.isSecondLoopOrLater();
-    this.dom.spotSecretBush.classList.toggle('hidden', !showSecret);
+    if (this.dom.spotSecretBush) {
+      this.dom.spotSecretBush.classList.remove('hidden');
+    }
 
     this.updateExplorationUi();
   }
@@ -648,6 +653,9 @@ class GameApp {
         }
         this.state.markSpotExamined(npcId);
         element.classList.add('is-examined');
+      } else if (chosen.isCorrect) {
+        this.state.markSpotExamined(npcId);
+        element.classList.add('is-examined');
       }
       this.updateExplorationUi();
     });
@@ -675,13 +683,10 @@ class GameApp {
 
   countRemainingKeyClues(areaKey) {
     const areaMap = {
-      plaza: ['cotton_micro', 'flower_footprint', 'caretaker_alibi'],
+      plaza: ['cotton_micro', 'flower_footprint', 'caretaker_alibi', 'kitten_ribbon'],
       grove: ['tree_nest', 'poppo_eyewitness'],
     };
-    const keys = [...(areaMap[areaKey] || [])];
-    if (areaKey === 'plaza' && this.state.isSecondLoopOrLater()) {
-      keys.push('kitten_ribbon');
-    }
+    const keys = areaMap[areaKey] || [];
     return keys.filter((k) => !this.state.hasEvidence(k)).length;
   }
 
@@ -705,14 +710,15 @@ class GameApp {
     if (this.state.isReadyForDebate()) {
       this.dom.btnGoToDebate.classList.remove('hidden');
       this.dom.exploreStatusText.textContent =
-        '🌟 3つの重要ヒントが揃ったよ！「準備OK！猫集会へ乗り込む！」ボタンを押そう！';
+        '🌟 4つの重要ヒントが揃ったよ！「準備OK！猫集会へ乗り込む！」ボタンを押そう！';
       this.dom.exploreStatusText.style.color = '#c84b28';
       return;
     }
 
     this.dom.btnGoToDebate.classList.add('hidden');
     const areaHints = {
-      plaza: '【ひだまり広場】🔍ベンチの隙間や花壇の隅を調べたり、💬管理人さんにお話を聞こう！',
+      plaza:
+        '【ひだまり広場】🔍ベンチの隙間・花壇・ベンチ裏を調べたり、💬管理人さんやクロにお話を聞こう！',
       grove: '【ケヤキの森】🔍高い木の穴を調べたり、💬ハトのポッポ師匠にお話を聞こう！',
     };
     this.dom.exploreStatusText.textContent = areaHints[this.currentArea] || areaHints.plaza;
@@ -729,6 +735,7 @@ class GameApp {
     this.state.currentDebateStep = 0;
     this.selectedEvidenceId = null;
 
+    this.dom.hudLoopBadge.textContent = '🐾 猫集会・立証';
     this.dom.hudLifeContainer.classList.remove('hidden');
     this.updateHearts();
     this.showScreen('screenDebate');
@@ -748,33 +755,25 @@ class GameApp {
 
   showDebateStep() {
     const stepIdx = this.state.currentDebateStep;
+    const totalSteps = this.scenario.debate.steps.length;
     const stepData = this.scenario.debate.steps[stepIdx];
 
     if (!stepData) {
-      if (this.state.isSecondLoopOrLater() && this.state.hasEvidence('kitten_ribbon')) {
-        this.showSecretDebateStep();
-      } else {
-        this.triggerHappyEnd();
-      }
+      this.triggerHappyEnd();
       return;
     }
 
-    this.dom.debateTurnLabel.textContent = `問答 ${stepIdx + 1} / 3`;
+    const isFinalStep = stepIdx === totalSteps - 1;
+    this.dom.debateTurnLabel.textContent = isFinalStep
+      ? `最終追及 ${stepIdx + 1} / ${totalSteps}`
+      : `問答 ${stepIdx + 1} / ${totalSteps}`;
     this.dom.debateOpponentSpeech.textContent = stepData.opponentQuestion;
     this.dom.debateHintText.textContent = `💡 パムの推理ヒント: ${stepData.hint}`;
     this.audio.speak('トラ吉', stepData.opponentQuestion);
 
-    this.renderEvidenceTray();
-  }
-
-  showSecretDebateStep() {
-    const secret = this.scenario.debate.secretStep;
-    this.dom.debateTurnLabel.textContent = '最終追及：優しいひみつ';
-    this.dom.debateOpponentSpeech.textContent = secret.opponentQuestion;
-    this.dom.debateHintText.textContent = `💡 パムの推理ヒント: ${secret.hint}`;
-    this.audio.speak('トラ吉', secret.opponentQuestion);
-
-    this.renderDebateAvatars('sweat', 'confident');
+    if (isFinalStep) {
+      this.renderDebateAvatars('sweat', 'confident');
+    }
     this.renderEvidenceTray();
   }
 
@@ -841,29 +840,21 @@ class GameApp {
   isStepEvidenceCorrect(stepData, evId) {
     return (
       evId === stepData.correctEvidenceId ||
-      Boolean(stepData.alternativeCorrectEvidenceId && evId === stepData.alternativeCorrectEvidenceId)
+      Boolean(
+        stepData.alternativeCorrectEvidenceId && evId === stepData.alternativeCorrectEvidenceId,
+      )
     );
   }
 
   evaluateDebatePresentation() {
     const stepIdx = this.state.currentDebateStep;
-    const isSecret = stepIdx >= 3;
-
-    if (isSecret) {
-      if (this.selectedEvidenceId === 'kitten_ribbon') {
-        this.renderDebateAvatars('shock', 'confident');
-        this.playDialogueQueue(this.scenario.debate.secretStep.successReactions, () => {
-          this.triggerTrueEnd();
-        });
-      } else {
-        this.handleDebateMistake(this.scenario.debate.secretStep, this.selectedEvidenceId);
-      }
-      return;
-    }
-
     const stepData = this.scenario.debate.steps[stepIdx];
+    if (!stepData) return;
+
     if (this.isStepEvidenceCorrect(stepData, this.selectedEvidenceId)) {
-      this.renderDebateAvatars('shock', 'confident');
+      const isFinalStep = stepIdx === this.scenario.debate.steps.length - 1;
+      const nextToraMood = ['shock', 'tear'][Number(isFinalStep)];
+      this.renderDebateAvatars(nextToraMood, 'confident');
       this.playDialogueQueue(stepData.successReactions, () => {
         this.state.currentDebateStep++;
         this.showDebateStep();
@@ -886,13 +877,13 @@ class GameApp {
       emotion: 'angry',
       text: '「的外れニャ！そんな証拠で俺たちを納得させられると思うなニャ！」',
     };
-    const reactions = (stepData && stepData.failureReactions) || [];
+    const reactions = stepData?.failureReactions || [];
     const specificTrap = reactions.find((r) => r.trapEvidenceId === selectedId);
     const generic = reactions.find((r) => !r.trapEvidenceId);
     const chosen = specificTrap || generic || defaultReaction;
 
     const queue = [chosen];
-    if (stepData && stepData.retryGuide) {
+    if (stepData?.retryGuide) {
       queue.push({
         speaker: 'パム（心の声）',
         emotion: 'thinking',
@@ -951,43 +942,29 @@ class GameApp {
     this.audio.playFanfare();
     this.playDialogueQueue(this.scenario.endings.HAPPY, () => {
       this.state.recordClear('HAPPY');
-      this.dom.endingIcon.textContent = '🎉';
+      this.dom.endingIcon.textContent = '👑';
       this.dom.endingTitle.textContent = 'HAPPY END';
-      this.dom.endingSub.textContent = 'ひだまりの和解';
+      this.dom.endingSub.textContent = 'おこげ口の英雄と青いお守りの約束';
       this.dom.endingDesc.textContent =
-        '犯人は冬支度をしていたシマリスのチビちゃんだった！誤解が解けて、パムとトラ吉たちはベンチで仲良くぽかぽか日向ぼっこ！';
+        '消えた座布団の真相は、今日旅立つ子猫たちへの「パムのにおい入りお守り袋」と、大雨の日に泥だらけで命を救ったパムへの「感謝の勲章バンダナ」のサプライズだった！お揃いの青い宝物を胸に、みんなでぽかぽか日向ぼっこ！';
       this.dom.endingUnlockedBanner.classList.remove('hidden');
       this.dom.endingUnlockedBanner.textContent =
-        '✨ 【2周目：名探偵パムモード】が解禁！ベンチの裏でトラ吉さんの本当のひみつが見つかるかも……！？';
-      if (this.dom.btnEndingExplore) this.dom.btnEndingExplore.classList.add('hidden');
-      this.dom.btnEndingNext.textContent = '🌟 タイトルに戻る（2周目解放）';
-      this.dom.screenEnding.classList.remove('hidden');
-    });
-  }
-
-  triggerTrueEnd() {
-    this.state.endingType = 'TRUE';
-    this.audio.playFanfare();
-    this.playDialogueQueue(this.scenario.endings.TRUE, () => {
-      this.state.recordClear('TRUE');
-      this.dom.endingIcon.textContent = '👑';
-      this.dom.endingTitle.textContent = 'TRUE END';
-      this.dom.endingSub.textContent = 'もふもふレスキュー隊';
-      this.dom.endingDesc.textContent =
-        'トラ吉の優しい秘密と迷子の子猫たちを守り抜き、パムは公園の「名誉ボス犬」に任命！犬も猫もみんな家族になった最高の結末！';
-      this.dom.endingUnlockedBanner.classList.remove('hidden');
-      this.dom.endingUnlockedBanner.textContent = '🏆 全シナリオ完全制覇！名探偵パム、大活躍！';
+        '🏆 事件解決＆真実解明！名探偵パムは「ひだまり公園の名誉ボス犬」になりました！';
       if (this.dom.btnEndingExplore) this.dom.btnEndingExplore.classList.add('hidden');
       this.dom.btnEndingNext.textContent = '🐾 タイトルに戻る';
       this.dom.screenEnding.classList.remove('hidden');
     });
   }
 
+  triggerTrueEnd() {
+    this.triggerHappyEnd();
+  }
+
   renderDebateAvatars(toraMood, pomeMood) {
     const moodLabels = {
       shock: '動揺 🙀',
       sweat: '冷や汗 💦',
-      tear: '白状・涙 😿',
+      tear: '感涙・白状 😿',
     };
     this.dom.opponentStatus.textContent = moodLabels[toraMood] || '威嚇中 😾';
     this.dom.debateToraAvatar.innerHTML = this.character.getMiniAvatarSvg('torakichi', toraMood);

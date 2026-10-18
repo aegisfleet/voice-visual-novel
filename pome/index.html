@@ -13,7 +13,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>ひだまりベンチ占拠事件 〜消えたクッションとボス猫の秘密〜</title>
-  <meta name="description" content="茶色で黒い口元がチャームポイントのポメラニアン「パム」が主人公のほのぼの推理ノベルゲーム。公園を散歩して手がかりを集め、猫集会で真相を解き明かそう！">
+  <meta name="description" content="茶色で黒い口元がチャームポイントのポメラニアン「パム」が主人公の1周完結・ほのぼの推理ノベルゲーム。公園を散歩して手がかりを集め、猫集会で事件の裏の優しい真実を解き明かそう！">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;700;900&display=swap" rel="stylesheet">
@@ -25,7 +25,7 @@
     <header id="hud" class="hud hidden">
       <div class="hud-left">
         <span id="hud-location-badge" class="badge">ひだまり公園</span>
-        <span id="hud-loop-badge" class="badge loop-badge">1周目</span>
+        <span id="hud-loop-badge" class="badge loop-badge">🔍 捜査パート</span>
       </div>
       <div class="hud-center">
         <!-- 立証パート用のライフ -->
@@ -159,10 +159,10 @@
 
           <div class="title-meta-box">
             <div id="title-loop-info" class="loop-info-text">
-              ✨ はじめての捜査（1周目）
+              ✨ 全4問・1周完結のハートフル推理ノベル
             </div>
             <div id="title-clear-badge" class="clear-badge-text hidden">
-              🏆 全エンディング到達！真の名誉ボス犬パム
+              🏆 HAPPY END 到達！ひだまり公園の名誉ボス犬パム
             </div>
           </div>
 
@@ -184,18 +184,18 @@
           <button type="button" id="btn-area-plaza" class="area-nav-btn active" title="ベンチ前の事件現場エリア">
             <span class="nav-icon">🪑</span>
             <span class="nav-text">ひだまり広場（ベンチ前）</span>
-            <span id="badge-area-plaza" class="area-count-badge">重要 3</span>
+            <span id="badge-area-plaza" class="area-count-badge">重要あと4</span>
           </button>
           <button type="button" id="btn-area-grove" class="area-nav-btn" title="ケヤキの大木と水飲み場エリア">
             <span class="nav-icon">🌲</span>
             <span class="nav-text">ケヤキの森＆水飲み場</span>
-            <span id="badge-area-grove" class="area-count-badge">重要 2</span>
+            <span id="badge-area-grove" class="area-count-badge">重要あと2</span>
           </button>
         </div>
 
         <div class="park-map" id="park-map">
           <!-- ==============================================
-               エリア 1: ひだまり広場（ベンチ・花壇・ゴミ箱）
+               エリア 1: ひだまり広場（ベンチ・花壇・ゴミ箱・ベンチ裏）
                ============================================== -->
           <div class="park-area active" id="area-plaza">
             <div class="park-sky">
@@ -250,9 +250,9 @@
               <span class="spot-label">広場のゴミ箱</span>
             </div>
 
-            <!-- 6. ベンチ裏の暗い隙間（2周目限定真実） -->
-            <div class="spot-object spot-hidden hidden" id="spot_secret_bush" data-spot="spot_secret_bush" style="top: 38%; left: 46%;">
-              <div class="spot-marker secret-marker">✨ 気になるにおい！</div>
+            <!-- 6. ベンチ裏のダンボール（正解④・裏の真実の手がかり） -->
+            <div class="spot-object spot-hidden" id="spot_secret_bush" data-spot="spot_secret_bush" style="top: 38%; left: 46%;">
+              <div class="spot-marker secret-marker">✨ ベンチ裏を調べる</div>
               <div class="bush-graphic">
                 <div class="bush-shrub"></div>
                 <div class="secret-glimmer">🎀</div>
@@ -468,7 +468,7 @@
           <!-- トラ吉の追及カード -->
           <div class="debate-question-box">
             <div class="question-header">
-              <span id="debate-turn-label" class="badge">問答 1 / 3</span>
+              <span id="debate-turn-label" class="badge">問答 1 / 4</span>
               <span class="question-title">トラ吉の言いがかり:</span>
             </div>
             <div id="debate-opponent-speech" class="opponent-speech-bubble">
@@ -576,21 +576,21 @@
       <!-- 6. エンディング演出オーバーレイ -->
       <div id="screen-ending" class="screen ending-overlay hidden">
         <div class="ending-card">
-          <div id="ending-icon" class="ending-icon">🎉</div>
+          <div id="ending-icon" class="ending-icon">👑</div>
           <h2 id="ending-title" class="ending-title">HAPPY END</h2>
-          <div id="ending-sub" class="ending-sub">ひだまりの和解</div>
+          <div id="ending-sub" class="ending-sub">おこげ口の英雄と青いお守りの約束</div>
           <div id="ending-desc" class="ending-desc">
-            みんな仲良くベンチで日向ぼっこ！
+            お揃いの青い宝物を胸に、みんなでベンチでぽかぽか日向ぼっこ！
           </div>
           <div id="ending-unlocked-banner" class="ending-banner hidden">
-            ✨ 【2周目：名探偵パムモード】が解放されました！ベンチの裏で新たなひみつが……！？
+            🏆 事件解決＆真実解明！名探偵パムは「ひだまり公園の名誉ボス犬」になりました！
           </div>
           <div class="ending-buttons">
             <button type="button" id="btn-ending-explore" class="sub-btn hidden">
               🔍 公園の探索に戻る
             </button>
             <button type="button" id="btn-ending-next" class="main-btn pulse-glow">
-              🐾 次へ進む
+              🐾 タイトルに戻る
             </button>
           </div>
         </div>
