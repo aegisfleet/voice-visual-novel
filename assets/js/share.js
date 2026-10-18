@@ -114,12 +114,37 @@
     shareOnX(options);
   }
 
+  // LINE等のアプリ内ブラウザ回避用URL生成 (Safari/Chrome外部起動パラメータ付与)
+  function buildExternalBrowserUrl(rawUrl) {
+    try {
+      const u = new URL(rawUrl || window.location.href);
+      u.searchParams.set('openExternalBrowser', '1');
+      return u.toString();
+    } catch {
+      const base = rawUrl || window.location.href;
+      const sep = base.includes('?') ? '&' : '?';
+      return `${base}${sep}openExternalBrowser=1`;
+    }
+  }
+
+  // LINE でシェア（?openExternalBrowser=1 を付与して標準ブラウザ起動を強制）
+  function shareOnLine(options = {}) {
+    const defaultUrl = window.location.href;
+    const rawUrl = options.url || defaultUrl;
+    const targetUrl = buildExternalBrowserUrl(rawUrl);
+    const text = options.text ? `${options.text} ` : '';
+    const intentUrl = `https://line.me/R/msg/text/?${encodeURIComponent(text + targetUrl)}`;
+    window.open(intentUrl, '_blank');
+  }
+
   // グローバル公開
   window.CyberShare = {
     showToast: showCyberToast,
     copyLink: copyLink,
     shareOnX: shareOnX,
+    shareOnLine: shareOnLine,
     smartShare: smartShare,
+    buildExternalBrowserUrl: buildExternalBrowserUrl,
   };
 
   // 自動イベントハンドラ登録

@@ -1,6 +1,7 @@
 const fs = require('fs');
 
-const content = fs.readFileSync('box/js/app.js', 'utf8');
+const targetFile = process.argv[2] || 'box/js/app.js';
+const content = fs.readFileSync(targetFile, 'utf8');
 
 function stripStringsAndComments(src) {
   let result = '';
