@@ -689,25 +689,10 @@ class AudioManager {
   }
 
   unlockVoiceAudio() {
-    if (!this.voiceAudio || this.isVoiceAudioUnlocked || this.currentVoiceAudio) return;
-    this.isVoiceAudioUnlocked = true;
-
-    const unlockSessionId = ++this.playSessionId;
-    try {
-      this.voiceAudio.src =
-        'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA';
-      const p = this.voiceAudio.play();
-      if (p !== undefined) {
-        p.then(() => {
-          if (this.playSessionId === unlockSessionId && this.voiceAudio?.src?.startsWith('data:')) {
-            try {
-              this.voiceAudio.pause();
-              this.voiceAudio.currentTime = 0;
-            } catch (_e) {}
-          }
-        }).catch(() => {});
-      }
-    } catch (_e) {}
+    // ボイス用Audio要素のインスタンスを確実に先行生成
+    this.initVoiceAudio();
+    // 重要: 無音WAVを同一要素に二重ロードするとWebKitでAbortErrorが発生し
+    // 後続のセリフ音声デコーダーがデッドロックするため、セリフ直接再生による正当アンロックを採用する
   }
 
   unlockSpeechSynthesis() {
