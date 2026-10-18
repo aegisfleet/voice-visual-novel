@@ -20,6 +20,11 @@ class AudioManager {
     this.currentUtterance = null;
     this.selectedVoice = null;
     this.isSkipActive = false; // スキップモード追従フラグ（通信量完全ガード用）
+    this.masterGainNode = null; // 全体マスターゲイン
+    this.bgmMasterGain = null; // BGM用ゲイン
+    this.voiceGainNode = null; // ボイス用ゲイン (Web Audio API接続用)
+    this.sfxGainNode = null; // 効果音用ゲイン
+    this.voiceSourceNode = null; // ボイスMediaElementSourceノード
     this.currentVoiceAudio = null; // 再生中のMP3 Audio要素
     this.currentVoiceAbortController = null; // ロード中の中断用 AbortController
     this.voiceAudio = null; // LINE内ブラウザ/iOS Safari自動再生制限対策・再利用Audio要素
@@ -116,7 +121,7 @@ class AudioManager {
     }
   }
 
-  // AudioContext の初期化 (ユーザー操作時に呼出)
+  // AudioContext の初期化 (ユーザー操作時に呼出・eve準拠の統合ノードグラフ)
   ensureContext() {
     if (!this.ctx) {
       const AudioCtx = window.AudioContext || window.webkitAudioContext;
@@ -127,10 +132,25 @@ class AudioManager {
     if (this.ctx && this.ctx.state === 'suspended') {
       this.ctx.resume();
     }
+    if (this.ctx && !this.masterGainNode) {
+      this.masterGainNode = this.ctx.createGain();
+      this.masterGainNode.gain.setValueAtTime(1.0, this.ctx.currentTime);
+      this.masterGainNode.connect(this.ctx.destination);
+    }
     if (this.ctx && !this.bgmMasterGain) {
       this.bgmMasterGain = this.ctx.createGain();
       this.bgmMasterGain.gain.setValueAtTime(this.bgmVolume, this.ctx.currentTime);
-      this.bgmMasterGain.connect(this.ctx.destination);
+      this.bgmMasterGain.connect(this.masterGainNode);
+    }
+    if (this.ctx && !this.voiceGainNode) {
+      this.voiceGainNode = this.ctx.createGain();
+      this.voiceGainNode.gain.setValueAtTime(1.0, this.ctx.currentTime);
+      this.voiceGainNode.connect(this.masterGainNode);
+    }
+    if (this.ctx && !this.sfxGainNode) {
+      this.sfxGainNode = this.ctx.createGain();
+      this.sfxGainNode.gain.setValueAtTime(1.0, this.ctx.currentTime);
+      this.sfxGainNode.connect(this.masterGainNode);
     }
   }
 
@@ -188,9 +208,9 @@ class AudioManager {
     return this.playVoiceFile(url, options);
   }
 
-  // ボイス再生用Audio要素の初期化 (単一要素の先行作成と再利用)
-  // 重要: Web Audio APIのMediaElementAudioSourceNodeはiOS WebKitでの無音化バグやCORS制約を招くため接続せず、
-  // 最も安定して鳴るネイティブHTMLAudioElementパイプラインで確実に再生する
+  // ボイス再生用Audio要素の初期化 (単一要素の先行作成とWeb Audio API接続・再利用 - eve完全準拠)
+  // 重要: Web Audio APIのDestinationに接続することで、LINE内蔵ブラウザ(WebKit)における
+  // BGMとの排他消音・マナーモード消音を完全に回避し、同一ストリームとして明瞭に再生する
   initVoiceAudio() {
     if (this.voiceAudio) return;
     if (typeof Audio === 'undefined') return;
@@ -198,6 +218,17 @@ class AudioManager {
     try {
       this.voiceAudio = new Audio();
       this.voiceAudio.preload = 'auto';
+      this.voiceAudio.crossOrigin = 'anonymous';
+
+      this.ensureContext();
+      if (this.ctx && this.voiceGainNode && !this.voiceSourceNode) {
+        try {
+          this.voiceSourceNode = this.ctx.createMediaElementSource(this.voiceAudio);
+          this.voiceSourceNode.connect(this.voiceGainNode);
+        } catch (e) {
+          console.warn('[AudioManager] createMediaElementSource fallback to HTMLAudio:', e);
+        }
+      }
     } catch (e) {
       console.warn('[AudioManager] Failed to init voiceAudio:', e);
     }
@@ -294,6 +325,7 @@ class AudioManager {
 
       // LINE内ブラウザ/iOS Safari対策: アンロック済みの単一Audio要素を再利用
       const audio = this.voiceAudio || new Audio();
+      audio.crossOrigin = 'anonymous';
       this.currentVoiceAudio = audio;
       this.isVoiceAudioUnlocked = true; // この直接再生自体がアンロックになる
 
@@ -341,11 +373,14 @@ class AudioManager {
     }
 
     if (this.currentVoiceAudio) {
-      try {
-        this.currentVoiceAudio.pause();
-        this.currentVoiceAudio.currentTime = 0;
-      } catch (_e) {}
+      const audio = this.currentVoiceAudio;
       this.currentVoiceAudio = null;
+      audio.onended = null;
+      audio.onerror = null;
+      try {
+        audio.pause();
+        audio.currentTime = 0;
+      } catch (_e) {}
     }
     this.dispatchVoiceState(false);
   }
@@ -473,7 +508,7 @@ class AudioManager {
     gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.05);
 
     osc.connect(gain);
-    gain.connect(this.ctx.destination);
+    gain.connect(this.sfxGainNode || this.ctx.destination);
 
     osc.start();
     osc.stop(this.ctx.currentTime + 0.05);
@@ -514,7 +549,7 @@ class AudioManager {
       gain.gain.exponentialRampToValueAtTime(0.0001, now + note.delay + note.duration);
 
       osc.connect(gain);
-      gain.connect(this.ctx.destination);
+      gain.connect(this.sfxGainNode || this.ctx.destination);
 
       osc.start(now + note.delay);
       osc.stop(now + note.delay + note.duration);
@@ -538,7 +573,7 @@ class AudioManager {
     gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.08);
 
     osc.connect(gain);
-    gain.connect(this.ctx.destination);
+    gain.connect(this.sfxGainNode || this.ctx.destination);
 
     osc.start();
     osc.stop(this.ctx.currentTime + 0.08);
@@ -573,7 +608,7 @@ class AudioManager {
     subGain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
 
     subOsc.connect(subGain);
-    subGain.connect(this.ctx.destination);
+    subGain.connect(this.sfxGainNode || this.ctx.destination);
     subOsc.start(now);
     subOsc.stop(now + 0.4);
 
@@ -597,7 +632,7 @@ class AudioManager {
 
     noise.connect(filter);
     filter.connect(noiseGain);
-    noiseGain.connect(this.ctx.destination);
+    noiseGain.connect(this.sfxGainNode || this.ctx.destination);
 
     noise.start(now);
   }
@@ -620,7 +655,7 @@ class AudioManager {
     gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
 
     osc.connect(gain);
-    gain.connect(this.ctx.destination);
+    gain.connect(this.sfxGainNode || this.ctx.destination);
 
     osc.start(now);
     osc.stop(now + 0.35);
@@ -728,6 +763,7 @@ class AudioManager {
 
     const audio = new Audio(url);
     audio.loop = true;
+    audio.crossOrigin = 'anonymous';
     audio.volume = 0.001; // フェードイン開始初期音量
 
     let sourceNode = null;
