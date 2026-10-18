@@ -33,7 +33,15 @@ with sync_playwright() as p:
     print("Saved 1_title_mobile.png")
 
     # ----------------------------------------------------
-    # 2. 探索画面 (エリアタブバッジ & 証拠トースト演出)
+    # 1-2. 前回の続きから再開（CONTINUE）ボタンのテスト
+    # ----------------------------------------------------
+    page.click("#btn-continue-game")
+    page.wait_for_timeout(500)
+    page.screenshot(path=str(OUT / "1_continued_explore_mobile.png"))
+    print("Saved 1_continued_explore_mobile.png")
+
+    # ----------------------------------------------------
+    # 2. 探索画面 (エリアタブバッジ & 証拠トースト演出 & HUDタイトル戻るボタン)
     # ----------------------------------------------------
     page.set_viewport_size({"width": 1280, "height": 800})
     page.evaluate("""() => {
@@ -61,8 +69,15 @@ with sync_playwright() as p:
     page.screenshot(path=str(OUT / "2_explore_mobile.png"))
     print("Saved 2_explore_mobile.png")
 
+    # HUDの「🏠 タイトル」ボタンをクリックして確認モーダルを表示
+    page.click("#btn-hud-return-title")
+    page.wait_for_timeout(400)
+    page.screenshot(path=str(OUT / "2_return_title_confirm_mobile.png"))
+    print("Saved 2_return_title_confirm_mobile.png")
+    page.evaluate("window.app.closeConfirmModal()")
+
     # ----------------------------------------------------
-    # 3. 会話画面 (NPC立ち絵維持 + モノローグ視覚差別化 + 発話インジケーター + HIDE)
+    # 3. 会話画面 (NPC立ち絵維持 + モノローグ視覚差別化 + 発話インジケーター)
     # ----------------------------------------------------
     page.set_viewport_size({"width": 1280, "height": 800})
     page.evaluate("""() => {
@@ -86,13 +101,6 @@ with sync_playwright() as p:
     page.wait_for_timeout(300)
     page.screenshot(path=str(OUT / "3_dialogue_monologue_mobile.png"))
     print("Saved 3_dialogue_monologue_mobile.png")
-
-    # HIDE ボタン押下（UI非表示）
-    page.evaluate("window.app.toggleHideDialogueUi(true)")
-    page.wait_for_timeout(300)
-    page.screenshot(path=str(OUT / "3_dialogue_hidden_mobile.png"))
-    print("Saved 3_dialogue_hidden_mobile.png")
-    page.evaluate("window.app.toggleHideDialogueUi(false)")
 
     # 会話を閉じる
     page.evaluate("""() => {
@@ -157,7 +165,7 @@ with sync_playwright() as p:
     page.evaluate("""() => {
         // バックログにボイス付き履歴を流し込んで開く
         window.app.dialogueLog = [
-            { speaker: '大家のヤエガシ', text: '何か用かね？ 部屋の鍵なら警察には預けてあるよ。', voiceUrl: 'assets/voices/voice_yaegashi_sample.mp3' },
+            { speaker: '大家のヤエガシ', text: 'ぶいえーらん……？ 何だその難しい横文字は！ 専門業者に頼むと工事費が何十万もかかるから、ワシが管理人室の光回線から安物の16ポートハブで、全15室へ壁伝いにLANケーブルを直結しただけじゃよ！', voiceUrl: 'assets/audio/voice/npc_yaegashi_c0_02.mp3' },
             { speaker: 'ユウタ', text: '（……ヤエガシさんは何か隠しているような気がするな）', voiceUrl: null }
         ];
         window.app.openBacklog();

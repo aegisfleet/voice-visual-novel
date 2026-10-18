@@ -251,6 +251,20 @@ body.game-active {
   background: rgba(15, 23, 42, 0.6);
 }
 
+.hud-title-btn {
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  color: #94a3b8;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.hud-title-btn:hover {
+  background: rgba(56, 189, 248, 0.15);
+  border-color: #38bdf8;
+  color: #38bdf8;
+}
+
 /* ----------------------------------------------------
    メインビューポート & スクリーン管理
 ---------------------------------------------------- */
@@ -3299,18 +3313,6 @@ body.dialogue-active .explore-pin {
 }
 .btn-danger:hover {
   background: rgba(244, 63, 94, 0.35);
-}
-
-/* P3-2: 会話ウィンドウ一時非表示 */
-.dialogue-stage.ui-hidden .novel-window {
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.25s ease;
-}
-.dialogue-stage.ui-hidden .illustration-frame {
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.25s ease;
 }
 
 /* P3-3: ポータル戻るリンク＆SNSシェアバー */
