@@ -369,6 +369,9 @@ class GameApp {
       backdropGallery: document.getElementById('backdrop-gallery'),
       btnCloseGallery: document.getElementById('btn-close-gallery'),
       galleryCharTabs: document.getElementById('gallery-char-tabs'),
+      galleryTabsWrap: document.getElementById('gallery-tabs-wrap'),
+      btnGalleryTabPrev: document.getElementById('btn-gallery-tab-prev'),
+      btnGalleryTabNext: document.getElementById('btn-gallery-tab-next'),
       galleryBody: document.getElementById('gallery-body'),
 
       // 拡大画像ビューアーモーダル
@@ -480,6 +483,46 @@ class GameApp {
         this.audio.playClick();
         this.renderGalleryContent(btn.dataset.char);
       });
+    }
+    this.bindGalleryTabNavEvents();
+  }
+
+  bindGalleryTabNavEvents() {
+    if (!this.dom.galleryTabsWrap) return;
+    if (this.dom.btnGalleryTabPrev) {
+      this.dom.btnGalleryTabPrev.addEventListener('click', () => {
+        this.audio.playClick();
+        this.scrollGalleryTabs(-140);
+      });
+    }
+    if (this.dom.btnGalleryTabNext) {
+      this.dom.btnGalleryTabNext.addEventListener('click', () => {
+        this.audio.playClick();
+        this.scrollGalleryTabs(140);
+      });
+    }
+    this.dom.galleryTabsWrap.addEventListener('scroll', () => {
+      this.updateGalleryTabArrows();
+    });
+  }
+
+  scrollGalleryTabs(offset) {
+    if (!this.dom.galleryTabsWrap) return;
+    this.dom.galleryTabsWrap.scrollBy({ left: offset, behavior: 'smooth' });
+  }
+
+  updateGalleryTabArrows() {
+    const wrap = this.dom.galleryTabsWrap;
+    if (!wrap) return;
+    const isAtStart = wrap.scrollLeft <= 5;
+    const isAtEnd = wrap.scrollLeft + wrap.clientWidth >= wrap.scrollWidth - 5;
+    if (this.dom.btnGalleryTabPrev) {
+      this.dom.btnGalleryTabPrev.disabled = isAtStart;
+      this.dom.btnGalleryTabPrev.classList.toggle('is-disabled', isAtStart);
+    }
+    if (this.dom.btnGalleryTabNext) {
+      this.dom.btnGalleryTabNext.disabled = isAtEnd;
+      this.dom.btnGalleryTabNext.classList.toggle('is-disabled', isAtEnd);
     }
   }
 
@@ -2214,16 +2257,29 @@ class GameApp {
   // ----------------------------------------------------
   openGallery(defaultChar = 'yuta') {
     if (!this.dom.modalGallery) return;
-    this.renderGalleryContent(defaultChar);
     this.dom.modalGallery.classList.remove('hidden');
+    this.renderGalleryContent(defaultChar);
+    setTimeout(() => {
+      this.updateGalleryTabs(defaultChar);
+      this.updateGalleryTabArrows();
+    }, 40);
   }
 
   updateGalleryTabs(activeId) {
     if (!this.dom.galleryCharTabs) return;
     const tabs = this.dom.galleryCharTabs.querySelectorAll('.gallery-tab-btn');
+    let activeBtn = null;
     tabs.forEach((t) => {
-      t.classList.toggle('active', t.dataset.char === activeId);
+      const isActive = t.dataset.char === activeId;
+      t.classList.toggle('active', isActive);
+      if (isActive) activeBtn = t;
     });
+    if (activeBtn) {
+      activeBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    }
+    setTimeout(() => {
+      this.updateGalleryTabArrows();
+    }, 100);
   }
 
   generateGallerySpritesHtml(data) {

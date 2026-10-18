@@ -276,14 +276,40 @@
             <button type="button" id="btn-close-gallery" class="btn-close">✕</button>
           </div>
         </div>
-        <div class="gallery-tabs-wrap">
-          <div class="gallery-character-tabs" id="gallery-char-tabs">
-            <button type="button" class="gallery-tab-btn active" data-char="yuta">ユウタ</button>
-            <button type="button" class="gallery-tab-btn" data-char="shibata">シバタ捜査官</button>
-            <button type="button" class="gallery-tab-btn" data-char="aoi">隣人アオイ</button>
-            <button type="button" class="gallery-tab-btn" data-char="yaegashi">大家のヤエガシ</button>
-            <button type="button" class="gallery-tab-btn" data-char="mimi">MIMI</button>
-            <button type="button" class="gallery-tab-btn" data-char="narrator">ナレーター</button>
+        <div class="gallery-tabs-nav">
+          <div class="gallery-tabs-hint">
+            <span class="gallery-tabs-hint-label">📂 ARCHIVE (全6名)</span>
+            <span class="gallery-tabs-hint-guide">◀ スライド / 矢印で切替 ▶</span>
+          </div>
+          <div class="gallery-tabs-container">
+            <button type="button" id="btn-gallery-tab-prev" class="gallery-tab-arrow-btn prev" aria-label="前のキャラクターへスクロール">
+              <span aria-hidden="true">‹</span>
+            </button>
+            <div class="gallery-tabs-wrap" id="gallery-tabs-wrap">
+              <div class="gallery-character-tabs" id="gallery-char-tabs">
+                <button type="button" class="gallery-tab-btn active" data-char="yuta">
+                  <span class="tab-icon">🧑‍💻</span><span class="tab-name">ユウタ</span>
+                </button>
+                <button type="button" class="gallery-tab-btn" data-char="shibata">
+                  <span class="tab-icon">🕵️</span><span class="tab-name">シバタ捜査官</span>
+                </button>
+                <button type="button" class="gallery-tab-btn" data-char="aoi">
+                  <span class="tab-icon">🎧</span><span class="tab-name">隣人アオイ</span>
+                </button>
+                <button type="button" class="gallery-tab-btn" data-char="yaegashi">
+                  <span class="tab-icon">🗝️</span><span class="tab-name">大家のヤエガシ</span>
+                </button>
+                <button type="button" class="gallery-tab-btn" data-char="mimi">
+                  <span class="tab-icon">🤖</span><span class="tab-name">MIMI</span>
+                </button>
+                <button type="button" class="gallery-tab-btn" data-char="narrator">
+                  <span class="tab-icon">🎙️</span><span class="tab-name">ナレーター</span>
+                </button>
+              </div>
+            </div>
+            <button type="button" id="btn-gallery-tab-next" class="gallery-tab-arrow-btn next" aria-label="次のキャラクターへスクロール">
+              <span aria-hidden="true">›</span>
+            </button>
           </div>
         </div>
         <div class="gallery-body" id="gallery-body">

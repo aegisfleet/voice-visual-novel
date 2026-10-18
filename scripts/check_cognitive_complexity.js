@@ -115,7 +115,7 @@ function calcSonarCognitiveComplexity(lines) {
 }
 
 const targetNames = [
-  'bindEvents', 'bindTitleEvents', 'bindGalleryEvents', 'bindHudEvents', 'bindEvidenceModalEvents',
+  'bindEvents', 'bindTitleEvents', 'bindGalleryEvents', 'bindGalleryTabNavEvents', 'scrollGalleryTabs', 'updateGalleryTabArrows', 'openGallery', 'updateGalleryTabs', 'bindHudEvents', 'bindEvidenceModalEvents',
   'bindExploreEvents', 'bindDebateEvents', 'bindDialogueEvents', 'bindIllustrationViewerEvents',
   'bindEndingEvents', 'bindKeyboardEvents', 'bindPointerEvents',
   'handleKeydown', 'handleEscapeKey', 'handleBackKey', 'handleAdvanceKey', 'handleAreaSwitchKey',

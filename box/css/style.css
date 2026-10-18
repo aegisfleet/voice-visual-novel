@@ -2488,45 +2488,164 @@ body.dialogue-active .explore-pin {
   padding: 20px;
   border: 1px solid rgba(168, 85, 247, 0.5);
   box-shadow: 0 0 40px rgba(168, 85, 247, 0.3);
+  overflow: hidden;
+}
+
+.modal-content-gallery > .modal-header {
+  flex-shrink: 0;
+}
+
+.gallery-tabs-nav {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.gallery-tabs-hint {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 4px;
+  font-size: 0.76rem;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  gap: 8px;
+}
+
+.gallery-tabs-hint-label {
+  font-weight: 700;
+  color: #cbd5e1;
+  font-family: var(--font-mono);
+  white-space: nowrap;
+}
+
+.gallery-tabs-hint-guide {
+  color: #00f3ff;
+  font-size: 0.72rem;
+  font-weight: 600;
+  opacity: 0.95;
+  text-shadow: 0 0 8px rgba(0, 243, 255, 0.4);
+  white-space: nowrap;
+}
+
+.gallery-tabs-container {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+}
+
+.gallery-tab-arrow-btn {
+  flex-shrink: 0;
+  width: 32px;
+  height: 38px;
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(168, 85, 247, 0.5);
+  border-radius: 8px;
+  color: #c084fc;
+  font-size: 1.35rem;
+  font-weight: 700;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 0 8px rgba(168, 85, 247, 0.2);
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.gallery-tab-arrow-btn:hover:not(:disabled):not(.is-disabled) {
+  background: rgba(88, 28, 135, 0.5);
+  border-color: #00f3ff;
+  color: #00f3ff;
+  box-shadow: 0 0 12px rgba(0, 243, 255, 0.4);
+}
+
+.gallery-tab-arrow-btn:disabled,
+.gallery-tab-arrow-btn.is-disabled {
+  opacity: 0.25;
+  cursor: not-allowed;
+  border-color: rgba(148, 163, 184, 0.2);
+  color: #64748b;
+  box-shadow: none;
 }
 
 .gallery-tabs-wrap {
+  flex: 1;
+  min-width: 0;
   overflow-x: auto;
-  padding-bottom: 6px;
-  margin-bottom: 16px;
+  overflow-y: hidden;
+  scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
+  padding: 2px 4px 6px 4px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(168, 85, 247, 0.6) rgba(15, 23, 42, 0.5);
 }
+
 .gallery-tabs-wrap::-webkit-scrollbar {
-  display: none;
+  height: 4px;
 }
+
+.gallery-tabs-wrap::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.5);
+  border-radius: 9999px;
+}
+
+.gallery-tabs-wrap::-webkit-scrollbar-thumb {
+  background: linear-gradient(90deg, #a855f7, #00f3ff);
+  border-radius: 9999px;
+}
+
 .gallery-character-tabs {
   display: flex;
   gap: 8px;
   min-width: max-content;
+  padding-right: 12px;
 }
+
 .gallery-tab-btn {
-  background: rgba(15, 23, 42, 0.8);
+  background: rgba(15, 23, 42, 0.85);
   border: 1px solid rgba(148, 163, 184, 0.25);
   color: var(--text-sub);
-  padding: 8px 16px;
+  padding: 8px 14px;
   border-radius: 8px;
   font-size: 0.88rem;
   font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
   white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  min-height: 38px;
+  box-sizing: border-box;
 }
+
+.gallery-tab-btn .tab-icon {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.gallery-tab-btn .tab-name {
+  line-height: 1.2;
+}
+
 .gallery-tab-btn:hover {
   border-color: #c084fc;
   color: #e9d5ff;
+  background: rgba(30, 41, 59, 0.9);
 }
+
 .gallery-tab-btn.active {
   background: linear-gradient(135deg, #581c87 0%, #1e3a8a 100%);
-  border-color: #c084fc;
+  border-color: #00f3ff;
   color: #fff;
-  box-shadow: 0 0 12px rgba(192, 132, 252, 0.4);
+  box-shadow: 0 0 14px rgba(0, 243, 255, 0.35);
 }
 
 .gallery-body {
@@ -2813,8 +2932,37 @@ body.dialogue-active .explore-pin {
 
 @media (max-width: 768px) {
   .modal-content-gallery {
-    padding: 14px 10px;
+    padding: 12px 8px;
     width: 96vw;
+  }
+  .gallery-tabs-nav {
+    margin-bottom: 8px;
+    gap: 4px;
+  }
+  .gallery-tabs-hint {
+    font-size: 0.7rem;
+    padding: 0 2px;
+  }
+  .gallery-tabs-hint-guide {
+    font-size: 0.68rem;
+  }
+  .gallery-tab-arrow-btn {
+    width: 28px;
+    height: 34px;
+    font-size: 1.15rem;
+  }
+  .gallery-tab-btn {
+    padding: 6px 10px;
+    font-size: 0.8rem;
+    min-height: 34px;
+    gap: 4px;
+  }
+  .gallery-tab-btn .tab-icon {
+    font-size: 0.88rem;
+  }
+  .gallery-character-tabs {
+    gap: 6px;
+    padding-right: 8px;
   }
   .gallery-sprites-grid {
     grid-template-columns: repeat(2, 1fr);

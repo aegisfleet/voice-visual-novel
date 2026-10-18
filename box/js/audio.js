@@ -334,7 +334,7 @@ class AudioManager {
     // パターンB: E6 (1318.51Hz) -> G#6 (1661.22Hz) -> B6 (1975.53Hz) のセレスタ・アルペジオ
     const notes = [
       { freq: 1318.51, delay: 0, duration: 0.35, gain: 0.08 },
-      { freq: 1661.22, delay: 0.065, duration: 0.4, gain: 0.10 },
+      { freq: 1661.22, delay: 0.065, duration: 0.4, gain: 0.1 },
       { freq: 1975.53, delay: 0.13, duration: 0.6, gain: 0.12 },
     ];
     notes.forEach((note) => {
