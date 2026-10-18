@@ -1043,7 +1043,8 @@ class GameApp {
         <span class="loop-tag loop-2">PHASE 02: 自律電脳生命の創発（深層解決編 / LOOP 2）</span>
         <p class="loop-desc">残された電脳ログとスマートフォンの微弱パケットを解析せよ。重み分散推論や知性の自己言及を解き明かし、共生調律パッチを適用して電脳生命との共生へ導け！</p>
       `;
-      if (this.dom.btnStartGame) this.dom.btnStartGame.textContent = '⚡ 電脳ログを解析し、深層真実へ挑む';
+      if (this.dom.btnStartGame)
+        this.dom.btnStartGame.textContent = '⚡ 電脳ログを解析し、深層真実へ挑む';
     } else {
       this.dom.titleLoopInfo.className = 'title-loop-info';
       this.dom.titleLoopInfo.innerHTML = `
@@ -2397,30 +2398,6 @@ class GameApp {
   }
 
   // ----------------------------------------------------
-  // セッション再開 (CONTINUE)
-  // ----------------------------------------------------
-  continueGame() {
-    const session = this.state.loadSessionProgress();
-    if (!session) return;
-    this.audio.unlockAudio();
-    this.audio.playClick();
-    this.updateEvidenceCounter();
-    this.updateHearts();
-
-    if (session.currentArea) {
-      this.currentArea = session.currentArea;
-    }
-
-    if (session.activePhase === 'debate') {
-      this.startDebate();
-    } else {
-      this.showScreen('explore');
-      this.switchArea(this.currentArea);
-      this.updateAreaTabBadges();
-    }
-  }
-
-  // ----------------------------------------------------
   // エリアタブの未調査バッジ更新
   // ----------------------------------------------------
   updateAreaTabBadges() {
@@ -2445,6 +2422,13 @@ class GameApp {
       (n) => (n.area || 'room') === areaId && !this.state.isNpcTalked(n.id),
     );
     return spots.length + npcs.length;
+  }
+
+  setTabBadgeText(btnEl, baseLabel, count) {
+    if (!btnEl) return;
+    const badgeClass = count > 0 ? 'area-tab-badge has-remaining' : 'area-tab-badge is-complete';
+    const badgeText = count > 0 ? `未調査 ${count}` : '✔ 完了';
+    btnEl.innerHTML = `${baseLabel} <span class="${badgeClass}">${badgeText}</span>`;
   }
 
   // ----------------------------------------------------
@@ -2816,31 +2800,36 @@ class GameApp {
     });
   }
 
+  parseConfirmOptions(messageOrOptions, onConfirm) {
+    if (typeof messageOrOptions === 'string') {
+      return {
+        title: 'CYBER CONFIRMATION',
+        message: messageOrOptions,
+        confirmText: '実行する',
+        cancelText: '中止',
+        callback: onConfirm,
+      };
+    }
+    const opts = messageOrOptions || {};
+    return {
+      title: opts.title || 'CYBER CONFIRMATION',
+      message: opts.message || '',
+      confirmText: opts.confirmText || '実行する',
+      cancelText: opts.cancelText || '中止',
+      callback: opts.onConfirm || onConfirm,
+    };
+  }
+
   showConfirmModal(messageOrOptions, onConfirm) {
     if (!this.dom.modalConfirm) return;
-    let title = 'CYBER CONFIRMATION';
-    let message = '';
-    let confirmText = '実行する';
-    let cancelText = '中止';
-    let callback = null;
+    const opts = this.parseConfirmOptions(messageOrOptions, onConfirm);
 
-    if (typeof messageOrOptions === 'string') {
-      message = messageOrOptions;
-      callback = onConfirm;
-    } else if (messageOrOptions && typeof messageOrOptions === 'object') {
-      if (messageOrOptions.title) title = messageOrOptions.title;
-      if (messageOrOptions.message) message = messageOrOptions.message;
-      if (messageOrOptions.confirmText) confirmText = messageOrOptions.confirmText;
-      if (messageOrOptions.cancelText) cancelText = messageOrOptions.cancelText;
-      callback = messageOrOptions.onConfirm || onConfirm;
-    }
+    if (this.dom.confirmModalTitle) this.dom.confirmModalTitle.textContent = opts.title;
+    if (this.dom.confirmModalBody) this.dom.confirmModalBody.textContent = opts.message;
+    if (this.dom.btnConfirmOk) this.dom.btnConfirmOk.textContent = opts.confirmText;
+    if (this.dom.btnConfirmCancel) this.dom.btnConfirmCancel.textContent = opts.cancelText;
 
-    if (this.dom.confirmModalTitle) this.dom.confirmModalTitle.textContent = title;
-    if (this.dom.confirmModalBody) this.dom.confirmModalBody.textContent = message;
-    if (this.dom.btnConfirmOk) this.dom.btnConfirmOk.textContent = confirmText;
-    if (this.dom.btnConfirmCancel) this.dom.btnConfirmCancel.textContent = cancelText;
-
-    this.confirmCallback = callback;
+    this.confirmCallback = opts.callback;
     this.dom.modalConfirm.classList.remove('hidden');
     this.dom.modalConfirm.classList.add('active');
   }
@@ -2864,11 +2853,11 @@ class GameApp {
     }, duration);
   }
 
-  showEvidenceToast(evId, evData) {
+  showEvidenceToast(_evId, evData) {
     if (!this.dom.evidenceToast) return;
     const toast = this.dom.evidenceToast;
-    const icon = (evData && evData.icon) || '📦';
-    const name = (evData && evData.name) || '鑑識データ入手';
+    const icon = evData?.icon || '📦';
+    const name = evData?.name || '鑑識データ入手';
 
     toast.innerHTML = [
       '<span class="toast-icon">' + icon + '</span>',
@@ -2900,49 +2889,6 @@ class GameApp {
         this.dom.screenDebate?.classList.remove('is-damaged');
       }, 500);
     }
-  }
-
-  countRemainingInArea(areaId) {
-    let remaining = 0;
-    const isLoop2 = this.state.isClearedFirstLoop();
-    const spots = (this.scenario.spots || []).filter((s) => s.area === areaId);
-    for (const spot of spots) {
-      if (spot.isSecretLoop2 && !isLoop2) {
-        continue;
-      }
-      if (!this.state.isSpotInspected(spot.id)) {
-        remaining++;
-      }
-    }
-    const npcs = (this.scenario.npcs || []).filter((n) => n.area === areaId);
-    for (const npc of npcs) {
-      if (!this.state.isNpcTalked(npc.id)) {
-        remaining++;
-      }
-    }
-    return remaining;
-  }
-
-  setTabBadgeText(btn, remaining) {
-    if (!btn) return;
-    let badge = btn.querySelector('.area-tab-badge');
-    if (!badge) {
-      badge = document.createElement('span');
-      badge.className = 'area-tab-badge';
-      btn.appendChild(badge);
-    }
-    if (remaining > 0) {
-      badge.textContent = '未調査 ' + remaining;
-      badge.className = 'area-tab-badge has-remaining';
-    } else {
-      badge.textContent = '完了';
-      badge.className = 'area-tab-badge is-complete';
-    }
-  }
-
-  updateAreaTabBadges() {
-    this.setTabBadgeText(this.dom.btnAreaRoom, this.countRemainingInArea('room'));
-    this.setTabBadgeText(this.dom.btnAreaCorridor, this.countRemainingInArea('corridor'));
   }
 }
 
