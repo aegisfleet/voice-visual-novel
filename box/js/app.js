@@ -461,6 +461,40 @@ class GameApp {
     this.bindKeyboardEvents();
     this.bindPointerEvents();
     this.bindConfirmModalEvents();
+    this.bindLifecycleEvents();
+  }
+
+  // モバイルライフサイクル監視（LINE内ブラウザ終了・非表示時のAUTO進行停止）
+  bindLifecycleEvents() {
+    const handleHide = () => this.pauseAutoMode();
+
+    if (typeof document !== 'undefined') {
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'hidden') {
+          handleHide();
+        }
+      });
+    }
+
+    window.addEventListener('pagehide', handleHide);
+    window.addEventListener('beforeunload', handleHide);
+  }
+
+  pauseAutoMode() {
+    clearTimeout(this.autoTimer);
+    this.autoTimer = null;
+    this.stopSkipMode();
+
+    if (this.isAutoMode) {
+      this.isAutoMode = false;
+      if (this.dom.btnDialogueAuto) {
+        this.dom.btnDialogueAuto.classList.remove('active');
+      }
+    }
+
+    if (this.isTyping) {
+      this.finishTyping();
+    }
   }
 
   // タイトル画面の操作

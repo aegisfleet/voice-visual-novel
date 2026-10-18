@@ -229,6 +229,53 @@ async def run_tests():
             assert novel_hide_state["timer"] is None, "非表示時に朗読タイマーが破棄されていません"
             print(" -> PASS: バックグラウンド移行時の全タイマー・音声即時停止は正常に機能しています")
 
+            # 3. BOX WORM（box/index.html）の早期アンロック＆LINE内ブラウザ非表示化テスト
+            print("\n[BOX WORM] LINE内ブラウザ早期アンロック＆非表示時即時停止テストを検証中...")
+            page_box = await browser.new_page(viewport={"width": 390, "height": 844})
+            await page_box.goto(f"{BASE_URL}/box/")
+            await page_box.mouse.click(100, 100)
+            await page_box.wait_for_timeout(300)
+
+            box_unlock = await page_box.evaluate("""() => {
+                const a = window.audioMgr;
+                return { isAudioUnlocked: a.isAudioUnlocked, isSpeechUnlocked: a.isSpeechUnlocked };
+            }""")
+            assert box_unlock["isAudioUnlocked"] is True, "BOX WORMのAudioContextがアンロックされていません"
+
+            # BGM開始＆会話AUTO開始
+            await page_box.evaluate("""() => {
+                window.audioMgr.startBgm('explore');
+                window.app.playDialogueSequence([
+                    { speaker: 'ユウタ', text: 'テストセリフ1' }
+                ]);
+            }""")
+            await page_box.wait_for_timeout(400)
+
+            # 非表示イベント
+            await page_box.evaluate("""() => {
+                Object.defineProperty(document, 'visibilityState', { value: 'hidden', writable: true });
+                document.dispatchEvent(new Event('visibilitychange'));
+                window.dispatchEvent(new Event('pagehide'));
+            }""")
+            await page_box.wait_for_timeout(400)
+
+            box_hide_state = await page_box.evaluate("""() => {
+                const a = window.audioMgr;
+                const app = window.app;
+                return {
+                    bgmPaused: a.currentBgmTrack ? a.currentBgmTrack.audio.paused : true,
+                    wasBgmPlaying: a.wasBgmPlayingBeforeHide,
+                    isAuto: app.isAutoMode,
+                    autoTimer: app.autoTimer
+                };
+            }""")
+            print(f" -> BOX WORM 非表示時ステータス: {box_hide_state}")
+            assert box_hide_state["bgmPaused"] is True, "BOX WORM非表示時にBGMが停止していません"
+            assert box_hide_state["wasBgmPlaying"] is True, "BOX WORM非表示時にwasBgmPlayingBeforeHideが記録されていません"
+            assert box_hide_state["isAuto"] is False, "BOX WORM非表示時にAUTOモードが停止していません"
+            assert box_hide_state["autoTimer"] is None, "BOX WORM非表示時にautoTimerが破棄されていません"
+            print(" -> PASS: BOX WORMのLINE内ブラウザ終了・非表示時停止は正常に機能しています")
+
             await browser.close()
 
     finally:

@@ -23,8 +23,83 @@ class AudioManager {
     this.currentVoiceAudio = null; // 再生中のMP3 Audio要素
     this.currentVoiceAbortController = null; // ロード中の中断用 AbortController
     this.pendingBgmMode = null; // 自動再生制限時の保留中BGMモード
+    this.isAudioUnlocked = false; // オーディオアンロック済みフラグ
+    this.isSpeechUnlocked = false; // WebSpeechアンロック済みフラグ
+    this.wasBgmPlayingBeforeHide = false; // 画面非表示前のBGM再生状態退避
 
     this.initSpeech();
+    this.setupLifecycleListeners();
+    this.setupEarlyUnlock();
+  }
+
+  // モバイルライフサイクルイベントの監視 (LINE内ブラウザ等でのバックグラウンド音声漏れ完全防止)
+  setupLifecycleListeners() {
+    if (typeof window === 'undefined') return;
+
+    const handleHide = () => this.pauseAll();
+    const handleShow = () => this.resumeAll();
+
+    if (typeof document !== 'undefined') {
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'hidden') {
+          handleHide();
+        } else if (document.visibilityState === 'visible') {
+          handleShow();
+        }
+      });
+    }
+
+    window.addEventListener('pagehide', handleHide);
+    window.addEventListener('beforeunload', handleHide);
+  }
+
+  // 画面初回タッチ/クリック時の早期アンロック (LINE内ブラウザAutoplay制限の完全突破)
+  setupEarlyUnlock() {
+    if (typeof window === 'undefined') return;
+
+    const earlyUnlock = () => {
+      this.unlockAudio();
+      window.removeEventListener('click', earlyUnlock, true);
+      window.removeEventListener('touchstart', earlyUnlock, true);
+      window.removeEventListener('keydown', earlyUnlock, true);
+    };
+
+    window.addEventListener('click', earlyUnlock, true);
+    window.addEventListener('touchstart', earlyUnlock, true);
+    window.addEventListener('keydown', earlyUnlock, true);
+  }
+
+  // 画面非表示・ブラウザ終了（LINE内ブラウザ「×」含む）時の全音声即時停止
+  pauseAll() {
+    this.stopVoice();
+
+    if (this.currentBgmTrack?.audio && !this.currentBgmTrack.audio.paused) {
+      this.wasBgmPlayingBeforeHide = true;
+      try {
+        this.currentBgmTrack.audio.pause();
+      } catch (_e) {}
+    }
+
+    if (this.ctx && this.ctx.state === 'running') {
+      try {
+        this.ctx.suspend();
+      } catch (_e) {}
+    }
+  }
+
+  // 画面復帰時の音声再開
+  resumeAll() {
+    this.ensureContext();
+
+    if (this.wasBgmPlayingBeforeHide && this.currentBgmTrack?.audio && this.bgmEnabled) {
+      const playPromise = this.currentBgmTrack.audio.play();
+      if (playPromise !== undefined) {
+        playPromise.catch((err) => {
+          console.warn('[AudioManager] BGM resume failed:', err);
+        });
+      }
+    }
+    this.wasBgmPlayingBeforeHide = false;
   }
 
   // ボイス再生状態の通知
@@ -507,9 +582,33 @@ class AudioManager {
   // (Web Audio API スムーズクロスフェード & シームレスループ)
   // ----------------------------------------------------
 
-  // ユーザー操作によるオーディオアンロック & 保留中BGM再開
+  // ユーザー操作によるオーディオアンロック & 保留中BGM再開 (LINE内ブラウザ完全対応)
   unlockAudio() {
     this.ensureContext();
+
+    // iOS Safari / LINE内ブラウザ用: Web Audio完全アンロック (無音バッファ再生)
+    if (this.ctx && !this.isAudioUnlocked) {
+      try {
+        const buffer = this.ctx.createBuffer(1, 1, 22050);
+        const source = this.ctx.createBufferSource();
+        source.buffer = buffer;
+        source.connect(this.ctx.destination);
+        source.start(0);
+      } catch (_e) {}
+    }
+
+    // Web Speech APIの無音ダミー発話で音声エンジンを早期アンロック
+    if ('speechSynthesis' in window && !this.isSpeechUnlocked) {
+      try {
+        const dummy = new SpeechSynthesisUtterance('');
+        dummy.volume = 0;
+        window.speechSynthesis.speak(dummy);
+      } catch (_e) {}
+      this.isSpeechUnlocked = true;
+    }
+
+    this.isAudioUnlocked = true;
+
     if (this.pendingBgmMode && this.bgmEnabled) {
       const mode = this.pendingBgmMode;
       this.pendingBgmMode = null;
