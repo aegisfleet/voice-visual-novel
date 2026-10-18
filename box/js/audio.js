@@ -27,6 +27,17 @@ class AudioManager {
     this.initSpeech();
   }
 
+  // ボイス再生状態の通知
+  dispatchVoiceState(isPlaying, speaker = '') {
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(
+        new CustomEvent('box-voice-state', {
+          detail: { isPlaying: Boolean(isPlaying), speaker },
+        }),
+      );
+    }
+  }
+
   // AudioContext の初期化 (ユーザー操作時に呼出)
   ensureContext() {
     if (!this.ctx) {
@@ -94,6 +105,11 @@ class AudioManager {
     this.speakSpeechSynthesis(speaker, text, options);
   }
 
+  // 単独ボイス再生ヘルパー
+  playVoice(url, options = {}) {
+    return this.playVoiceFile(url, options);
+  }
+
   // MP3音声ファイルのロード＆再生（スキップ完全防御・Abort対応）
   async playVoiceFile(url, options = {}) {
     // 二重チェック: スキップ中・音声無効ならHTTPリクエストを一切発行せずに即座に終了
@@ -117,10 +133,12 @@ class AudioManager {
         if (this.currentVoiceAudio === audio) {
           this.currentVoiceAudio = null;
         }
+        this.dispatchVoiceState(false);
         if (options.onEnd) options.onEnd();
       };
 
       audio.onerror = (e) => {
+        this.dispatchVoiceState(false);
         if (this.isSkipActive || controller.signal.aborted) return;
         console.warn(`[Audio] Failed to load voice file: ${url}`, e);
         if (options.onEnd) options.onEnd();
@@ -135,6 +153,7 @@ class AudioManager {
         audio.removeAttribute('src');
         audio.load();
         this.currentVoiceAudio = null;
+        this.dispatchVoiceState(false);
         if (options.onEnd) options.onEnd();
         return;
       }
@@ -142,14 +161,20 @@ class AudioManager {
       audio.src = url;
       const playPromise = audio.play();
       if (playPromise !== undefined) {
-        playPromise.catch((err) => {
-          if (err.name !== 'AbortError') {
-            console.warn('[Audio] playVoiceFile aborted/interrupted:', err.message);
-          }
-          if (options.onEnd) options.onEnd();
-        });
+        playPromise
+          .then(() => {
+            this.dispatchVoiceState(true, options.speaker || '');
+          })
+          .catch((err) => {
+            this.dispatchVoiceState(false);
+            if (err.name !== 'AbortError') {
+              console.warn('[Audio] playVoiceFile aborted/interrupted:', err.message);
+            }
+            if (options.onEnd) options.onEnd();
+          });
       }
     } catch (err) {
+      this.dispatchVoiceState(false);
       if (!controller.signal.aborted) {
         console.warn('[Audio] Voice loading error:', err);
       }
@@ -188,6 +213,7 @@ class AudioManager {
       } catch (_e) {}
       this.currentVoiceAudio = null;
     }
+    this.dispatchVoiceState(false);
   }
 
   // 従来のWeb Speech API読み上げ
@@ -215,10 +241,15 @@ class AudioManager {
       utterance.voice = this.selectedVoice;
     }
 
+    utterance.onstart = () => {
+      this.dispatchVoiceState(true, speaker);
+    };
     utterance.onend = () => {
+      this.dispatchVoiceState(false);
       if (options.onEnd) options.onEnd();
     };
     utterance.onerror = () => {
+      this.dispatchVoiceState(false);
       if (options.onEnd) options.onEnd();
     };
 
@@ -437,7 +468,7 @@ class AudioManager {
     noise.start(now);
   }
 
-  // ショック音（間違い・動揺）
+  // ショック・ダメージ音（間違い・動揺・ライフ減少）
   playShock() {
     if (!this.seEnabled) return;
     this.ensureContext();
@@ -463,6 +494,11 @@ class AudioManager {
 
   // 不正解・警告音（playShockのエイリアス）
   playWrong() {
+    this.playShock();
+  }
+
+  // ダメージ演出音（playShockのエイリアス）
+  playDamage() {
     this.playShock();
   }
 

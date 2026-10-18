@@ -3,8 +3,66 @@
 class GameState {
   constructor() {
     this.storageKey = 'box_worm_save_v1';
+    this.sessionKey = 'box_worm_session_v1';
     this.resetTransientState();
     this.loadPersistentState();
+  }
+
+  // セッション進行（オートセーブ）の保存
+  saveSessionProgress(activePhase = 'explore') {
+    try {
+      const sessionData = {
+        currentLoop: this.currentLoop,
+        activePhase,
+        currentArea: window.gameApp ? window.gameApp.currentArea : 'room',
+        currentDebateStep: this.currentDebateStep,
+        life: this.life,
+        collectedEvidence: Array.from(this.collectedEvidence),
+        inspectedSpots: Array.from(this.inspectedSpots),
+        talkedNpcs: Array.from(this.talkedNpcs),
+        savedAt: Date.now(),
+      };
+      localStorage.setItem(this.sessionKey, JSON.stringify(sessionData));
+    } catch (e) {
+      console.warn('Failed to save session progress:', e);
+    }
+  }
+
+  // 再開可能なセッションが存在するか判定
+  hasSavedSession() {
+    try {
+      return Boolean(localStorage.getItem(this.sessionKey));
+    } catch (_e) {
+      return false;
+    }
+  }
+
+  // セッション進行の復元
+  loadSessionProgress() {
+    try {
+      const raw = localStorage.getItem(this.sessionKey);
+      if (!raw) return null;
+      const data = JSON.parse(raw);
+      this.currentLoop = data.currentLoop || data.loopCount || (this.isClearedFirstLoop() ? 2 : 1);
+      this.currentDebateStep = data.currentDebateStep || 0;
+      this.life = typeof data.life === 'number' ? data.life : data.playerLife || 3;
+      this.collectedEvidence = new Set(data.collectedEvidence || []);
+      this.inspectedSpots = new Set(data.inspectedSpots || []);
+      this.talkedNpcs = new Set(data.talkedNpcs || []);
+      return data;
+    } catch (e) {
+      console.warn('Failed to load session progress:', e);
+      return null;
+    }
+  }
+
+  // セッション進行のクリア
+  clearSessionProgress() {
+    try {
+      localStorage.removeItem(this.sessionKey);
+    } catch (e) {
+      console.warn('Failed to clear session progress:', e);
+    }
   }
 
   // 1回のプレイごとの一時状態
@@ -85,6 +143,7 @@ class GameState {
     } catch (e) {
       console.warn('Failed to clear storage:', e);
     }
+    this.clearSessionProgress();
     this.hasClearedLoop1 = false;
     this.hasClearedTrueEnd = false;
     this.resetTransientState();

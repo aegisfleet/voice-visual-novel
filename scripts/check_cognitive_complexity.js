@@ -124,7 +124,7 @@ const targetNames = [
   'handleTalkNpc', 'onNpcChoiceSelected', 'onNpcDialogueComplete',
   'updateEvidenceCounter', 'setDebateButtonVisible', 'getExploreProgressInfo',
   'showNextDialogue', 'handleDialogueQueueEmpty', 'hideDialogueIllustration', 'updateDialogueIllustration', 'renderDialogueItem',
-  'renderDebateEvidenceList', 'getSubmittedCorrectEvidenceIds', 'handleEvidenceCardSelect', 'createDebateEvidenceCard',
+  'renderDebateEvidenceList', 'getSubmittedCorrectEvidenceIds', 'handleEvidenceCardSelect', 'renderDebateEvidencePreview', 'createDebateEvidenceCard',
   'renderEvidenceModalItems', 'createEvidenceModalItem'
 ];
 

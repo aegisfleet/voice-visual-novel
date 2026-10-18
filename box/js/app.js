@@ -33,6 +33,12 @@ class GameApp {
 
     // 現在エリア (room | corridor)
     this.currentArea = 'room';
+    this.isDialogueHidden = false;
+    this.activeNpcInScene = false;
+    this.currentDebateVoiceUrl = null;
+    this.toastTimer = null;
+    this.evidenceToastTimer = null;
+    this.confirmCallback = null;
 
     // 機密設定資料集データ（全5名：設定シート、プロフィール、設計意図、表情差分アセット）
     this.galleryData = {
@@ -292,6 +298,7 @@ class GameApp {
       // タイトル
       titleLoopInfo: document.getElementById('title-loop-info'),
       titleClearBadge: document.getElementById('title-clear-badge'),
+      btnContinueGame: document.getElementById('btn-continue-game'),
       btnStartGame: document.getElementById('btn-start-game'),
       btnOpenGallery: document.getElementById('btn-open-gallery'),
       btnResetSave: document.getElementById('btn-reset-save'),
@@ -314,6 +321,7 @@ class GameApp {
       opponentStatus: document.getElementById('opponent-status'),
       debateTurnLabel: document.getElementById('debate-turn-label'),
       debateOpponentSpeech: document.getElementById('debate-opponent-speech'),
+      btnReplayDebateVoice: document.getElementById('btn-replay-debate-voice'),
       debateHintText: document.getElementById('debate-hint-text'),
       selectedEvidencePreview: document.getElementById('selected-evidence-preview'),
       debateEvidenceList: document.getElementById('debate-evidence-list'),
@@ -328,9 +336,11 @@ class GameApp {
       novelWindow: document.getElementById('novel-window'),
       dialogueSpeakerIcon: document.getElementById('dialogue-speaker-icon'),
       dialogueSpeaker: document.getElementById('dialogue-speaker'),
+      voiceWaveIndicator: document.getElementById('voice-wave-indicator'),
       dialogueText: document.getElementById('dialogue-text'),
       dialogueChoices: document.getElementById('dialogue-choices'),
       dialoguePrompt: document.getElementById('dialogue-prompt'),
+      btnDialogueHide: document.getElementById('btn-dialogue-hide'),
       btnDialogueAuto: document.getElementById('btn-dialogue-auto'),
       btnDialogueSkip: document.getElementById('btn-dialogue-skip'),
       btnDialogueLog: document.getElementById('btn-dialogue-log'),
@@ -381,15 +391,35 @@ class GameApp {
       imageViewerImg: document.getElementById('image-viewer-img'),
       imageViewerTitle: document.getElementById('image-viewer-title'),
 
+      // 確認ダイアログモーダル
+      modalConfirm: document.getElementById('modal-confirm'),
+      backdropConfirm: document.getElementById('backdrop-confirm'),
+      confirmModalTitle: document.getElementById('confirm-modal-title'),
+      confirmModalBody: document.getElementById('confirm-modal-body'),
+      btnConfirmCancel: document.getElementById('btn-confirm-cancel'),
+      btnConfirmOk: document.getElementById('btn-confirm-ok'),
+
       // バックログ
       modalBacklog: document.getElementById('modal-backlog'),
       modalBacklogList: document.getElementById('modal-backlog-list'),
       btnCloseBacklog: document.getElementById('btn-close-backlog'),
       backdropBacklog: document.getElementById('backdrop-backlog'),
 
+      // トースト通知
+      evidenceToast: document.getElementById('evidence-toast'),
+      gameToast: document.getElementById('game-toast'),
+
       // ガイドバー
       keyboardGuide: document.getElementById('keyboard-guide'),
     };
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('box-voice-state', (e) => {
+        if (e.detail && this.dom.voiceWaveIndicator) {
+          this.dom.voiceWaveIndicator.classList.toggle('hidden', !e.detail.isPlaying);
+        }
+      });
+    }
 
     this.bindEvents();
     this.updateTitleView();
@@ -429,6 +459,7 @@ class GameApp {
     this.bindEndingEvents();
     this.bindKeyboardEvents();
     this.bindPointerEvents();
+    this.bindConfirmModalEvents();
   }
 
   // タイトル画面の操作
@@ -443,6 +474,10 @@ class GameApp {
     document.addEventListener('click', unlockAudioAndPlayTitle, { once: true });
     document.addEventListener('keydown', unlockAudioAndPlayTitle, { once: true });
 
+    this.bindClickIfPresent(this.dom.btnContinueGame, () => {
+      this.continueGame();
+    });
+
     this.dom.btnStartGame.addEventListener('click', () => {
       this.audio.unlockAudio();
       this.audio.playClick();
@@ -451,11 +486,24 @@ class GameApp {
     });
 
     this.dom.btnResetSave.addEventListener('click', () => {
-      if (confirm('捜査ログとセーブデータを初期化し、初期捜査（Phase 1）からやり直しますか？')) {
-        this.state.resetAllData();
-        this.updateTitleView();
-        alert('セーブデータを初期化しました。');
-      }
+      this.showConfirmModal(
+        '捜査ログとセーブデータを初期化し、初期捜査（Phase 1）からやり直しますか？',
+        () => {
+          this.state.resetAllData();
+          this.updateTitleView();
+          this.showToast('セーブデータを初期化しました。');
+        },
+      );
+    });
+  }
+
+  bindConfirmModalEvents() {
+    this.bindClickIfPresent(this.dom.btnConfirmCancel, () => this.closeConfirmModal());
+    this.bindClickIfPresent(this.dom.backdropConfirm, () => this.closeConfirmModal());
+    this.bindClickIfPresent(this.dom.btnConfirmOk, () => {
+      const cb = this.confirmCallback;
+      this.closeConfirmModal();
+      if (typeof cb === 'function') cb();
     });
   }
 
@@ -601,6 +649,11 @@ class GameApp {
     this.bindClickIfPresent(this.dom.btnEndingExplore, () => {
       this.backToExploration();
     });
+    this.bindClickIfPresent(this.dom.btnReplayDebateVoice, () => {
+      if (this.currentDebateVoiceUrl) {
+        this.audio.playVoice(this.currentDebateVoiceUrl);
+      }
+    });
     this.dom.btnPresentEvidence.addEventListener('click', () => {
       this.handlePresentEvidence();
     });
@@ -609,6 +662,10 @@ class GameApp {
   // 会話ノベルウィンドウの操作
   bindDialogueEvents() {
     this.dom.dialogueStage.addEventListener('click', (e) => {
+      if (this.isDialogueHidden) {
+        this.toggleHideDialogueUi(false);
+        return;
+      }
       if (
         e.target.closest('.dialogue-ctrl-btn') ||
         e.target.closest('.choice-btn') ||
@@ -621,6 +678,11 @@ class GameApp {
         return;
       }
       this.handleDialogueProceed();
+    });
+
+    this.bindClickIfPresent(this.dom.btnDialogueHide, (e) => {
+      e.stopPropagation();
+      this.toggleHideDialogueUi();
     });
 
     this.dom.btnDialogueAuto.addEventListener('click', (e) => {
@@ -706,19 +768,37 @@ class GameApp {
     window.addEventListener('keydown', (e) => this.handleKeydown(e));
   }
 
-  handleKeydown(e) {
-    if (['INPUT', 'TEXTAREA'].includes(document.activeElement?.tagName)) return;
-    if (this.handleEscapeKey(e)) return;
-    if (this.handleBackKey(e)) return;
-    if (this.handleAdvanceKey(e)) return;
-    if (this.handleAreaSwitchKey(e)) return;
-    if (this.handleNumberKey(e)) return;
-    this.handleModalShortcutKey(e);
+  isInputFocused() {
+    const el = document.activeElement;
+    if (!el) return false;
+    return el.tagName === 'INPUT' || el.tagName === 'TEXTAREA';
   }
 
-  // Escキー: モーダルを閉じる、または立証から現場へ戻る
-  handleEscapeKey(e) {
-    if (e.key !== 'Escape') return false;
+  handleKeydown(e) {
+    if (this.isInputFocused()) return;
+    const actions = [
+      () => this.handleEscapeKey(e),
+      () => this.handleHideKey(e),
+      () => this.handleBackKey(e),
+      () => this.handleAdvanceKey(e),
+      () => this.handleAreaSwitchKey(e),
+      () => this.handleNumberKey(e),
+      () => this.handleModalShortcutKey(e),
+    ];
+    for (const action of actions) {
+      if (action()) return;
+    }
+  }
+
+  closeAnyOpenModal() {
+    if (this.isDialogueHidden) {
+      this.toggleHideDialogueUi(false);
+      return true;
+    }
+    if (this.dom.modalConfirm && !this.dom.modalConfirm.classList.contains('hidden')) {
+      this.closeConfirmModal();
+      return true;
+    }
     if (this.dom.modalImageViewer && !this.dom.modalImageViewer.classList.contains('hidden')) {
       this.closeImageViewer();
       return true;
@@ -731,11 +811,26 @@ class GameApp {
       this.dom.modalBacklog.classList.add('hidden');
       return true;
     }
+    return false;
+  }
+
+  // Escキー: モーダルを閉じる、または立証から現場へ戻る
+  handleEscapeKey(e) {
+    if (e.key !== 'Escape') return false;
+    if (this.closeAnyOpenModal()) return true;
     if (this.dom.screenDebate.classList.contains('active') && !this.isDialogueActive) {
       this.backToExploration();
       return true;
     }
     return false;
+  }
+
+  // Hキー: 会話ウィンドウ一時非表示
+  handleHideKey(e) {
+    if (e.key !== 'h' && e.key !== 'H') return false;
+    if (!this.isDialogueActive) return false;
+    this.toggleHideDialogueUi();
+    return true;
   }
 
   // Bキー: 立証パートから現場の再調査へ戻る
@@ -950,6 +1045,10 @@ class GameApp {
         this.dom.btnOpenGallery.title = '第1幕またはTRUE ENDクリア後にアンロックされます';
       }
     }
+
+    if (this.dom.btnContinueGame) {
+      this.dom.btnContinueGame.classList.toggle('hidden', !this.state.hasSavedSession());
+    }
   }
 
   // 音声・SE・BGMトグルボタン1つ分の表示更新
@@ -1105,6 +1204,8 @@ class GameApp {
       this.dom.btnAreaCorridor.classList.add('active');
       if (this.dom.hudLocationBadge) this.dom.hudLocationBadge.textContent = '外廊下';
     }
+    this.updateAreaTabBadges();
+    this.state.saveSessionProgress('explore');
   }
 
   renderExploreMap() {
@@ -1194,6 +1295,7 @@ class GameApp {
 
     renderItems(this.dom.areaRoom, 'room');
     renderItems(this.dom.areaCorridor, 'corridor');
+    this.updateAreaTabBadges();
   }
 
   // スポット調査処理
@@ -1212,10 +1314,13 @@ class GameApp {
           const isNew = this.state.addEvidence(spot.evidenceId);
           if (isNew) {
             this.audio.playFound();
+            this.showEvidenceToast(spot.evidenceId);
           }
           this.updateEvidenceCounter();
         }
         this.renderExploreMap();
+        this.updateAreaTabBadges();
+        this.state.saveSessionProgress('explore');
       },
       false,
     );
@@ -1257,10 +1362,13 @@ class GameApp {
       const isNew = this.state.addEvidence(chosenChoice.giveEvidence);
       if (isNew) {
         this.audio.playFound();
+        this.showEvidenceToast(chosenChoice.giveEvidence);
       }
       this.updateEvidenceCounter();
     }
     this.renderExploreMap();
+    this.updateAreaTabBadges();
+    this.state.saveSessionProgress('explore');
   }
 
   // 証拠カウンタ・立証ボタン有効化判定
@@ -1348,12 +1456,17 @@ class GameApp {
       document.activeElement.blur();
     }
     this.stopSkipMode();
+    this.toggleHideDialogueUi(false);
     if (this.dom.novelWindow) {
       this.dom.novelWindow.classList.remove('has-choices');
     }
     // 前回の図解イラストの残像を確実に消去
     this.hideDialogueIllustration();
     this.dialogueQueue = [...dialogueList];
+    this.activeNpcInScene = (dialogueList || []).some((item) => {
+      const s = item.speaker || '';
+      return s && !s.includes('ユウタ') && !s.includes('ナレーション');
+    });
     this.currentDialogueCallback = onComplete;
     this.keepStageOpen = keepStageOpen;
     this.isDialogueActive = true;
@@ -1367,8 +1480,11 @@ class GameApp {
 
   handleDialogueQueueEmpty() {
     this.stopSkipMode();
+    this.activeNpcInScene = false;
+    this.toggleHideDialogueUi(false);
     if (this.dom.novelWindow) {
       this.dom.novelWindow.classList.remove('has-choices');
+      this.dom.novelWindow.classList.remove('is-monologue');
     }
     this.hideDialogueIllustration();
 
@@ -1440,14 +1556,26 @@ class GameApp {
   }
 
   renderDialogueItem(currentItem) {
-    this.character.showForDialogue(currentItem);
+    this.character.showForDialogue(currentItem, this.activeNpcInScene);
     this.updateDialogueIllustration(currentItem.illustration, currentItem.caption);
 
     this.currentSpeaker = currentItem.speaker || 'ナレーション';
     this.currentFullText = currentItem.text || '';
 
-    // バックログ記録
-    this.backlog.push({ speaker: this.currentSpeaker, text: this.currentFullText });
+    const isMonologue =
+      Boolean(this.currentSpeaker.includes('心の声')) ||
+      this.currentSpeaker === '' ||
+      !currentItem.speaker;
+    if (this.dom.novelWindow) {
+      this.dom.novelWindow.classList.toggle('is-monologue', isMonologue);
+    }
+
+    // バックログ記録 (ボイスURLも保持)
+    this.backlog.push({
+      speaker: this.currentSpeaker,
+      text: this.currentFullText,
+      voiceUrl: currentItem.voiceUrl || null,
+    });
 
     this.dom.dialogueSpeaker.textContent = this.currentSpeaker;
     this.dom.dialogueChoices.classList.add('hidden');
@@ -1583,6 +1711,10 @@ class GameApp {
   }
 
   handleDialogueProceed() {
+    if (this.isDialogueHidden) {
+      this.toggleHideDialogueUi(false);
+      return;
+    }
     if (this.isChoiceActive) return;
 
     if (this.isTyping) {
@@ -1689,14 +1821,36 @@ class GameApp {
     this.backlog.forEach((item) => {
       const div = document.createElement('div');
       div.className = 'backlog-item';
+
+      const voiceBtnHtml = item.voiceUrl
+        ? '<button type="button" class="backlog-voice-btn" aria-label="ボイスを再生">🔊 再生</button>'
+        : '';
+
       div.innerHTML = `
-        <div class="backlog-speaker">${item.speaker}</div>
+        <div class="backlog-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+          <span class="backlog-speaker" style="font-weight:700; color:var(--neon-cyan);">${item.speaker}</span>
+          ${voiceBtnHtml}
+        </div>
         <div class="backlog-text">${item.text}</div>
       `;
+
+      if (item.voiceUrl) {
+        const btn = div.querySelector('.backlog-voice-btn');
+        btn?.addEventListener('click', () => {
+          this.audio.playVoice(item.voiceUrl, { speaker: item.speaker, text: item.text });
+        });
+      }
+
       this.dom.modalBacklogList.appendChild(div);
     });
     this.dom.modalBacklog.classList.remove('hidden');
     this.dom.modalBacklogList.scrollTop = this.dom.modalBacklogList.scrollHeight;
+  }
+
+  closeBacklog() {
+    if (this.dom.modalBacklog) {
+      this.dom.modalBacklog.classList.add('hidden');
+    }
   }
 
   // ----------------------------------------------------
@@ -1706,10 +1860,10 @@ class GameApp {
     // 証拠不足ガード（二重安全ブロック）
     if (!this.canStartDebate()) {
       if (this.audio.playShock) this.audio.playShock();
-      alert(
+      this.showToast(
         this.state.isClearedFirstLoop()
-          ? '【深層鑑識データ不足】シバタ捜査官に真実を提示するには、深層データ（『自律増殖体コード』『分散推論ログ』『給電遮断トリガー』『共生調律パッチ』）の全4件を解析して揃える必要があります！'
-          : '【証拠不足】シバタ捜査官に客観的反証を提示するには、最低3件の鑑識データが必要です！現場を再調査して証拠を集めてください。',
+          ? '【深層鑑識データ不足】深層データ全4件を解析して揃えてください！'
+          : '【証拠不足】反証には最低3件の鑑識データが必要です！現場を再調査してください。',
       );
       return;
     }
@@ -1799,6 +1953,7 @@ class GameApp {
       return;
     }
 
+    this.currentDebateVoiceUrl = currentStep.opponentVoiceUrl || null;
     this.setDebateShibataEmotion('angry');
     this.selectedEvidenceId = null;
     this.dom.btnPresentEvidence.disabled = true;
@@ -1808,10 +1963,16 @@ class GameApp {
     this.dom.debateOpponentSpeech.textContent = currentStep.opponentQuestion;
     this.dom.debateHintText.textContent = `💡 鑑識ポイント: ${currentStep.hint}`;
 
+    if (this.dom.btnReplayDebateVoice) {
+      this.dom.btnReplayDebateVoice.classList.toggle('hidden', !this.currentDebateVoiceUrl);
+    }
+
     // 相手の発言を読み上げ（MP3優先 / Web Speechフォールバック）
     this.audio.speak('シバタ捜査官', currentStep.opponentQuestion, {
       audioUrl: currentStep.opponentVoiceUrl || null,
     });
+
+    this.state.saveSessionProgress('debate');
 
     // 所持証拠一覧をレンダリング
     this.renderDebateEvidenceList();
@@ -1828,6 +1989,51 @@ class GameApp {
     return submittedCorrectIds;
   }
 
+  buildDebateEvidencePreviewHtml(ev, cyberTag, tagColor, zoomBtnHtml) {
+    return [
+      '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">',
+      '  <span><strong>選択中:</strong> ' + ev.icon + ' ' + ev.name + '</span>',
+      '  <span style="font-family:var(--font-mono); font-size:0.75rem; font-weight:700; color:' +
+        tagColor +
+        ';">' +
+        cyberTag +
+        '</span>',
+      '</div>',
+      '<div style="font-size:0.82rem; color:#cbd5e1; margin-bottom:4px;">' + ev.summary + '</div>',
+      '<div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">',
+      '  <span style="color:var(--neon-cyan); font-size:0.75rem;">[再タップまたは Enter で即座に反証を突きつける]</span>',
+      '  ' + zoomBtnHtml,
+      '</div>',
+    ].join('\n');
+  }
+
+  renderDebateEvidencePreview(ev, isDeep) {
+    const cyberTag = isDeep ? '⚡ CYBER FORENSIC DATA' : 'STANDARD EVIDENCE';
+    const tagColor = isDeep ? 'var(--neon-purple)' : 'var(--neon-cyan)';
+    let zoomBtnHtml = '';
+    if (ev.image) {
+      zoomBtnHtml =
+        '<button type="button" class="preview-zoom-btn" id="btn-preview-zoom-img">🔍 画像を拡大確認</button>';
+    }
+
+    this.dom.selectedEvidencePreview.innerHTML = this.buildDebateEvidencePreviewHtml(
+      ev,
+      cyberTag,
+      tagColor,
+      zoomBtnHtml,
+    );
+
+    if (ev.image) {
+      const zoomBtn = this.dom.selectedEvidencePreview.querySelector('#btn-preview-zoom-img');
+      if (zoomBtn) {
+        zoomBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          this.openImageViewer(ev.image, ev.name);
+        });
+      }
+    }
+  }
+
   handleEvidenceCardSelect(evId, ev, isDeep) {
     if (this.selectedEvidenceId === evId) {
       // 選択中カードを再タップ → 即座に提示！（スマホ片手親指UX）
@@ -1836,14 +2042,7 @@ class GameApp {
     }
     this.selectedEvidenceId = evId;
     this.dom.btnPresentEvidence.disabled = false;
-    this.dom.selectedEvidencePreview.innerHTML = `
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-        <span><strong>選択中:</strong> ${ev.icon} ${ev.name}</span>
-        <span style="font-family:var(--font-mono); font-size:0.75rem; font-weight:700; color:${isDeep ? 'var(--neon-purple)' : 'var(--neon-cyan)'};">${isDeep ? '⚡ CYBER FORENSIC DATA' : 'STANDARD EVIDENCE'}</span>
-      </div>
-      <div style="font-size:0.82rem; color:#cbd5e1; margin-bottom:4px;">${ev.summary}</div>
-      <div style="color:var(--neon-cyan); font-size:0.75rem;">[再タップまたは Enter で即座に反証を突きつける]</div>
-    `;
+    this.renderDebateEvidencePreview(ev, isDeep);
     this.renderDebateEvidenceList();
   }
 
@@ -1965,9 +2164,10 @@ class GameApp {
         );
       });
     } else {
-      // 失敗演出！ショック音＆ハート減少＆相手怒り
+      // 失敗演出！ショック音＆ハート減少＆相手怒り＆ダメージシェイク
       this.setDebateShibataEmotion('angry');
       this.audio.playShock();
+      this.triggerDebateDamageEffect();
       const remainLife = this.state.decreaseLife();
       this.updateHearts();
 
@@ -2109,6 +2309,11 @@ class GameApp {
     if (this.character) this.character.hide();
     this.isDialogueActive = false;
     this.currentEndingType = endingData.type;
+
+    if (endingData.type !== 'bad') {
+      this.state.clearSessionProgress();
+    }
+
     this.showScreen('ending');
 
     this.dom.endingTitle.textContent = endingData.title;
@@ -2128,6 +2333,149 @@ class GameApp {
     document.body.classList.remove('dialogue-active');
     this.updateTitleView();
     this.showScreen('title');
+  }
+
+  // ----------------------------------------------------
+  // セッション再開 (CONTINUE)
+  // ----------------------------------------------------
+  continueGame() {
+    const session = this.state.loadSessionProgress();
+    if (!session) return;
+    this.audio.unlockAudio();
+    this.audio.playClick();
+    this.updateEvidenceCounter();
+    this.updateHearts();
+
+    if (session.currentArea) {
+      this.currentArea = session.currentArea;
+    }
+
+    if (session.activePhase === 'debate') {
+      this.startDebate();
+    } else {
+      this.showScreen('explore');
+      this.switchArea(this.currentArea);
+      this.updateAreaTabBadges();
+    }
+  }
+
+  // ----------------------------------------------------
+  // エリアタブの未調査バッジ更新
+  // ----------------------------------------------------
+  updateAreaTabBadges() {
+    const scenarioData = this.getCurrentScenario();
+    const roomRemaining = this.countRemainingInArea(scenarioData, 'room');
+    const corridorRemaining = this.countRemainingInArea(scenarioData, 'corridor');
+    this.setTabBadgeText(this.dom.btnAreaRoom, '🏠 201号室 (自室)', roomRemaining);
+    this.setTabBadgeText(this.dom.btnAreaCorridor, '🚪 外廊下・共用部', corridorRemaining);
+  }
+
+  getCurrentScenario() {
+    const loopKey = `loop${this.state.currentLoop}`;
+    return this.scenario[loopKey] || this.scenario.loop1;
+  }
+
+  countRemainingInArea(scenarioData, areaId) {
+    if (!scenarioData) return 0;
+    const spots = (this.scenario.spots || []).filter(
+      (s) => (s.area || 'room') === areaId && !this.state.isSpotInspected(s.id),
+    );
+    const npcs = (this.scenario.npcs || []).filter(
+      (n) => (n.area || 'room') === areaId && !this.state.isNpcTalked(n.id),
+    );
+    return spots.length + npcs.length;
+  }
+
+  setTabBadgeText(btnEl, baseLabel, count) {
+    if (!btnEl) return;
+    const badgeClass = count > 0 ? 'area-tab-badge has-remaining' : 'area-tab-badge is-complete';
+    const badgeText = count > 0 ? `未調査 ${count}` : '✔ 完了';
+    btnEl.innerHTML = `${baseLabel} <span class="${badgeClass}">${badgeText}</span>`;
+  }
+
+  // ----------------------------------------------------
+  // サイバートースト通知＆インゲーム確認ダイアログ
+  // ----------------------------------------------------
+  showToast(message, duration = 2800) {
+    if (!this.dom.gameToast) return;
+    clearTimeout(this.toastTimer);
+    this.dom.gameToast.textContent = message;
+    this.dom.gameToast.classList.remove('hidden');
+    requestAnimationFrame(() => {
+      this.dom.gameToast.classList.add('visible');
+    });
+    this.toastTimer = setTimeout(() => {
+      this.dom.gameToast.classList.remove('visible');
+      setTimeout(() => this.dom.gameToast.classList.add('hidden'), 300);
+    }, duration);
+  }
+
+  showEvidenceToast(evidenceId) {
+    if (!this.dom.evidenceToast) return;
+    const ev = this.scenario.evidence[evidenceId];
+    if (!ev) return;
+
+    clearTimeout(this.evidenceToastTimer);
+    const icon = this.getEvidenceModalIconHtml(ev);
+    this.dom.evidenceToast.innerHTML = `
+      <span class="toast-icon">${icon}</span>
+      <div class="toast-content">
+        <span class="toast-title">⚡ 新規電脳鑑識ログ獲得</span>
+        <span class="toast-name">${ev.name}</span>
+      </div>
+      <span class="toast-action-hint">手帳を開く ↗</span>
+    `;
+    this.dom.evidenceToast.onclick = () => {
+      this.openEvidenceModal();
+      this.dom.evidenceToast.classList.remove('visible');
+    };
+    this.dom.evidenceToast.classList.remove('hidden');
+    requestAnimationFrame(() => {
+      this.dom.evidenceToast.classList.add('visible');
+    });
+    this.evidenceToastTimer = setTimeout(() => {
+      this.dom.evidenceToast.classList.remove('visible');
+      setTimeout(() => this.dom.evidenceToast.classList.add('hidden'), 300);
+    }, 2800);
+  }
+
+  showConfirmModal(message, onConfirm, title = '⚠️ システム確認') {
+    if (!this.dom.modalConfirm) {
+      if (confirm(message)) onConfirm();
+      return;
+    }
+    this.confirmCallback = onConfirm;
+    this.dom.confirmModalTitle.textContent = title;
+    this.dom.confirmModalBody.textContent = message;
+    this.dom.modalConfirm.classList.remove('hidden');
+  }
+
+  closeConfirmModal() {
+    if (this.dom.modalConfirm) {
+      this.dom.modalConfirm.classList.add('hidden');
+    }
+    this.confirmCallback = null;
+  }
+
+  // ----------------------------------------------------
+  // UI補助演出 (HIDE & ダメージシェイク)
+  // ----------------------------------------------------
+  toggleHideDialogueUi(forceState) {
+    if (!this.dom.dialogueStage || !this.isDialogueActive) return;
+    this.isDialogueHidden = typeof forceState === 'boolean' ? forceState : !this.isDialogueHidden;
+    this.dom.dialogueStage.classList.toggle('ui-hidden', this.isDialogueHidden);
+    if (this.dom.btnDialogueHide) {
+      this.dom.btnDialogueHide.classList.toggle('active', this.isDialogueHidden);
+    }
+  }
+
+  triggerDebateDamageEffect() {
+    const stage = document.querySelector('.debate-stage');
+    if (!stage) return;
+    stage.classList.remove('is-damaged');
+    void stage.offsetWidth;
+    stage.classList.add('is-damaged');
+    setTimeout(() => stage.classList.remove('is-damaged'), 400);
   }
 
   // 証拠手帳フィルター切替
@@ -2429,6 +2777,179 @@ class GameApp {
     `;
 
     this.attachGalleryEventListeners(data);
+  }
+
+  updateTitleView() {
+    if (this.dom.titleLoopInfo) {
+      this.dom.titleLoopInfo.textContent = 'LOOP: ' + (this.state.currentLoop || 1);
+    }
+    if (this.dom.titleClearBadge) {
+      this.dom.titleClearBadge.classList.toggle('hidden', !this.state.hasClearedLoop1);
+    }
+    if (this.dom.btnContinueGame) {
+      const hasSaved = this.state.hasSavedSession();
+      this.dom.btnContinueGame.classList.toggle('hidden', !hasSaved);
+      if (hasSaved) {
+        const session = this.state.loadSessionProgress();
+        const phaseName =
+          session && session.activePhase === 'debate' ? '立証フェーズ' : '探索フェーズ';
+        this.dom.btnContinueGame.innerHTML = [
+          '<span class="btn-text">▶ CONTINUED INVESTIGATION</span>',
+          '<span class="btn-subtext">前回の続きから再開（' + phaseName + '）</span>',
+        ].join('\n');
+      }
+    }
+  }
+
+  continueGame() {
+    const session = this.state.loadSessionProgress();
+    if (!session) {
+      this.showToast('再開可能な捜査データが見つかりませんでした。');
+      return;
+    }
+    this.audio.unlockAudio();
+    this.audio.playClick();
+    if (session.activePhase === 'debate') {
+      this.startDebate();
+    } else {
+      this.startExplore();
+    }
+  }
+
+  showConfirmModal(messageOrOptions, onConfirm) {
+    if (!this.dom.modalConfirm) return;
+    let title = 'CYBER CONFIRMATION';
+    let message = '';
+    let confirmText = '実行する';
+    let cancelText = '中止';
+    let callback = null;
+
+    if (typeof messageOrOptions === 'string') {
+      message = messageOrOptions;
+      callback = onConfirm;
+    } else if (messageOrOptions && typeof messageOrOptions === 'object') {
+      if (messageOrOptions.title) title = messageOrOptions.title;
+      if (messageOrOptions.message) message = messageOrOptions.message;
+      if (messageOrOptions.confirmText) confirmText = messageOrOptions.confirmText;
+      if (messageOrOptions.cancelText) cancelText = messageOrOptions.cancelText;
+      callback = messageOrOptions.onConfirm || onConfirm;
+    }
+
+    if (this.dom.confirmModalTitle) this.dom.confirmModalTitle.textContent = title;
+    if (this.dom.confirmModalBody) this.dom.confirmModalBody.textContent = message;
+    if (this.dom.btnConfirmOk) this.dom.btnConfirmOk.textContent = confirmText;
+    if (this.dom.btnConfirmCancel) this.dom.btnConfirmCancel.textContent = cancelText;
+
+    this.confirmCallback = callback;
+    this.dom.modalConfirm.classList.remove('hidden');
+    this.dom.modalConfirm.classList.add('active');
+  }
+
+  closeConfirmModal() {
+    if (!this.dom.modalConfirm) return;
+    this.dom.modalConfirm.classList.remove('active');
+    this.dom.modalConfirm.classList.add('hidden');
+    this.confirmCallback = null;
+  }
+
+  showToast(message, duration = 3000) {
+    if (!this.dom.gameToast) return;
+    this.dom.gameToast.textContent = message;
+    this.dom.gameToast.classList.remove('hidden');
+    this.dom.gameToast.classList.add('visible');
+    if (this.gameToastTimer) clearTimeout(this.gameToastTimer);
+    this.gameToastTimer = setTimeout(() => {
+      this.dom.gameToast?.classList.remove('visible');
+      setTimeout(() => this.dom.gameToast?.classList.add('hidden'), 350);
+    }, duration);
+  }
+
+  showEvidenceToast(evId, evData) {
+    if (!this.dom.evidenceToast) return;
+    const toast = this.dom.evidenceToast;
+    const icon = (evData && evData.icon) || '📦';
+    const name = (evData && evData.name) || '鑑識データ入手';
+
+    toast.innerHTML = [
+      '<span class="toast-icon">' + icon + '</span>',
+      '<div class="toast-content">',
+      '  <span class="toast-title">EVIDENCE ACQUIRED / 鑑識データ獲得</span>',
+      '  <span class="toast-name">' + name + '</span>',
+      '</div>',
+      '<span class="toast-action-hint">[E: 証拠手帳で確認]</span>',
+    ].join('\n');
+
+    toast.classList.remove('hidden');
+    toast.classList.add('visible');
+    if (this.evidenceToastTimer) clearTimeout(this.evidenceToastTimer);
+    this.evidenceToastTimer = setTimeout(() => {
+      toast.classList.remove('visible');
+      setTimeout(() => toast.classList.add('hidden'), 350);
+    }, 4000);
+  }
+
+  toggleHideDialogueUi(force) {
+    if (!this.dom.dialogueStage) return;
+    const isHidden = this.dom.dialogueStage.classList.contains('ui-hidden');
+    const shouldHide = typeof force === 'boolean' ? force : !isHidden;
+    this.dom.dialogueStage.classList.toggle('ui-hidden', shouldHide);
+  }
+
+  triggerDebateDamageEffect() {
+    if (this.audio.playDamage) {
+      this.audio.playDamage();
+    } else if (this.audio.playShock) {
+      this.audio.playShock();
+    }
+    if (this.dom.screenDebate) {
+      this.dom.screenDebate.classList.add('is-damaged');
+      setTimeout(() => {
+        this.dom.screenDebate?.classList.remove('is-damaged');
+      }, 500);
+    }
+  }
+
+  countRemainingInArea(areaId) {
+    let remaining = 0;
+    const isLoop2 = this.state.isClearedFirstLoop();
+    const spots = (this.scenario.spots || []).filter((s) => s.area === areaId);
+    for (const spot of spots) {
+      if (spot.isSecretLoop2 && !isLoop2) {
+        continue;
+      }
+      if (!this.state.isSpotInspected(spot.id)) {
+        remaining++;
+      }
+    }
+    const npcs = (this.scenario.npcs || []).filter((n) => n.area === areaId);
+    for (const npc of npcs) {
+      if (!this.state.isNpcTalked(npc.id)) {
+        remaining++;
+      }
+    }
+    return remaining;
+  }
+
+  setTabBadgeText(btn, remaining) {
+    if (!btn) return;
+    let badge = btn.querySelector('.area-tab-badge');
+    if (!badge) {
+      badge = document.createElement('span');
+      badge.className = 'area-tab-badge';
+      btn.appendChild(badge);
+    }
+    if (remaining > 0) {
+      badge.textContent = '未調査 ' + remaining;
+      badge.className = 'area-tab-badge has-remaining';
+    } else {
+      badge.textContent = '完了';
+      badge.className = 'area-tab-badge is-complete';
+    }
+  }
+
+  updateAreaTabBadges() {
+    this.setTabBadgeText(this.dom.btnAreaRoom, this.countRemainingInArea('room'));
+    this.setTabBadgeText(this.dom.btnAreaCorridor, this.countRemainingInArea('corridor'));
   }
 }
 

@@ -14,6 +14,14 @@ class BoxCharacterController {
     this.currentEmotion = 'normal';
     this.bubbleTimeout = null;
 
+    if (typeof window !== 'undefined') {
+      window.addEventListener('box-voice-state', (e) => {
+        if (e.detail) {
+          this.setIsSpeaking(e.detail.isPlaying);
+        }
+      });
+    }
+
     // 各キャラクターの感情差分画像マッピング（正方形1:1 高精細統一版）
     this.characterImages = {
       yuta: {
@@ -285,6 +293,8 @@ class BoxCharacterController {
 
   hide() {
     this.currentCharId = null;
+    this.setDimmed(false);
+    this.setIsSpeaking(false);
     this.hideEmotionBubble();
     if (this.stage) {
       this.stage.classList.remove('visible');
@@ -295,6 +305,39 @@ class BoxCharacterController {
         (this.spriteBox || this.stage).innerHTML = '';
       }
     }, 250);
+  }
+
+  setDimmed(isDimmed) {
+    const targetBox = this.spriteBox || this.stage;
+    const spriteImg = targetBox ? targetBox.querySelector('.char-sprite-img') : null;
+    if (!spriteImg) return;
+    spriteImg.classList.toggle('is-dimmed', Boolean(isDimmed));
+  }
+
+  setIsSpeaking(isSpeaking) {
+    const targetBox = this.spriteBox || this.stage;
+    const spriteImg = targetBox ? targetBox.querySelector('.char-sprite-img') : null;
+    if (!spriteImg) return;
+    spriteImg.classList.toggle('is-speaking', Boolean(isSpeaking));
+  }
+
+  updateBySpeaker(speakerName, hasActiveNpcInScene = false) {
+    const mapping = this.findSpeakerMapping(speakerName);
+    if (!mapping) {
+      this.setDimmed(true);
+      return;
+    }
+    if (
+      mapping.id === 'yuta' &&
+      hasActiveNpcInScene &&
+      this.currentCharId &&
+      this.currentCharId !== 'yuta'
+    ) {
+      this.setDimmed(true);
+      return;
+    }
+    this.setDimmed(false);
+    this.show(mapping.id, mapping.emotion || 'normal');
   }
 
   findSpeakerMapping(speaker) {
@@ -322,7 +365,7 @@ class BoxCharacterController {
     return this.detectEmotionFromText(mapping.id, text) || mapping.emotion;
   }
 
-  showForDialogue(dialogueItem) {
+  showForDialogue(dialogueItem, hasActiveNpcInScene = false) {
     if (!dialogueItem) return;
 
     const speaker = dialogueItem.speaker || '';
@@ -339,6 +382,17 @@ class BoxCharacterController {
       return;
     }
 
+    if (
+      mapping.id === 'yuta' &&
+      hasActiveNpcInScene &&
+      this.currentCharId &&
+      this.currentCharId !== 'yuta'
+    ) {
+      this.setDimmed(true);
+      return;
+    }
+
+    this.setDimmed(false);
     const emotion = this.resolveEmotion(dialogueItem, mapping, text);
     this.show(mapping.id, emotion);
     this.showContextEmotionBubble(emotion, text);

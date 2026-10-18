@@ -3,12 +3,48 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#030712">
+  <meta name="color-scheme" content="dark">
   <title>BOX WORM 〜55ドルの自己増殖知性〜</title>
   <meta name="description" content="55ドルのTVボックス15台で稼働する自己増殖AIの謎を追う電脳推理ノベルゲーム。部屋を探索し証拠を集め、捜査官との立証対決に挑め！">
+  <link rel="canonical" href="https://aegisfleet.github.io/voice-visual-novel/box/">
+
+  <!-- Favicon & Icons -->
+  <link rel="icon" type="image/svg+xml" href="../assets/icons/favicon.svg">
+
+  <!-- Open Graph Protocol (OGP) -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="VOICE VISUAL NOVELS">
+  <meta property="og:url" content="https://aegisfleet.github.io/voice-visual-novel/box/">
+  <meta property="og:title" content="BOX WORM 〜55ドルの自己増殖知性〜">
+  <meta property="og:description" content="55ドルのTVボックス15台で稼働する自己増殖AIの謎を追う電脳推理ノベルゲーム。部屋を探索し証拠を集め、捜査官との立証対決に挑め！">
+  <meta property="og:image" content="https://aegisfleet.github.io/voice-visual-novel/box/assets/backgrounds/bg_title.jpg">
+  <meta property="og:locale" content="ja_JP">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="BOX WORM 〜55ドルの自己増殖知性〜">
+  <meta name="twitter:description" content="55ドルのTVボックス15台で稼働する自己増殖AIの謎を追う電脳推理ノベルゲーム。部屋を探索し証拠を集め、捜査官との立証対決に挑め！">
+  <meta name="twitter:image" content="https://aegisfleet.github.io/voice-visual-novel/box/assets/backgrounds/bg_title.jpg">
+
+  <!-- 構造化データ (JSON-LD) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "VideoGame",
+    "name": "BOX WORM 〜55ドルの自己増殖知性〜",
+    "description": "55ドルのTVボックス15台で稼働する自己増殖AIの謎を追う電脳推理ノベルゲーム。",
+    "genre": ["Visual Novel", "Cyberpunk", "Adventure", "Detective"],
+    "inLanguage": "ja",
+    "url": "https://aegisfleet.github.io/voice-visual-novel/box/",
+    "image": "https://aegisfleet.github.io/voice-visual-novel/box/assets/backgrounds/bg_title.jpg"
+  }
+  </script>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20261018_rev82">
+  <link rel="stylesheet" href="css/style.css?v=20261018_rev83">
 </head>
 <body>
   <div class="bg-grid"></div>
@@ -75,6 +111,9 @@
         </div>
 
         <div class="title-actions">
+          <button type="button" id="btn-continue-game" class="btn-primary btn-continue hidden">
+            ⚡ 調査を再開する (CONTINUE)
+          </button>
           <button type="button" id="btn-start-game" class="btn-primary">
             🔍 部屋の調査を開始する
           </button>
@@ -84,6 +123,12 @@
           <button type="button" id="btn-reset-save" class="btn-subtle">
             🗑️ セーブデータを初期化
           </button>
+        </div>
+
+        <div class="title-nav-bar">
+          <a href="../index.html" class="portal-link-btn" title="作品ポータルTOPへ戻る">🌐 作品ポータル</a>
+          <button type="button" class="share-btn-compact" data-share-action="x" data-share-text="『BOX WORM 〜55ドルの自己増殖知性〜』55ドルのTVボックス15台で稼働する自己増殖AIの謎を追う電脳推理ADV！" data-share-hashtags="BOX_WORM,VoiceVisualNovel">𝕏 シェア</button>
+          <button type="button" class="share-btn-compact" data-share-action="copy" title="URLをクリップボードにコピー">📋 コピー</button>
         </div>
       </section>
 
@@ -132,6 +177,10 @@
               <img src="assets/characters/shibata_normal.png?v=20261017_rev66" alt="シバタ捜査官" class="opponent-portrait-img" />
             </div>
             <div class="opponent-speech-bubble">
+              <div class="speech-bubble-header">
+                <span class="speech-speaker-label">シバタ捜査官</span>
+                <button type="button" id="btn-replay-debate-voice" class="btn-replay-voice" title="主張ボイスをもう一度聴く">🔊 再生</button>
+              </div>
               <p id="debate-opponent-speech">シバタ捜査官の反証問答を開始します……</p>
             </div>
           </div>
@@ -175,6 +224,13 @@
           <a href="samples.html" target="_blank" class="btn-gallery" style="text-decoration: none; text-align: center; display: inline-flex; align-items: center; justify-content: center;" title="Gemini 3.8 Flash TTS ボイス試聴室を開く">
             🎙️ 全ボイス試聴室 (VOICE ARCHIVE)
           </a>
+          <a href="../index.html" class="btn-subtle" style="text-decoration: none; text-align: center; display: inline-flex; align-items: center; justify-content: center;" title="作品ポータルTOPへ戻る">
+            🌐 作品ポータルへ戻る
+          </a>
+        </div>
+        <div class="ending-share-bar">
+          <button type="button" class="btn-share" data-share-action="x" data-share-text="『BOX WORM 〜55ドルの自己増殖知性〜』クリア！自己増殖AIとエンジニアの電脳推理劇！" data-share-hashtags="BOX_WORM,VoiceVisualNovel">𝕏 クリア結果をシェア</button>
+          <button type="button" class="btn-share" data-share-action="copy">📋 URLをコピー</button>
         </div>
       </section>
 
@@ -205,8 +261,16 @@
 
         <div id="novel-window" class="novel-window">
           <div class="novel-header">
-            <span id="dialogue-speaker" class="speaker-name">ナレーション</span>
+            <div class="speaker-wrap">
+              <span id="dialogue-speaker" class="speaker-name">ナレーション</span>
+              <span id="voice-wave-indicator" class="voice-wave-indicator hidden" aria-hidden="true">
+                <span class="voice-wave-bar"></span>
+                <span class="voice-wave-bar"></span>
+                <span class="voice-wave-bar"></span>
+              </span>
+            </div>
             <div class="dialogue-ctrls">
+              <button type="button" id="btn-dialogue-hide" class="dialogue-ctrl-btn" title="ウィンドウを一時非表示 (H)">HIDE</button>
               <button type="button" id="btn-dialogue-auto" class="dialogue-ctrl-btn active">AUTO</button>
               <button type="button" id="btn-dialogue-skip" class="dialogue-ctrl-btn">SKIP</button>
               <button type="button" id="btn-dialogue-log" class="dialogue-ctrl-btn">LOG</button>
@@ -335,6 +399,32 @@
       </div>
     </div>
 
+    <!-- サイバー確認ダイアログモーダル (インゲームUI化) -->
+    <div id="modal-confirm" class="modal modal-confirm hidden">
+      <div id="backdrop-confirm" class="modal-backdrop"></div>
+      <div class="modal-content modal-content-confirm">
+        <div class="modal-header">
+          <div class="modal-title-wrap">
+            <h3 id="confirm-modal-title" class="modal-title">⚠️ システム確認</h3>
+            <span class="modal-sub-title">ACTION CONFIRMATION</span>
+          </div>
+        </div>
+        <div id="confirm-modal-body" class="confirm-modal-body">
+          本当に実行しますか？
+        </div>
+        <div class="confirm-modal-actions">
+          <button type="button" id="btn-confirm-cancel" class="btn-subtle">キャンセル</button>
+          <button type="button" id="btn-confirm-ok" class="btn-primary btn-danger">実行する</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 証拠獲得サイバートースト通知 (上部中央) -->
+    <div id="evidence-toast" class="evidence-toast hidden" role="alert" aria-live="polite"></div>
+
+    <!-- 汎用サイバートースト通知 (上部中央) -->
+    <div id="game-toast" class="game-toast hidden" role="alert" aria-live="polite"></div>
+
     <!-- キーボード操作ガイドバー -->
     <footer id="keyboard-guide" class="keyboard-guide">
       <div class="key-hint"><span class="key-tag">Space / Enter</span> 会話送り・決定</div>
@@ -342,15 +432,17 @@
       <div class="key-hint"><span class="key-tag">1〜9</span> 選択肢・証拠選択</div>
       <div class="key-hint"><span class="key-tag">E</span> 証拠手帳</div>
       <div class="key-hint"><span class="key-tag">L</span> ログ</div>
+      <div class="key-hint"><span class="key-tag">H</span> UI非表示</div>
       <div class="key-hint"><span class="key-tag">Esc</span> 閉じる</div>
     </footer>
   </div>
 
   <!-- スクリプト群 -->
-  <script src="js/state.js?v=20261018_rev82"></script>
-  <script src="js/audio.js?v=20261018_rev82"></script>
-  <script src="js/character.js?v=20261018_rev82"></script>
-  <script src="js/scenario.js?v=20261018_rev82"></script>
-  <script src="js/app.js?v=20261018_rev82"></script>
+  <script src="../assets/js/share.js?v=20261018_rev83"></script>
+  <script src="js/state.js?v=20261018_rev83"></script>
+  <script src="js/audio.js?v=20261018_rev83"></script>
+  <script src="js/character.js?v=20261018_rev83"></script>
+  <script src="js/scenario.js?v=20261018_rev83"></script>
+  <script src="js/app.js?v=20261018_rev83"></script>
 </body>
 </html>

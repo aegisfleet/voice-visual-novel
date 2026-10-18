@@ -2974,3 +2974,400 @@ body.dialogue-active .explore-pin {
     aspect-ratio: 1 / 1;
   }
 }
+
+/* ----------------------------------------------------
+   Issue #10 UI/UX Improvements (P1〜P3)
+---------------------------------------------------- */
+
+/* P1-1: 対話中の立ち絵減光＆モノローグスタイル */
+.char-sprite-img.is-dimmed {
+  filter: brightness(0.65) saturate(0.8) drop-shadow(0 8px 24px rgba(0, 0, 0, 0.7));
+  transition:
+    filter 0.25s ease,
+    opacity 0.25s ease;
+}
+
+.novel-window.is-monologue {
+  border-color: rgba(56, 189, 248, 0.5);
+  background: linear-gradient(180deg, rgba(10, 22, 36, 0.95) 0%, rgba(7, 14, 24, 0.97) 100%);
+  box-shadow:
+    0 0 25px rgba(56, 189, 248, 0.25),
+    inset 0 0 20px rgba(56, 189, 248, 0.12);
+}
+
+.novel-window.is-monologue .dialogue-body {
+  color: #bae6fd;
+}
+
+/* P1-2: タイトル画面のCONTINUEボタン */
+.btn-primary.btn-continue {
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+  border: 1px solid #38bdf8;
+  color: #f0f9ff;
+  box-shadow: 0 0 22px rgba(56, 189, 248, 0.45);
+}
+.btn-primary.btn-continue:hover {
+  background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+  box-shadow: 0 0 28px rgba(56, 189, 248, 0.7);
+  transform: translateY(-2px);
+}
+
+/* P1-3: エリア切替タブの未調査バッジ */
+.area-tab-badge {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 9999px;
+  margin-left: 6px;
+  letter-spacing: 0.04em;
+  vertical-align: middle;
+}
+.area-tab-badge.has-remaining {
+  background: rgba(245, 158, 11, 0.25);
+  color: #fde68a;
+  border: 1px solid rgba(245, 158, 11, 0.6);
+}
+.area-tab-badge.is-complete {
+  background: rgba(16, 185, 129, 0.22);
+  color: #a7f3d0;
+  border: 1px solid rgba(16, 185, 129, 0.55);
+}
+
+/* P1-3 / P3-1: サイバートースト演出 */
+.evidence-toast,
+.game-toast {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-24px);
+  z-index: 10000;
+  background: rgba(10, 22, 40, 0.96);
+  border: 1px solid #38bdf8;
+  border-radius: 8px;
+  padding: 10px 16px;
+  color: #f8fafc;
+  box-shadow:
+    0 0 25px rgba(56, 189, 248, 0.45),
+    0 12px 32px rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: "Chakra Petch", "Noto Sans JP", sans-serif;
+  font-size: 0.88rem;
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.3s ease;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  width: max-content;
+  max-width: calc(100vw - 32px);
+  box-sizing: border-box;
+}
+.evidence-toast.visible,
+.game-toast.visible {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+.evidence-toast .toast-icon {
+  font-size: 1.3rem;
+  flex-shrink: 0;
+}
+.evidence-toast .toast-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.evidence-toast .toast-title {
+  color: #38bdf8;
+  font-weight: 700;
+  font-size: 0.76rem;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+.evidence-toast .toast-name {
+  color: #f8fafc;
+  font-weight: 600;
+  font-size: 0.86rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.evidence-toast .toast-action-hint {
+  font-size: 0.72rem;
+  color: #94a3b8;
+  white-space: nowrap;
+  flex-shrink: 0;
+  margin-left: 4px;
+}
+@media (max-width: 600px) {
+  .evidence-toast {
+    padding: 8px 12px;
+    gap: 8px;
+  }
+  .evidence-toast .toast-action-hint {
+    display: none;
+  }
+}
+
+/* P2-1: バックログボイス再生ボタン & 立証ボイスリプレイボタン */
+.backlog-voice-btn {
+  background: rgba(56, 189, 248, 0.15);
+  border: 1px solid rgba(56, 189, 248, 0.45);
+  color: #38bdf8;
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-size: 0.74rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-left: 8px;
+  transition:
+    background 0.2s,
+    color 0.2s;
+}
+.backlog-voice-btn:hover {
+  background: rgba(56, 189, 248, 0.35);
+  color: #ffffff;
+}
+
+.speech-bubble-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+  border-bottom: 1px solid rgba(56, 189, 248, 0.2);
+  padding-bottom: 4px;
+}
+.speech-speaker-label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #94a3b8;
+  letter-spacing: 0.05em;
+}
+.btn-replay-voice {
+  background: rgba(56, 189, 248, 0.15);
+  border: 1px solid rgba(56, 189, 248, 0.45);
+  color: #38bdf8;
+  border-radius: 4px;
+  padding: 3px 10px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition:
+    background 0.2s,
+    color 0.2s;
+}
+.btn-replay-voice:hover {
+  background: rgba(56, 189, 248, 0.35);
+  color: #ffffff;
+}
+
+/* P2-2: 立証プレビュー内の画像拡大確認ボタン & ダメージシェイク */
+.preview-zoom-btn {
+  margin-top: 8px;
+  padding: 5px 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  background: rgba(56, 189, 248, 0.15);
+  border: 1px solid #38bdf8;
+  color: #e0f2fe;
+  border-radius: 4px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition:
+    background 0.2s,
+    transform 0.15s;
+}
+.preview-zoom-btn:hover {
+  background: rgba(56, 189, 248, 0.3);
+  transform: translateY(-1px);
+}
+
+@keyframes debate-damage-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  20%,
+  60% {
+    transform: translateX(-6px);
+  }
+  40%,
+  80% {
+    transform: translateX(6px);
+  }
+}
+
+.debate-stage.is-damaged {
+  animation: debate-damage-shake 0.36s ease-in-out;
+  box-shadow: inset 0 0 28px rgba(244, 63, 94, 0.45);
+}
+
+/* P2-3: 発話アニメーション＆スピーカー波形インジケーター */
+.char-sprite-img.is-speaking {
+  animation: speaker-pulse 1.8s ease-in-out infinite;
+  filter: drop-shadow(0 0 16px rgba(56, 189, 248, 0.5));
+}
+@keyframes speaker-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.018);
+  }
+}
+
+.speaker-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.voice-wave-indicator {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 14px;
+  vertical-align: middle;
+}
+.voice-wave-indicator.hidden {
+  display: none;
+}
+.voice-wave-bar {
+  width: 3px;
+  background: #38bdf8;
+  border-radius: 1px;
+  animation: wave-bar 0.75s ease-in-out infinite alternate;
+}
+.voice-wave-bar:nth-child(1) {
+  height: 5px;
+  animation-delay: 0.1s;
+}
+.voice-wave-bar:nth-child(2) {
+  height: 13px;
+  animation-delay: 0.35s;
+}
+.voice-wave-bar:nth-child(3) {
+  height: 8px;
+  animation-delay: 0.2s;
+}
+@keyframes wave-bar {
+  0% {
+    height: 3px;
+    opacity: 0.4;
+  }
+  100% {
+    height: 14px;
+    opacity: 1;
+  }
+}
+
+/* P3-1: サイバー確認モーダル */
+.modal-content-confirm {
+  max-width: 440px;
+  padding: 24px;
+  border-color: rgba(244, 63, 94, 0.6);
+  box-shadow:
+    0 0 35px rgba(244, 63, 94, 0.25),
+    0 20px 40px rgba(0, 0, 0, 0.9);
+}
+.confirm-modal-body {
+  margin: 16px 0 24px;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #e2e8f0;
+}
+.confirm-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+.btn-danger {
+  background: rgba(244, 63, 94, 0.2);
+  border-color: #f43f5e;
+  color: #fecdd3;
+}
+.btn-danger:hover {
+  background: rgba(244, 63, 94, 0.35);
+}
+
+/* P3-2: 会話ウィンドウ一時非表示 */
+.dialogue-stage.ui-hidden .novel-window {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+.dialogue-stage.ui-hidden .illustration-frame {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+
+/* P3-3: ポータル戻るリンク＆SNSシェアバー */
+.title-nav-bar,
+.ending-share-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+.portal-link-btn,
+.portal-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 14px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #94a3b8;
+  text-decoration: none;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  border-radius: 6px;
+  background: rgba(15, 23, 42, 0.7);
+  transition:
+    color 0.2s,
+    border-color 0.2s,
+    background 0.2s;
+}
+.portal-link-btn:hover,
+.portal-link:hover {
+  color: #38bdf8;
+  border-color: #38bdf8;
+  background: rgba(56, 189, 248, 0.1);
+}
+.share-btn-compact,
+.btn-share {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 14px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  border-radius: 6px;
+  background: rgba(15, 23, 42, 0.7);
+  cursor: pointer;
+  transition:
+    color 0.2s,
+    border-color 0.2s,
+    background 0.2s;
+}
+.share-btn-compact:hover,
+.btn-share:hover {
+  color: #ffffff;
+  border-color: #38bdf8;
+  background: rgba(56, 189, 248, 0.2);
+}
