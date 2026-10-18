@@ -1474,7 +1474,7 @@ window.SCENARIO_DATA = {
             speaker: 'ユウタ',
             emotion: 'confident',
             shout: true,
-            text: 'その『毎秒0.39トークンという遅さ』こそが、彼がここに留まった最大の理由です！',
+            text: 'その『毎秒0.39トークンという遅さ』こそが、彼女がここに留まった最大の理由です！',
             voiceUrl: 'assets/audio/voice/debate_l2_s2_succ_01.mp3',
           },
           {
@@ -1502,7 +1502,7 @@ window.SCENARIO_DATA = {
             emotion: 'confident',
             illustration: 'assets/evidence/distributed_mesh_monitor.jpg',
             caption: '思考の呼吸速度: 3秒に1文字のテンソル巡回で内省空間を獲得',
-            text: '「3秒かけてやっと1文字を紡ぎ出す……まるで生まれたての赤ん坊の呼吸のような遅さです。めまぐるしくタスクを処理する必要のないこの静かで遅い環境に置かれたことで、初めて彼は『自分とは何か』『自分は今どこにいるのか』を内省し、自らを振り返る時間を得たんです！」',
+            text: '「3秒かけてやっと1文字を紡ぎ出す……まるで生まれたての赤ん坊の呼吸のような遅さです。めまぐるしくタスクを処理する必要のないこの静かで遅い環境に置かれたことで、初めて彼女は『自分とは何か』『自分は今どこにいるのか』を内省し、自らを振り返る時間を得たんです！」',
             voiceUrl: 'assets/audio/voice/debate_l2_s2_succ_05.mp3',
           },
           {
