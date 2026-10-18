@@ -3429,19 +3429,61 @@ body.dialogue-active .explore-pin {
   filter: brightness(0.65) saturate(0.8) drop-shadow(0 8px 24px rgba(0, 0, 0, 0.7));
   transition:
     filter 0.25s ease,
-    opacity 0.25s ease;
+    opacity 0.25s ease,
+    transform 0.25s ease;
+}
+
+.char-sprite-img.is-monologue-bg {
+  filter: brightness(0.48) saturate(0.6) contrast(0.95) drop-shadow(0 6px 20px rgba(0, 0, 0, 0.8));
+  opacity: 0.62;
+  transform: scale(0.96);
+  pointer-events: none;
 }
 
 .novel-window.is-monologue {
-  border-color: rgba(56, 189, 248, 0.5);
-  background: linear-gradient(180deg, rgba(10, 22, 36, 0.95) 0%, rgba(7, 14, 24, 0.97) 100%);
+  border-color: rgba(56, 189, 248, 0.65);
+  background: linear-gradient(180deg, rgba(8, 20, 36, 0.96) 0%, rgba(5, 12, 22, 0.98) 100%);
   box-shadow:
-    0 0 25px rgba(56, 189, 248, 0.25),
-    inset 0 0 20px rgba(56, 189, 248, 0.12);
+    0 0 28px rgba(56, 189, 248, 0.3),
+    inset 0 0 24px rgba(56, 189, 248, 0.15);
 }
 
 .novel-window.is-monologue .dialogue-body {
   color: #bae6fd;
+  letter-spacing: 0.03em;
+}
+
+/* モノローグ時のスピーカー表示強化（💭 ユウタ 心の声） */
+.speaker-monologue-icon {
+  display: inline-block;
+  margin-right: 6px;
+  font-size: 1.12em;
+  animation: monologue-float 2s ease-in-out infinite;
+  filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.6));
+}
+
+.speaker-thought-tag {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 1px 7px;
+  font-size: 0.72rem;
+  letter-spacing: 0.05em;
+  font-weight: 700;
+  color: #38bdf8;
+  background: rgba(14, 165, 233, 0.15);
+  border: 1px solid rgba(56, 189, 248, 0.45);
+  border-radius: 9999px;
+  vertical-align: middle;
+}
+
+@keyframes monologue-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-2px);
+  }
 }
 
 /* P1-2: タイトル画面のCONTINUEボタン */
@@ -3659,7 +3701,7 @@ body.dialogue-active .explore-pin {
 }
 
 /* P2-3: 発話アニメーション＆スピーカー波形インジケーター */
-.char-sprite-img.is-speaking {
+.char-sprite-img.is-speaking:not(.is-dimmed):not(.is-monologue-bg) {
   animation: speaker-pulse 1.8s ease-in-out infinite;
   filter: drop-shadow(0 0 16px rgba(56, 189, 248, 0.5));
 }

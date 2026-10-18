@@ -17,7 +17,7 @@ class BoxCharacterController {
     if (typeof window !== 'undefined') {
       window.addEventListener('box-voice-state', (e) => {
         if (e.detail) {
-          this.setIsSpeaking(e.detail.isPlaying);
+          this.setIsSpeaking(e.detail.isPlaying, e.detail.speaker || '');
         }
       });
     }
@@ -307,18 +307,49 @@ class BoxCharacterController {
     }, 250);
   }
 
-  setDimmed(isDimmed) {
+  setDimmed(isDimmed, isMonologue = false) {
     const targetBox = this.spriteBox || this.stage;
     const spriteImg = targetBox ? targetBox.querySelector('.char-sprite-img') : null;
     if (!spriteImg) return;
     spriteImg.classList.toggle('is-dimmed', Boolean(isDimmed));
+    spriteImg.classList.toggle('is-monologue-bg', Boolean(isMonologue));
+    if (isDimmed || isMonologue) {
+      spriteImg.classList.remove('is-speaking');
+    }
   }
 
-  setIsSpeaking(isSpeaking) {
+  setIsSpeaking(isSpeaking, speaker = '') {
     const targetBox = this.spriteBox || this.stage;
     const spriteImg = targetBox ? targetBox.querySelector('.char-sprite-img') : null;
     if (!spriteImg) return;
-    spriteImg.classList.toggle('is-speaking', Boolean(isSpeaking));
+
+    if (!isSpeaking) {
+      spriteImg.classList.remove('is-speaking');
+      return;
+    }
+
+    // 1. スピーカーが心の声・独白・モノローグ、またはナレーションの場合は発話アニメーションを適用しない
+    const isMonologue =
+      speaker.includes('心の声') ||
+      speaker.includes('思考') ||
+      speaker.includes('モノローグ') ||
+      speaker.includes('独白') ||
+      speaker.includes('ナレーション');
+    if (isMonologue) {
+      spriteImg.classList.remove('is-speaking');
+      return;
+    }
+
+    // 2. 現在舞台に表示されているキャラクターと発話者が一致しているか検証
+    const mapping = this.findSpeakerMapping(speaker);
+    if (!mapping || mapping.id !== this.currentCharId) {
+      // 発話者が画面上のキャラクターと異なる（例: NPC表示中にユウタが発話）場合、NPCを発話状態にしない
+      spriteImg.classList.remove('is-speaking');
+      return;
+    }
+
+    // 3. 一致し、かつ心の声ではない場合のみ発話アニメーションを付与
+    spriteImg.classList.add('is-speaking');
   }
 
   updateBySpeaker(speakerName, hasActiveNpcInScene = false) {
@@ -327,16 +358,21 @@ class BoxCharacterController {
       this.setDimmed(true);
       return;
     }
+    const isMonologue =
+      speakerName.includes('心の声') ||
+      speakerName.includes('思考') ||
+      speakerName.includes('モノローグ') ||
+      speakerName.includes('独白');
     if (
       mapping.id === 'yuta' &&
       hasActiveNpcInScene &&
       this.currentCharId &&
       this.currentCharId !== 'yuta'
     ) {
-      this.setDimmed(true);
+      this.setDimmed(true, isMonologue);
       return;
     }
-    this.setDimmed(false);
+    this.setDimmed(false, false);
     this.show(mapping.id, mapping.emotion || 'normal');
   }
 
@@ -365,7 +401,36 @@ class BoxCharacterController {
     return this.detectEmotionFromText(mapping.id, text) || mapping.emotion;
   }
 
-  showForDialogue(dialogueItem, hasActiveNpcInScene = false) {
+  isMonologueItem(speaker, text) {
+    if (
+      speaker.includes('心の声') ||
+      speaker.includes('思考') ||
+      speaker.includes('モノローグ') ||
+      speaker.includes('独白')
+    ) {
+      return true;
+    }
+    return Boolean(text.startsWith('（') && text.endsWith('）'));
+  }
+
+  handleProtagonistDialogueWithNpc(activeNpcInScene, isMonologue) {
+    // 既に画面にNPC立ち絵がある場合は維持して減光（心の声ならモノローグ背景として大きく減光）
+    if (this.currentCharId && this.currentCharId !== 'yuta') {
+      this.setDimmed(true, isMonologue);
+      this.hideEmotionBubble();
+      return true;
+    }
+    // もしNPC対話中だがまだNPCが表示されていない場合（冒頭がユウタ思考の場合）
+    if (typeof activeNpcInScene === 'string' && activeNpcInScene !== 'yuta') {
+      this.show(activeNpcInScene, 'normal');
+      this.setDimmed(true, isMonologue);
+      this.hideEmotionBubble();
+      return true;
+    }
+    return false;
+  }
+
+  showForDialogue(dialogueItem, activeNpcInScene = false) {
     if (!dialogueItem) return;
 
     const speaker = dialogueItem.speaker || '';
@@ -382,20 +447,24 @@ class BoxCharacterController {
       return;
     }
 
-    if (
-      mapping.id === 'yuta' &&
-      hasActiveNpcInScene &&
-      this.currentCharId &&
-      this.currentCharId !== 'yuta'
-    ) {
-      this.setDimmed(true);
-      return;
+    const isMonologue = this.isMonologueItem(speaker, text);
+
+    // NPCが同席している対話シーンで、ユウタが発言または思考している場合
+    if (mapping.id === 'yuta' && activeNpcInScene) {
+      if (this.handleProtagonistDialogueWithNpc(activeNpcInScene, isMonologue)) {
+        return;
+      }
     }
 
-    this.setDimmed(false);
+    this.setDimmed(false, false);
     const emotion = this.resolveEmotion(dialogueItem, mapping, text);
     this.show(mapping.id, emotion);
-    this.showContextEmotionBubble(emotion, text);
+
+    if (isMonologue) {
+      this.hideEmotionBubble();
+    } else {
+      this.showContextEmotionBubble(emotion, text);
+    }
   }
 
   // 感情に応じた感情バルーン（絵文字）の表示

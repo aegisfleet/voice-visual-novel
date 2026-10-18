@@ -1557,10 +1557,12 @@ class GameApp {
     // 前回の図解イラストの残像を確実に消去
     this.hideDialogueIllustration();
     this.dialogueQueue = [...dialogueList];
-    this.activeNpcInScene = (dialogueList || []).some((item) => {
+    const npcItem = (dialogueList || []).find((item) => {
       const s = item.speaker || '';
       return s && !s.includes('ユウタ') && !s.includes('ナレーション');
     });
+    const npcId = npcItem ? this.resolveNpcId(npcItem.speaker) : null;
+    this.activeNpcInScene = npcId || Boolean(npcItem);
     this.currentDialogueCallback = onComplete;
     this.keepStageOpen = keepStageOpen;
     this.isDialogueActive = true;
@@ -1665,6 +1667,77 @@ class GameApp {
     return 'default';
   }
 
+  resolveNpcId(speaker) {
+    if (!speaker) return null;
+    if (speaker.includes('アオイ')) return 'aoi';
+    if (speaker.includes('ヤエガシ') || speaker.includes('大家')) return 'yaegashi';
+    if (speaker.includes('シバタ') || speaker.includes('柴田')) return 'shibata';
+    if (
+      speaker.includes('MIMI') ||
+      speaker.includes('ミミ') ||
+      speaker.includes('知性') ||
+      speaker.includes('TVボックス')
+    ) {
+      return 'mimi';
+    }
+    return null;
+  }
+
+  isMonologueDialogue(speaker, text) {
+    if (!speaker || speaker.includes('ナレーション')) return false;
+    if (
+      speaker.includes('心の声') ||
+      speaker.includes('思考') ||
+      speaker.includes('モノローグ') ||
+      speaker.includes('独白')
+    ) {
+      return true;
+    }
+    const trimmed = (text || '').trim();
+    return trimmed.startsWith('（') && trimmed.endsWith('）');
+  }
+
+  updateNovelWindowSpeaker(speaker, fullText) {
+    const isMonologue = this.isMonologueDialogue(speaker, fullText);
+    if (this.dom.novelWindow) {
+      this.dom.novelWindow.classList.toggle('is-monologue', isMonologue);
+      this.dom.novelWindow.dataset.speakerTheme = this.resolveSpeakerTheme(speaker);
+    }
+    if (this.dom.dialogueSpeaker) {
+      if (isMonologue) {
+        this.dom.dialogueSpeaker.innerHTML = [
+          '<span class="speaker-monologue-icon">💭</span>',
+          '<span class="speaker-name-text">ユウタ</span>',
+          '<span class="speaker-thought-tag">心の声</span>',
+        ].join('');
+      } else {
+        this.dom.dialogueSpeaker.textContent = speaker;
+      }
+    }
+    return isMonologue;
+  }
+
+  playDialogueVoice(currentItem) {
+    clearTimeout(this.autoTimer);
+    this.isVoicePlaying = false;
+
+    if (this.isSkipMode) {
+      this.audio.stopVoice();
+      return;
+    }
+
+    if (currentItem.voiceUrl && this.audio.voiceEnabled) {
+      this.isVoicePlaying = true;
+    }
+    this.audio.speak(this.currentSpeaker, this.currentFullText, {
+      audioUrl: currentItem.voiceUrl || null,
+      isSkip: this.isSkipMode,
+      onEnd: () => {
+        this.handleVoicePlaybackEnd();
+      },
+    });
+  }
+
   renderDialogueItem(currentItem) {
     this.character.showForDialogue(currentItem, this.activeNpcInScene);
     this.updateDialogueIllustration(currentItem.illustration, currentItem.caption);
@@ -1672,14 +1745,7 @@ class GameApp {
     this.currentSpeaker = currentItem.speaker || 'ナレーション';
     this.currentFullText = currentItem.text || '';
 
-    const isMonologue =
-      Boolean(this.currentSpeaker.includes('心の声')) ||
-      this.currentSpeaker === '' ||
-      !currentItem.speaker;
-    if (this.dom.novelWindow) {
-      this.dom.novelWindow.classList.toggle('is-monologue', isMonologue);
-      this.dom.novelWindow.dataset.speakerTheme = this.resolveSpeakerTheme(this.currentSpeaker);
-    }
+    this.updateNovelWindowSpeaker(this.currentSpeaker, this.currentFullText);
 
     // バックログ記録 (ボイスURLも保持)
     this.backlog.push({
@@ -1688,28 +1754,10 @@ class GameApp {
       voiceUrl: currentItem.voiceUrl || null,
     });
 
-    this.dom.dialogueSpeaker.textContent = this.currentSpeaker;
     this.dom.dialogueChoices.classList.add('hidden');
     this.dom.dialogueChoices.innerHTML = '';
 
-    clearTimeout(this.autoTimer);
-    this.isVoicePlaying = false;
-
-    // 音声読み上げ（スキップモード時は通信量完全ガードのため即座に停止・取得バイパス）
-    if (!this.isSkipMode) {
-      if (currentItem.voiceUrl && this.audio.voiceEnabled) {
-        this.isVoicePlaying = true;
-      }
-      this.audio.speak(this.currentSpeaker, this.currentFullText, {
-        audioUrl: currentItem.voiceUrl || null,
-        isSkip: this.isSkipMode,
-        onEnd: () => {
-          this.handleVoicePlaybackEnd();
-        },
-      });
-    } else {
-      this.audio.stopVoice();
-    }
+    this.playDialogueVoice(currentItem);
 
     // タイピング演出
     this.startTypewriter(this.currentFullText, currentItem.speaker);
