@@ -82,7 +82,13 @@ body {
 .svg-tail {
   transform-box: fill-box;
   transform-origin: 82% 72%;
-  animation: svg-tail-wag 1.9s infinite ease-in-out;
+  animation: svg-tail-wag 1.9s infinite cubic-bezier(0.45, 0.05, 0.55, 0.95);
+}
+
+.svg-tail-tip {
+  transform-box: fill-box;
+  transform-origin: 70% 80%;
+  animation: svg-tail-tip-whip 1.9s infinite cubic-bezier(0.45, 0.05, 0.55, 0.95) -0.25s;
 }
 
 .char-wrapper[data-emotion="smile"] .svg-tail,
@@ -90,28 +96,98 @@ body {
   animation: svg-tail-wag-fast 0.42s infinite ease-in-out;
 }
 
+.char-wrapper[data-emotion="smile"] .svg-tail-tip,
+.char-wrapper[data-emotion="confident"] .svg-tail-tip {
+  animation: svg-tail-tip-whip 0.42s infinite ease-in-out -0.08s;
+}
+
 .char-wrapper[data-emotion="sad"] .svg-tail {
   animation: none;
   transform: rotate(-16deg) translateY(6px);
 }
 
+.char-wrapper[data-emotion="sad"] .svg-tail-tip {
+  animation: none;
+}
+
 @keyframes svg-tail-wag {
   0%,
   100% {
-    transform: rotate(-7deg);
+    transform: rotate(-8deg);
   }
   50% {
-    transform: rotate(11deg);
+    transform: rotate(12deg);
   }
 }
 
 @keyframes svg-tail-wag-fast {
   0%,
   100% {
-    transform: rotate(-14deg);
+    transform: rotate(-15deg);
   }
   50% {
-    transform: rotate(16deg);
+    transform: rotate(18deg);
+  }
+}
+
+@keyframes svg-tail-tip-whip {
+  0%,
+  100% {
+    transform: rotate(-6deg) scale(0.98, 1.02);
+  }
+  50% {
+    transform: rotate(9deg) scale(1.03, 0.97);
+  }
+}
+
+.svg-chest-fluff {
+  transform-box: fill-box;
+  transform-origin: 50% 25%;
+  animation: svg-chest-breathe 3.6s infinite ease-in-out -0.6s;
+}
+
+@keyframes svg-chest-breathe {
+  0%,
+  100% {
+    transform: scale(1, 1) translateY(0);
+  }
+  50% {
+    transform: scale(1.028, 1.035) translateY(1px);
+  }
+}
+
+.svg-scarf-tail {
+  transform-box: fill-box;
+  transform-origin: 20% 15%;
+  animation: svg-scarf-sway 2.8s infinite ease-in-out;
+}
+
+@keyframes svg-scarf-sway {
+  0%,
+  100% {
+    transform: rotate(-3deg);
+  }
+  50% {
+    transform: rotate(5deg);
+  }
+}
+
+.svg-badge-gleam {
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+  animation: svg-badge-pulse 3.2s infinite ease-in-out;
+}
+
+@keyframes svg-badge-pulse {
+  0%,
+  80%,
+  100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  90% {
+    transform: scale(1.08);
+    filter: brightness(1.22);
   }
 }
 
@@ -119,12 +195,40 @@ body {
   transform-box: fill-box;
   transform-origin: 70% 90%;
   animation: svg-ear-twitch-l 3.6s infinite ease-in-out;
+  transition: transform 0.25s ease;
 }
 
 .svg-ear-r {
   transform-box: fill-box;
   transform-origin: 30% 90%;
   animation: svg-ear-twitch-r 3.6s infinite ease-in-out 0.4s;
+  transition: transform 0.25s ease;
+}
+
+.char-wrapper[data-emotion="sad"] .svg-ear-l {
+  animation: none;
+  transform: rotate(-16deg) translateY(3px);
+}
+
+.char-wrapper[data-emotion="sad"] .svg-ear-r {
+  animation: none;
+  transform: rotate(16deg) translateY(3px);
+}
+
+.char-wrapper[data-emotion="surprised"] .svg-ear-l {
+  transform: rotate(5deg) translateY(-3px) scaleY(1.06);
+}
+
+.char-wrapper[data-emotion="surprised"] .svg-ear-r {
+  transform: rotate(-5deg) translateY(-3px) scaleY(1.06);
+}
+
+.char-wrapper[data-emotion="angry"] .svg-ear-l {
+  transform: rotate(8deg);
+}
+
+.char-wrapper[data-emotion="angry"] .svg-ear-r {
+  transform: rotate(-8deg);
 }
 
 @keyframes svg-ear-twitch-l {
@@ -158,11 +262,32 @@ body {
 .svg-head {
   transform-box: fill-box;
   transform-origin: 50% 85%;
+  animation: svg-head-idle 3.6s infinite ease-in-out -0.9s;
   transition: transform 0.28s ease;
+}
+
+@keyframes svg-head-idle {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-0.8deg);
+  }
+  50% {
+    transform: translateY(-2px) rotate(0.8deg);
+  }
 }
 
 .char-wrapper[data-emotion="thinking"] .svg-head {
   animation: svg-head-tilt 2.6s infinite ease-in-out;
+}
+
+.char-wrapper[data-emotion="sad"] .svg-head {
+  animation: none;
+  transform: translateY(4px) rotate(-3deg);
+}
+
+.char-wrapper[data-emotion="confident"] .svg-head,
+.char-wrapper[data-emotion="smile"] .svg-head {
+  animation: svg-head-happy 1.4s infinite ease-in-out;
 }
 
 @keyframes svg-head-tilt {
@@ -172,6 +297,59 @@ body {
   }
   50% {
     transform: rotate(4deg);
+  }
+}
+
+@keyframes svg-head-happy {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-2deg);
+  }
+  50% {
+    transform: translateY(-3px) rotate(2deg);
+  }
+}
+
+.svg-nose {
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+  animation: svg-nose-sniff 2.4s infinite ease-in-out;
+}
+
+@keyframes svg-nose-sniff {
+  0%,
+  76%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  82% {
+    transform: translateY(-1.2px) scale(1.06, 0.94);
+  }
+  88% {
+    transform: translateY(0.5px) scale(0.97, 1.03);
+  }
+  94% {
+    transform: translateY(-1px) scale(1.05, 0.96);
+  }
+}
+
+.svg-whiskers {
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+  animation: svg-whisker-twitch 3.4s infinite ease-in-out;
+}
+
+@keyframes svg-whisker-twitch {
+  0%,
+  84%,
+  100% {
+    transform: scaleX(1) rotate(0deg);
+  }
+  90% {
+    transform: scaleX(1.03) rotate(-1.5deg);
+  }
+  95% {
+    transform: scaleX(0.99) rotate(1.5deg);
   }
 }
 
@@ -192,6 +370,24 @@ body {
   }
 }
 
+.svg-eye-shine {
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+  animation: svg-eye-shimmer 2.2s infinite ease-in-out;
+}
+
+@keyframes svg-eye-shimmer {
+  0%,
+  100% {
+    transform: scale(1) translate(0, 0);
+    opacity: 0.95;
+  }
+  50% {
+    transform: scale(1.12) translate(0.4px, -0.4px);
+    opacity: 1;
+  }
+}
+
 .svg-mouth {
   transform-box: fill-box;
   transform-origin: 50% 25%;
@@ -207,6 +403,112 @@ body {
   }
   100% {
     transform: scaleY(1.36) scaleX(1.06);
+  }
+}
+
+.svg-paw-raise {
+  transform-box: fill-box;
+  transform-origin: 50% 85%;
+  animation: svg-paw-wave 0.9s infinite ease-in-out alternate;
+}
+
+@keyframes svg-paw-wave {
+  0% {
+    transform: translateY(0) rotate(-4deg);
+  }
+  100% {
+    transform: translateY(-4px) rotate(5deg);
+  }
+}
+
+.svg-wing-l {
+  transform-box: fill-box;
+  transform-origin: 85% 25%;
+  animation: svg-wing-flutter-l 3.2s infinite ease-in-out;
+}
+
+.svg-wing-r {
+  transform-box: fill-box;
+  transform-origin: 15% 25%;
+  animation: svg-wing-flutter-r 3.2s infinite ease-in-out;
+}
+
+@keyframes svg-wing-flutter-l {
+  0%,
+  86%,
+  100% {
+    transform: rotate(0deg);
+  }
+  92% {
+    transform: rotate(6deg) translateY(-2px);
+  }
+}
+
+@keyframes svg-wing-flutter-r {
+  0%,
+  86%,
+  100% {
+    transform: rotate(0deg);
+  }
+  92% {
+    transform: rotate(-6deg) translateY(-2px);
+  }
+}
+
+.svg-sweat {
+  transform-box: fill-box;
+  transform-origin: 50% 20%;
+  animation: svg-sweat-drop 1.4s infinite ease-in-out;
+}
+
+@keyframes svg-sweat-drop {
+  0% {
+    transform: translateY(-3px) scale(0.88);
+    opacity: 0.7;
+  }
+  60% {
+    transform: translateY(3px) scale(1.04);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(6px) scale(0.92);
+    opacity: 0.35;
+  }
+}
+
+.svg-tear {
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+  animation: svg-tear-wobble 1.1s infinite ease-in-out alternate;
+}
+
+@keyframes svg-tear-wobble {
+  0% {
+    transform: scale(0.94, 1.05) translateY(0);
+  }
+  100% {
+    transform: scale(1.08, 0.95) translateY(1.5px);
+  }
+}
+
+.svg-steam {
+  transform-box: fill-box;
+  transform-origin: 50% 80%;
+  animation: svg-steam-rise 1.2s infinite ease-out;
+}
+
+@keyframes svg-steam-rise {
+  0% {
+    transform: translateY(4px) scale(0.85);
+    opacity: 0.4;
+  }
+  50% {
+    transform: translateY(-2px) scale(1.05);
+    opacity: 0.95;
+  }
+  100% {
+    transform: translateY(-8px) scale(1.15);
+    opacity: 0.15;
   }
 }
 
@@ -1211,12 +1513,48 @@ body {
   animation: walker-trot 0.22s infinite alternate ease-in-out;
 }
 
+.walker-leg-a,
+.walker-leg-b {
+  transform-box: fill-box;
+  transform-origin: 50% 15%;
+}
+
+.pome-walker.is-walking .walker-leg-a {
+  animation: walker-leg-swing-a 0.18s infinite alternate ease-in-out;
+}
+
+.pome-walker.is-walking .walker-leg-b {
+  animation: walker-leg-swing-b 0.18s infinite alternate ease-in-out;
+}
+
+.pome-walker.is-walking .svg-tail {
+  animation: svg-tail-wag-fast 0.26s infinite ease-in-out;
+}
+
 @keyframes walker-trot {
   0% {
     transform: translateY(0) rotate(-3deg);
   }
   100% {
     transform: translateY(-6px) rotate(3deg);
+  }
+}
+
+@keyframes walker-leg-swing-a {
+  0% {
+    transform: rotate(-22deg) translateY(-1px);
+  }
+  100% {
+    transform: rotate(20deg) translateY(0);
+  }
+}
+
+@keyframes walker-leg-swing-b {
+  0% {
+    transform: rotate(20deg) translateY(0);
+  }
+  100% {
+    transform: rotate(-22deg) translateY(-1px);
   }
 }
 
