@@ -67,92 +67,221 @@
           </h1>
 
           <div class="title-hero-art">
-            <!-- オレンジセーブル＆黒マズルの主人公「パム」SVGアート -->
+            <!-- オレンジセーブル＆黒マズルの主人公「パム」高精細ベクターSVGアート -->
             <div id="title-pome" class="pome-hero-wrapper bounce-idle">
               <svg class="character-svg pome-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <radialGradient id="tp-fur" cx="48%" cy="38%" r="58%">
+                    <stop offset="0%" stop-color="#ffbe6b"/>
+                    <stop offset="55%" stop-color="#eb8f38"/>
+                    <stop offset="88%" stop-color="#c96818"/>
+                    <stop offset="100%" stop-color="#9e4b0b"/>
+                  </radialGradient>
+                  <radialGradient id="tp-chest" cx="50%" cy="32%" r="60%">
+                    <stop offset="0%" stop-color="#fffdf9"/>
+                    <stop offset="55%" stop-color="#ffefd4"/>
+                    <stop offset="85%" stop-color="#f7cfa0"/>
+                    <stop offset="100%" stop-color="#df9e55"/>
+                  </radialGradient>
+                  <radialGradient id="tp-head" cx="48%" cy="36%" r="55%">
+                    <stop offset="0%" stop-color="#ffcb80"/>
+                    <stop offset="48%" stop-color="#f09742"/>
+                    <stop offset="84%" stop-color="#cc6f1d"/>
+                    <stop offset="100%" stop-color="#9c4c0c"/>
+                  </radialGradient>
+                  <radialGradient id="tp-muzzle" cx="50%" cy="35%" r="58%">
+                    <stop offset="0%" stop-color="#4d3529"/>
+                    <stop offset="55%" stop-color="#281a14"/>
+                    <stop offset="100%" stop-color="#140c08"/>
+                  </radialGradient>
+                  <linearGradient id="tp-scarf" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#3cc2b2"/>
+                    <stop offset="55%" stop-color="#2a9d8f"/>
+                    <stop offset="100%" stop-color="#175c53"/>
+                  </linearGradient>
+                  <radialGradient id="tp-eye" cx="45%" cy="40%" r="55%">
+                    <stop offset="0%" stop-color="#4a2c18"/>
+                    <stop offset="55%" stop-color="#1f1109"/>
+                    <stop offset="100%" stop-color="#0c0603"/>
+                  </radialGradient>
+                </defs>
+                <!-- 飾り毛たっぷりの巻き尾 -->
                 <g class="svg-tail">
-                  <ellipse cx="44" cy="116" rx="32" ry="30" fill="#df8232" stroke="#8a4412" stroke-width="3" />
-                  <path d="M 24 108 Q 14 86 36 82 Q 48 96 36 122 Z" fill="#f7b267" />
-                  <path d="M 20 96 Q 15 82 32 82 Q 40 90 32 104 Z" fill="#3d2314" />
+                  <path d="M 52 136 C 24 134, 8 110, 14 86 C 18 70, 32 62, 46 68 C 36 60, 22 64, 16 76 C 10 62, 26 48, 44 54 C 58 58, 68 74, 62 96 C 68 86, 74 96, 66 114 C 62 126, 58 134, 52 136 Z" fill="url(#tp-fur)" stroke="#7a3b0c" stroke-width="2.6" stroke-linejoin="round"/>
+                  <path class="svg-tail-tip" d="M 18 76 C 12 62, 26 50, 42 54 C 34 58, 28 66, 30 76 C 24 72, 20 74, 18 76 Z" fill="#3a2010" opacity="0.88"/>
+                  <path d="M 24 102 C 18 88, 28 72, 44 74 C 52 82, 48 102, 38 114 Z" fill="#ffd99e" opacity="0.65"/>
                 </g>
-                <ellipse cx="100" cy="132" rx="64" ry="52" fill="#e58f3e" stroke="#8a4412" stroke-width="3" />
-                <ellipse cx="100" cy="136" rx="44" ry="36" fill="#FAD4A6" />
-                <circle cx="66" cy="130" r="24" fill="#f4a259" opacity="0.65" />
-                <circle cx="134" cy="130" r="24" fill="#f4a259" opacity="0.65" />
-                <ellipse cx="78" cy="172" rx="14" ry="11" fill="#e58f3e" stroke="#8a4412" stroke-width="2.5" />
-                <ellipse cx="122" cy="172" rx="14" ry="11" fill="#e58f3e" stroke="#8a4412" stroke-width="2.5" />
-                <!-- 名探偵スカーフ -->
-                <path d="M 68 118 Q 100 132 132 118 Q 120 138 100 140 Q 80 138 68 118 Z" fill="#2a9d8f" stroke="#1b635a" stroke-width="2" />
-                <circle cx="100" cy="133" r="5.5" fill="#ffd166" stroke="#b8860b" stroke-width="1.2" />
+                <!-- もふもふの胴体 -->
+                <path d="M 48 130 C 34 114, 40 94, 58 92 C 74 88, 126 88, 142 92 C 160 94, 166 114, 152 130 C 164 140, 160 158, 146 164 C 136 172, 118 175, 100 175 C 82 175, 64 172, 54 164 C 40 158, 36 140, 48 130 Z" fill="url(#tp-fur)" stroke="#7a3b0c" stroke-width="2.8" stroke-linejoin="round"/>
+                <!-- 胸元の3段飾り毛（エプロン） -->
+                <g class="svg-chest-fluff">
+                  <path d="M 62 114 C 54 126, 56 142, 68 148 C 62 156, 72 166, 84 164 C 92 172, 108 172, 116 164 C 128 166, 138 156, 132 148 C 144 142, 146 126, 138 114 Z" fill="url(#tp-chest)" stroke="#b86b25" stroke-width="2" stroke-linejoin="round"/>
+                  <path d="M 74 128 C 78 138, 90 142, 100 136 C 110 142, 122 138, 126 128" stroke="#e6b073" stroke-width="2" fill="none" stroke-linecap="round"/>
+                </g>
+                <!-- 前足と肉球 -->
+                <g class="svg-paws">
+                  <path d="M 64 164 C 60 174, 68 182, 78 182 C 88 182, 94 174, 90 164 Z" fill="url(#tp-chest)" stroke="#7a3b0c" stroke-width="2.4"/>
+                  <path d="M 73 174 L 73 180 M 80 174 L 80 180" stroke="#7a3b0c" stroke-width="1.6" stroke-linecap="round"/>
+                  <path d="M 110 164 C 106 174, 112 182, 122 182 C 132 182, 140 174, 136 164 Z" fill="url(#tp-chest)" stroke="#7a3b0c" stroke-width="2.4"/>
+                  <path d="M 120 174 L 120 180 M 127 174 L 127 180" stroke="#7a3b0c" stroke-width="1.6" stroke-linecap="round"/>
+                </g>
+                <!-- 名探偵スカーフと肉球勲章 -->
+                <g class="svg-scarf">
+                  <path class="svg-scarf-tail" d="M 114 124 C 126 132, 134 146, 128 156 L 114 150 C 116 140, 114 132, 108 126 Z" fill="#1d756a" stroke="#134e47" stroke-width="1.8" stroke-linejoin="round"/>
+                  <path d="M 62 114 C 82 126, 118 126, 138 114 C 134 130, 118 140, 100 142 C 82 140, 66 130, 62 114 Z" fill="url(#tp-scarf)" stroke="#134e47" stroke-width="2.2" stroke-linejoin="round"/>
+                  <path d="M 72 121 C 90 129, 110 129, 128 121" stroke="#7ce8dc" stroke-width="1.4" stroke-dasharray="4 3" fill="none" opacity="0.75"/>
+                  <circle class="svg-badge-gleam" cx="100" cy="133" r="7.5" fill="#ffd166" stroke="#9c6307" stroke-width="1.8"/>
+                  <circle cx="100" cy="134.5" r="2.2" fill="#8c5305"/>
+                  <circle cx="97.2" cy="131" r="1.1" fill="#8c5305"/>
+                  <circle cx="100" cy="129.8" r="1.1" fill="#8c5305"/>
+                  <circle cx="102.8" cy="131" r="1.1" fill="#8c5305"/>
+                </g>
+                <!-- 頭部 -->
                 <g class="svg-head">
                   <g class="svg-ear-l">
-                    <polygon points="60,55 76,15 95,58" fill="#df8232" stroke="#8a4412" stroke-width="3" />
-                    <polygon points="69,34 76,15 84,36" fill="#3d2314" />
-                    <polygon points="67,50 76,26 89,52" fill="#f4acb7" />
+                    <path d="M 56 58 C 52 40, 60 18, 72 14 C 82 12, 92 32, 95 54 Z" fill="url(#tp-head)" stroke="#7a3b0c" stroke-width="2.8" stroke-linejoin="round"/>
+                    <path d="M 62 32 C 65 20, 70 14, 74 14 C 80 15, 85 24, 88 34 C 80 30, 70 30, 62 32 Z" fill="#361e10"/>
+                    <path d="M 64 52 C 62 38, 67 24, 73 22 C 79 22, 85 36, 88 50 Z" fill="#f7a8b8" opacity="0.88"/>
+                    <path d="M 62 52 Q 70 44 76 50 Q 82 44 89 51" fill="#ffebd2" opacity="0.85"/>
                   </g>
                   <g class="svg-ear-r">
-                    <polygon points="105,58 124,15 140,55" fill="#df8232" stroke="#8a4412" stroke-width="3" />
-                    <polygon points="116,36 124,15 131,34" fill="#3d2314" />
-                    <polygon points="111,52 124,26 133,50" fill="#f4acb7" />
+                    <path d="M 105 54 C 108 32, 118 12, 128 14 C 140 18, 148 40, 144 58 Z" fill="url(#tp-head)" stroke="#7a3b0c" stroke-width="2.8" stroke-linejoin="round"/>
+                    <path d="M 112 34 C 115 24, 120 15, 126 14 C 130 14, 135 20, 138 32 C 130 30, 120 30, 112 34 Z" fill="#361e10"/>
+                    <path d="M 112 50 C 115 36, 121 22, 127 22 C 133 24, 138 38, 136 52 Z" fill="#f7a8b8" opacity="0.88"/>
+                    <path d="M 111 51 Q 118 44 124 50 Q 130 44 138 52" fill="#ffebd2" opacity="0.85"/>
                   </g>
-                  <circle cx="100" cy="85" r="50" fill="#e58f3e" stroke="#8a4412" stroke-width="3" />
-                  <circle cx="60" cy="86" r="21" fill="#e58f3e" />
-                  <circle cx="140" cy="86" r="21" fill="#e58f3e" />
-                  <ellipse cx="80" cy="66" rx="6.5" ry="3.5" fill="#ffe5b4" transform="rotate(-8 80 66)" />
-                  <ellipse cx="120" cy="66" rx="6.5" ry="3.5" fill="#ffe5b4" transform="rotate(8 120 66)" />
-                  <circle cx="72" cy="96" r="10" fill="#ff758f" opacity="0.55" />
-                  <circle cx="128" cy="96" r="10" fill="#ff758f" opacity="0.55" />
+                  <!-- 顔の輪郭（頬の飾り毛つき） -->
+                  <path d="M 52 74 C 46 58, 66 36, 100 36 C 134 36, 154 58, 148 74 C 162 82, 164 98, 150 106 C 156 114, 144 124, 130 122 C 118 128, 82 128, 70 122 C 56 124, 44 114, 50 106 C 36 98, 38 82, 52 74 Z" fill="url(#tp-head)" stroke="#7a3b0c" stroke-width="2.8" stroke-linejoin="round"/>
+                  <path d="M 88 38 C 94 30, 100 32, 102 38 C 106 31, 112 34, 110 40" fill="url(#tp-head)" stroke="#7a3b0c" stroke-width="2.2" stroke-linecap="round"/>
+                  <path d="M 64 78 C 56 64, 72 48, 92 54 C 84 68, 78 82, 64 78 Z" fill="#ffdfa8" opacity="0.45"/>
+                  <path d="M 136 78 C 144 64, 128 48, 108 54 C 116 68, 122 82, 136 78 Z" fill="#ffdfa8" opacity="0.45"/>
+                  <!-- マロ眉 -->
+                  <ellipse cx="79" cy="63" rx="6.8" ry="3.8" fill="#fff0cc" stroke="#b86b25" stroke-width="0.9" transform="rotate(-10 79 63)"/>
+                  <ellipse cx="121" cy="63" rx="6.8" ry="3.8" fill="#fff0cc" stroke="#b86b25" stroke-width="0.9" transform="rotate(10 121 63)"/>
+                  <!-- ほっぺ -->
+                  <ellipse cx="66" cy="95" rx="11" ry="7.5" fill="#ff6b8b" opacity="0.48"/>
+                  <ellipse cx="134" cy="95" rx="11" ry="7.5" fill="#ff6b8b" opacity="0.48"/>
                   <!-- パムの黒マズル -->
-                  <ellipse cx="100" cy="98" rx="18" ry="13" fill="#281c17" />
-                  <circle cx="91" cy="98" r="9.5" fill="#2b1d16" />
-                  <circle cx="109" cy="98" r="9.5" fill="#2b1d16" />
-                  <ellipse cx="100" cy="91" rx="6.5" ry="4.5" fill="#0f0907" />
-                  <ellipse cx="98" cy="89.5" rx="2.2" ry="1.2" fill="#ffffff" opacity="0.85" />
-                  <path d="M 93 100 Q 100 106 107 100" stroke="#f8edeb" stroke-width="2.2" fill="none" stroke-linecap="round" />
-                  <ellipse cx="100" cy="105" rx="5" ry="4" fill="#ff758f" />
+                  <g class="pam-black-muzzle">
+                    <path d="M 79 94 C 79 83, 88 78, 100 78 C 112 78, 121 83, 121 94 C 121 104, 113 111, 100 111 C 87 111, 79 104, 79 94 Z" fill="url(#tp-muzzle)"/>
+                    <circle cx="90" cy="96" r="10.5" fill="#231610"/>
+                    <circle cx="110" cy="96" r="10.5" fill="#231610"/>
+                    <circle cx="85" cy="95" r="1" fill="#594136"/>
+                    <circle cx="88" cy="99" r="1" fill="#594136"/>
+                    <circle cx="115" cy="95" r="1" fill="#594136"/>
+                    <circle cx="112" cy="99" r="1" fill="#594136"/>
+                    <g class="svg-nose">
+                      <path d="M 93 88 C 93 84, 107 84, 107 88 C 107 92, 103 95, 100 95 C 97 95, 93 92, 93 88 Z" fill="#0d0705"/>
+                      <ellipse cx="98" cy="87.2" rx="3" ry="1.4" fill="#ffffff" opacity="0.88"/>
+                    </g>
+                  </g>
+                  <!-- 口元 -->
+                  <g class="svg-mouth">
+                    <path d="M 94 100 C 96 111, 104 111, 106 100 Z" fill="#ff6b8b" stroke="#9e2a45" stroke-width="1.4"/>
+                    <line x1="100" y1="101" x2="100" y2="107" stroke="#e0486c" stroke-width="1.1"/>
+                    <path d="M 88 97 Q 94 104 100 98 Q 106 104 112 97" stroke="#fff5eb" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+                  </g>
+                  <!-- うるうるの瞳 -->
                   <g class="svg-eyes-blink">
-                    <ellipse cx="78" cy="81" rx="7.5" ry="9.5" fill="#1f130e" />
-                    <circle cx="75.5" cy="78" r="3" fill="#ffffff" />
-                    <ellipse cx="122" cy="81" rx="7.5" ry="9.5" fill="#1f130e" />
-                    <circle cx="119.5" cy="78" r="3" fill="#ffffff" />
+                    <path d="M 67 74 Q 77 67 86 75" stroke="#2d170b" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+                    <ellipse cx="77" cy="80" rx="8.8" ry="10.2" fill="url(#tp-eye)"/>
+                    <path d="M 71 84 A 6.5 7 0 0 0 83 84" stroke="#9c5825" stroke-width="2" fill="none" opacity="0.75"/>
+                    <circle class="svg-eye-shine" cx="74" cy="76.5" r="3.4" fill="#ffffff"/>
+                    <circle cx="80.5" cy="83.5" r="1.6" fill="#ffffff" opacity="0.9"/>
+                    <path d="M 114 75 Q 123 67 133 74" stroke="#2d170b" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+                    <ellipse cx="123" cy="80" rx="8.8" ry="10.2" fill="url(#tp-eye)"/>
+                    <path d="M 117 84 A 6.5 7 0 0 0 129 84" stroke="#9c5825" stroke-width="2" fill="none" opacity="0.75"/>
+                    <circle class="svg-eye-shine" cx="120" cy="76.5" r="3.4" fill="#ffffff"/>
+                    <circle cx="126.5" cy="83.5" r="1.6" fill="#ffffff" opacity="0.9"/>
                   </g>
                 </g>
               </svg>
             </div>
-            <!-- トラ吉のSVGアート -->
+            <!-- ボス猫「トラ吉」高精細ベクターSVGアート -->
             <div id="title-torakichi" class="tora-hero-wrapper bounce-idle-alt">
               <svg class="character-svg tora-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <linearGradient id="tt-fur" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#f7b257"/>
+                    <stop offset="55%" stop-color="#e39235"/>
+                    <stop offset="100%" stop-color="#b56414"/>
+                  </linearGradient>
+                  <radialGradient id="tt-head" cx="50%" cy="40%" r="55%">
+                    <stop offset="0%" stop-color="#fac06e"/>
+                    <stop offset="65%" stop-color="#e59639"/>
+                    <stop offset="100%" stop-color="#b86614"/>
+                  </linearGradient>
+                  <linearGradient id="tt-scarf" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#ff5c67"/>
+                    <stop offset="60%" stop-color="#e63946"/>
+                    <stop offset="100%" stop-color="#9e1924"/>
+                  </linearGradient>
+                  <radialGradient id="tt-eye" cx="50%" cy="45%" r="52%">
+                    <stop offset="0%" stop-color="#fff07c"/>
+                    <stop offset="65%" stop-color="#f5b700"/>
+                    <stop offset="100%" stop-color="#c47d00"/>
+                  </radialGradient>
+                </defs>
+                <!-- 縞模様のしっぽ -->
                 <g class="svg-tail">
-                  <path d="M 145 148 C 175 125 178 85 156 72 C 150 85 158 118 138 138 Z" fill="#e69d45" stroke="#ba681b" stroke-width="2.5" />
+                  <path d="M 142 154 C 174 142, 188 104, 172 74 C 166 64, 152 66, 154 78 C 158 98, 150 124, 132 140 Z" fill="url(#tt-fur)" stroke="#7a3e08" stroke-width="2.8" stroke-linejoin="round"/>
+                  <path class="svg-tail-tip" d="M 157 86 C 163 83, 171 86, 175 91 M 155 104 C 162 101, 170 104, 173 110 M 149 122 C 156 120, 163 123, 166 128" stroke="#613006" stroke-width="4" stroke-linecap="round" fill="none"/>
                 </g>
-                <ellipse cx="100" cy="130" rx="55" ry="50" fill="#e69d45" stroke="#ba681b" stroke-width="3" />
-                <path d="M 70 120 L 85 125 L 72 135" stroke="#68390d" stroke-width="4" stroke-linecap="round" fill="none" />
-                <path d="M 130 120 L 115 125 L 128 135" stroke="#68390d" stroke-width="4" stroke-linecap="round" fill="none" />
+                <!-- たくましい体躯と縞模様 -->
+                <path d="M 48 134 C 44 104, 66 92, 100 92 C 134 92, 156 104, 152 134 C 154 158, 136 176, 100 176 C 64 176, 46 158, 48 134 Z" fill="url(#tt-fur)" stroke="#7a3e08" stroke-width="2.8" stroke-linejoin="round"/>
+                <path class="svg-chest-fluff" d="M 70 120 C 70 148, 82 168, 100 168 C 118 168, 130 148, 130 120 Z" fill="#fff7eb"/>
+                <path d="M 52 124 Q 68 128 62 136 Q 54 140 50 144" stroke="#613006" stroke-width="4" stroke-linecap="round" fill="none"/>
+                <path d="M 148 124 Q 132 128 138 136 Q 146 140 150 144" stroke="#613006" stroke-width="4" stroke-linecap="round" fill="none"/>
+                <!-- 前足 -->
+                <path d="M 64 164 C 60 175, 68 182, 79 182 C 90 182, 95 175, 91 164 Z" fill="#fff7eb" stroke="#7a3e08" stroke-width="2.5"/>
+                <path d="M 74 174 L 74 180 M 81 174 L 81 180" stroke="#7a3e08" stroke-width="1.6" stroke-linecap="round"/>
+                <path d="M 109 164 C 105 175, 110 182, 121 182 C 132 182, 140 175, 136 164 Z" fill="#fff7eb" stroke="#7a3e08" stroke-width="2.5"/>
+                <path d="M 119 174 L 119 180 M 126 174 L 126 180" stroke="#7a3e08" stroke-width="1.6" stroke-linecap="round"/>
+                <!-- 赤いボス猫スカーフ -->
+                <path class="svg-scarf-tail" d="M 64 112 C 86 122, 114 122, 136 112 L 126 126 L 100 144 L 74 126 Z" fill="url(#tt-scarf)" stroke="#780c16" stroke-width="2.4" stroke-linejoin="round"/>
+                <circle class="svg-badge-gleam" cx="100" cy="128" r="5" fill="#ffd166" stroke="#9c6307" stroke-width="1.4"/>
+                <!-- 頭部 -->
                 <g class="svg-head">
+                  <!-- 左耳（歴戦の切り込み入り） -->
                   <g class="svg-ear-l">
-                    <polygon points="55,50 65,15 88,48" fill="#e69d45" stroke="#ba681b" stroke-width="3" />
-                    <polygon points="62,45 68,24 82,44" fill="#d47979" />
+                    <path d="M 50 54 L 56 26 L 65 30 L 62 18 L 66 13 L 90 44 Z" fill="url(#tt-head)" stroke="#7a3e08" stroke-width="2.8" stroke-linejoin="round"/>
+                    <path d="M 58 48 L 65 24 L 83 44 Z" fill="#e07a7a" opacity="0.85"/>
                   </g>
+                  <!-- 右耳 -->
                   <g class="svg-ear-r">
-                    <polygon points="112,48 135,15 145,50" fill="#e69d45" stroke="#ba681b" stroke-width="3" />
-                    <polygon points="118,44 132,24 138,45" fill="#d47979" />
+                    <path d="M 110 44 L 134 13 C 142 24, 146 38, 150 54 Z" fill="url(#tt-head)" stroke="#7a3e08" stroke-width="2.8" stroke-linejoin="round"/>
+                    <path d="M 117 44 L 132 23 L 142 48 Z" fill="#e07a7a" opacity="0.85"/>
                   </g>
-                  <ellipse cx="100" cy="80" rx="46" ry="40" fill="#e69d45" stroke="#ba681b" stroke-width="3" />
-                  <path d="M 94 48 L 100 60 L 106 48" stroke="#68390d" stroke-width="4" stroke-linecap="round" fill="none" />
+                  <!-- 顔の輪郭 -->
+                  <path d="M 50 76 C 46 52, 68 38, 100 38 C 132 38, 154 52, 150 76 C 160 84, 158 100, 144 106 C 132 118, 116 120, 100 120 C 84 120, 68 118, 56 106 C 42 100, 40 84, 50 76 Z" fill="url(#tt-head)" stroke="#7a3e08" stroke-width="2.8" stroke-linejoin="round"/>
+                  <!-- 額のM字縞模様＆頬のトラ縞 -->
+                  <path d="M 85 46 L 92 59 L 100 49 L 108 59 L 115 46" stroke="#592b04" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                  <path d="M 52 80 Q 64 82 68 86 M 50 90 Q 62 91 66 94" stroke="#592b04" stroke-width="2.8" stroke-linecap="round" fill="none"/>
+                  <path d="M 148 80 Q 136 82 132 86 M 150 90 Q 138 91 134 94" stroke="#592b04" stroke-width="2.8" stroke-linecap="round" fill="none"/>
+                  <!-- 琥珀色の猫目 -->
                   <g class="svg-eyes-blink">
-                    <polygon points="72,75 88,78 75,86" fill="#ffe066" stroke="#2d1c14" stroke-width="2" />
-                    <ellipse cx="80" cy="80" rx="2.5" ry="5" fill="#2d1c14" />
-                    <polygon points="128,75 112,78 125,86" fill="#ffe066" stroke="#2d1c14" stroke-width="2" />
-                    <ellipse cx="120" cy="80" rx="2.5" ry="5" fill="#2d1c14" />
+                    <path d="M 67 74 C 72 67, 85 69, 90 78 C 84 85, 71 84, 67 74 Z" fill="url(#tt-eye)" stroke="#2b1708" stroke-width="2.2"/>
+                    <ellipse cx="79" cy="76.5" rx="2.3" ry="6.2" fill="#1f1005"/>
+                    <circle class="svg-eye-shine" cx="76" cy="73.5" r="2" fill="#ffffff"/>
+                    <path d="M 133 74 C 128 67, 115 69, 110 78 C 116 85, 129 84, 133 74 Z" fill="url(#tt-eye)" stroke="#2b1708" stroke-width="2.2"/>
+                    <ellipse cx="121" cy="76.5" rx="2.3" ry="6.2" fill="#1f1005"/>
+                    <circle class="svg-eye-shine" cx="118" cy="73.5" r="2" fill="#ffffff"/>
+                    <path d="M 65 67 L 91 74 M 135 67 L 109 74" stroke="#4a2304" stroke-width="3.2" stroke-linecap="round"/>
                   </g>
-                  <polygon points="97,90 103,90 100,95" fill="#ff9999" />
-                  <path d="M 94 98 Q 100 102 106 98" stroke="#2d1c14" stroke-width="2" fill="none" />
-                  <line x1="60" y1="88" x2="42" y2="85" stroke="#2d1c14" stroke-width="2" />
-                  <line x1="60" y1="94" x2="40" y2="96" stroke="#2d1c14" stroke-width="2" />
-                  <line x1="140" y1="88" x2="158" y2="85" stroke="#2d1c14" stroke-width="2" />
-                  <line x1="140" y1="94" x2="160" y2="96" stroke="#2d1c14" stroke-width="2" />
+                  <!-- ぷっくりωマズルと牙 -->
+                  <ellipse cx="92" cy="95" rx="10" ry="7.5" fill="#fff7eb"/>
+                  <ellipse cx="108" cy="95" rx="10" ry="7.5" fill="#fff7eb"/>
+                  <path d="M 95 88 L 105 88 L 100 94 Z" fill="#f08080" stroke="#7a2e2e" stroke-width="1.2" stroke-linejoin="round"/>
+                  <g class="svg-mouth">
+                    <path d="M 88 98 Q 94 104 100 97 Q 106 104 112 98" stroke="#2d1c14" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+                    <polygon points="107,100 110,106 112,99" fill="#ffffff" stroke="#2d1c14" stroke-width="1"/>
+                  </g>
+                  <!-- ヒゲ -->
+                  <g class="svg-whiskers">
+                    <path d="M 64 90 Q 46 86 34 84 M 64 96 Q 46 96 32 98" stroke="#3b2210" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+                    <path d="M 136 90 Q 154 86 166 84 M 136 96 Q 154 96 168 98" stroke="#3b2210" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+                  </g>
                 </g>
-                <polygon points="75,115 125,115 100,138" fill="#e63946" stroke="#ba1826" stroke-width="2" />
               </svg>
             </div>
           </div>
@@ -260,42 +389,75 @@
               <span class="spot-label">ベンチ裏のダンボール</span>
             </div>
 
-            <!-- NPC 1: 管理人のおじいさん（SVGキャラ） -->
+            <!-- NPC 1: 管理人のおじいさん（高精細SVGアイコン） -->
             <div class="npc-actor npc-caretaker" id="npc_caretaker" data-npc="npc_caretaker" style="top: 45%; left: 16%;">
               <div class="npc-marker">💬 お話を聞く</div>
               <div class="npc-body">
                 <svg class="npc-mini-svg" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
                   <g class="svg-head">
-                    <ellipse cx="40" cy="24" rx="32" ry="10" fill="#eed971" stroke="#c4a520" stroke-width="2"/>
-                    <path d="M 20 24 C 20 6 60 6 60 24 Z" fill="#edd055" stroke="#c4a520" stroke-width="2"/>
-                    <circle cx="40" cy="44" r="22" fill="#fdecd9" stroke="#d5bdaf" stroke-width="2"/>
-                    <path d="M 24 54 Q 40 70 56 54 Q 48 62 40 62 Q 32 62 24 54 Z" fill="#ffffff" stroke="#cccccc" stroke-width="1.5"/>
-                    <path d="M 28 40 Q 32 35 36 40" stroke="#332722" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-                    <path d="M 44 40 Q 48 35 52 40" stroke="#332722" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-                    <circle cx="40" cy="47" r="4" fill="#f5cac3"/>
+                    <!-- 麦わら帽子と緑のリボン -->
+                    <ellipse cx="40" cy="24" rx="34" ry="9.5" fill="#f3d96b" stroke="#9e7b12" stroke-width="2"/>
+                    <path d="M 18 23 C 18 5, 62 5, 62 23 Z" fill="#fae588" stroke="#9e7b12" stroke-width="2"/>
+                    <path d="M 19 20 Q 40 24 61 20" stroke="#2d6a4f" stroke-width="4" fill="none"/>
+                    <!-- 銀髪と耳 -->
+                    <circle cx="17" cy="42" r="5" fill="#f9dcc4" stroke="#b5835a" stroke-width="1.6"/>
+                    <circle cx="63" cy="42" r="5" fill="#f9dcc4" stroke="#b5835a" stroke-width="1.6"/>
+                    <!-- 優しい顔立ち -->
+                    <circle cx="40" cy="44" r="22" fill="#ffe8d1" stroke="#b5835a" stroke-width="2"/>
+                    <circle cx="26" cy="47" r="4.5" fill="#ff8fa3" opacity="0.45"/>
+                    <circle cx="54" cy="47" r="4.5" fill="#ff8fa3" opacity="0.45"/>
+                    <!-- 糸目と丸眼鏡 -->
+                    <g class="svg-eyes-blink">
+                      <path d="M 27 40 Q 32 35 37 40" stroke="#3b281e" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+                      <path d="M 43 40 Q 48 35 53 40" stroke="#3b281e" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+                    </g>
+                    <circle cx="32" cy="40" r="6.5" fill="none" stroke="#8a6d3b" stroke-width="1.2" opacity="0.7"/>
+                    <circle cx="48" cy="40" r="6.5" fill="none" stroke="#8a6d3b" stroke-width="1.2" opacity="0.7"/>
+                    <circle cx="40" cy="45" r="3.5" fill="#f2b89b"/>
+                    <!-- 豊かな白ひげ -->
+                    <path class="svg-chest-fluff" d="M 20 50 C 16 64, 28 74, 40 74 C 52 74, 64 64, 60 50 C 52 57, 28 57, 20 50 Z" fill="#ffffff" stroke="#adb5bd" stroke-width="1.6"/>
+                    <path class="svg-mouth" d="M 35 56 Q 40 61 45 56" stroke="#8c2f39" stroke-width="2" fill="none" stroke-linecap="round"/>
                   </g>
                 </svg>
               </div>
               <span class="npc-label">管理人さん</span>
             </div>
 
-            <!-- NPC 3: 見張り猫クロ（SVGキャラ） -->
+            <!-- NPC 3: 見張り猫クロ（高精細SVGアイコン） -->
             <div class="npc-actor npc-kuro" id="npc_kuro" data-npc="npc_kuro" style="top: 28%; left: 56%;">
               <div class="npc-marker">💬 お話を聞く</div>
               <div class="npc-body">
                 <svg class="npc-mini-svg" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+                  <g class="svg-tail">
+                    <path d="M 56 64 C 72 58, 76 38, 66 28 C 62 34, 66 50, 52 58 Z" fill="#22252d" stroke="#0b0c10" stroke-width="2" stroke-linejoin="round"/>
+                  </g>
                   <g class="svg-head">
-                    <g class="svg-ear-l"><polygon points="18,34 24,10 36,30" fill="#1b1c1e" stroke="#000000" stroke-width="2"/></g>
-                    <g class="svg-ear-r"><polygon points="44,30 56,10 62,34" fill="#1b1c1e" stroke="#000000" stroke-width="2"/></g>
-                    <ellipse cx="40" cy="46" rx="24" ry="20" fill="#1b1c1e" stroke="#000000" stroke-width="2"/>
-                    <g class="svg-eyes-blink">
-                      <ellipse cx="31" cy="44" rx="5" ry="6" fill="#f9c74f"/>
-                      <ellipse cx="31" cy="44" rx="1.8" ry="4.5" fill="#000000"/>
-                      <ellipse cx="49" cy="44" rx="5" ry="6" fill="#f9c74f"/>
-                      <ellipse cx="49" cy="44" rx="1.8" ry="4.5" fill="#000000"/>
+                    <g class="svg-ear-l">
+                      <path d="M 16 36 C 14 22, 20 10, 25 8 C 30 12, 34 22, 37 31 Z" fill="#22252d" stroke="#0b0c10" stroke-width="2.2" stroke-linejoin="round"/>
+                      <path d="M 20 31 L 25 14 L 33 29 Z" fill="#a85c68" opacity="0.85"/>
                     </g>
-                    <path d="M 26 62 Q 40 68 54 62" stroke="#e63946" stroke-width="4" fill="none"/>
-                    <circle cx="40" cy="66" r="4" fill="#ffd166"/>
+                    <g class="svg-ear-r">
+                      <path d="M 43 31 C 46 22, 50 12, 55 8 C 60 10, 66 22, 64 36 Z" fill="#22252d" stroke="#0b0c10" stroke-width="2.2" stroke-linejoin="round"/>
+                      <path d="M 47 29 L 55 14 L 60 31 Z" fill="#a85c68" opacity="0.85"/>
+                    </g>
+                    <!-- 艶やかな黒毛の頭部 -->
+                    <path d="M 16 44 C 14 28, 26 22, 40 22 C 54 22, 66 28, 64 44 C 68 50, 64 60, 54 63 C 46 67, 34 67, 26 63 C 16 60, 12 50, 16 44 Z" fill="#22252d" stroke="#0b0c10" stroke-width="2.2" stroke-linejoin="round"/>
+                    <path d="M 26 27 Q 40 23 54 27" stroke="#484f60" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.7"/>
+                    <!-- 金緑に輝く瞳 -->
+                    <g class="svg-eyes-blink">
+                      <ellipse cx="30" cy="43" rx="5.8" ry="6.6" fill="#ffd43b" stroke="#090a0d" stroke-width="1.4"/>
+                      <ellipse cx="30" cy="43" rx="1.8" ry="5" fill="#090a0d"/>
+                      <circle class="svg-eye-shine" cx="28.2" cy="40.5" r="1.6" fill="#ffffff"/>
+                      <ellipse cx="50" cy="43" rx="5.8" ry="6.6" fill="#ffd43b" stroke="#090a0d" stroke-width="1.4"/>
+                      <ellipse cx="50" cy="43" rx="1.8" ry="5" fill="#090a0d"/>
+                      <circle class="svg-eye-shine" cx="48.2" cy="40.5" r="1.6" fill="#ffffff"/>
+                    </g>
+                    <polygon points="38,50 42,50 40,53" fill="#ff9ebb"/>
+                    <path class="svg-mouth" d="M 35 55 Q 37.5 58 40 54 Q 42.5 58 45 55" stroke="#adb5bd" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+                    <!-- 赤い首輪と金の鈴 -->
+                    <path d="M 23 62 Q 40 69 57 62" stroke="#e63946" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+                    <circle class="svg-badge-gleam" cx="40" cy="67" r="4.8" fill="#ffd166" stroke="#9c6307" stroke-width="1.4"/>
+                    <circle cx="40" cy="68" r="1.2" fill="#5c3a04"/>
                   </g>
                 </svg>
               </div>
@@ -351,22 +513,33 @@
               <span class="spot-label">公園の水飲み場</span>
             </div>
 
-            <!-- NPC 2: ハトのポッポ師匠（SVGキャラ） -->
+            <!-- NPC 2: ハトのポッポ師匠（高精細SVGアイコン） -->
             <div class="npc-actor npc-poppo" id="npc_poppo" data-npc="npc_poppo" style="top: 52%; left: 42%;">
               <div class="npc-marker">💬 お話を聞く</div>
               <div class="npc-body">
                 <svg class="npc-mini-svg" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+                  <!-- 尾羽と丸い鳩胸 -->
+                  <path d="M 28 66 L 20 75 L 60 75 L 52 66 Z" fill="#4a5568" stroke="#2b2d42" stroke-width="1.6"/>
+                  <ellipse cx="40" cy="54" rx="23" ry="17" fill="#9aa6b8" stroke="#2b2d42" stroke-width="2.2"/>
+                  <!-- 構造色の首飾り羽 -->
+                  <path class="svg-chest-fluff" d="M 24 41 C 28 50, 52 50, 56 41 C 53 36, 27 36, 24 41 Z" fill="#40c057" stroke="#2b8a3e" stroke-width="1.4"/>
+                  <path d="M 28 45 Q 40 50 52 45" stroke="#9775fa" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                  <!-- 翼の2本線 -->
+                  <path class="svg-wing-l" d="M 18 46 C 14 55, 19 65, 29 64 C 28 55, 25 48, 18 46 Z" fill="#7c889b" stroke="#2b2d42" stroke-width="1.8"/>
+                  <path class="svg-wing-r" d="M 62 46 C 66 55, 61 65, 51 64 C 52 55, 55 48, 62 46 Z" fill="#7c889b" stroke="#2b2d42" stroke-width="1.8"/>
                   <g class="svg-head">
-                    <ellipse cx="40" cy="54" rx="22" ry="18" fill="#8d99ae" stroke="#2b2d42" stroke-width="2"/>
-                    <ellipse cx="40" cy="44" rx="16" ry="7" fill="#52b788"/>
-                    <circle cx="40" cy="28" r="16" fill="#8d99ae" stroke="#2b2d42" stroke-width="2"/>
+                    <circle cx="40" cy="27" r="15.5" fill="#9aa6b8" stroke="#2b2d42" stroke-width="2.2"/>
                     <g class="svg-eyes-blink">
-                      <circle cx="31" cy="26" r="4.5" fill="#fb8500"/>
-                      <circle cx="31" cy="26" r="2" fill="#000000"/>
-                      <circle cx="49" cy="26" r="4.5" fill="#fb8500"/>
-                      <circle cx="49" cy="26" r="2" fill="#000000"/>
+                      <circle cx="31" cy="25" r="4.6" fill="#ff7b00" stroke="#2b2d42" stroke-width="1.2"/>
+                      <circle cx="31" cy="25" r="2" fill="#111111"/>
+                      <circle class="svg-eye-shine" cx="29.8" cy="23.6" r="1.2" fill="#ffffff"/>
+                      <circle cx="49" cy="25" r="4.6" fill="#ff7b00" stroke="#2b2d42" stroke-width="1.2"/>
+                      <circle cx="49" cy="25" r="2" fill="#111111"/>
+                      <circle class="svg-eye-shine" cx="47.8" cy="23.6" r="1.2" fill="#ffffff"/>
                     </g>
-                    <polygon points="36,30 44,30 40,39" fill="#ffb703" stroke="#d48b00" stroke-width="1.2"/>
+                    <!-- 鼻コブとくちばし -->
+                    <ellipse cx="40" cy="29" rx="4.2" ry="2.2" fill="#ffffff" stroke="#adb5bd" stroke-width="1"/>
+                    <path class="svg-mouth" d="M 35 30 L 45 30 L 40 40 Z" fill="#ffb703" stroke="#b87a00" stroke-width="1.4" stroke-linejoin="round"/>
                   </g>
                 </svg>
               </div>
@@ -382,29 +555,86 @@
             </div>
           </div>
 
-          <!-- 画面上を歩くパムのミニSVGスプライト（マップ共通） -->
+          <!-- 画面上を歩くパムの高精細ミニSVGスプライト（マップ共通・4本足トコトコ歩行） -->
           <div id="pome-walker" class="pome-walker">
             <div class="pome-walker-svg-wrap">
               <svg class="pome-walker-svg" viewBox="0 0 90 80" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <radialGradient id="wk-fur" cx="50%" cy="40%" r="58%">
+                    <stop offset="0%" stop-color="#ffc978"/>
+                    <stop offset="60%" stop-color="#eb8f38"/>
+                    <stop offset="100%" stop-color="#b55912"/>
+                  </radialGradient>
+                  <radialGradient id="wk-chest" cx="55%" cy="40%" r="58%">
+                    <stop offset="0%" stop-color="#fffdf9"/>
+                    <stop offset="70%" stop-color="#ffebd2"/>
+                    <stop offset="100%" stop-color="#e3a864"/>
+                  </radialGradient>
+                </defs>
+                <!-- 足元の接地シャドウ -->
+                <ellipse cx="46" cy="72" rx="26" ry="5" fill="#2b180a" opacity="0.22"/>
+                <!-- 背中にくるんと巻いた飾り尾 -->
                 <g class="svg-tail">
-                  <circle cx="20" cy="40" r="13" fill="#df8232" stroke="#8a4412" stroke-width="2"/>
-                  <circle cx="16" cy="35" r="5" fill="#3d2314"/>
+                  <path d="M 27 46 C 11 45, 4 31, 11 20 C 16 12, 28 14, 30 24 C 26 19, 18 20, 16 26 C 14 33, 22 40, 29 41 Z" fill="url(#wk-fur)" stroke="#7a3b0c" stroke-width="2.2" stroke-linejoin="round"/>
+                  <path class="svg-tail-tip" d="M 11 22 C 13 15, 22 14, 27 19 C 21 19, 16 21, 11 22 Z" fill="#3a2010"/>
                 </g>
-                <ellipse cx="46" cy="48" rx="24" ry="18" fill="#e58f3e" stroke="#8a4412" stroke-width="2.2"/>
-                <ellipse cx="52" cy="49" rx="15" ry="13" fill="#FAD4A6"/>
+                <!-- 奥側の脚ペア -->
                 <g class="walker-legs">
-                  <ellipse cx="36" cy="65" rx="5" ry="6" fill="#e58f3e" stroke="#8a4412" stroke-width="1.8"/>
-                  <ellipse cx="56" cy="65" rx="5" ry="6" fill="#e58f3e" stroke="#8a4412" stroke-width="1.8"/>
+                  <g class="walker-leg-b">
+                    <path d="M 29 56 C 27 64, 29 70, 34 70 C 38 70, 40 64, 38 56 Z" fill="#d97925" stroke="#7a3b0c" stroke-width="1.8"/>
+                  </g>
+                  <g class="walker-leg-a">
+                    <path d="M 50 56 C 48 64, 50 70, 55 70 C 59 70, 61 64, 59 56 Z" fill="#d97925" stroke="#7a3b0c" stroke-width="1.8"/>
+                  </g>
                 </g>
+                <!-- もふもふの胴体とエプロン胸毛 -->
+                <path d="M 22 46 C 18 35, 28 28, 44 29 C 60 29, 70 36, 68 48 C 68 58, 56 63, 43 63 C 30 63, 20 56, 22 46 Z" fill="url(#wk-fur)" stroke="#7a3b0c" stroke-width="2.2" stroke-linejoin="round"/>
+                <path class="svg-chest-fluff" d="M 44 34 C 38 42, 40 56, 50 60 C 60 62, 71 54, 69 42 C 67 34, 54 32, 44 34 Z" fill="url(#wk-chest)" stroke="#b86b25" stroke-width="1.6"/>
+                <!-- 手前側の脚ペア -->
+                <g class="walker-legs-front">
+                  <g class="walker-leg-a">
+                    <path d="M 23 56 C 21 65, 24 71, 29 71 C 34 71, 36 65, 33 56 Z" fill="url(#wk-chest)" stroke="#7a3b0c" stroke-width="1.9"/>
+                  </g>
+                  <g class="walker-leg-b">
+                    <path d="M 55 56 C 53 65, 56 71, 61 71 C 66 71, 68 65, 65 56 Z" fill="url(#wk-chest)" stroke="#7a3b0c" stroke-width="1.9"/>
+                  </g>
+                </g>
+                <!-- 名探偵スカーフ＆金メダル -->
+                <path d="M 43 38 C 52 44, 65 44, 71 37 C 69 45, 61 49, 54 49 C 47 48, 43 43, 43 38 Z" fill="#2a9d8f" stroke="#134e47" stroke-width="1.6" stroke-linejoin="round"/>
+                <circle cx="60" cy="46" r="3.4" fill="#ffd166" stroke="#9c6307" stroke-width="1.1"/>
+                <!-- 頭部 -->
                 <g class="svg-head">
-                  <polygon points="40,22 46,6 54,22" fill="#df8232" stroke="#8a4412" stroke-width="2"/>
-                  <polygon points="56,22 64,6 70,22" fill="#df8232" stroke="#8a4412" stroke-width="2"/>
-                  <circle cx="56" cy="32" r="18" fill="#e58f3e" stroke="#8a4412" stroke-width="2.2"/>
-                  <!-- 黒マズル -->
-                  <ellipse cx="60" cy="36" rx="8" ry="6" fill="#281c17"/>
-                  <circle cx="62" cy="33" r="2.8" fill="#0f0907"/>
-                  <circle cx="51" cy="29" r="3" fill="#1f130e"/>
-                  <circle cx="65" cy="29" r="3" fill="#1f130e"/>
+                  <g class="svg-ear-l">
+                    <path d="M 41 21 C 40 12, 45 4, 50 4 C 54 5, 57 13, 56 21 Z" fill="url(#wk-fur)" stroke="#7a3b0c" stroke-width="2" stroke-linejoin="round"/>
+                    <path d="M 45 10 C 47 5, 49 4, 51 5 C 53 7, 54 10, 54 12 Z" fill="#361e10"/>
+                  </g>
+                  <g class="svg-ear-r">
+                    <path d="M 58 20 C 60 11, 65 4, 70 5 C 74 7, 75 15, 72 23 Z" fill="url(#wk-fur)" stroke="#7a3b0c" stroke-width="2" stroke-linejoin="round"/>
+                    <path d="M 63 11 C 65 6, 68 5, 70 6 C 71 8, 72 11, 71 13 Z" fill="#361e10"/>
+                    <path d="M 62 20 L 68 10 L 70 21 Z" fill="#f7a8b8" opacity="0.85"/>
+                  </g>
+                  <!-- もふもふの頭輪郭 -->
+                  <path d="M 38 28 C 36 18, 46 12, 58 12 C 70 12, 79 19, 77 29 C 82 33, 81 41, 74 44 C 66 48, 48 48, 41 42 C 35 39, 34 32, 38 28 Z" fill="url(#wk-fur)" stroke="#7a3b0c" stroke-width="2.2" stroke-linejoin="round"/>
+                  <!-- マロ眉＆ほっぺ -->
+                  <ellipse cx="52" cy="21" rx="2.6" ry="1.5" fill="#fff0cc" transform="rotate(-8 52 21)"/>
+                  <ellipse cx="68" cy="21" rx="2.6" ry="1.5" fill="#fff0cc" transform="rotate(8 68 21)"/>
+                  <ellipse cx="47" cy="34" rx="4" ry="2.8" fill="#ff6b8b" opacity="0.48"/>
+                  <ellipse cx="73" cy="34" rx="4" ry="2.8" fill="#ff6b8b" opacity="0.48"/>
+                  <!-- 黒マズル＆濡れ鼻 -->
+                  <g class="pam-black-muzzle">
+                    <ellipse cx="62" cy="35" rx="8.8" ry="6.2" fill="#241610"/>
+                    <circle class="svg-nose" cx="64" cy="32" r="3" fill="#0d0705"/>
+                    <circle cx="63" cy="31" r="1" fill="#ffffff"/>
+                    <path d="M 60 37 C 61 41, 65 41, 66 37 Z" fill="#ff6b8b"/>
+                    <path d="M 57 36 Q 61 39 64 35 Q 67 39 69 36" stroke="#fff5eb" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+                  </g>
+                  <!-- 瞳 -->
+                  <g class="svg-eyes-blink">
+                    <ellipse cx="52" cy="28" rx="3.4" ry="4" fill="#1f1109"/>
+                    <circle cx="51" cy="26.5" r="1.3" fill="#ffffff"/>
+                    <ellipse cx="69" cy="28" rx="3.4" ry="4" fill="#1f1109"/>
+                    <circle cx="68" cy="26.5" r="1.3" fill="#ffffff"/>
+                  </g>
                 </g>
               </svg>
             </div>
@@ -547,25 +777,65 @@
         </div>
       </div>
 
-      <!-- 5. カットイン・オーバーレイ演出（「ワン！」異議あり風・パムSVG） -->
+      <!-- 5. カットイン・オーバーレイ演出（「ワン！」異議あり風・高精細パムSVG） -->
       <div id="overlay-cutin" class="cutin-overlay hidden">
         <div class="cutin-speedline"></div>
         <div class="cutin-content">
           <div class="cutin-pome-face">
             <svg class="cutin-pam-svg" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
-              <polygon points="24,42 36,10 52,42" fill="#df8232" stroke="#8a4412" stroke-width="3"/>
-              <polygon points="31,26 36,10 42,27" fill="#3d2314"/>
-              <polygon points="68,42 84,10 96,42" fill="#df8232" stroke="#8a4412" stroke-width="3"/>
-              <polygon points="78,27 84,10 89,26" fill="#3d2314"/>
-              <circle cx="60" cy="66" r="42" fill="#e58f3e" stroke="#8a4412" stroke-width="3.5"/>
-              <ellipse cx="60" cy="78" rx="17" ry="13" fill="#281c17"/>
-              <ellipse cx="60" cy="71" rx="6" ry="4.5" fill="#0f0907"/>
-              <ellipse cx="60" cy="82" rx="7" ry="6" fill="#ff758f" stroke="#f8edeb" stroke-width="1.5"/>
-              <ellipse cx="42" cy="60" rx="6.5" ry="8.5" fill="#1f130e"/>
-              <circle cx="40" cy="57" r="2.5" fill="#ffd166"/>
-              <ellipse cx="78" cy="60" rx="6.5" ry="8.5" fill="#1f130e"/>
-              <circle cx="76" cy="57" r="2.5" fill="#ffd166"/>
-              <path d="M 33 48 L 49 52 M 87 48 L 71 52" stroke="#3d2314" stroke-width="3" stroke-linecap="round"/>
+              <defs>
+                <radialGradient id="ci-fur" cx="50%" cy="38%" r="56%">
+                  <stop offset="0%" stop-color="#ffd180"/>
+                  <stop offset="55%" stop-color="#f09742"/>
+                  <stop offset="100%" stop-color="#a8500c"/>
+                </radialGradient>
+                <radialGradient id="ci-muzzle" cx="50%" cy="35%" r="58%">
+                  <stop offset="0%" stop-color="#4d3529"/>
+                  <stop offset="60%" stop-color="#261812"/>
+                  <stop offset="100%" stop-color="#120a06"/>
+                </radialGradient>
+              </defs>
+              <!-- 背景の集中フラッシュ -->
+              <circle cx="60" cy="64" r="54" fill="#fff3b0" opacity="0.22"/>
+              <!-- 耳（セーブル毛先・内耳ピンク） -->
+              <g class="svg-ear-l">
+                <path d="M 18 48 C 14 28, 22 10, 33 8 C 42 8, 49 24, 52 44 Z" fill="url(#ci-fur)" stroke="#6e3206" stroke-width="2.8" stroke-linejoin="round"/>
+                <path d="M 24 24 C 27 14, 31 8, 35 8 C 39 10, 43 17, 45 26 C 38 23, 30 23, 24 24 Z" fill="#361e10"/>
+                <path d="M 25 42 C 24 30, 28 18, 34 17 C 39 18, 43 29, 45 41 Z" fill="#f7a8b8" opacity="0.88"/>
+              </g>
+              <g class="svg-ear-r">
+                <path d="M 68 44 C 71 24, 78 8, 87 8 C 98 10, 106 28, 102 48 Z" fill="url(#ci-fur)" stroke="#6e3206" stroke-width="2.8" stroke-linejoin="round"/>
+                <path d="M 75 26 C 77 17, 81 10, 85 8 C 89 8, 93 14, 96 24 C 90 23, 82 23, 75 26 Z" fill="#361e10"/>
+                <path d="M 75 41 C 77 29, 81 18, 86 17 C 92 18, 96 30, 95 42 Z" fill="#f7a8b8" opacity="0.88"/>
+              </g>
+              <!-- 顔の輪郭（頬の飾り毛つき） -->
+              <path d="M 18 62 C 14 40, 32 26, 60 26 C 88 26, 106 40, 102 62 C 114 70, 114 86, 100 94 C 92 104, 76 108, 60 108 C 44 108, 28 104, 20 94 C 6 86, 6 70, 18 62 Z" fill="url(#ci-fur)" stroke="#6e3206" stroke-width="3" stroke-linejoin="round"/>
+              <!-- 名探偵スカーフと勲章 -->
+              <path d="M 24 98 C 42 108, 78 108, 96 98 C 90 112, 76 117, 60 118 C 44 117, 30 112, 24 98 Z" fill="#2a9d8f" stroke="#134e47" stroke-width="2.2"/>
+              <circle cx="60" cy="110" r="6" fill="#ffd166" stroke="#9c6307" stroke-width="1.5"/>
+              <!-- 凛々しいマロ眉 -->
+              <ellipse cx="44" cy="46" rx="5.5" ry="3" fill="#fff0cc" transform="rotate(14 44 46)"/>
+              <ellipse cx="76" cy="46" rx="5.5" ry="3" fill="#fff0cc" transform="rotate(-14 76 46)"/>
+              <path d="M 28 46 L 49 52 M 92 46 L 71 52" stroke="#361e10" stroke-width="3.2" stroke-linecap="round"/>
+              <!-- 闘志に燃える瞳 -->
+              <g class="svg-eyes-blink">
+                <ellipse cx="41" cy="59" rx="7.5" ry="9" fill="#1f1109"/>
+                <circle class="svg-eye-shine" cx="38.5" cy="55.5" r="3" fill="#ffffff"/>
+                <circle cx="43.5" cy="62" r="1.8" fill="#ffd166"/>
+                <ellipse cx="79" cy="59" rx="7.5" ry="9" fill="#1f1109"/>
+                <circle class="svg-eye-shine" cx="76.5" cy="55.5" r="3" fill="#ffffff"/>
+                <circle cx="81.5" cy="62" r="1.8" fill="#ffd166"/>
+              </g>
+              <!-- パムの黒マズルと大きく開いた口（「ワンッ！」） -->
+              <g class="pam-black-muzzle">
+                <path d="M 41 76 C 41 66, 49 62, 60 62 C 71 62, 79 66, 79 76 C 79 86, 71 92, 60 92 C 49 92, 41 86, 41 76 Z" fill="url(#ci-muzzle)"/>
+                <path class="svg-nose" d="M 54 69 C 54 65, 66 65, 66 69 C 66 72, 62 75, 60 75 C 58 75, 54 72, 54 69 Z" fill="#0d0705"/>
+                <ellipse cx="58.5" cy="68" rx="2.5" ry="1.1" fill="#ffffff" opacity="0.9"/>
+              </g>
+              <g class="svg-mouth">
+                <ellipse cx="60" cy="83" rx="8.5" ry="7" fill="#9e2a45" stroke="#fff5eb" stroke-width="1.8"/>
+                <ellipse cx="60" cy="85" rx="6" ry="4.5" fill="#ff758f"/>
+              </g>
             </svg>
           </div>
           <div class="cutin-text">ワンッ！！！</div>

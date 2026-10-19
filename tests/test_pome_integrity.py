@@ -85,15 +85,23 @@ class TestPomeHtmlStructure(unittest.TestCase):
         self.assertNotIn("!important", self.css_content)
         self.assertNotIn("word-break: break-word", self.css_content)
         self.assertIn("@keyframes svg-tail-wag", self.css_content)
+        self.assertIn("@keyframes svg-tail-tip-whip", self.css_content)
+        self.assertIn("@keyframes svg-chest-breathe", self.css_content)
         self.assertIn("@keyframes svg-eye-blink", self.css_content)
+        self.assertIn("@keyframes svg-eye-shimmer", self.css_content)
+        self.assertIn("@keyframes svg-nose-sniff", self.css_content)
         self.assertIn("@keyframes svg-lip-sync", self.css_content)
+        self.assertIn("@keyframes walker-leg-swing-a", self.css_content)
+        self.assertIn("@keyframes walker-leg-swing-b", self.css_content)
+        self.assertIn("walker-leg-a", self.html_content)
+        self.assertIn("walker-leg-b", self.html_content)
 
 
 class TestPomeCharacterController(unittest.TestCase):
     """pome/js/character.js の全SVG描画・パム造形・アニメーション構造検証"""
 
     def test_character_svg_rendering(self):
-        """全9キャラクターのSVGおよびパムの黒マズル・アニメーションパーツが正常に生成されること"""
+        """全9キャラクターのSVGおよびパムの黒マズル・高精細グラデーション・アニメーションパーツが正常に生成されること"""
         code = """
         const fs = require('fs');
         const charJs = fs.readFileSync('pome/js/character.js', 'utf8');
@@ -110,6 +118,7 @@ class TestPomeCharacterController(unittest.TestCase):
           const html = ctrl.renderCharacterHtml(id);
           results[id] = {
             hasSvg: html.includes('<svg'),
+            hasDefs: html.includes('<defs>'),
             hasHead: html.includes('svg-head'),
             hasMouth: html.includes('svg-mouth')
           };
@@ -117,9 +126,11 @@ class TestPomeCharacterController(unittest.TestCase):
         const pamHtml = ctrl.renderCharacterHtml('pome');
         results.pamFeatures = {
           hasBlackMuzzle: pamHtml.includes('pam-black-muzzle'),
-          hasTail: pamHtml.includes('svg-tail'),
+          hasTail: pamHtml.includes('svg-tail') && pamHtml.includes('svg-tail-tip'),
+          hasChestFluff: pamHtml.includes('svg-chest-fluff'),
+          hasNose: pamHtml.includes('svg-nose'),
           hasEars: pamHtml.includes('svg-ear-l') && pamHtml.includes('svg-ear-r'),
-          hasBlink: pamHtml.includes('svg-eyes-blink')
+          hasBlink: pamHtml.includes('svg-eyes-blink') && pamHtml.includes('svg-eye-shine')
         };
         console.log(JSON.stringify(results));
         """
@@ -127,11 +138,14 @@ class TestPomeCharacterController(unittest.TestCase):
         results = json.loads(output)
         for char_id in ["pome", "torakichi", "caretaker", "poppo", "kuro", "squirrel", "mike", "kittens", "owner"]:
             self.assertTrue(results[char_id]["hasSvg"], f"Character {char_id} should render valid SVG")
+            self.assertTrue(results[char_id]["hasDefs"], f"Character {char_id} should include SVG gradient defs")
             self.assertTrue(results[char_id]["hasHead"], f"Character {char_id} should have svg-head group")
             self.assertTrue(results[char_id]["hasMouth"], f"Character {char_id} should have svg-mouth group")
 
         self.assertTrue(results["pamFeatures"]["hasBlackMuzzle"])
         self.assertTrue(results["pamFeatures"]["hasTail"])
+        self.assertTrue(results["pamFeatures"]["hasChestFluff"])
+        self.assertTrue(results["pamFeatures"]["hasNose"])
         self.assertTrue(results["pamFeatures"]["hasEars"])
         self.assertTrue(results["pamFeatures"]["hasBlink"])
 
