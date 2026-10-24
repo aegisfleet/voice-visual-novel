@@ -15,6 +15,9 @@
       "box/js/**/*.js",
       "box/css/**/*.css",
       "box/**/*.html",
+      "ghost/js/**/*.js",
+      "ghost/css/**/*.css",
+      "ghost/**/*.html",
       "*.html",
       "*.json",
       "!package-lock.json"
