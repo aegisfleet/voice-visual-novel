@@ -4,7 +4,25 @@
    ========================================================================== */
 
 /* 1. 汎用非表示クラス（すべての要素で最優先・ガイドライン規約） */
-.hidden {
+.hidden,
+[hidden],
+button.hidden,
+.btn-cyber-plate.hidden,
+.btn-primary.hidden,
+.btn-continue.hidden,
+.btn-debate-start.hidden,
+.hud.hidden,
+.life-container.hidden,
+.title-clear-badge.hidden,
+.area-map.hidden,
+.dialogue-stage.hidden,
+.character-stage.hidden,
+.dialogue-illustration-stage.hidden,
+.overlay-cutin.hidden,
+.ending-unlocked-banner.hidden,
+.modal.hidden,
+.hud-debate-btn.hidden,
+.hud-back-explore-btn.hidden {
   display: none !important;
 }
 
@@ -80,12 +98,14 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: 8px 16px;
-  background: rgba(3, 7, 18, 0.92);
+  background: rgba(3, 7, 18, 0.94);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border-cyan);
-  z-index: 40;
+  z-index: 50;
   gap: 8px;
+  box-sizing: border-box;
+  min-height: 48px;
 }
 
 .hud-left,
@@ -209,7 +229,11 @@ body {
   width: 100%;
 }
 
-.screen.active {
+.screen.active,
+#screen-title.active,
+#screen-explore.active,
+#screen-debate.active,
+#screen-ending.active {
   display: flex;
 }
 
@@ -218,10 +242,12 @@ body {
    ========================================================================== */
 #screen-title {
   align-items: center;
-  justify-content: center;
-  padding: 24px 16px;
+  justify-content: flex-start;
+  padding: clamp(20px, 4dvh, 40px) 16px calc(36px + max(16px, env(safe-area-inset-bottom, 0px)));
   text-align: center;
-  min-height: calc(100dvh - 54px);
+  min-height: 100dvh;
+  box-sizing: border-box;
+  overflow-y: auto;
   background: radial-gradient(circle at 50% 20%, rgba(0, 243, 255, 0.12) 0%, transparent 60%);
 }
 
@@ -429,8 +455,6 @@ body {
 #screen-explore {
   position: relative;
   flex: 1;
-  display: flex;
-  flex-direction: column;
 }
 
 .explore-header {
@@ -445,23 +469,30 @@ body {
   display: flex;
   gap: 8px;
   width: 100%;
-  max-width: 480px;
+  max-width: 520px;
 }
 
 .area-btn {
   flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
   padding: 8px 12px;
   border-radius: 6px;
   background: rgba(15, 23, 42, 0.8);
   border: 1px solid var(--border-subtle);
   color: var(--text-sub);
   font-family: var(--font-body);
-  font-size: 0.84rem;
+  font-size: clamp(0.76rem, 2.8vw, 0.86rem);
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s ease;
   min-height: 44px;
   touch-action: manipulation;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .area-btn.active {
@@ -497,14 +528,6 @@ body {
   flex: 1;
   min-height: 380px;
   overflow: hidden;
-}
-
-@media (max-width: 640px) {
-  .explore-stage {
-    min-height: 280px;
-    max-height: 50dvh;
-    aspect-ratio: 4 / 3;
-  }
 }
 
 .area-map {
@@ -897,14 +920,18 @@ body {
 }
 
 .character-stage {
-  position: relative;
-  width: 100%;
-  max-width: 440px;
-  height: 60vh;
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(440px, 60dvh, 90vw);
+  height: auto;
+  max-height: min(520px, calc(100% - 30px));
   display: flex;
   align-items: flex-end;
   justify-content: center;
   pointer-events: none;
+  z-index: 5;
 }
 
 .character-sprite-box {
@@ -924,7 +951,7 @@ body {
 
 .dialogue-illustration-stage {
   position: absolute;
-  top: 15%;
+  top: 12%;
   left: 50%;
   transform: translateX(-50%);
   width: 90%;
@@ -983,24 +1010,27 @@ body {
   text-align: center;
 }
 
-/* ノベルウィンドウ（セーフエリア・100dvh制御） */
+/* ノベルウィンドウ（完全フロートカード・セーフエリア・ホームボタン対応） */
 .novel-window {
   position: relative;
-  background: rgba(3, 7, 18, 0.95);
+  z-index: 10;
+  background: rgba(3, 7, 18, 0.96);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border-top: 1px solid var(--border-cyan);
-  border-left: 1px solid var(--border-cyan);
-  border-right: 1px solid var(--border-cyan);
-  border-radius: 12px 12px 0 0;
-  padding: 14px 18px;
-  margin: 0 10px;
-  margin-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
-  padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
-  max-height: 38dvh;
-  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.8);
+  border: 1px solid var(--border-cyan);
+  border-radius: 14px;
+  padding: 14px 18px 12px 18px;
+  margin: 0 16px max(16px, env(safe-area-inset-bottom, 0px)) 16px;
+  max-height: min(240px, 36dvh);
+  min-height: 150px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.85);
   pointer-events: auto;
   cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  box-sizing: border-box;
+  flex-shrink: 0;
 }
 
 .novel-header {
@@ -1491,4 +1521,215 @@ body {
   font-weight: 700;
   margin-right: 6px;
   flex-shrink: 0;
+}
+
+/* ==========================================================================
+   10. スマホ・モバイル最適化メディアクエリ (max-width: 640px)
+   ========================================================================== */
+@media (max-width: 640px) {
+  /* 上部HUDの1行固定・親指省スペース最適化 */
+  .hud {
+    padding: 6px 8px;
+    gap: 4px;
+    flex-wrap: nowrap;
+    min-height: 42px;
+  }
+
+  .hud-left {
+    gap: 4px;
+    flex-shrink: 1;
+    min-width: 0;
+  }
+
+  .hud-right {
+    gap: 3px;
+    flex-shrink: 0;
+  }
+
+  .hud-btn {
+    padding: 4px 6px;
+    font-size: 0.72rem;
+    min-height: 32px;
+    border-radius: 6px;
+  }
+
+  .hud-audio-btn {
+    padding: 4px;
+    min-width: 30px;
+    justify-content: center;
+  }
+
+  /* テキストラベルを隠してアイコン化 (横幅圧縮) */
+  .hud-audio-label,
+  .hud-btn-label {
+    display: none;
+  }
+
+  /* バッジの省スペース化 */
+  .phase-desc-text {
+    display: none;
+  }
+
+  #hud-location-badge {
+    max-width: 105px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 0.68rem;
+    padding: 3px 6px;
+  }
+
+  .badge {
+    font-size: 0.68rem;
+    padding: 3px 6px;
+  }
+
+  /* 立証ライフ */
+  .life-container {
+    padding: 2px 6px;
+    gap: 3px;
+    border-radius: 6px;
+  }
+
+  .life-label {
+    font-size: 0.62rem;
+  }
+
+  .hearts {
+    font-size: 0.78rem;
+    letter-spacing: 1px;
+  }
+
+  /* タイトル画面 */
+  #screen-title {
+    padding: 18px 12px calc(32px + max(14px, env(safe-area-inset-bottom, 0px)));
+  }
+
+  .title-hero-wrap {
+    width: 96%;
+    margin: 12px 0;
+  }
+
+  .title-actions {
+    width: 100%;
+    max-width: 340px;
+  }
+
+  /* 探索画面 */
+  .explore-header {
+    padding: 6px 8px;
+  }
+
+  .area-selector {
+    gap: 6px;
+  }
+
+  .area-btn {
+    padding: 8px 6px;
+    font-size: 0.74rem;
+    min-height: 40px;
+  }
+
+  .area-sub {
+    display: none;
+  }
+
+  .explore-status-bar {
+    padding: 6px 10px;
+    font-size: 0.76rem;
+  }
+
+  .explore-stage {
+    min-height: 280px;
+    max-height: 50dvh;
+    aspect-ratio: 4 / 3;
+  }
+
+  .pin-icon-wrap {
+    width: 42px;
+    height: 42px;
+    font-size: 1.15rem;
+  }
+
+  .pin-label {
+    font-size: 0.68rem;
+    padding: 2px 6px;
+  }
+
+  /* 会話ステージ・ノベルウィンドウ（セーフエリア・ホームボタン配慮） */
+  .novel-window {
+    margin: 0 10px max(14px, env(safe-area-inset-bottom, 0px)) 10px;
+    width: calc(100% - 20px);
+    padding: 10px 14px 8px 14px;
+    min-height: 140px;
+    max-height: 36dvh;
+    border-radius: 14px;
+  }
+
+  .novel-header {
+    margin-bottom: 4px;
+  }
+
+  .speaker-name {
+    font-size: 0.85rem;
+  }
+
+  .dialogue-ctrl-btn {
+    font-size: 0.64rem;
+    padding: 2px 6px;
+  }
+
+  .dialogue-body {
+    font-size: clamp(0.82rem, 3.6vw, 0.92rem);
+    line-height: 1.5;
+    min-height: 54px;
+    margin-bottom: 2px;
+    flex: 1;
+    overflow-wrap: break-word;
+    overflow-y: auto;
+  }
+
+  .dialogue-prompt {
+    font-size: 0.68rem;
+    margin-top: 4px;
+  }
+
+  .character-stage {
+    width: min(340px, 55dvh, 88vw);
+    max-height: min(420px, calc(100% - 20px));
+  }
+
+  .dialogue-illustration-stage {
+    top: 8%;
+    width: 94%;
+    padding: 8px;
+  }
+
+  /* 立証対決画面 */
+  #screen-debate {
+    padding: 8px 10px calc(14px + max(14px, env(safe-area-inset-bottom, 0px)));
+  }
+
+  .opponent-box {
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .opponent-avatar {
+    width: 60px;
+    height: 60px;
+  }
+
+  .debate-evidence-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  /* モーダル */
+  .modal-content {
+    width: 95%;
+    max-height: calc(88dvh - env(safe-area-inset-bottom, 0px));
+    padding: 14px;
+  }
 }

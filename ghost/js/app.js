@@ -1292,18 +1292,34 @@ class GameApp {
   }
 
   updateAudioButtonStates() {
-    if (this.dom.btnToggleVoice) {
-      this.dom.btnToggleVoice.className = `hud-btn hud-audio-btn ${this.state.voiceEnabled ? 'active' : ''}`;
-      this.dom.btnToggleVoice.innerHTML = `🔊 音声: ${this.state.voiceEnabled ? 'ON' : 'OFF'}`;
+    this.updateAudioToggleButton(this.dom.btnToggleVoice, this.state.voiceEnabled, {
+      onLabel: ' 音声: ON',
+      offLabel: ' 音声: OFF',
+      onTitle: '音声合成: ON',
+      offTitle: '音声合成: OFF',
+    });
+    this.updateAudioToggleButton(this.dom.btnToggleSe, this.state.seEnabled, {
+      onLabel: ' SE: ON',
+      offLabel: ' SE: OFF',
+      onTitle: '効果音 (SE): ON',
+      offTitle: '効果音 (SE): OFF',
+    });
+    this.updateAudioToggleButton(this.dom.btnToggleBgm, this.state.bgmEnabled, {
+      onLabel: ' BGM: ON',
+      offLabel: ' BGM: OFF',
+      onTitle: 'BGM音楽: ON',
+      offTitle: 'BGM音楽: OFF',
+    });
+  }
+
+  updateAudioToggleButton(btn, enabled, labels) {
+    if (!btn) return;
+    btn.classList.toggle('active', Boolean(enabled));
+    const lbl = btn.querySelector('.hud-audio-label');
+    if (lbl) {
+      lbl.textContent = enabled ? labels.onLabel : labels.offLabel;
     }
-    if (this.dom.btnToggleSe) {
-      this.dom.btnToggleSe.className = `hud-btn hud-audio-btn ${this.state.seEnabled ? 'active' : ''}`;
-      this.dom.btnToggleSe.innerHTML = `⚡ SE: ${this.state.seEnabled ? 'ON' : 'OFF'}`;
-    }
-    if (this.dom.btnToggleBgm) {
-      this.dom.btnToggleBgm.className = `hud-btn hud-audio-btn ${this.state.bgmEnabled ? 'active' : ''}`;
-      this.dom.btnToggleBgm.innerHTML = `🎵 BGM: ${this.state.bgmEnabled ? 'ON' : 'OFF'}`;
-    }
+    btn.title = enabled ? labels.onTitle : labels.offTitle;
   }
 
   handleResetSaveData() {

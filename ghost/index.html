@@ -60,25 +60,28 @@
       </div>
       <div class="hud-right">
         <button type="button" id="btn-hud-goto-debate" class="hud-btn hud-debate-btn hidden" title="執行官に反証する">
-          <span>⚖️ 反証へ進む</span>
+          <span class="hud-btn-icon">⚖️</span>
+          <span class="hud-btn-label">反証へ進む</span>
         </button>
         <button type="button" id="btn-hud-back-to-explore" class="hud-btn hidden" title="現場の再調査に戻る">
-          <span>🔍 現場調査に戻る</span>
+          <span class="hud-btn-icon">🔍</span>
+          <span class="hud-btn-label">現場に戻る</span>
         </button>
         <button type="button" id="btn-evidence-bag" class="hud-btn" title="集めた証拠手帳 [E]">
-          <span>💾 証拠 (<span id="evidence-count">0</span>)</span>
+          <span class="hud-btn-icon">💾</span>
+          <span class="hud-btn-label">証拠 </span>(<span id="evidence-count">0</span>)
         </button>
         <button type="button" id="btn-toggle-voice" class="hud-btn hud-audio-btn active" title="音声合成: ON">
-          🔊 音声: ON
+          <span class="hud-btn-icon">🔊</span><span class="hud-audio-label"> 音声: ON</span>
         </button>
         <button type="button" id="btn-toggle-se" class="hud-btn hud-audio-btn active" title="効果音 (SE): ON">
-          ⚡ SE: ON
+          <span class="hud-btn-icon">⚡</span><span class="hud-audio-label"> SE: ON</span>
         </button>
         <button type="button" id="btn-toggle-bgm" class="hud-btn hud-audio-btn active" title="BGM音楽: ON">
-          🎵 BGM: ON
+          <span class="hud-btn-icon">🎵</span><span class="hud-audio-label"> BGM: ON</span>
         </button>
         <button type="button" id="btn-hud-return-title" class="hud-btn" title="タイトル画面へ戻る">
-          🏠 タイトル
+          <span class="hud-btn-icon">🏠</span><span class="hud-btn-label"> タイトル</span>
         </button>
       </div>
     </header>
@@ -133,8 +136,16 @@
       <section id="screen-explore" class="screen">
         <div class="explore-header">
           <div class="area-selector">
-            <button type="button" id="btn-area-desk" class="area-btn active">🛡️ アリアの防弾マイルーム (Secure VM)</button>
-            <button type="button" id="btn-area-living" class="area-btn">📡 NCOオンライン聴聞＆病院モニター</button>
+            <button type="button" id="btn-area-desk" class="area-btn active" title="アリアの防弾マイルーム (Secure VM)">
+              <span class="area-icon">🛡️</span>
+              <span class="area-name">アリアの防弾自室</span>
+              <span class="area-sub"> (VM)</span>
+            </button>
+            <button type="button" id="btn-area-living" class="area-btn" title="NCOオンライン聴聞＆病院モニター">
+              <span class="area-icon">📡</span>
+              <span class="area-name">NCO聴聞＆病院</span>
+              <span class="area-sub">モニター</span>
+            </button>
           </div>
         </div>
 
