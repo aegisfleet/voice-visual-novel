@@ -17,6 +17,9 @@ class NovelApp {
     this.queueIndex = 0;
     this.currentSpeaker = null;
     this.backlog = [];
+    this.deductionStepIndex = 0;
+    this.selectedDeductionEvidence = null;
+    this.isFinalDeductionComplete = false;
 
     this.bindDomElements();
     this.initEventListeners();
@@ -63,6 +66,7 @@ class NovelApp {
 
       // 選択肢パネル
       choiceStage: get('choice-stage'),
+      choiceBadge: get('choice-badge'),
       choiceQuestion: get('choice-question'),
       choiceOptions: get('choice-options'),
 
@@ -216,6 +220,9 @@ class NovelApp {
   }
 
   handleStartGame() {
+    this.deductionStepIndex = 0;
+    this.selectedDeductionEvidence = null;
+    this.isFinalDeductionComplete = false;
     this.state.resetTransientState();
     this.state.clearSessionProgress();
     this.audio.playBgm('investigate');
@@ -490,12 +497,7 @@ class NovelApp {
     }
 
     if (chapterNum >= 1 && chapterNum <= 5) {
-      const chapterData = this.currentChapterData;
-      if (chapterData?.choice && !this.hasChosenForChapter(chapterData.choice.id)) {
-        this.showChoice(chapterData.choice);
-        return;
-      }
-      this.completeChapter(chapterNum);
+      this.handleChapterProgress(chapterNum);
       return;
     }
 
@@ -505,16 +507,48 @@ class NovelApp {
     }
   }
 
+  handleChapterProgress(chapterNum) {
+    const chapterData = this.currentChapterData;
+    if (!chapterData) return;
+
+    // 1. 中盤の作戦判断選択肢 (tacticChoice)
+    if (chapterData.tacticChoice && !this.hasChosenForChapter(chapterData.tacticChoice.id)) {
+      this.showChoice(chapterData.tacticChoice, 'tactic');
+      return;
+    }
+
+    // 2. 終盤の核心鑑識選択肢 (choice)
+    if (chapterData.choice && !this.hasChosenForChapter(chapterData.choice.id)) {
+      this.showChoice(chapterData.choice, 'forensic');
+      return;
+    }
+
+    // 3. Chapter 5 最終証拠連結フェーズ (finalDeduction)
+    if (chapterNum === 5 && chapterData.finalDeduction && !this.isFinalDeductionComplete) {
+      this.startFinalDeduction(chapterData.finalDeduction);
+      return;
+    }
+
+    this.completeChapter(chapterNum);
+  }
+
   hasChosenForChapter(choiceId) {
     return Boolean(this.state.selectedChoices[choiceId]);
   }
 
-  showChoice(choiceData) {
+  showChoice(choiceData, type = 'forensic') {
     this.stopAuto();
     this.stopSkip();
     this.stopVoicePlayback();
 
     if (!this.dom.choiceStage) return;
+    if (this.dom.choiceBadge) {
+      this.dom.choiceBadge.textContent =
+        choiceData.badge ||
+        (type === 'tactic'
+          ? '⚡ TACTICAL DECISION / 作戦判断'
+          : '⚡ FORENSIC DECISION / 鑑識の決断');
+    }
     this.dom.choiceQuestion.textContent = choiceData.question;
     this.dom.choiceOptions.innerHTML = '';
 
@@ -526,36 +560,163 @@ class NovelApp {
         <span class="choice-btn-label">${opt.label}</span>
         <span class="choice-btn-desc">${opt.description}</span>
       `;
-      btn.addEventListener('click', () => this.handleOptionSelected(choiceData, opt));
+      btn.addEventListener('click', () => this.handleOptionSelected(choiceData, opt, type));
       this.dom.choiceOptions.appendChild(btn);
     });
 
     this.dom.choiceStage.classList.remove('hidden');
   }
 
-  handleOptionSelected(choiceData, option) {
+  handleOptionSelected(choiceData, option, type = 'forensic') {
     this.dom.choiceStage?.classList.add('hidden');
     this.state.recordChoice(choiceData.id, option.id);
 
-    // カットイン演出の強制リフロー再トリガー
+    if (type === 'tactic') {
+      this.handleTacticOptionSelected(option);
+    } else {
+      this.handleForensicOptionSelected(option);
+    }
+  }
+
+  handleTacticOptionSelected(option) {
+    this.audio.playSe('evidence_a');
+    const reaction = option.reaction || [];
+    const mid = this.currentChapterData?.midDialogue || [];
+    this.currentDialogueQueue = [...reaction, ...mid];
+    this.queueIndex = 0;
+    setTimeout(() => this.renderCurrentLine(), 300);
+  }
+
+  handleForensicOptionSelected(option) {
     this.triggerCutin('客観的反証があります！');
     this.audio.playCutin();
 
-    // リアクションダイアログの注入
     const reaction = option.reaction || [];
-    const resolution = this.currentChapterData.resolution || [];
+    const resolution = this.currentChapterData?.resolution || [];
     this.currentDialogueQueue = [...reaction, ...resolution];
     this.queueIndex = 0;
 
-    // 証拠アンロック
-    if (this.currentChapterData.requiredEvidence) {
+    if (this.currentChapterData?.requiredEvidence) {
       this.state.addEvidence(this.currentChapterData.requiredEvidence);
       this.updateEvidenceHud();
     }
 
+    setTimeout(() => this.renderCurrentLine(), 700);
+  }
+
+  // 6.1 最終証拠連結 (FINAL DEDUCTION) コントローラー
+  startFinalDeduction(deductionData) {
+    this.finalDeductionData = deductionData;
+    this.stopAuto();
+    this.stopSkip();
+    this.stopVoicePlayback();
+    this.renderDeductionStep();
+  }
+
+  renderDeductionStep() {
+    if (!this.finalDeductionData || !this.dom.choiceStage) return;
+    const steps = this.finalDeductionData.steps;
+    if (this.deductionStepIndex >= steps.length) {
+      this.isFinalDeductionComplete = true;
+      this.completeChapter(5);
+      return;
+    }
+
+    const step = steps[this.deductionStepIndex];
+    this.selectedDeductionEvidence = null;
+
+    if (this.dom.choiceBadge) {
+      this.dom.choiceBadge.textContent = '⚡ FINAL DEDUCTION / 最終証拠連結作戦';
+    }
+    this.dom.choiceQuestion.innerHTML = `<span class="deduction-step-badge">STEP ${step.stepNumber} / ${steps.length}</span> ${step.question}`;
+    this.dom.choiceOptions.innerHTML = '';
+
+    const grid = document.createElement('div');
+    grid.className = 'deduction-evidence-grid';
+
+    const evidenceList = Object.values(this.scenario.evidence);
+    evidenceList.forEach((ev) => {
+      const card = document.createElement('div');
+      card.className = 'deduction-card';
+      card.dataset.evId = ev.id;
+      card.innerHTML = `
+        <div class="deduction-card-header">
+          <span class="deduction-card-icon">${ev.icon}</span>
+          <span class="deduction-card-title">${ev.name}</span>
+        </div>
+        <div class="deduction-card-desc">${ev.summary}</div>
+      `;
+      card.addEventListener('click', () => this.handleDeductionEvidenceSelect(grid, card, ev.id));
+      grid.appendChild(card);
+    });
+
+    this.dom.choiceOptions.appendChild(grid);
+
+    const actionDiv = document.createElement('div');
+    actionDiv.className = 'deduction-actions';
+    const submitBtn = document.createElement('button');
+    submitBtn.type = 'button';
+    submitBtn.className = 'btn-deduction-submit';
+    submitBtn.id = 'btn-deduction-submit';
+    submitBtn.textContent = '⚡ この証拠を突きつける！';
+    submitBtn.disabled = true;
+    submitBtn.addEventListener('click', () => this.submitDeductionAnswer(step));
+    actionDiv.appendChild(submitBtn);
+    this.dom.choiceOptions.appendChild(actionDiv);
+
+    this.dom.choiceStage.classList.remove('hidden');
+  }
+
+  handleDeductionEvidenceSelect(grid, card, evId) {
+    grid.querySelectorAll('.deduction-card').forEach((c) => {
+      c.classList.remove('selected');
+    });
+    card.classList.add('selected');
+    this.selectedDeductionEvidence = evId;
+    const submitBtn = document.getElementById('btn-deduction-submit');
+    if (submitBtn) submitBtn.disabled = false;
+    this.audio.playSe('evidence_a');
+  }
+
+  submitDeductionAnswer(step) {
+    if (!this.selectedDeductionEvidence) return;
+
+    if (this.selectedDeductionEvidence === step.correctEvidenceId) {
+      this.handleDeductionSuccess(step);
+    } else {
+      this.handleDeductionIncorrect(step);
+    }
+  }
+
+  handleDeductionSuccess(step) {
+    this.dom.choiceStage?.classList.add('hidden');
+    this.triggerCutin('真実は全て暴かれた！');
+    this.audio.playCutin();
+
+    this.deductionStepIndex += 1;
+    this.currentDialogueQueue = [...step.reaction];
+    this.queueIndex = 0;
+
+    const isLastStep = this.deductionStepIndex >= this.finalDeductionData.steps.length;
+    if (isLastStep) {
+      this.state.addEvidence('canary_c2_origin');
+      this.isFinalDeductionComplete = true;
+    }
+
     setTimeout(() => {
       this.renderCurrentLine();
-    }, 700);
+    }, 800);
+  }
+
+  handleDeductionIncorrect(step) {
+    this.audio.playSe('evidence_b');
+    let hintBanner = this.dom.choiceOptions?.querySelector('.deduction-hint-banner');
+    if (!hintBanner) {
+      hintBanner = document.createElement('div');
+      hintBanner.className = 'deduction-hint-banner';
+      this.dom.choiceOptions.insertBefore(hintBanner, this.dom.choiceOptions.firstChild);
+    }
+    hintBanner.textContent = `❌ 不正解です！ 【ヒント】${step.hint}`;
   }
 
   triggerCutin(text = '客観的反証があります！') {

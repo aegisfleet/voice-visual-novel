@@ -628,6 +628,125 @@ body {
 }
 
 /* ==========================================================================
+   5.1 最終証拠連結 (Deduction Evidence Connect)
+   ========================================================================== */
+.deduction-badge {
+  font-family: var(--font-hud);
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: var(--neon-amber);
+  letter-spacing: 0.08em;
+}
+
+.deduction-step-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  background: rgba(245, 158, 11, 0.2);
+  border: 1px solid var(--neon-amber);
+  border-radius: 4px;
+  color: var(--neon-amber);
+  font-size: 0.75rem;
+  font-weight: 700;
+  margin-left: 8px;
+}
+
+.deduction-evidence-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 10px;
+  max-height: 50vh;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.deduction-card {
+  display: flex;
+  flex-direction: column;
+  padding: 10px 14px;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s ease;
+}
+
+.deduction-card:hover {
+  background: rgba(0, 243, 255, 0.12);
+  border-color: var(--neon-cyan);
+}
+
+.deduction-card.selected {
+  background: rgba(245, 158, 11, 0.18);
+  border-color: var(--neon-amber);
+  box-shadow: 0 0 16px rgba(245, 158, 11, 0.4);
+}
+
+.deduction-card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.deduction-card-icon {
+  font-size: 1.25rem;
+}
+
+.deduction-card-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1.35;
+}
+
+.deduction-card-desc {
+  font-size: 0.74rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+  line-height: 1.35;
+}
+
+.deduction-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.btn-deduction-submit {
+  padding: 10px 20px;
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.9), rgba(217, 119, 6, 0.9));
+  color: #030712;
+  font-family: var(--font-hud);
+  font-size: 0.9rem;
+  font-weight: 800;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-deduction-submit:hover:not(:disabled) {
+  filter: brightness(1.15);
+  box-shadow: 0 0 16px rgba(245, 158, 11, 0.6);
+}
+
+.btn-deduction-submit:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.deduction-hint-banner {
+  padding: 8px 12px;
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid var(--neon-crimson);
+  border-radius: 6px;
+  color: #fca5a5;
+  font-size: 0.82rem;
+  line-height: 1.4;
+}
+
+/* ==========================================================================
    6. 会話ノベルウィンドウ (#novel-window)
    ========================================================================== */
 .novel-window {

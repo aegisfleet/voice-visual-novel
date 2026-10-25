@@ -148,6 +148,25 @@ class TestGhostScenarioAndAssets(unittest.TestCase):
             self.assertGreaterEqual(len(ch["choice"].get("options", [])), 2)
             self.assertGreaterEqual(len(ch.get("resolution", [])), 2)
 
+    def test_tactic_choices_and_final_deduction_registered(self):
+        """全5章に中盤の作戦判断選択肢があり、Chapter 5に最終証拠連結フェーズが存在すること"""
+        chapters = self.scenario.get("chapters", [])
+        for ch in chapters:
+            self.assertIn("tacticChoice", ch)
+            self.assertGreaterEqual(len(ch["tacticChoice"].get("options", [])), 2)
+            self.assertIn("midDialogue", ch)
+            self.assertGreaterEqual(len(ch["midDialogue"]), 1)
+
+        ch5 = chapters[4]
+        self.assertIn("finalDeduction", ch5)
+        steps = ch5["finalDeduction"].get("steps", [])
+        self.assertGreaterEqual(len(steps), 3)
+        for step in steps:
+            self.assertTrue(step.get("question"))
+            self.assertTrue(step.get("correctEvidenceId"))
+            self.assertTrue(step.get("hint"))
+            self.assertGreaterEqual(len(step.get("reaction", [])), 1)
+
     def test_all_evidence_registered(self):
         """現実の事件構造に基づく6件の核心フォレンジック証拠品が登録されていること"""
         evidence = self.scenario.get("evidence", {})
