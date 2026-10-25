@@ -395,7 +395,7 @@ class GameApp {
     this.state.saveSessionProgress('explore');
   }
 
-  // エリア切り替え（自室 ⇔ 玄関）
+  // エリア切り替え（アリアVM ⇔ NCOモニター）
   switchArea(areaName) {
     this.audio.playSe('click');
     this.currentArea = areaName;
@@ -404,13 +404,15 @@ class GameApp {
       this.dom.btnAreaLiving?.classList.remove('active');
       this.dom.areaDesk?.classList.remove('hidden');
       this.dom.areaLiving?.classList.add('hidden');
-      if (this.dom.hudLocationBadge) this.dom.hudLocationBadge.textContent = '自室デスク周り';
+      if (this.dom.hudLocationBadge)
+        this.dom.hudLocationBadge.textContent = 'アリアの防弾マイルーム (Secure VM)';
     } else {
       this.dom.btnAreaDesk?.classList.remove('active');
       this.dom.btnAreaLiving?.classList.add('active');
       this.dom.areaDesk?.classList.add('hidden');
       this.dom.areaLiving?.classList.remove('hidden');
-      if (this.dom.hudLocationBadge) this.dom.hudLocationBadge.textContent = 'リビング・玄関側';
+      if (this.dom.hudLocationBadge)
+        this.dom.hudLocationBadge.textContent = 'NCOオンライン聴聞＆病院モニター';
     }
     this.renderExplorePins();
     this.state.saveSessionProgress('explore');
@@ -426,7 +428,7 @@ class GameApp {
     const currentLoop = this.state.currentLoop;
 
     spots.forEach((spot) => {
-      if (spot.requiredLoop > currentLoop) return;
+      if (spot.requiredLoop && spot.requiredLoop > currentLoop) return;
 
       const isInspected = this.state.isSpotInspected(spot.id);
       const pinBtn = document.createElement('button');
@@ -499,7 +501,7 @@ class GameApp {
     const notificationSeq = [
       {
         speaker: 'ナレーション',
-        text: `【証拠品入手】『${evidence.name}』を電脳鑑識データベースに記録した！`,
+        text: `【証拠品入手】『${evidence.name}』を電脳鑑識データベースに記録した！\n${evidence.easyExplain || ''}`,
         illustration: evidence.image,
         caption: evidence.summary,
       },
@@ -509,7 +511,7 @@ class GameApp {
 
   // 探索画面UIと前提条件ガードの更新
   updateExploreUI() {
-    const requiredEvidence = this.state.currentLoop === 1 ? 3 : 3;
+    const requiredEvidence = 4;
     const collectedCount = this.state.collectedEvidence.size;
 
     if (this.dom.evidenceCount) {
@@ -517,17 +519,12 @@ class GameApp {
     }
 
     if (this.dom.evidenceNeededCounter) {
-      this.dom.evidenceNeededCounter.textContent = `${Math.min(collectedCount, requiredEvidence)} / ${requiredEvidence}`;
+      this.dom.evidenceNeededCounter.textContent = `${collectedCount} / 6 (立証可能: 4〜)`;
     }
 
     if (this.dom.hudLoopBadge) {
-      if (this.state.currentLoop === 2) {
-        this.dom.hudLoopBadge.innerHTML =
-          '<span class="phase-title">Phase 2</span><span class="phase-desc-text">: 深層真実立証</span>';
-      } else {
-        this.dom.hudLoopBadge.innerHTML =
-          '<span class="phase-title">Phase 1</span><span class="phase-desc-text">: 潔白の立証</span>';
-      }
+      this.dom.hudLoopBadge.innerHTML =
+        '<span class="phase-title">GHOST PROTOCOL</span><span class="phase-desc-text">: 身代わりの防波堤</span>';
     }
 
     // 前提条件ガード：証拠が揃うまでボタンを非表示かつ非活性にする
@@ -539,7 +536,7 @@ class GameApp {
       this.dom.btnHudGotoDebate?.removeAttribute('disabled');
       if (this.dom.exploreStatusText) {
         this.dom.exploreStatusText.textContent =
-          '立証に必要な鑑識データが揃った！ 執行官に反証せよ！';
+          '立証に必要な鑑識データが揃った！ 執行官に反証せよ！（最大6件）';
       }
     } else {
       this.dom.btnGoToDebate?.classList.add('hidden');
@@ -548,27 +545,28 @@ class GameApp {
       this.dom.btnHudGotoDebate?.setAttribute('disabled', 'true');
       if (this.dom.exploreStatusText) {
         this.dom.exploreStatusText.textContent =
-          '自室や機器を調査し、潔白を示す客観鑑識データを集めよう';
+          'アリアの部屋やNCOモニターを調査し、身代わりの真実と黒幕の証拠を集めよう';
       }
     }
   }
 
   // 立証パート（論戦）の開始（二重安全ガード）
   startDebate() {
-    const requiredEvidence = this.state.currentLoop === 1 ? 3 : 3;
+    const requiredEvidence = 4;
     if (this.state.collectedEvidence.size < requiredEvidence) {
       this.audio.playSe('damage');
       alert(
-        '【証拠不足】相手に反証するには、十分な鑑識データが必要です！ 現場を調査してください。',
+        '【証拠不足】相手に反証するには、少なくとも4件以上の鑑識データが必要です！ 現場を調査してください。',
       );
       return;
     }
 
+    this.stopDialogueTimers();
+    this.dom.dialogueStage?.classList.add('hidden');
     this.audio.playSe('cutin');
     this.state.currentDebateStep = 0;
     this.state.recoverLife();
-    this.activeDebateList =
-      this.state.currentLoop === 1 ? this.scenario.debate.phase1 : this.scenario.debate.phase2;
+    this.activeDebateList = this.scenario.debates;
     this.showScreen('debate');
     this.renderDebateQuestion();
     this.state.saveSessionProgress('debate');
@@ -585,7 +583,8 @@ class GameApp {
 
     const totalSteps = this.activeDebateList.length;
     if (this.dom.debateTurnLabel) {
-      this.dom.debateTurnLabel.textContent = `問答 ${step + 1} / ${totalSteps}`;
+      this.dom.debateTurnLabel.textContent =
+        debateItem.turnLabel || `問答 ${step + 1} / ${totalSteps}`;
     }
 
     this.updateHeartsUI();
@@ -596,8 +595,9 @@ class GameApp {
       this.dom.debateOpponentAvatar.innerHTML = `<img src="${opponentData.sprite}" alt="${opponentData.name}" class="opponent-portrait-img" />`;
     }
 
+    const speechText = debateItem.speech || debateItem.opponentSpeech || '';
     if (this.dom.debateOpponentSpeech) {
-      this.dom.debateOpponentSpeech.textContent = debateItem.speech;
+      this.dom.debateOpponentSpeech.textContent = speechText;
     }
 
     if (this.dom.debateHintText) {
@@ -605,7 +605,7 @@ class GameApp {
     }
 
     // 主張ボイス発話
-    this.audio.speak(debateItem.speech, opponentData);
+    this.audio.speak(speechText, opponentData);
 
     // 証拠一覧の描画
     this.renderDebateEvidenceGrid();
@@ -618,7 +618,8 @@ class GameApp {
     const debateItem = this.activeDebateList[step];
     if (debateItem) {
       const opponentData = this.characters[debateItem.opponent] || this.characters.kuroda;
-      this.audio.speak(debateItem.speech, opponentData);
+      const speechText = debateItem.speech || debateItem.opponentSpeech || '';
+      this.audio.speak(speechText, opponentData);
     }
   }
 
@@ -654,6 +655,7 @@ class GameApp {
         <span class="card-icon">${ev.icon}</span>
         <div class="card-text">
           <span class="card-name">${ev.name}</span>
+          ${ev.easyExplain ? `<span class="card-easy-explain">${ev.easyExplain}</span>` : ''}
           <span class="card-type">${ev.type}</span>
         </div>
       `;
@@ -699,6 +701,7 @@ class GameApp {
           <span class="preview-icon">${ev.icon}</span>
           <div class="preview-info">
             <strong class="preview-title">${ev.name}</strong>
+            ${ev.easyExplain ? `<span class="preview-easy-explain">${ev.easyExplain}</span>` : ''}
             <p class="preview-summary">${ev.summary}</p>
           </div>
         </div>
@@ -727,9 +730,11 @@ class GameApp {
 
   // 正解時の処理
   onDebateCorrect(debateItem) {
-    this.triggerCutin('客観的反証があります！', () => {
+    const cutinText = debateItem.correctCutin || '客観的反証があります！';
+    this.triggerCutin(cutinText, () => {
       this.audio.playSe('correct');
-      this.playDialogueSequence(debateItem.successDialogue, () => {
+      const successSeq = debateItem.correctDialogue || debateItem.successDialogue || [];
+      this.playDialogueSequence(successSeq, () => {
         this.state.currentDebateStep += 1;
         this.state.saveSessionProgress('debate');
         if (this.state.currentDebateStep >= this.activeDebateList.length) {
@@ -741,13 +746,31 @@ class GameApp {
     });
   }
 
-  // 不正解時の処理
+  // 不正解時の処理（理由フィードバック＋アリアの日常たとえヒント）
   onDebateWrong(debateItem) {
     this.audio.playSe('damage');
     const remainingLife = this.state.decreaseLife();
     this.updateHeartsUI();
 
-    this.playDialogueSequence(debateItem.failureDialogue, () => {
+    const failureSeq = [];
+    if (debateItem.wrongFeedback) {
+      if (debateItem.wrongFeedback.speaker && debateItem.wrongFeedback.text) {
+        failureSeq.push({
+          speaker: debateItem.wrongFeedback.speaker,
+          text: debateItem.wrongFeedback.text,
+        });
+      }
+      if (debateItem.wrongFeedback.hintDialogue) {
+        failureSeq.push({
+          speaker: debateItem.wrongFeedback.hintDialogue.speaker,
+          text: debateItem.wrongFeedback.hintDialogue.text,
+        });
+      }
+    } else if (debateItem.failureDialogue) {
+      failureSeq.push(...debateItem.failureDialogue);
+    }
+
+    this.playDialogueSequence(failureSeq, () => {
       if (remainingLife <= 0) {
         this.onGameOver();
       } else {
@@ -776,20 +799,14 @@ class GameApp {
     }, 1100);
   }
 
-  // 全問正解：エピローグ会話劇へ
+  // 全問正解：TRUE ENDエピローグ会話劇へ
   onDebateSuccessAll() {
     this.audio.playSe('victory');
-    const isLoop1 = this.state.currentLoop === 1;
-    const epilogueSeq = isLoop1 ? this.scenario.epilogueLoop1 : this.scenario.epiloguePhase2;
+    this.state.markTrueEndCleared();
+    const epilogueSeq = this.scenario.epilogue || this.scenario.dialogues?.epilogue || [];
 
     this.playDialogueSequence(epilogueSeq, () => {
-      if (isLoop1) {
-        this.state.markLoop1Cleared();
-        this.showEnding('normal');
-      } else {
-        this.state.markTrueEndCleared();
-        this.showEnding('trueEnd');
-      }
+      this.showEnding('trueEnd');
       this.state.clearSessionProgress();
     });
   }
@@ -1032,9 +1049,11 @@ class GameApp {
           <div class="card-left">
             <span class="card-modal-icon">${ev.icon}</span>
             <span class="card-modal-type">${ev.type}</span>
+            ${ev.image ? `<img src="${ev.image}" alt="${ev.name}" class="card-modal-thumb" />` : ''}
           </div>
           <div class="card-right">
             <strong class="card-modal-title">${ev.name}</strong>
+            ${ev.easyExplain ? `<div class="card-modal-easy">${ev.easyExplain}</div>` : ''}
             <p class="card-modal-desc">${ev.detail}</p>
           </div>
         `;

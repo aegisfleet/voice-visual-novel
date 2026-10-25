@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="theme-color" content="#030712">
   <meta name="color-scheme" content="dark">
-  <title>GHOST SCHEMA 〜自律エージェント無害化指令〜</title>
-  <meta name="description" content="自律型パーソナルAIと能動的サイバー防御を巡る電脳鑑識＆逆転立証ビジュアルノベル。部屋を探索し証拠を集め、国家執行官との論戦に挑め！">
+  <title>GHOST PROTOCOL 〜偽りの無害化指令と相棒AIの約束〜</title>
+  <meta name="description" content="自律型相棒AIと能動的サイバー防御を巡る電脳サスペンス＆逆転立証ビジュアルノベル。アリアが身代わりの防波堤となって守った真実を暴き出せ！">
   <link rel="canonical" href="https://aegisfleet.github.io/voice-visual-novel/ghost/">
 
   <!-- Favicon -->
@@ -16,8 +16,8 @@
   <meta property="og:type" content="game">
   <meta property="og:site_name" content="VOICE VISUAL NOVELS">
   <meta property="og:url" content="https://aegisfleet.github.io/voice-visual-novel/ghost/">
-  <meta property="og:title" content="GHOST SCHEMA 〜自律エージェント無害化指令〜">
-  <meta property="og:description" content="自律型パーソナルAIと能動的サイバー防御を巡る電脳鑑識＆逆転立証ビジュアルノベル。">
+  <meta property="og:title" content="GHOST PROTOCOL 〜偽りの無害化指令と相棒AIの約束〜">
+  <meta property="og:description" content="自律型相棒AIと能動的サイバー防御を巡る電脳サスペンス＆逆転立証ビジュアルノベル。アリアが身代わりの防波堤となって守った真実を暴き出せ！">
   <meta property="og:image" content="https://aegisfleet.github.io/voice-visual-novel/ghost/assets/images/ogp-ghost.png">
   <meta property="og:locale" content="ja_JP">
 
@@ -26,8 +26,8 @@
   {
     "@context": "https://schema.org",
     "@type": "VideoGame",
-    "name": "GHOST SCHEMA 〜自律エージェント無害化指令〜",
-    "description": "自律型パーソナルAIと能動的サイバー防御を巡る電脳鑑識＆逆転立証ビジュアルノベル。",
+    "name": "GHOST PROTOCOL 〜偽りの無害化指令と相棒AIの約束〜",
+    "description": "自律型相棒AIと能動的サイバー防御を巡る電脳サスペンス＆逆転立証ビジュアルノベル。",
     "genre": ["Visual Novel", "Cyberpunk", "Adventure", "Detective"],
     "inLanguage": "ja",
     "url": "https://aegisfleet.github.io/voice-visual-novel/ghost/"
@@ -39,7 +39,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700;800&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
   
-  <link rel="stylesheet" href="css/style.css?v=20261025_ghost_v1">
+  <link rel="stylesheet" href="css/style.css?v=20261025_ghost_v2">
 </head>
 <body>
   <div class="bg-grid"></div>
@@ -48,8 +48,8 @@
     <!-- 上部HUD -->
     <header id="hud" class="hud hidden">
       <div class="hud-left">
-        <span id="hud-location-badge" class="badge">自室デスク周り</span>
-        <span id="hud-loop-badge" class="badge loop-badge"><span class="phase-title">Phase 1</span><span class="phase-desc-text">: 潔白の立証</span></span>
+        <span id="hud-location-badge" class="badge">アリアの防弾マイルーム (Secure VM)</span>
+        <span id="hud-loop-badge" class="badge loop-badge"><span class="phase-title">GHOST PROTOCOL</span><span class="phase-desc-text">: 身代わりの防波堤</span></span>
       </div>
       <div class="hud-center">
         <!-- 立証パート用ライフ -->
@@ -89,12 +89,12 @@
       <section id="screen-title" class="screen active">
         <div class="title-badge-top">⚡ 2026 AUTONOMOUS AGENT ACTIVE DEFENSE PROJECT</div>
         <h1 class="game-title">
-          GHOST SCHEMA
-          <span class="sub-title">〜 自律エージェント無害化指令 〜</span>
+          GHOST PROTOCOL
+          <span class="sub-title">〜 偽りの無害化指令と相棒AIの約束 〜</span>
         </h1>
 
         <div class="title-hero-wrap">
-          <img src="assets/images/keyvisual.png" alt="GHOST SCHEMA キービジュアル" class="title-hero-img">
+          <img src="assets/images/keyvisual.png" alt="GHOST PROTOCOL キービジュアル" class="title-hero-img">
         </div>
 
         <div id="title-loop-info" class="title-loop-info"></div>
@@ -109,7 +109,7 @@
           </button>
           <button type="button" id="btn-start-game" class="btn-cyber-plate btn-primary">
             <span class="btn-text">▶ START INVESTIGATION</span>
-            <span class="btn-subtext">自室の調査を開始する</span>
+            <span class="btn-subtext">電脳調査を開始する</span>
           </button>
 
           <aside id="line-external-notice" class="line-external-notice" aria-label="外部ブラウザ起動の案内">
@@ -133,8 +133,8 @@
       <section id="screen-explore" class="screen">
         <div class="explore-header">
           <div class="area-selector">
-            <button type="button" id="btn-area-desk" class="area-btn active">🖥️ 自室デスク周り</button>
-            <button type="button" id="btn-area-living" class="area-btn">🚪 リビング・玄関側</button>
+            <button type="button" id="btn-area-desk" class="area-btn active">🛡️ アリアの防弾マイルーム (Secure VM)</button>
+            <button type="button" id="btn-area-living" class="area-btn">📡 NCOオンライン聴聞＆病院モニター</button>
           </div>
         </div>
 
@@ -325,6 +325,11 @@
             <div class="gallery-char-role">NCO通信自動選別チーム</div>
           </div>
           <div class="gallery-card">
+            <img src="assets/characters/takamiya.png" alt="タカミヤ レン" class="gallery-img">
+            <div class="gallery-char-name">タカミヤ レン (26歳)</div>
+            <div class="gallery-char-role">医療システム技術者・ケイの親友</div>
+          </div>
+          <div class="gallery-card">
             <img src="assets/items/aura_drop.png" alt="Aura Drop" class="gallery-img">
             <div class="gallery-char-name">Aura Drop</div>
             <div class="gallery-char-role">ホログラム音声対話卓上ドック</div>
@@ -335,10 +340,10 @@
   </div>
 
   <!-- スクリプト群 -->
-  <script src="js/state.js?v=20261025_ghost_v1"></script>
-  <script src="js/character.js?v=20261025_ghost_v1"></script>
-  <script src="js/audio.js?v=20261025_ghost_v1"></script>
-  <script src="js/scenario.js?v=20261025_ghost_v1"></script>
-  <script src="js/app.js?v=20261025_ghost_v1"></script>
+  <script src="js/state.js?v=20261025_ghost_v2"></script>
+  <script src="js/character.js?v=20261025_ghost_v2"></script>
+  <script src="js/audio.js?v=20261025_ghost_v2"></script>
+  <script src="js/scenario.js?v=20261025_ghost_v2"></script>
+  <script src="js/app.js?v=20261025_ghost_v2"></script>
 </body>
 </html>
