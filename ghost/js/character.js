@@ -1,4 +1,4 @@
-// character.js - 登場キャラクター設定・TTSモデル・立ち絵管理 (GHOST SCHEMA)
+// character.js - 登場キャラクター設定・TTSモデル・立ち絵管理 (GHOST PROTOCOL)
 
 window.CHARACTER_DATA = {
   narrator: {
@@ -15,7 +15,7 @@ window.CHARACTER_DATA = {
     id: 'kei',
     name: 'ナギサ ケイ',
     shortName: 'ケイ',
-    role: 'アプリ開発者 (26歳)。相棒AIアリアのマスター',
+    role: '独立系セキュリティ＆金融取引基盤エンジニア (27歳)',
     color: '#38bdf8',
     ttsModel: 'Puck',
     ttsRate: 1.05,
@@ -26,7 +26,7 @@ window.CHARACTER_DATA = {
     id: 'aria',
     name: 'アリア (ARIA)',
     shortName: 'アリア',
-    role: 'パーソナル自律型AIエージェント。ケイを支える献身的な相棒',
+    role: '自律型電脳鑑識＆防衛AIエージェント (Secure VM稼働)',
     color: '#00f3ff',
     ttsModel: 'Zephyr',
     ttsRate: 1.05,
@@ -37,7 +37,7 @@ window.CHARACTER_DATA = {
     id: 'kuroda',
     name: 'クロダ統括官',
     shortName: 'クロダ統括官',
-    role: '国家サイバー統括室 (NCO) 兼 警察庁サイバー特別執行指揮官 (52歳)',
+    role: '国家サイバー統括室 (NCO) 審議官 兼 警察庁特別執行指揮官 (52歳)',
     color: '#f97316',
     ttsModel: 'Charon',
     ttsRate: 0.92,
@@ -48,7 +48,7 @@ window.CHARACTER_DATA = {
     id: 'mio',
     name: 'ミオ分析官',
     shortName: 'ミオ分析官',
-    role: '国家サイバー統括室 (NCO) 自動選別システム担当分析官 (24歳)',
+    role: '国家サイバー統括室 (NCO) 通信情報分析官 (24歳)',
     color: '#c084fc',
     ttsModel: 'Leda',
     ttsRate: 1.08,
@@ -59,10 +59,10 @@ window.CHARACTER_DATA = {
     id: 'takamiya',
     name: 'タカミヤ レン (高宮 蓮)',
     shortName: 'レン',
-    role: '医療システム技術者 (26歳)。半年前に喧嘩別れしたケイの親友',
+    role: 'クラウドVPS緊急対策室 (CSIRT) 現場リーダー・ケイの親友 (27歳)',
     color: '#4ade80',
     ttsModel: 'Aoede',
-    ttsRate: 1.1,
+    ttsRate: 1.08,
     ttsPitch: 1.0,
     sprite: 'assets/characters/takamiya.png',
   },

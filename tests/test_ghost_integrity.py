@@ -1,22 +1,22 @@
 # -*- coding: utf-8 -*-
 """
-GHOST PROTOCOL - シナリオ・証拠品画像・対話イラスト・ピン座標・整合性テストスイート
+GHOST PROTOCOL - シナリオ・全5章構成・証拠品画像・対話イラスト・ピン座標・整合性テストスイート
 ---------------------------------------------------------------------------------
 目的:
-  - ghost/index.html のDOM構造検証（波形インジケーター、エリア切替、立証画面、証拠モーダル等）
-  - ghost/js/scenario.js の全証拠品マスター・アセット実在性検証
+  - ghost/index.html のDOM構造検証（5章タイムラインバー、小説全文モーダル、波形インジケーター、エリア切替、立証画面、証拠モーダル等）
+  - ghost/js/scenario.js の全5章構成・全証拠品マスター・アセット実在性検証
   - 証拠品画像の重複ゼロ検証（SHAハッシュが全て異なること）
-  - 立証パート全4問の決定打証拠品整合性検証（詰み防止）
+  - 章進行型ブリーフィング全6問の決定打証拠品整合性検証（詰み防止）
   - 探索ピンのユークリッド距離20%以上離散配置検証（AGENT PROTOCOLルール5）
   - 会話および立証パートで指定された illustration / image ファイルの実在性検証
   - 全JavaScriptファイルの構文チェック（node -c）
 """
 
-import unittest
+import hashlib
 import json
 import math
-import hashlib
 import subprocess
+import unittest
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -30,7 +30,7 @@ def run_node(code: str) -> str:
         capture_output=True,
         text=True,
         cwd=str(REPO_ROOT),
-        encoding="utf-8"
+        encoding="utf-8",
     )
     if res.returncode != 0:
         raise RuntimeError(f"Node execution failed:\n{res.stderr}")
@@ -51,6 +51,14 @@ class TestGhostHtmlStructure(unittest.TestCase):
         self.assertIn('id="screen-explore"', self.html_content)
         self.assertIn('id="screen-debate"', self.html_content)
         self.assertIn('id="screen-ending"', self.html_content)
+
+    def test_chapter_timeline_and_novel_modal_present(self):
+        """5章タイムラインバー、章ストーリー再生ボタン、小説全文リーダーモーダルが存在すること"""
+        self.assertIn('id="chapter-timeline-bar"', self.html_content)
+        self.assertIn('id="btn-replay-chapter-story"', self.html_content)
+        self.assertIn('id="btn-open-novel"', self.html_content)
+        self.assertIn('id="modal-novel"', self.html_content)
+        self.assertIn('id="modal-novel-body"', self.html_content)
 
     def test_voice_wave_indicator_present(self):
         """発話波形インジケーターが存在すること"""
@@ -75,7 +83,7 @@ class TestGhostHtmlStructure(unittest.TestCase):
     def test_line_external_notice_present(self):
         """マナーモード回避用のSafari/外部ブラウザ起動導線が存在すること"""
         self.assertIn('id="line-external-notice"', self.html_content)
-        self.assertIn('openExternalBrowser=1', self.html_content)
+        self.assertIn("openExternalBrowser=1", self.html_content)
 
 
 class TestGhostAudioPipeline(unittest.TestCase):
@@ -118,17 +126,27 @@ class TestGhostScenarioAndAssets(unittest.TestCase):
         raw_json = run_node(code)
         cls.scenario = json.loads(raw_json)
 
+    def test_five_chapters_registered(self):
+        """全5章のタイムラインシナリオが登録され、各章に導入ノベルパートが存在すること"""
+        chapters = self.scenario.get("chapters", [])
+        self.assertEqual(len(chapters), 5)
+        for idx, ch in enumerate(chapters, start=1):
+            self.assertEqual(ch.get("id"), idx)
+            self.assertTrue(ch.get("title"))
+            self.assertTrue(ch.get("date"))
+            self.assertGreaterEqual(len(ch.get("introDialogue", [])), 5)
+
     def test_all_evidence_registered(self):
-        """6件の証拠品（決定打4件＋状況把握データ2件）が登録されていること"""
+        """現実の事件構造に基づく6件の核心フォレンジック証拠品が登録されていること"""
         evidence = self.scenario.get("evidence", {})
         self.assertEqual(len(evidence), 6)
         expected_ids = [
-            "sinkhole_route",
-            "honeypot_log",
-            "active_memory_ren",
-            "nco_envelope_alert",
-            "hospital_icu_status",
-            "c2_target_ip",
+            "ad_demofastloss_log",
+            "persistent_session_trap",
+            "reverse_rdp_tsclient",
+            "direct_compensation_matrix",
+            "nco_three_walls_report",
+            "canary_c2_origin",
         ]
         for ev_id in expected_ids:
             self.assertIn(ev_id, evidence)
@@ -154,27 +172,29 @@ class TestGhostScenarioAndAssets(unittest.TestCase):
             self.assertNotIn(
                 sha,
                 hashes,
-                f"Duplicate image hash detected between '{ev_id}' and '{hashes.get(sha)}'"
+                f"Duplicate image hash detected between '{ev_id}' and '{hashes.get(sha)}'",
             )
             hashes[sha] = ev_id
 
-    def test_debate_four_questions_critical_evidence(self):
-        """立証全4問の正解証拠品が決定打4点に合致していること（詰み防止）"""
+    def test_debate_six_questions_critical_evidence(self):
+        """全5章（6問）の推論ブリーフィングの正解証拠品が6点の核心証拠に合致していること"""
         debates = self.scenario.get("debates", [])
-        self.assertEqual(len(debates), 4, "debates must have exactly 4 questions")
+        self.assertEqual(len(debates), 6, "debates must have 6 questions across 5 chapters")
 
         expected_correct = [
-            "sinkhole_route",
-            "honeypot_log",
-            "active_memory_ren",
-            "c2_target_ip",
+            "ad_demofastloss_log",
+            "persistent_session_trap",
+            "reverse_rdp_tsclient",
+            "direct_compensation_matrix",
+            "nco_three_walls_report",
+            "canary_c2_origin",
         ]
         for idx, (expected_id, debate) in enumerate(zip(expected_correct, debates)):
             actual_id = debate.get("correctEvidenceId")
             self.assertEqual(
                 actual_id,
                 expected_id,
-                f"Question {idx + 1} expected '{expected_id}', got '{actual_id}'"
+                f"Question {idx + 1} expected '{expected_id}', got '{actual_id}'",
             )
 
     def test_pin_distances_rule5(self):
@@ -190,7 +210,7 @@ class TestGhostScenarioAndAssets(unittest.TestCase):
                     self.assertGreaterEqual(
                         dist,
                         19.5,
-                        f"Area '{area}' pins '{spots[i]['name']}' and '{spots[j]['name']}' are too close ({dist:.1f}% < 20%)"
+                        f"Area '{area}' pins '{spots[i]['name']}' and '{spots[j]['name']}' are too close ({dist:.1f}% < 20%)",
                     )
 
     def test_dialogue_illustrations_exist(self):
@@ -212,15 +232,9 @@ class TestGhostJsSyntax(unittest.TestCase):
         js_files = list(js_dir.glob("*.js"))
         self.assertGreaterEqual(len(js_files), 5)
         for js_file in js_files:
-            res = subprocess.run(
-                ["node", "-c", str(js_file)],
-                capture_output=True,
-                text=True
-            )
+            res = subprocess.run(["node", "-c", str(js_file)], capture_output=True, text=True)
             self.assertEqual(
-                res.returncode,
-                0,
-                f"Syntax error in {js_file.name}:\n{res.stderr}"
+                res.returncode, 0, f"Syntax error in {js_file.name}:\n{res.stderr}"
             )
 
 
