@@ -485,7 +485,7 @@ class GameApp {
 
   playChapterIntro(chapterNum, onDone = null) {
     const ch = this.getChapterData(chapterNum);
-    if (!ch || !ch.introDialogue) {
+    if (!ch?.introDialogue) {
       if (onDone) onDone();
       return;
     }
@@ -512,7 +512,8 @@ class GameApp {
       this.startNewInvestigation();
       return;
     }
-    this.currentArea = data.currentArea || this.getPreferredAreaForChapter(this.state.currentChapter);
+    this.currentArea =
+      data.currentArea || this.getPreferredAreaForChapter(this.state.currentChapter);
     if (data.activePhase === 'debate') {
       this.prepareDebateListForCurrentState();
       this.showScreen('debate');
