@@ -9,6 +9,9 @@ class AudioManager {
     this.bgmVolume = 0.35;
     this.currentBgmMode = 'title'; // title | investigate | crisis | truth
     this.currentBgmTrack = null;
+    this.bgmBuffers = new Map();
+    this.bgmBufferLoads = new Map();
+    this.bgmSessionId = 0;
     this.bgmTracks = {
       title: 'assets/audio/bgm_title.mp3',
       investigate: 'assets/audio/bgm_investigation.mp3',
@@ -102,11 +105,11 @@ class AudioManager {
   }
 
   unlockAudio() {
-    if (this.isAudioUnlocked) return;
     this.initContext();
     if (this.ctx && this.ctx.state === 'suspended') {
       this.ctx.resume().catch(() => {});
     }
+    if (this.isAudioUnlocked) return;
 
     // LINE内ブラウザ / iOS Safari用: ボイス専用Audio要素の先行アンロック (無音WAV)
     if (this.voiceAudio && !this.isVoiceAudioUnlocked) {
@@ -127,11 +130,15 @@ class AudioManager {
 
   pauseAll() {
     this.stopVoice();
-    if (this.currentBgmTrack?.audio && !this.currentBgmTrack.audio.paused) {
+    const track = this.currentBgmTrack;
+    if (track?.audio && !track.audio.paused) {
       this.wasBgmPlayingBeforeHide = true;
       try {
-        this.currentBgmTrack.audio.pause();
+        track.audio.pause();
       } catch (_e) {}
+    } else if (track?.source && !track.isStopped) {
+      // Web Audio版BGMはこの後のAudioContext停止で一緒に止まる
+      this.wasBgmPlayingBeforeHide = true;
     }
     if (this.ctx && this.ctx.state === 'running') {
       this.ctx.suspend().catch(() => {});
@@ -144,18 +151,127 @@ class AudioManager {
     }
     if (this.wasBgmPlayingBeforeHide && this.bgmEnabled && this.currentBgmTrack?.audio) {
       this.currentBgmTrack.audio.play().catch(() => {});
+    }
+    if (this.wasBgmPlayingBeforeHide && this.bgmEnabled && this.currentBgmTrack) {
       this.wasBgmPlayingBeforeHide = false;
     }
   }
 
-  // BGMの再生（MP3再生 & 失敗時フォールバック）
+  resumeContext() {
+    this.initContext();
+    if (this.ctx?.state === 'suspended') {
+      this.ctx.resume().catch(() => {});
+    }
+    return this.ctx || null;
+  }
+
+  isCurrentBgmTrack(track) {
+    return this.currentBgmTrack === track && track.sessionId === this.bgmSessionId;
+  }
+
+  decodeBgmAudio(encoded) {
+    return new Promise((resolve, reject) => {
+      let pending;
+      try {
+        pending = this.ctx.decodeAudioData(encoded.slice(0), resolve, reject);
+      } catch (error) {
+        reject(error);
+        return;
+      }
+      if (pending?.then) pending.then(resolve, reject);
+    });
+  }
+
+  loadBgmBuffer(url) {
+    if (this.bgmBuffers.has(url)) {
+      return Promise.resolve(this.bgmBuffers.get(url));
+    }
+    if (this.bgmBufferLoads.has(url)) {
+      return this.bgmBufferLoads.get(url);
+    }
+
+    const loadPromise = (async () => {
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`BGM load failed: ${response.status}`);
+      }
+      const buffer = await this.decodeBgmAudio(await response.arrayBuffer());
+      this.bgmBuffers.set(url, buffer);
+      return buffer;
+    })();
+
+    this.bgmBufferLoads.set(url, loadPromise);
+    const clearLoad = () => {
+      if (this.bgmBufferLoads.get(url) === loadPromise) {
+        this.bgmBufferLoads.delete(url);
+      }
+    };
+    loadPromise.then(clearLoad, clearLoad);
+    return loadPromise;
+  }
+
+  startWebBgm(track, buffer) {
+    const source = this.ctx.createBufferSource();
+    const gainNode = this.ctx.createGain();
+    source.buffer = buffer;
+    // HTMLAudioElementのloopに頼らず、デコード済みバッファを
+    // サンプル単位で繰り返すことでループ境界の無音区間をなくす。
+    source.loop = true;
+    source.loopStart = 0;
+    source.loopEnd = buffer.duration;
+    gainNode.gain.value = this.bgmVolume;
+    source.connect(gainNode);
+    gainNode.connect(this.ctx.destination);
+
+    track.kind = 'webaudio';
+    track.buffer = buffer;
+    track.source = source;
+    track.gainNode = gainNode;
+    track.isStopped = false;
+    try {
+      source.start();
+    } catch (error) {
+      this.stopBgmTrack(track);
+      throw error;
+    }
+  }
+
+  async playWebBgm(track) {
+    const buffer = await this.loadBgmBuffer(track.url);
+    if (!this.isCurrentBgmTrack(track) || !this.bgmEnabled) return;
+    this.startWebBgm(track, buffer);
+  }
+
+  playHtmlBgm(track) {
+    try {
+      const audio = new Audio(track.url);
+      audio.loop = true;
+      audio.preload = 'auto';
+      audio.volume = this.bgmVolume;
+      track.kind = 'html';
+      track.audio = audio;
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise.catch((_err) => {
+          // 自動再生制限時は次回タップで再生
+        });
+      }
+    } catch (error) {
+      console.warn('BGM play failed:', error);
+    }
+  }
+
+  // BGMの再生（Web Audioでギャップレス再生 & 失敗時はHTMLAudioへ）
   playBgm(mode = 'title') {
     this.currentBgmMode = mode;
     if (!this.bgmEnabled) return;
 
-    if (this.currentBgmTrack && this.currentBgmTrack.mode === mode) {
-      if (this.currentBgmTrack.audio?.paused) {
-        this.currentBgmTrack.audio.play().catch(() => {});
+    const current = this.currentBgmTrack;
+    if (current?.mode === mode) {
+      if (current.audio?.paused) {
+        current.audio.play().catch(() => {});
+      } else if (current.kind === 'webaudio') {
+        this.resumeContext();
       }
       return;
     }
@@ -164,34 +280,66 @@ class AudioManager {
     const url = this.bgmTracks[mode];
     if (!url) return;
 
-    try {
-      const audio = new Audio(url);
-      audio.loop = true;
-      audio.volume = this.bgmVolume;
-      const playPromise = audio.play();
-      if (playPromise !== undefined) {
-        playPromise.catch((_err) => {
-          // 自動再生制限時は次回タップで再生
-        });
-      }
-      this.currentBgmTrack = { audio, mode, url };
-    } catch (e) {
-      console.warn('BGM play failed:', e);
+    const track = {
+      audio: null,
+      buffer: null,
+      gainNode: null,
+      isStopped: false,
+      kind: 'loading',
+      mode,
+      sessionId: this.bgmSessionId,
+      source: null,
+      url,
+    };
+    this.currentBgmTrack = track;
+
+    if (!this.resumeContext()) {
+      this.playHtmlBgm(track);
+      return;
+    }
+
+    this.playWebBgm(track).catch((error) => {
+      if (!this.isCurrentBgmTrack(track)) return;
+      console.warn('Web Audio BGM failed; falling back to HTMLAudio:', error);
+      this.playHtmlBgm(track);
+    });
+  }
+
+  stopBgmTrack(track) {
+    track.isStopped = true;
+    if (track.source) {
+      try {
+        track.source.stop();
+      } catch (_e) {}
+      try {
+        track.source.disconnect();
+      } catch (_e) {}
+    }
+    if (track.gainNode) {
+      try {
+        track.gainNode.disconnect();
+      } catch (_e) {}
+    }
+    if (track.audio) {
+      try {
+        track.audio.pause();
+        track.audio.currentTime = 0;
+      } catch (_e) {}
     }
   }
 
   stopBgm() {
-    if (this.currentBgmTrack?.audio) {
-      try {
-        this.currentBgmTrack.audio.pause();
-        this.currentBgmTrack.audio.currentTime = 0;
-      } catch (_e) {}
-      this.currentBgmTrack = null;
-    }
+    this.bgmSessionId++;
+    const track = this.currentBgmTrack;
+    this.currentBgmTrack = null;
+    if (track) this.stopBgmTrack(track);
   }
 
   setBgmVolume(volume) {
     this.bgmVolume = Math.max(0, Math.min(1, volume));
+    if (this.currentBgmTrack?.gainNode) {
+      this.currentBgmTrack.gainNode.gain.value = this.bgmVolume;
+    }
     if (this.currentBgmTrack?.audio) {
       this.currentBgmTrack.audio.volume = this.bgmVolume;
     }
