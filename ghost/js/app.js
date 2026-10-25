@@ -19,6 +19,7 @@ class GameApp {
     this.backlog = [];
     this.selectedEvidenceId = null;
     this.activeDebateList = [];
+    this.lastActiveNpcChar = null;
 
     this.initDomElements();
     this.bindEvents();
@@ -115,6 +116,11 @@ class GameApp {
       backdropGallery: document.getElementById('backdrop-gallery'),
       btnCloseGallery: document.getElementById('btn-close-gallery'),
     };
+
+    if (this.dom.voiceWaveIndicator && !this.dom.voiceWaveIndicator.hasChildNodes()) {
+      this.dom.voiceWaveIndicator.innerHTML =
+        '<span class="voice-wave-bar"></span><span class="voice-wave-bar"></span><span class="voice-wave-bar"></span>';
+    }
   }
 
   // イベントリスナーの登録
@@ -237,20 +243,79 @@ class GameApp {
   }
 
   bindKeyboardShortcuts() {
-    window.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' || e.key === 'b' || e.key === 'B') {
-        this.handleBackShortcut();
-      } else if (e.key === 'e' || e.key === 'E') {
-        this.toggleEvidenceModal();
-      } else if (e.key === 'l' || e.key === 'L') {
-        this.toggleBacklogModal();
-      } else if (e.key === ' ' || e.key === 'Enter') {
-        if (!this.dom.dialogueStage?.classList.contains('hidden')) {
-          e.preventDefault();
-          this.advanceDialogue();
-        }
-      }
-    });
+    window.addEventListener('keydown', (e) => this.handleKeyDown(e));
+  }
+
+  handleKeyDown(e) {
+    if (this.handleModalShortcuts(e.key)) return;
+    if (this.handleDialogueShortcuts(e)) return;
+    if (this.handleAreaShortcuts(e)) return;
+    this.handleDebateShortcuts(e);
+  }
+
+  handleModalShortcuts(key) {
+    if (key === 'Escape' || key === 'b' || key === 'B') {
+      this.handleBackShortcut();
+      return true;
+    }
+    if (key === 'e' || key === 'E') {
+      this.toggleEvidenceModal();
+      return true;
+    }
+    if (key === 'l' || key === 'L') {
+      this.toggleBacklogModal();
+      return true;
+    }
+    return false;
+  }
+
+  handleDialogueShortcuts(e) {
+    if (
+      (e.key === ' ' || e.key === 'Enter') &&
+      !this.dom.dialogueStage?.classList.contains('hidden')
+    ) {
+      e.preventDefault();
+      this.advanceDialogue();
+      return true;
+    }
+    return false;
+  }
+
+  isModalOrDialogueOpen() {
+    return Boolean(
+      !this.dom.dialogueStage?.classList.contains('hidden') ||
+        !this.dom.modalEvidence?.classList.contains('hidden') ||
+        !this.dom.modalBacklog?.classList.contains('hidden') ||
+        !this.dom.modalGallery?.classList.contains('hidden'),
+    );
+  }
+
+  handleAreaShortcuts(e) {
+    if (this.isModalOrDialogueOpen() || this.currentScreen !== 'explore') return false;
+    if (e.key === 'Tab' || e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+      e.preventDefault();
+      const nextArea = this.currentArea === 'desk' ? 'living' : 'desk';
+      this.switchArea(nextArea);
+      return true;
+    }
+    return false;
+  }
+
+  handleDebateShortcuts(e) {
+    if (this.isModalOrDialogueOpen() || this.currentScreen !== 'debate') return;
+    if (['1', '2', '3', '4', '5', '6'].includes(e.key)) {
+      e.preventDefault();
+      const index = Number.parseInt(e.key, 10) - 1;
+      this.selectEvidenceByIndex(index);
+    }
+  }
+
+  selectEvidenceByIndex(index) {
+    const list = Array.from(this.state.collectedEvidence);
+    if (index >= 0 && index < list.length) {
+      const evId = list[index];
+      this.selectDebateEvidence(evId);
+    }
   }
 
   handleBackShortcut() {
@@ -273,24 +338,20 @@ class GameApp {
   }
 
   updateTitleScreenUI() {
-    const isCleared1 = this.state.isClearedFirstLoop();
-    const isClearedTrue = this.state.isClearedTrueEnd();
+    const isCleared = this.state.isGameCleared();
 
     if (this.dom.titleLoopInfo) {
-      if (isClearedTrue) {
+      if (isCleared) {
         this.dom.titleLoopInfo.innerHTML =
-          '<span class="loop-tag true-tag">🏆 TRUE END CLEAR</span> <span class="loop-text">共生プロトコル締結済：全事件解決</span>';
-      } else if (isCleared1) {
-        this.dom.titleLoopInfo.innerHTML =
-          '<span class="loop-tag phase2-tag">⚡ PHASE 2 DEEP TRACE</span> <span class="loop-text">深層解決編解放中：10万台のストームを阻止せよ</span>';
+          '<span class="loop-tag true-tag">🏆 MISSION COMPLETE</span> <span class="loop-text">防波堤プロトコル成功：救命病院防衛完了</span>';
       } else {
         this.dom.titleLoopInfo.innerHTML =
-          '<span class="loop-tag phase1-tag">⚡ PHASE 1</span> <span class="loop-text">第一幕：潔白の立証 〜システムプロンプトの罠〜</span>';
+          '<span class="loop-tag phase1-tag">⚡ 全4問・1周完結</span> <span class="loop-text">身代わりの防波堤と相棒AIの約束</span>';
       }
     }
 
     if (this.dom.titleClearBadge) {
-      if (isClearedTrue) {
+      if (isCleared) {
         this.dom.titleClearBadge.classList.remove('hidden');
       } else {
         this.dom.titleClearBadge.classList.add('hidden');
@@ -384,6 +445,14 @@ class GameApp {
   // タイトルへ戻る
   returnToTitle() {
     this.stopDialogueTimers();
+    this.audio.stopVoice();
+    this.lastActiveNpcChar = null;
+    if (this.dom.characterSpriteBox) {
+      this.dom.characterSpriteBox.innerHTML = '';
+    }
+    if (this.dom.voiceWaveIndicator) {
+      this.dom.voiceWaveIndicator.classList.add('hidden');
+    }
     this.dom.dialogueStage?.classList.add('hidden');
     this.showScreen('title');
   }
@@ -510,17 +579,39 @@ class GameApp {
     this.playDialogueSequence(notificationSeq);
   }
 
+  // エリア切替ボタンの未調査数バッジ更新
+  updateAreaBadges() {
+    const deskSpots = this.scenario.exploreSpots.desk || [];
+    const livingSpots = this.scenario.exploreSpots.living || [];
+
+    const uninspectedDesk = deskSpots.filter((s) => !this.state.isSpotInspected(s.id)).length;
+    const uninspectedLiving = livingSpots.filter((s) => !this.state.isSpotInspected(s.id)).length;
+
+    if (this.dom.btnAreaDesk) {
+      const badgeClass = uninspectedDesk === 0 ? 'is-complete' : 'has-remaining';
+      const badgeText = uninspectedDesk === 0 ? '✓ 完了' : `残り ${uninspectedDesk}`;
+      this.dom.btnAreaDesk.innerHTML = `🛡️ アリアの防弾マイルーム (Secure VM) <span class="area-tab-badge ${badgeClass}">${badgeText}</span>`;
+    }
+
+    if (this.dom.btnAreaLiving) {
+      const badgeClass = uninspectedLiving === 0 ? 'is-complete' : 'has-remaining';
+      const badgeText = uninspectedLiving === 0 ? '✓ 完了' : `残り ${uninspectedLiving}`;
+      this.dom.btnAreaLiving.innerHTML = `📡 NCOオンライン聴聞＆病院モニター <span class="area-tab-badge ${badgeClass}">${badgeText}</span>`;
+    }
+  }
+
   // 探索画面UIと前提条件ガードの更新
   updateExploreUI() {
-    const requiredEvidence = 4;
     const collectedCount = this.state.collectedEvidence.size;
+    const criticalCount = this.state.getCriticalEvidenceCount();
+    const canEnter = this.state.canEnterDebate();
 
     if (this.dom.evidenceCount) {
       this.dom.evidenceCount.textContent = collectedCount;
     }
 
     if (this.dom.evidenceNeededCounter) {
-      this.dom.evidenceNeededCounter.textContent = `${collectedCount} / 6 (立証可能: 4〜)`;
+      this.dom.evidenceNeededCounter.textContent = `${collectedCount} / 6 (決定打: ${criticalCount} / 4)`;
     }
 
     if (this.dom.hudLoopBadge) {
@@ -528,16 +619,17 @@ class GameApp {
         '<span class="phase-title">GHOST PROTOCOL</span><span class="phase-desc-text">: 身代わりの防波堤</span>';
     }
 
-    // 前提条件ガード：証拠が揃うまでボタンを非表示かつ非活性にする
-    const hasEnoughEvidence = collectedCount >= requiredEvidence;
-    if (hasEnoughEvidence) {
+    this.updateAreaBadges();
+
+    // 前提条件ガード：決定打4件（または全6件）が揃うまでボタンを非表示かつ非活性にする
+    if (canEnter) {
       this.dom.btnGoToDebate?.classList.remove('hidden');
       this.dom.btnGoToDebate?.removeAttribute('disabled');
       this.dom.btnHudGotoDebate?.classList.remove('hidden');
       this.dom.btnHudGotoDebate?.removeAttribute('disabled');
       if (this.dom.exploreStatusText) {
         this.dom.exploreStatusText.textContent =
-          '立証に必要な鑑識データが揃った！ 執行官に反証せよ！（最大6件）';
+          '立証に必要な決定打4件が揃った！ 執行官に反証せよ！（最大6件）';
       }
     } else {
       this.dom.btnGoToDebate?.classList.add('hidden');
@@ -546,18 +638,17 @@ class GameApp {
       this.dom.btnHudGotoDebate?.setAttribute('disabled', 'true');
       if (this.dom.exploreStatusText) {
         this.dom.exploreStatusText.textContent =
-          'アリアの部屋やNCOモニターを調査し、身代わりの真実と黒幕の証拠を集めよう';
+          'アリアの部屋やNCOモニターを調査し、4つの決定打（または全6件の鑑識データ）を集めよう';
       }
     }
   }
 
   // 立証パート（論戦）の開始（二重安全ガード）
   startDebate() {
-    const requiredEvidence = 4;
-    if (this.state.collectedEvidence.size < requiredEvidence) {
+    if (!this.state.canEnterDebate()) {
       this.audio.playSe('damage');
       alert(
-        '【証拠不足】相手に反証するには、少なくとも4件以上の鑑識データが必要です！ 現場を調査してください。',
+        '【証拠不足】相手に反証するには、4つの立証決定打（または全6件の鑑識データ）が必要です！ 現場を調査してください。',
       );
       return;
     }
@@ -648,7 +739,7 @@ class GameApp {
     this.dom.debateEvidenceList.innerHTML = '';
 
     const collectedIds = Array.from(this.state.collectedEvidence);
-    collectedIds.forEach((id) => {
+    collectedIds.forEach((id, idx) => {
       const ev = this.scenario.evidence[id];
       if (!ev) return;
 
@@ -658,6 +749,7 @@ class GameApp {
       card.dataset.evidenceId = id;
 
       card.innerHTML = `
+        <span class="card-num-badge" title="キーボード[${idx + 1}]で選択">${idx + 1}</span>
         <span class="card-icon">${ev.icon}</span>
         <div class="card-text">
           <span class="card-name">${ev.name}</span>
@@ -895,19 +987,30 @@ class GameApp {
 
   renderDialogueItem(item) {
     this.dom.dialoguePrompt?.classList.add('hidden');
-    const char = this.characters[item.speaker] || {
-      name: item.speaker,
+    const speakerKey = item.speaker;
+    const char = this.characters[speakerKey] || {
+      name: speakerKey,
       color: '#f8fafc',
       sprite: null,
     };
 
+    const isMonologue =
+      Boolean(item.text.startsWith('（') && item.text.endsWith('）')) ||
+      item.text.includes('（……') ||
+      speakerKey.includes('思考') ||
+      speakerKey.includes('心の声');
+
     if (this.dom.dialogueSpeaker) {
-      this.dom.dialogueSpeaker.textContent = char.name;
+      if (speakerKey === 'kei' && isMonologue) {
+        this.dom.dialogueSpeaker.innerHTML = `${char.name} <span class="speaker-thought-tag">💭 心の声</span>`;
+      } else {
+        this.dom.dialogueSpeaker.textContent = char.name;
+      }
       this.dom.dialogueSpeaker.style.color = char.color || '#00f3ff';
     }
 
-    // 立ち絵表示
-    this.updateCharacterSprite(char);
+    // 立ち絵表示（点滅防止＆減光制御）
+    this.updateCharacterSprite(char, speakerKey, isMonologue);
 
     // イラスト・イメージ図表示
     this.updateIllustration(item);
@@ -915,18 +1018,35 @@ class GameApp {
     // バックログへ追加
     this.backlog.push({ speaker: char.name, text: item.text });
 
-    // 音声読み上げ
-    this.audio.speak(item.text, char);
+    // 音声読み上げ（SKIP中または思考・心の声時はボイス抑止）
+    if (!this.isSkipActive && !isMonologue) {
+      this.audio.speak(item.text, char);
+    } else {
+      this.audio.stopVoice();
+    }
 
     // タイプライター表示
-    this.startTypewriter(item.text);
+    this.startTypewriter(item.text, isMonologue);
   }
 
-  updateCharacterSprite(char) {
+  updateCharacterSprite(char, speakerKey, isMonologue = false) {
     if (!this.dom.characterStage || !this.dom.characterSpriteBox) return;
+
     if (char.sprite) {
+      // NPC自身が発言する場合：通常立ち絵を表示
+      this.lastActiveNpcChar = char;
       this.dom.characterStage.classList.remove('hidden');
       this.dom.characterSpriteBox.innerHTML = `<img src="${char.sprite}" alt="${char.name}" class="char-sprite-img" />`;
+    } else if (speakerKey === 'kei' || speakerKey === 'narrator') {
+      // ケイ発話時またはナレーション：直前NPC立ち絵を減光（思考時は大きく減光）で維持
+      if (this.lastActiveNpcChar?.sprite) {
+        this.dom.characterStage.classList.remove('hidden');
+        const dimClass = isMonologue ? 'is-monologue-bg' : 'is-dimmed';
+        this.dom.characterSpriteBox.innerHTML = `<img src="${this.lastActiveNpcChar.sprite}" alt="${this.lastActiveNpcChar.name}" class="char-sprite-img ${dimClass}" />`;
+      } else {
+        this.dom.characterStage.classList.add('hidden');
+        this.dom.characterSpriteBox.innerHTML = '';
+      }
     } else {
       this.dom.characterStage.classList.add('hidden');
       this.dom.characterSpriteBox.innerHTML = '';
@@ -946,12 +1066,19 @@ class GameApp {
     }
   }
 
-  startTypewriter(text) {
+  startTypewriter(text, isMonologue = false) {
     this.isTyping = true;
     if (!this.dom.dialogueText) return;
     this.dom.dialogueText.textContent = '';
     let index = 0;
     const speed = this.isSkipActive ? 6 : 24;
+
+    // 心の声ではなく、かつスキップ中でなければ発話波形アニメーションを表示
+    if (!isMonologue && !this.isSkipActive && this.dom.voiceWaveIndicator) {
+      this.dom.voiceWaveIndicator.classList.remove('hidden');
+    } else if (this.dom.voiceWaveIndicator) {
+      this.dom.voiceWaveIndicator.classList.add('hidden');
+    }
 
     this.typewriterTimer = setInterval(() => {
       index += 1;
@@ -966,6 +1093,9 @@ class GameApp {
 
   stopTypewriter() {
     this.isTyping = false;
+    if (this.dom.voiceWaveIndicator) {
+      this.dom.voiceWaveIndicator.classList.add('hidden');
+    }
     if (this.typewriterTimer) {
       clearInterval(this.typewriterTimer);
       this.typewriterTimer = null;
@@ -993,6 +1123,13 @@ class GameApp {
   finishDialogueSequence() {
     this.stopDialogueTimers();
     this.dom.dialogueStage?.classList.add('hidden');
+    this.lastActiveNpcChar = null;
+    if (this.dom.characterSpriteBox) {
+      this.dom.characterSpriteBox.innerHTML = '';
+    }
+    if (this.dom.voiceWaveIndicator) {
+      this.dom.voiceWaveIndicator.classList.add('hidden');
+    }
     if (this.onDialogueComplete) {
       const cb = this.onDialogueComplete;
       this.onDialogueComplete = null;
@@ -1019,6 +1156,7 @@ class GameApp {
     this.isSkipActive = !this.isSkipActive;
     if (this.dom.btnDialogueSkip) {
       if (this.isSkipActive) {
+        this.audio.stopVoice();
         this.dom.btnDialogueSkip.classList.add('active');
         this.isAutoActive = false;
         this.dom.btnDialogueAuto?.classList.remove('active');

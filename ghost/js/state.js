@@ -12,7 +12,6 @@ class GameState {
   saveSessionProgress(activePhase = 'explore') {
     try {
       const sessionData = {
-        currentLoop: this.currentLoop,
         activePhase,
         currentArea: window.gameApp ? window.gameApp.currentArea : 'desk',
         currentDebateStep: this.currentDebateStep,
@@ -43,7 +42,6 @@ class GameState {
       const raw = localStorage.getItem(this.sessionKey);
       if (!raw) return null;
       const data = JSON.parse(raw);
-      this.currentLoop = data.currentLoop || (this.isClearedFirstLoop() ? 2 : 1);
       this.currentDebateStep = data.currentDebateStep || 0;
       this.life = typeof data.life === 'number' ? data.life : 3;
       this.collectedEvidence = new Set(data.collectedEvidence || []);
@@ -67,7 +65,6 @@ class GameState {
 
   // 1回のプレイごとの一時状態リセット
   resetTransientState() {
-    this.currentLoop = this.isClearedFirstLoop() ? 2 : 1;
     this.life = 3; // ライフ（ハート3つ）
     this.collectedEvidence = new Set();
     this.inspectedSpots = new Set();
@@ -84,20 +81,23 @@ class GameState {
       const data = localStorage.getItem(this.storageKey);
       if (data) {
         const parsed = JSON.parse(data);
-        this.hasClearedLoop1 = parsed.hasClearedLoop1 || false;
-        this.hasClearedTrueEnd = parsed.hasClearedTrueEnd || false;
-        this.currentLoop = this.hasClearedLoop1 ? 2 : 1;
+        this.hasClearedGame =
+          parsed.hasClearedGame || parsed.hasClearedTrueEnd || parsed.hasClearedLoop1 || false;
+        this.hasClearedTrueEnd = this.hasClearedGame;
+        this.hasClearedLoop1 = this.hasClearedGame;
         if (typeof parsed.voiceEnabled === 'boolean') this.voiceEnabled = parsed.voiceEnabled;
         if (typeof parsed.seEnabled === 'boolean') this.seEnabled = parsed.seEnabled;
         if (typeof parsed.bgmEnabled === 'boolean') this.bgmEnabled = parsed.bgmEnabled;
       } else {
-        this.hasClearedLoop1 = false;
+        this.hasClearedGame = false;
         this.hasClearedTrueEnd = false;
+        this.hasClearedLoop1 = false;
       }
     } catch (e) {
       console.warn('Failed to load save data:', e);
-      this.hasClearedLoop1 = false;
+      this.hasClearedGame = false;
       this.hasClearedTrueEnd = false;
+      this.hasClearedLoop1 = false;
     }
   }
 
@@ -105,8 +105,8 @@ class GameState {
   savePersistentState() {
     try {
       const data = {
-        hasClearedLoop1: this.hasClearedLoop1,
-        hasClearedTrueEnd: this.hasClearedTrueEnd,
+        hasClearedGame: this.hasClearedGame,
+        hasClearedTrueEnd: this.hasClearedGame,
         voiceEnabled: this.voiceEnabled,
         seEnabled: this.seEnabled,
         bgmEnabled: this.bgmEnabled,
@@ -118,23 +118,45 @@ class GameState {
     }
   }
 
+  isGameCleared() {
+    return Boolean(this.hasClearedGame || this.hasClearedTrueEnd || this.hasClearedLoop1);
+  }
+
   isClearedFirstLoop() {
-    return Boolean(this.hasClearedLoop1);
+    return this.isGameCleared();
   }
 
   isClearedTrueEnd() {
-    return Boolean(this.hasClearedTrueEnd);
+    return this.isGameCleared();
+  }
+
+  markGameCleared() {
+    this.hasClearedGame = true;
+    this.hasClearedTrueEnd = true;
+    this.savePersistentState();
   }
 
   markLoop1Cleared() {
-    this.hasClearedLoop1 = true;
-    this.currentLoop = 2;
-    this.savePersistentState();
+    this.markGameCleared();
   }
 
   markTrueEndCleared() {
-    this.hasClearedTrueEnd = true;
-    this.savePersistentState();
+    this.markGameCleared();
+  }
+
+  // 立証決定打4件の判定
+  hasAllCriticalEvidence() {
+    const criticalIds = ['sinkhole_route', 'honeypot_log', 'active_memory_ren', 'c2_target_ip'];
+    return criticalIds.every((id) => this.collectedEvidence.has(id));
+  }
+
+  getCriticalEvidenceCount() {
+    const criticalIds = ['sinkhole_route', 'honeypot_log', 'active_memory_ren', 'c2_target_ip'];
+    return criticalIds.filter((id) => this.collectedEvidence.has(id)).length;
+  }
+
+  canEnterDebate() {
+    return this.hasAllCriticalEvidence() || this.collectedEvidence.size >= 6;
   }
 
   resetAllData() {
@@ -144,6 +166,7 @@ class GameState {
       console.warn('Failed to clear storage:', e);
     }
     this.clearSessionProgress();
+    this.hasClearedGame = false;
     this.hasClearedLoop1 = false;
     this.hasClearedTrueEnd = false;
     this.resetTransientState();

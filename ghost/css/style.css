@@ -1366,3 +1366,129 @@ body {
   font-size: 0.7rem;
   color: var(--text-muted);
 }
+
+/* 立ち絵減光・心の声演出 */
+.char-sprite-img {
+  transition:
+    filter 0.25s ease,
+    opacity 0.25s ease,
+    transform 0.25s ease;
+}
+
+.char-sprite-img.is-dimmed {
+  filter: brightness(0.65) saturate(0.85);
+  opacity: 0.75;
+}
+
+.char-sprite-img.is-monologue-bg {
+  filter: brightness(0.45) saturate(0.6);
+  opacity: 0.55;
+}
+
+.speaker-thought-tag {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 1px 7px;
+  font-size: 0.72rem;
+  letter-spacing: 0.05em;
+  font-weight: 700;
+  color: var(--neon-cyan);
+  background: rgba(0, 243, 255, 0.15);
+  border: 1px solid rgba(0, 243, 255, 0.45);
+  border-radius: 9999px;
+  vertical-align: middle;
+}
+
+/* エリア切替タブの未調査数バッジ */
+.area-tab-badge {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 9999px;
+  margin-left: 6px;
+  letter-spacing: 0.04em;
+  vertical-align: middle;
+}
+
+.area-tab-badge.has-remaining {
+  background: rgba(245, 158, 11, 0.25);
+  color: #fde68a;
+  border: 1px solid rgba(245, 158, 11, 0.6);
+}
+
+.area-tab-badge.is-complete {
+  background: rgba(16, 185, 129, 0.22);
+  color: #a7f3d0;
+  border: 1px solid rgba(16, 185, 129, 0.55);
+}
+
+/* 発話波形インジケーター */
+.speaker-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.voice-wave-indicator {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 14px;
+  vertical-align: middle;
+}
+
+.voice-wave-indicator.hidden {
+  display: none;
+}
+
+.voice-wave-bar {
+  width: 3px;
+  background: var(--neon-cyan);
+  border-radius: 1px;
+  animation: wave-bar 0.75s ease-in-out infinite alternate;
+}
+
+.voice-wave-bar:nth-child(1) {
+  height: 5px;
+  animation-delay: 0.1s;
+}
+
+.voice-wave-bar:nth-child(2) {
+  height: 13px;
+  animation-delay: 0.35s;
+}
+
+.voice-wave-bar:nth-child(3) {
+  height: 8px;
+  animation-delay: 0.2s;
+}
+
+@keyframes wave-bar {
+  0% {
+    height: 3px;
+    opacity: 0.4;
+  }
+  100% {
+    height: 14px;
+    opacity: 1;
+  }
+}
+
+/* 立証証拠カードの数字キーバッジ */
+.card-num-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 3px;
+  background: rgba(0, 243, 255, 0.2);
+  border: 1px solid var(--neon-cyan);
+  color: var(--neon-cyan);
+  font-family: var(--font-hud);
+  font-size: 0.7rem;
+  font-weight: 700;
+  margin-right: 6px;
+  flex-shrink: 0;
+}

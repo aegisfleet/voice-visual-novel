@@ -18,9 +18,17 @@ class AudioManager {
     this.currentUtterance = null;
     this.voiceAudio = typeof Audio !== 'undefined' ? new Audio() : null;
     if (this.voiceAudio) this.voiceAudio.preload = 'auto';
+    this.isVoiceAudioUnlocked = false;
     this.isAudioUnlocked = false;
     this.wasBgmPlayingBeforeHide = false;
     this.playSessionId = 0;
+
+    this.seTracks = {
+      cutin: 'assets/audio/sfx_cutin.mp3',
+      evidence: 'assets/audio/sfx_evidence.mp3',
+      correct: 'assets/audio/sfx_evidence_a.mp3',
+      victory: 'assets/audio/sfx_evidence_b.mp3',
+    };
 
     this.initSpeech();
     this.setupLifecycleListeners();
@@ -99,6 +107,21 @@ class AudioManager {
     if (this.ctx && this.ctx.state === 'suspended') {
       this.ctx.resume().catch(() => {});
     }
+
+    // LINE内ブラウザ / iOS Safari用: ボイス専用Audio要素の先行アンロック (無音WAV)
+    if (this.voiceAudio && !this.isVoiceAudioUnlocked) {
+      this.voiceAudio.src =
+        'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA';
+      const p = this.voiceAudio.play();
+      if (p !== undefined) {
+        p.then(() => {
+          this.voiceAudio.pause();
+          this.voiceAudio.currentTime = 0;
+        }).catch(() => {});
+      }
+      this.isVoiceAudioUnlocked = true;
+    }
+
     this.isAudioUnlocked = true;
   }
 
@@ -177,6 +200,7 @@ class AudioManager {
   // Web Speech API によるセリフ発話
   speak(text, charData = null) {
     if (!this.voiceEnabled) return;
+    if (window.gameApp?.isSkipActive) return;
     this.stopVoice();
 
     if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
@@ -215,10 +239,36 @@ class AudioManager {
     this.currentUtterance = null;
   }
 
-  // Web Audio API によるサイバーSE生成
+  // 効果音再生（MP3優先 ＆ Web Audio API オシレーターフォールバック連携）
   playSe(type) {
     if (!this.seEnabled) return;
     this.unlockAudio();
+
+    // 1. MP3音源が存在する場合は優先して再生
+    const trackUrl = this.seTracks?.[type];
+    if (trackUrl) {
+      try {
+        const audio = new Audio(trackUrl);
+        audio.volume = 0.7;
+        const playPromise = audio.play();
+        if (playPromise !== undefined) {
+          playPromise.catch((_err) => {
+            // 自動再生制限等で失敗した場合はシンセフォールバック
+            this.playSynthSe(type);
+          });
+          return;
+        }
+      } catch (_e) {
+        // フォールバック
+      }
+    }
+
+    // 2. MP3未指定または例外時はオシレーターシンセで再生
+    this.playSynthSe(type);
+  }
+
+  // Web Audio API によるサイバーSE合成フォールバック
+  playSynthSe(type) {
     if (!this.ctx) return;
 
     try {
