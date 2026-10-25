@@ -116,10 +116,22 @@ class NovelApp {
 
   // 2. イベントリスナー登録
   initEventListeners() {
+    this.initTitleEventListeners();
+    this.initDialogueEventListeners();
+    this.initModalEventListeners();
+    this.initAudioEventListeners();
+    this.setupKeyboardShortcuts();
+  }
+
+  initTitleEventListeners() {
     this.dom.btnStartGame?.addEventListener('click', () => this.handleStartGame());
     this.dom.btnContinueGame?.addEventListener('click', () => this.handleContinueGame());
     this.dom.btnResetSave?.addEventListener('click', () => this.handleResetSave());
+    this.dom.btnHudReturnTitle?.addEventListener('click', () => this.returnToTitle());
+    this.dom.btnEndingNext?.addEventListener('click', () => this.returnToTitle());
+  }
 
+  initDialogueEventListeners() {
     this.dom.novelWindow?.addEventListener('click', (e) => {
       if (e.target.closest('.dialogue-ctrl-btn')) return;
       this.advanceDialogue();
@@ -128,7 +140,10 @@ class NovelApp {
     this.dom.btnDialogueAuto?.addEventListener('click', () => this.toggleAuto());
     this.dom.btnDialogueSkip?.addEventListener('click', () => this.toggleSkip());
     this.dom.btnDialogueLog?.addEventListener('click', () => this.openLogModal());
+    this.dom.btnCloseIllustration?.addEventListener('click', () => this.hideIllustration());
+  }
 
+  initModalEventListeners() {
     this.dom.btnHudNovel?.addEventListener('click', () => this.openNovelModal());
     this.dom.btnOpenNovel?.addEventListener('click', () => this.openNovelModal());
     this.dom.btnEndingNovel?.addEventListener('click', () => this.openNovelModal());
@@ -136,12 +151,6 @@ class NovelApp {
     this.dom.btnEvidenceBag?.addEventListener('click', () => this.openEvidenceModal());
     this.dom.btnOpenGallery?.addEventListener('click', () => this.openGalleryModal());
     this.dom.btnEndingGallery?.addEventListener('click', () => this.openGalleryModal());
-
-    this.dom.btnToggleVoice?.addEventListener('click', () => this.toggleVoice());
-    this.dom.btnToggleSe?.addEventListener('click', () => this.toggleSe());
-    this.dom.btnToggleBgm?.addEventListener('click', () => this.toggleBgm());
-    this.dom.btnHudReturnTitle?.addEventListener('click', () => this.returnToTitle());
-    this.dom.btnEndingNext?.addEventListener('click', () => this.returnToTitle());
 
     this.dom.btnCloseLog?.addEventListener('click', () => this.closeModal(this.dom.modalLog));
     this.dom.btnCloseEvidence?.addEventListener('click', () =>
@@ -151,9 +160,12 @@ class NovelApp {
     this.dom.btnCloseGallery?.addEventListener('click', () =>
       this.closeModal(this.dom.modalGallery),
     );
-    this.dom.btnCloseIllustration?.addEventListener('click', () => this.hideIllustration());
+  }
 
-    this.setupKeyboardShortcuts();
+  initAudioEventListeners() {
+    this.dom.btnToggleVoice?.addEventListener('click', () => this.toggleVoice());
+    this.dom.btnToggleSe?.addEventListener('click', () => this.toggleSe());
+    this.dom.btnToggleBgm?.addEventListener('click', () => this.toggleBgm());
   }
 
   setupKeyboardShortcuts() {
