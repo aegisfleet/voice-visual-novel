@@ -65,6 +65,7 @@ class GameApp {
       debateTurnLabel: document.getElementById('debate-turn-label'),
       btnDebateBack: document.getElementById('btn-debate-back'),
       debateOpponentAvatar: document.getElementById('debate-opponent-avatar'),
+      debateSpeakerLabel: document.querySelector('.speech-speaker-label'),
       debateOpponentSpeech: document.getElementById('debate-opponent-speech'),
       btnReplayDebateVoice: document.getElementById('btn-replay-debate-voice'),
       debateHintText: document.getElementById('debate-hint-text'),
@@ -593,6 +594,11 @@ class GameApp {
     const opponentData = this.characters[debateItem.opponent] || this.characters.kuroda;
     if (this.dom.debateOpponentAvatar) {
       this.dom.debateOpponentAvatar.innerHTML = `<img src="${opponentData.sprite}" alt="${opponentData.name}" class="opponent-portrait-img" />`;
+    }
+
+    if (this.dom.debateSpeakerLabel) {
+      this.dom.debateSpeakerLabel.textContent = opponentData.name;
+      this.dom.debateSpeakerLabel.style.color = opponentData.color || '#f97316';
     }
 
     const speechText = debateItem.speech || debateItem.opponentSpeech || '';
