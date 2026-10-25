@@ -269,6 +269,7 @@ class AudioManager {
 
   // Web Audio API によるサイバーSE合成フォールバック
   playSynthSe(type) {
+    this.initContext();
     if (!this.ctx) return;
 
     try {
@@ -424,6 +425,27 @@ class AudioManager {
       osc.stop(time + n.d);
       time += n.d * 0.85;
     });
+  }
+
+  // 便利ラッパーメソッド
+  playCutin() {
+    this.playSe('cutin');
+  }
+
+  playEvidence() {
+    this.playSe('evidence');
+  }
+
+  playCorrect() {
+    this.playSe('correct');
+  }
+
+  playVictory() {
+    this.playSe('victory');
+  }
+
+  playWrong() {
+    this.playSe('damage');
   }
 }
 

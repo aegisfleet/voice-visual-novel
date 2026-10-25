@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#030712">
   <meta name="color-scheme" content="dark">
   <title>GHOST PROTOCOL 〜26,739台の亡霊と能動的サイバー防御・発動第1号〜</title>
-  <meta name="description" content="26,739台のクラウドVPS停止、2秒で蒸発する400万円、\\tsclient\C逆流（Reverse RDP）、被害者直接補償、そして能動的サイバー防御「発動第1号」要請の6日間を追体験する長編電脳サスペンスノベル。">
+  <meta name="description" content="2026年10月VPS大規模サイバー攻撃事件（26,739台侵害・DEMOFASTLOSS・リバースRDP・顧客実損100%直接補償・能動的サイバー防御第1号）を追体験する長編体験型ビジュアルノベル。">
   <link rel="canonical" href="https://aegisfleet.github.io/voice-visual-novel/ghost/">
 
   <!-- Favicon -->
@@ -38,8 +38,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700;800&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
-  
-  <link rel="stylesheet" href="css/style.css?v=20261025_ghost_v3">
+
+  <link rel="stylesheet" href="css/style.css?v=20261025_novel_v1">
 </head>
 <body>
   <div class="bg-grid"></div>
@@ -48,25 +48,10 @@
     <!-- 上部HUD -->
     <header id="hud" class="hud hidden">
       <div class="hud-left">
-        <span id="hud-location-badge" class="badge">アリアの鑑識端末 (Secure VM)</span>
+        <span id="hud-location-badge" class="badge">SECURE TERMINAL</span>
         <span id="hud-loop-badge" class="badge loop-badge"><span class="phase-title">CHAPTER 1</span><span class="phase-desc-text">: 26,739台の沈黙</span></span>
       </div>
-      <div class="hud-center">
-        <!-- 立証パート用ライフ -->
-        <div id="hud-life-container" class="life-container hidden">
-          <span class="life-label">DEFENSE:</span>
-          <output id="hud-hearts" class="hearts" aria-label="残りライフ 3 / 3"></output>
-        </div>
-      </div>
       <div class="hud-right">
-        <button type="button" id="btn-hud-goto-debate" class="hud-btn hud-debate-btn hidden" title="真相解明・反証へ進む">
-          <span class="hud-btn-icon">⚖️</span>
-          <span class="hud-btn-label">真相解明へ</span>
-        </button>
-        <button type="button" id="btn-hud-back-to-explore" class="hud-btn hidden" title="鑑識コンソールに戻る">
-          <span class="hud-btn-icon">🔍</span>
-          <span class="hud-btn-label">鑑識に戻る</span>
-        </button>
         <button type="button" id="btn-hud-novel" class="hud-btn" title="全編小説＆事件真相レポートを読む [N]">
           <span class="hud-btn-icon">📖</span>
           <span class="hud-btn-label">小説版</span>
@@ -106,17 +91,17 @@
 
         <div id="title-loop-info" class="title-loop-info"></div>
         <div id="title-clear-badge" class="title-clear-badge hidden">
-          🏆 全5章・完全解明：能動的サイバー防御「公表なき発動第1号」達成
+          🏆 全5章・完全制覇：能動的サイバー防御「公表なき発動第1号」達成
         </div>
 
         <div class="title-actions">
           <button type="button" id="btn-continue-game" class="btn-cyber-plate btn-continue hidden">
-            <span class="btn-text">▶ RESUME CHRONICLE</span>
-            <span class="btn-subtext">前回のチャプターから再開する</span>
+            <span class="btn-text">▶ RESUME NOVEL</span>
+            <span class="btn-subtext">前回の場面から再開する</span>
           </button>
           <button type="button" id="btn-start-game" class="btn-cyber-plate btn-primary">
-            <span class="btn-text">▶ START CHRONICLE (全5章)</span>
-            <span class="btn-subtext">6日間の電脳金融危機と真実を追体験する</span>
+            <span class="btn-text">▶ START NOVEL (全5章)</span>
+            <span class="btn-subtext">体験型電脳サスペンスノベルを開始する</span>
           </button>
           <button type="button" id="btn-open-novel" class="btn-cyber-plate" title="全編小説＆事件真相レポートを読む">
             <span class="btn-text">📖 READ FULL NOVEL &amp; REPORT</span>
@@ -130,9 +115,9 @@
             </a>
           </aside>
 
-          <button type="button" id="btn-open-gallery" class="btn-cyber-plate" title="機密設定資料集を閲覧">
-            <span class="btn-text">◆ EXTRAS ARCHIVE</span>
-            <span class="btn-subtext">登場人物・技術用語設定資料集</span>
+          <button type="button" id="btn-open-gallery" class="btn-cyber-plate" title="機密鑑識ファイル一覧を閲覧">
+            <span class="btn-text">◆ FORENSIC ARCHIVE</span>
+            <span class="btn-subtext">獲得した核心鑑識ファイル・証拠資料集</span>
           </button>
           <button type="button" id="btn-reset-save" class="btn-subtle">
             セーブデータを初期化
@@ -140,138 +125,43 @@
         </div>
       </section>
 
-      <!-- 2. 探索＆チャプター進行画面 -->
-      <section id="screen-explore" class="screen">
-        <!-- 5章タイムライン進行バー -->
-        <div class="chapter-timeline-wrap">
-          <nav id="chapter-timeline-bar" class="chapter-timeline-bar" aria-label="チャプター進行状況"></nav>
-          <button type="button" id="btn-replay-chapter-story" class="btn-replay-story" title="現在の章の導入ストーリーをもう一度読む">
-            📖 章の導入を読む
-          </button>
+      <!-- 2. 体験型ノベル進行画面 -->
+      <section id="screen-novel" class="screen">
+        <!-- タイムライン進行インジケーター -->
+        <nav id="chapter-timeline-bar" class="chapter-timeline-bar" aria-label="チャプター進行状況"></nav>
+
+        <!-- 背景ステージ -->
+        <div id="novel-bg" class="novel-bg bg-terminal"></div>
+
+        <!-- 立ち絵キャラクター表示領域 -->
+        <div id="character-stage" class="character-stage">
+          <div id="character-sprite-box" class="character-sprite-box"></div>
         </div>
 
-        <div class="explore-header">
-          <div class="area-selector">
-            <button type="button" id="btn-area-desk" class="area-btn active" title="アリアの鑑識端末 (VM・ローカル解析)">
-              <span class="area-icon">🛡️</span>
-              <span class="area-name">アリアの鑑識端末</span>
-              <span class="area-sub"> (VM・逆探知)</span>
-            </button>
-            <button type="button" id="btn-area-living" class="area-btn" title="CSIRT対策室＆NCO緊急聴聞モニター">
-              <span class="area-icon">📡</span>
-              <span class="area-name">対策室＆NCO聴聞</span>
-              <span class="area-sub">モニター</span>
-            </button>
+        <!-- 電脳鑑識・図解ポップアップステージ -->
+        <div id="dialogue-illustration-stage" class="dialogue-illustration-stage hidden">
+          <div class="illustration-header">
+            <span class="illustration-badge">📊 電脳鑑識モニター</span>
+            <button type="button" id="btn-close-illustration" class="illustration-close-btn" title="閉じる">✕</button>
           </div>
+          <div class="illustration-img-container">
+            <img id="dialogue-illustration-img" src="" alt="鑑識データ図" class="dialogue-illustration-img">
+          </div>
+          <div id="dialogue-illustration-caption" class="illustration-caption"></div>
         </div>
 
-        <div class="explore-status-bar">
-          <span id="explore-status-text">現在の章の重要ログを調査し、事件の真相を1つずつ解き明かそう</span>
-          <span id="evidence-needed-counter" class="counter-box">第1章 / 全5章</span>
-        </div>
-
-        <div class="explore-stage">
-          <div id="area-desk" class="area-map"></div>
-          <div id="area-living" class="area-map hidden"></div>
-        </div>
-
-        <div class="explore-footer">
-          <button type="button" id="btn-go-to-debate" class="btn-cyber-plate btn-debate-start hidden" disabled>
-            <span class="btn-text">⚡ UNLOCK TRUTH GATE</span>
-            <span class="btn-subtext">この章の真相を立証して次の章へ進む！</span>
-          </button>
-        </div>
-      </section>
-
-      <!-- 3. 真相解明・立証パート（各章の推理ゲート ＆ 最終NCO聴聞） -->
-      <section id="screen-debate" class="screen">
-        <div class="debate-stage">
-          <div class="debate-top-bar">
-            <div class="debate-turn-badge">
-              <span id="debate-turn-label">第1章 解明ゲート (1 / 6)</span>
+        <!-- 選択肢パネル（体験型インタラクティブ意思決定） -->
+        <div id="choice-stage" class="choice-stage hidden">
+          <div class="choice-modal-card">
+            <div class="choice-header">
+              <span class="choice-badge">⚡ FORENSIC DECISION / 鑑識の決断</span>
+              <h2 id="choice-question" class="choice-question">設問テキスト</h2>
             </div>
-            <button type="button" id="btn-debate-back" class="btn-debate-back" title="鑑識コンソールに戻る [B]">
-              🔍 鑑識コンソールに戻る
-            </button>
-          </div>
-
-          <div class="opponent-box">
-            <div id="debate-opponent-avatar" class="opponent-avatar"></div>
-            <div class="opponent-speech-bubble">
-              <div class="speech-bubble-header">
-                <span class="speech-speaker-label">対策室・執行官</span>
-                <button type="button" id="btn-replay-debate-voice" class="btn-replay-voice">🔊 再生</button>
-              </div>
-              <p id="debate-opponent-speech">現在の章の核心的な謎がここに表示されます……</p>
-            </div>
-          </div>
-
-          <div id="debate-hint-text" class="debate-hint">
-            💡 鑑識ポイント: 相手の疑問や壁を突破する鑑識ファイルを選択せよ
-          </div>
-
-          <div class="evidence-selection-section">
-            <div id="selected-evidence-preview" class="preview-box">
-              <span class="placeholder-text">提示する鑑識ファイルを下の一覧から選択してください</span>
-            </div>
-            <div id="debate-evidence-list" class="debate-evidence-grid"></div>
-          </div>
-
-          <button type="button" id="btn-present-evidence" class="btn-cyber-plate btn-present" disabled>
-            <span class="btn-text">⚡ EXECUTE FORENSIC PROOF</span>
-            <span class="btn-subtext">この鑑識ファイルで真相を立証する！</span>
-          </button>
-        </div>
-      </section>
-
-      <!-- 4. エンディング画面 -->
-      <section id="screen-ending" class="screen">
-        <div id="ending-icon" class="ending-icon">🌟</div>
-        <h2 id="ending-title" class="ending-title">エンディングタイトル</h2>
-        <div id="ending-sub" class="ending-sub">サブタイトル</div>
-        <div id="ending-unlocked-banner" class="ending-unlocked-banner hidden"></div>
-        <p id="ending-desc" class="ending-desc">エンディングの詳細テキスト</p>
-        <div class="ending-actions">
-          <button type="button" id="btn-ending-explore-again" class="btn-cyber-plate btn-primary hidden">
-            <span class="btn-text">🔍 RE-INVESTIGATE</span>
-            <span class="btn-subtext">鑑識コンソールに戻って証拠を確認する</span>
-          </button>
-          <button type="button" id="btn-ending-novel" class="btn-cyber-plate btn-primary">
-            <span class="btn-text">📖 READ FULL NOVEL &amp; REPORT</span>
-            <span class="btn-subtext">全編小説＆事件の深層解説レポートを読む</span>
-          </button>
-          <button type="button" id="btn-ending-next" class="btn-cyber-plate">
-            <span class="btn-text">RETURN TO TITLE</span>
-            <span class="btn-subtext">タイトル画面へ戻る</span>
-          </button>
-          <button type="button" id="btn-ending-gallery" class="btn-cyber-plate">
-            <span class="btn-text">◆ EXTRAS ARCHIVE</span>
-            <span class="btn-subtext">機密設定資料集を開く</span>
-          </button>
-        </div>
-      </section>
-
-      <!-- 会話ステージ＆ノベルウィンドウ (オーバーレイ固定) -->
-      <div id="dialogue-stage" class="dialogue-stage hidden">
-        <div id="dialogue-backdrop" class="dialogue-backdrop"></div>
-        <div class="dialogue-visual-area">
-          <div id="character-stage" class="character-stage hidden">
-            <div id="character-sprite-box" class="character-sprite-box"></div>
-          </div>
-
-          <!-- 鑑識データ図解表示枠 -->
-          <div id="dialogue-illustration-stage" class="dialogue-illustration-stage hidden">
-            <div class="illustration-header">
-              <span class="illustration-badge">📊 電脳鑑識モニター</span>
-              <button type="button" id="btn-close-illustration" class="illustration-close-btn" title="閉じる">✕</button>
-            </div>
-            <div class="illustration-img-container">
-              <img id="dialogue-illustration-img" src="" alt="鑑識データ図" class="dialogue-illustration-img">
-            </div>
-            <div id="dialogue-illustration-caption" class="illustration-caption"></div>
+            <div id="choice-options" class="choice-options"></div>
           </div>
         </div>
 
+        <!-- 会話ノベルウィンドウ -->
         <div id="novel-window" class="novel-window">
           <div class="novel-header">
             <div class="speaker-wrap">
@@ -287,9 +177,32 @@
           <div id="dialogue-text" class="dialogue-body"></div>
           <div id="dialogue-prompt" class="dialogue-prompt hidden">▼ クリックして進む</div>
         </div>
-      </div>
+      </section>
 
-      <!-- 異議ありカットイン -->
+      <!-- 3. エンディング画面 -->
+      <section id="screen-ending" class="screen">
+        <div id="ending-icon" class="ending-icon">🌟</div>
+        <h2 id="ending-title" class="ending-title">エンディングタイトル</h2>
+        <div id="ending-sub" class="ending-sub">サブタイトル</div>
+        <div id="ending-unlocked-banner" class="ending-unlocked-banner hidden"></div>
+        <p id="ending-desc" class="ending-desc">エンディングの詳細テキスト</p>
+        <div class="ending-actions">
+          <button type="button" id="btn-ending-novel" class="btn-cyber-plate btn-primary">
+            <span class="btn-text">📖 READ FULL NOVEL &amp; REPORT</span>
+            <span class="btn-subtext">全編小説＆事件の深層解説レポートを読む</span>
+          </button>
+          <button type="button" id="btn-ending-next" class="btn-cyber-plate">
+            <span class="btn-text">RETURN TO TITLE</span>
+            <span class="btn-subtext">タイトル画面へ戻る</span>
+          </button>
+          <button type="button" id="btn-ending-gallery" class="btn-cyber-plate">
+            <span class="btn-text">◆ FORENSIC ARCHIVE</span>
+            <span class="btn-subtext">鑑識ファイル・証拠資料集を開く</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- 異議あり・突破カットイン -->
       <div id="overlay-cutin" class="overlay-cutin hidden">
         <div class="cutin-box">
           <div class="cutin-sub">⚡ FORENSIC BREAKTHROUGH / 電脳鑑識立証</div>
@@ -298,99 +211,64 @@
       </div>
     </main>
 
-    <!-- 証拠手帳モーダル -->
-    <div id="modal-evidence" class="modal hidden">
-      <div id="backdrop-evidence" class="modal-backdrop"></div>
-      <div class="modal-content">
+    <!-- モーダル：バックログ -->
+    <div id="modal-log" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modal-log-title">
+      <div class="modal-card">
         <div class="modal-header">
-          <div class="modal-title-wrap">
-            <h3>💾 電脳鑑識データベース (全6巻)</h3>
-            <span class="modal-sub-title">COLLECTED FORENSIC FILES</span>
-          </div>
-          <button type="button" id="btn-close-evidence" class="btn-close">✕</button>
+          <h2 id="modal-log-title" class="modal-title">📜 バックログ (会話履歴)</h2>
+          <button type="button" id="btn-close-log" class="modal-close-btn" title="閉じる">✕</button>
         </div>
-        <div id="modal-evidence-list" class="modal-list"></div>
+        <div id="modal-log-list" class="modal-body log-list"></div>
       </div>
     </div>
 
-    <!-- 全編小説＆事件真相レポートモーダル -->
-    <div id="modal-novel" class="modal hidden">
-      <div id="backdrop-novel" class="modal-backdrop"></div>
-      <div class="modal-content modal-novel-content">
+    <!-- モーダル：証拠手帳・鑑識ファイル -->
+    <div id="modal-evidence" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modal-evidence-title">
+      <div class="modal-card">
         <div class="modal-header">
-          <div class="modal-title-wrap">
-            <h3>📖 『GHOST PROTOCOL』全編小説＆事件真相解剖レポート</h3>
-            <span class="modal-sub-title">6-DAY CYBER CRISIS CHRONICLE &amp; TECHNICAL DEEP DIVE</span>
-          </div>
-          <button type="button" id="btn-close-novel" class="btn-close">✕</button>
+          <h2 id="modal-evidence-title" class="modal-title">💾 核心鑑識ファイル一覧</h2>
+          <button type="button" id="btn-close-evidence" class="modal-close-btn" title="閉じる">✕</button>
         </div>
-        <div id="novel-chapter-tabs" class="novel-chapter-tabs"></div>
-        <div id="modal-novel-body" class="modal-list novel-reader-body"></div>
+        <div class="modal-body">
+          <div id="modal-evidence-list" class="evidence-grid"></div>
+          <div id="modal-evidence-detail" class="evidence-detail-panel hidden">
+            <h3 id="detail-ev-name">証拠品名</h3>
+            <div id="detail-ev-type" class="badge">種別</div>
+            <img id="detail-ev-img" src="" alt="証拠画像" class="evidence-detail-img">
+            <p id="detail-ev-desc"></p>
+          </div>
+        </div>
       </div>
     </div>
 
-    <!-- バックログモーダル -->
-    <div id="modal-backlog" class="modal hidden">
-      <div id="backdrop-backlog" class="modal-backdrop"></div>
-      <div class="modal-content">
+    <!-- モーダル：全編小説＆真相レポートリーダー -->
+    <div id="modal-novel" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modal-novel-title">
+      <div class="modal-card modal-card-large">
         <div class="modal-header">
-          <div class="modal-title-wrap">
-            <h3>📜 会話ログ</h3>
-            <span class="modal-sub-title">DIALOGUE BACKLOG</span>
-          </div>
-          <button type="button" id="btn-close-backlog" class="btn-close">✕</button>
+          <h2 id="modal-novel-title" class="modal-title">📖 全編小説＆事件真相解剖レポート</h2>
+          <button type="button" id="btn-close-novel" class="modal-close-btn" title="閉じる">✕</button>
         </div>
-        <div id="modal-backlog-list" class="modal-list"></div>
+        <div id="modal-novel-body" class="modal-body novel-reader-body"></div>
       </div>
     </div>
 
-    <!-- 機密設定資料集モーダル -->
-    <div id="modal-gallery" class="modal hidden">
-      <div id="backdrop-gallery" class="modal-backdrop"></div>
-      <div class="modal-content">
+    <!-- モーダル：設定資料集・アーカイブ -->
+    <div id="modal-gallery" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modal-gallery-title">
+      <div class="modal-card modal-card-large">
         <div class="modal-header">
-          <div class="modal-title-wrap">
-            <h3>🎨 機密設定資料集 (EXTRAS ARCHIVE)</h3>
-            <span class="modal-sub-title">OFFICIAL CHARACTER &amp; INCIDENT GLOSSARY</span>
-          </div>
-          <button type="button" id="btn-close-gallery" class="btn-close">✕</button>
+          <h2 id="modal-gallery-title" class="modal-title">◆ FORENSIC ARCHIVE / 機密設定資料集</h2>
+          <button type="button" id="btn-close-gallery" class="modal-close-btn" title="閉じる">✕</button>
         </div>
-        <div class="modal-list gallery-grid">
-          <div class="gallery-card">
-            <img src="assets/characters/aria.png" alt="アリア" class="gallery-img">
-            <div class="gallery-char-name">アリア (ARIA)</div>
-            <div class="gallery-char-role">自律型電脳鑑識＆防衛AIエージェント</div>
-          </div>
-          <div class="gallery-card">
-            <img src="assets/characters/takamiya.png" alt="タカミヤ レン" class="gallery-img">
-            <div class="gallery-char-name">タカミヤ レン (27歳)</div>
-            <div class="gallery-char-role">クラウドVPS緊急対策室 (CSIRT) 現場リーダー</div>
-          </div>
-          <div class="gallery-card">
-            <img src="assets/characters/kuroda.png" alt="クロダ統括官" class="gallery-img">
-            <div class="gallery-char-name">クロダ統括官 (52歳)</div>
-            <div class="gallery-char-role">NCO審議官 兼 警察庁サイバー特別執行指揮官</div>
-          </div>
-          <div class="gallery-card">
-            <img src="assets/characters/mio.png" alt="ミオ分析官" class="gallery-img">
-            <div class="gallery-char-name">ミオ分析官 (24歳)</div>
-            <div class="gallery-char-role">国家サイバー統括室 (NCO) 通信情報分析官</div>
-          </div>
-          <div class="gallery-card">
-            <img src="assets/items/aura_drop.png" alt="Aura Drop" class="gallery-img">
-            <div class="gallery-char-name">Aura Drop</div>
-            <div class="gallery-char-role">ホログラム音声対話＆カナリア監視ドック</div>
-          </div>
-        </div>
+        <div id="modal-gallery-body" class="modal-body gallery-body"></div>
       </div>
     </div>
   </div>
 
-  <!-- スクリプト群 -->
-  <script src="js/state.js?v=20261025_ghost_v3"></script>
-  <script src="js/character.js?v=20261025_ghost_v3"></script>
-  <script src="js/audio.js?v=20261025_ghost_v3"></script>
-  <script src="js/scenario.js?v=20261025_ghost_v3"></script>
-  <script src="js/app.js?v=20261025_ghost_v3"></script>
+  <!-- スクリプト読み込み -->
+  <script src="js/audio.js?v=20261025_novel_v1"></script>
+  <script src="js/character.js?v=20261025_novel_v1"></script>
+  <script src="js/scenario.js?v=20261025_novel_v1"></script>
+  <script src="js/state.js?v=20261025_novel_v1"></script>
+  <script src="js/app.js?v=20261025_novel_v1"></script>
 </body>
 </html>

@@ -1,20 +1,18 @@
 # -*- coding: utf-8 -*-
 """
-GHOST PROTOCOL - シナリオ・全5章構成・証拠品画像・対話イラスト・ピン座標・整合性テストスイート
+GHOST PROTOCOL - 体験型インタラクティブノベル・全5章構成・証拠品画像・対話整合性テストスイート
 ---------------------------------------------------------------------------------
 目的:
-  - ghost/index.html のDOM構造検証（5章タイムラインバー、小説全文モーダル、波形インジケーター、エリア切替、立証画面、証拠モーダル等）
-  - ghost/js/scenario.js の全5章構成・全証拠品マスター・アセット実在性検証
+  - ghost/index.html のDOM構造検証（HUD、ノベル画面、タイムラインバー、選択肢パネル、小説リーダー、波形等）
+  - ghost/js/scenario.js の全5章・プロローグ・エピローグ・全証拠品マスター・アセット実在性検証
   - 証拠品画像の重複ゼロ検証（SHAハッシュが全て異なること）
-  - 章進行型ブリーフィング全6問の決定打証拠品整合性検証（詰み防止）
-  - 探索ピンのユークリッド距離20%以上離散配置検証（AGENT PROTOCOLルール5）
-  - 会話および立証パートで指定された illustration / image ファイルの実在性検証
+  - 体験型選択肢（全5章）の整合性検証
+  - 会話および鑑識で指定された illustration / image ファイルの実在性検証
   - 全JavaScriptファイルの構文チェック（node -c）
 """
 
 import hashlib
 import json
-import math
 import subprocess
 import unittest
 from pathlib import Path
@@ -46,39 +44,43 @@ class TestGhostHtmlStructure(unittest.TestCase):
         cls.html_content = html_path.read_text(encoding="utf-8")
 
     def test_screens_present(self):
-        """主要画面（title, explore, debate, ending）が存在すること"""
+        """主要画面（title, novel, ending）が存在すること"""
         self.assertIn('id="screen-title"', self.html_content)
-        self.assertIn('id="screen-explore"', self.html_content)
-        self.assertIn('id="screen-debate"', self.html_content)
+        self.assertIn('id="screen-novel"', self.html_content)
         self.assertIn('id="screen-ending"', self.html_content)
 
     def test_chapter_timeline_and_novel_modal_present(self):
-        """5章タイムラインバー、章ストーリー再生ボタン、小説全文リーダーモーダルが存在すること"""
+        """タイムラインバー、小説全文リーダーモーダルが存在すること"""
         self.assertIn('id="chapter-timeline-bar"', self.html_content)
-        self.assertIn('id="btn-replay-chapter-story"', self.html_content)
         self.assertIn('id="btn-open-novel"', self.html_content)
         self.assertIn('id="modal-novel"', self.html_content)
         self.assertIn('id="modal-novel-body"', self.html_content)
+
+    def test_interactive_choice_stage_present(self):
+        """体験型選択肢ステージおよび設問が存在すること"""
+        self.assertIn('id="choice-stage"', self.html_content)
+        self.assertIn('id="choice-question"', self.html_content)
+        self.assertIn('id="choice-options"', self.html_content)
 
     def test_voice_wave_indicator_present(self):
         """発話波形インジケーターが存在すること"""
         self.assertIn('id="voice-wave-indicator"', self.html_content)
 
-    def test_area_buttons_present(self):
-        """探索エリア切替ボタンが存在すること"""
-        self.assertIn('id="btn-area-desk"', self.html_content)
-        self.assertIn('id="btn-area-living"', self.html_content)
-
     def test_dialogue_stage_present(self):
-        """会話ステージおよびイラスト表示ステージが存在すること"""
-        self.assertIn('id="dialogue-stage"', self.html_content)
+        """ノベルウィンドウおよびイラスト表示ステージが存在すること"""
+        self.assertIn('id="novel-window"', self.html_content)
         self.assertIn('id="dialogue-illustration-stage"', self.html_content)
         self.assertIn('id="dialogue-illustration-img"', self.html_content)
 
     def test_evidence_modal_present(self):
-        """証拠手帳モーダルが存在すること"""
+        """鑑識ファイル手帳モーダルが存在すること"""
         self.assertIn('id="modal-evidence"', self.html_content)
         self.assertIn('id="modal-evidence-list"', self.html_content)
+
+    def test_backlog_modal_present(self):
+        """バックログモーダルが存在すること"""
+        self.assertIn('id="modal-log"', self.html_content)
+        self.assertIn('id="modal-log-list"', self.html_content)
 
     def test_line_external_notice_present(self):
         """マナーモード回避用のSafari/外部ブラウザ起動導線が存在すること"""
@@ -126,15 +128,25 @@ class TestGhostScenarioAndAssets(unittest.TestCase):
         raw_json = run_node(code)
         cls.scenario = json.loads(raw_json)
 
+    def test_prologue_and_epilogue_registered(self):
+        """プロローグとエピローグが登録されていること"""
+        self.assertIn("prologue", self.scenario)
+        self.assertGreaterEqual(len(self.scenario["prologue"].get("dialogue", [])), 5)
+        self.assertIn("epilogue", self.scenario)
+        self.assertGreaterEqual(len(self.scenario["epilogue"].get("dialogue", [])), 5)
+
     def test_five_chapters_registered(self):
-        """全5章のタイムラインシナリオが登録され、各章に導入ノベルパートが存在すること"""
+        """全5章の体験型ノベルシナリオが登録され、各章に導入・選択肢・解決パートが存在すること"""
         chapters = self.scenario.get("chapters", [])
         self.assertEqual(len(chapters), 5)
         for idx, ch in enumerate(chapters, start=1):
             self.assertEqual(ch.get("id"), idx)
             self.assertTrue(ch.get("title"))
             self.assertTrue(ch.get("date"))
-            self.assertGreaterEqual(len(ch.get("introDialogue", [])), 5)
+            self.assertGreaterEqual(len(ch.get("introDialogue", [])), 3)
+            self.assertIn("choice", ch)
+            self.assertGreaterEqual(len(ch["choice"].get("options", [])), 2)
+            self.assertGreaterEqual(len(ch.get("resolution", [])), 2)
 
     def test_all_evidence_registered(self):
         """現実の事件構造に基づく6件の核心フォレンジック証拠品が登録されていること"""
@@ -163,7 +175,7 @@ class TestGhostScenarioAndAssets(unittest.TestCase):
             self.assertGreater(img_path.stat().st_size, 1000, f"Image file too small: {img_path}")
 
     def test_evidence_images_no_duplicates(self):
-        """証拠品画像にハッシュ重複が存在しないこと（課題6検証）"""
+        """証拠品画像にハッシュ重複が存在しないこと"""
         evidence = self.scenario.get("evidence", {})
         hashes = {}
         for ev_id, ev in evidence.items():
@@ -176,52 +188,14 @@ class TestGhostScenarioAndAssets(unittest.TestCase):
             )
             hashes[sha] = ev_id
 
-    def test_debate_six_questions_critical_evidence(self):
-        """全5章（6問）の推論ブリーフィングの正解証拠品が6点の核心証拠に合致していること"""
-        debates = self.scenario.get("debates", [])
-        self.assertEqual(len(debates), 6, "debates must have 6 questions across 5 chapters")
-
-        expected_correct = [
-            "ad_demofastloss_log",
-            "persistent_session_trap",
-            "reverse_rdp_tsclient",
-            "direct_compensation_matrix",
-            "nco_three_walls_report",
-            "canary_c2_origin",
-        ]
-        for idx, (expected_id, debate) in enumerate(zip(expected_correct, debates)):
-            actual_id = debate.get("correctEvidenceId")
-            self.assertEqual(
-                actual_id,
-                expected_id,
-                f"Question {idx + 1} expected '{expected_id}', got '{actual_id}'",
-            )
-
-    def test_pin_distances_rule5(self):
-        """探索ピンのユークリッド距離が20%以上離れていること（AGENT PROTOCOLルール5）"""
-        explore_spots = self.scenario.get("exploreSpots", {})
-        for area, spots in explore_spots.items():
-            self.assertGreaterEqual(len(spots), 2, f"Area '{area}' has too few spots")
-            for i in range(len(spots)):
-                for j in range(i + 1, len(spots)):
-                    p1 = spots[i]["coords"]
-                    p2 = spots[j]["coords"]
-                    dist = math.hypot(p1["x"] - p2["x"], p1["y"] - p2["y"])
-                    self.assertGreaterEqual(
-                        dist,
-                        19.5,
-                        f"Area '{area}' pins '{spots[i]['name']}' and '{spots[j]['name']}' are too close ({dist:.1f}% < 20%)",
-                    )
-
     def test_dialogue_illustrations_exist(self):
-        """探索スポットおよび会話で指定された illustration が実在すること"""
-        explore_spots = self.scenario.get("exploreSpots", {})
-        for area, spots in explore_spots.items():
-            for spot in spots:
-                for line in spot.get("dialogue", []):
-                    if "illustration" in line:
-                        img_path = GHOST_DIR / line["illustration"]
-                        self.assertTrue(img_path.exists(), f"Illustration not found: {img_path}")
+        """会話および解決パートで指定された illustration が実在すること"""
+        chapters = self.scenario.get("chapters", [])
+        for ch in chapters:
+            for line in ch.get("resolution", []):
+                if "illustration" in line:
+                    img_path = GHOST_DIR / line["illustration"]
+                    self.assertTrue(img_path.exists(), f"Illustration not found: {img_path}")
 
 
 class TestGhostJsSyntax(unittest.TestCase):

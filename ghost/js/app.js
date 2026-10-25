@@ -1,1599 +1,796 @@
-// app.js - 体験型長編電脳サスペンスノベル ゲームループ・UI制御コントローラー (GHOST PROTOCOL)
+// app.js - GHOST PROTOCOL 体験型インタラクティブノベル コントローラー
 
-const CHAPTER_SHORT_TITLES = {
-  1: '第1章: 口座焼却',
-  2: '第2章: 亡霊接続',
-  3: '第3章: 逆流RDP',
-  4: '第4章: 直接補償',
-  5: '第5章: 発動第1号',
-};
-
-class GameApp {
+class NovelApp {
   constructor() {
+    this.audio = new AudioManager();
     this.state = window.gameState;
-    this.audio = window.audioManager;
     this.scenario = window.SCENARIO_DATA;
     this.characters = window.CHARACTER_DATA;
 
-    this.currentScreen = 'title';
-    this.currentArea = 'desk';
-    this.dialogueQueue = [];
-    this.currentDialogueIndex = -1;
-    this.isTyping = false;
-    this.typewriterTimer = null;
+    this.dom = {};
+    this.typingTimer = null;
     this.autoTimer = null;
+    this.isTyping = false;
     this.isAutoActive = false;
     this.isSkipActive = false;
+    this.currentDialogueQueue = [];
+    this.queueIndex = 0;
+    this.currentSpeaker = null;
     this.backlog = [];
-    this.selectedEvidenceId = null;
-    this.activeDebateList = [];
-    this.lastActiveNpcChar = null;
-    this.currentNovelTab = 'all';
 
-    this.initDomElements();
-    this.bindEvents();
-    this.checkInitialState();
+    this.bindDomElements();
+    this.initEventListeners();
+    this.checkSavedSession();
   }
 
-  initDomElements() {
+  // 1. DOM要素のバインド
+  bindDomElements() {
+    const get = (id) => document.getElementById(id);
+
     this.dom = {
-      hud: document.getElementById('hud'),
-      hudLocationBadge: document.getElementById('hud-location-badge'),
-      hudLoopBadge: document.getElementById('hud-loop-badge'),
-      hudLifeContainer: document.getElementById('hud-life-container'),
-      hudHearts: document.getElementById('hud-hearts'),
-      btnHudGotoDebate: document.getElementById('btn-hud-goto-debate'),
-      btnHudBackToExplore: document.getElementById('btn-hud-back-to-explore'),
-      btnHudNovel: document.getElementById('btn-hud-novel'),
-      btnEvidenceBag: document.getElementById('btn-evidence-bag'),
-      evidenceCount: document.getElementById('evidence-count'),
-      btnToggleVoice: document.getElementById('btn-toggle-voice'),
-      btnToggleSe: document.getElementById('btn-toggle-se'),
-      btnToggleBgm: document.getElementById('btn-toggle-bgm'),
-      btnHudReturnTitle: document.getElementById('btn-hud-return-title'),
+      // HUD
+      hud: get('hud'),
+      hudLocationBadge: get('hud-location-badge'),
+      hudLoopBadge: get('hud-loop-badge'),
+      btnHudNovel: get('btn-hud-novel'),
+      btnEvidenceBag: get('btn-evidence-bag'),
+      evidenceCount: get('evidence-count'),
+      btnToggleVoice: get('btn-toggle-voice'),
+      btnToggleSe: get('btn-toggle-se'),
+      btnToggleBgm: get('btn-toggle-bgm'),
+      btnHudReturnTitle: get('btn-hud-return-title'),
 
-      screenTitle: document.getElementById('screen-title'),
-      screenExplore: document.getElementById('screen-explore'),
-      screenDebate: document.getElementById('screen-debate'),
-      screenEnding: document.getElementById('screen-ending'),
+      // タイトル画面
+      screenTitle: get('screen-title'),
+      btnStartGame: get('btn-start-game'),
+      btnContinueGame: get('btn-continue-game'),
+      btnOpenNovel: get('btn-open-novel'),
+      btnOpenGallery: get('btn-open-gallery'),
+      btnResetSave: get('btn-reset-save'),
+      titleLoopInfo: get('title-loop-info'),
+      titleClearBadge: get('title-clear-badge'),
 
-      titleLoopInfo: document.getElementById('title-loop-info'),
-      titleClearBadge: document.getElementById('title-clear-badge'),
-      btnStartGame: document.getElementById('btn-start-game'),
-      btnContinueGame: document.getElementById('btn-continue-game'),
-      btnOpenNovel: document.getElementById('btn-open-novel'),
-      btnOpenGallery: document.getElementById('btn-open-gallery'),
-      btnResetSave: document.getElementById('btn-reset-save'),
+      // ノベル画面
+      screenNovel: get('screen-novel'),
+      chapterTimelineBar: get('chapter-timeline-bar'),
+      novelBg: get('novel-bg'),
+      characterStage: get('character-stage'),
+      characterSpriteBox: get('character-sprite-box'),
+      dialogueIllustrationStage: get('dialogue-illustration-stage'),
+      dialogueIllustrationImg: get('dialogue-illustration-img'),
+      dialogueIllustrationCaption: get('dialogue-illustration-caption'),
+      btnCloseIllustration: get('btn-close-illustration'),
 
-      chapterTimelineBar: document.getElementById('chapter-timeline-bar'),
-      btnReplayChapterStory: document.getElementById('btn-replay-chapter-story'),
-      btnAreaDesk: document.getElementById('btn-area-desk'),
-      btnAreaLiving: document.getElementById('btn-area-living'),
-      areaDesk: document.getElementById('area-desk'),
-      areaLiving: document.getElementById('area-living'),
-      exploreStatusText: document.getElementById('explore-status-text'),
-      evidenceNeededCounter: document.getElementById('evidence-needed-counter'),
-      btnGoToDebate: document.getElementById('btn-go-to-debate'),
+      // 選択肢パネル
+      choiceStage: get('choice-stage'),
+      choiceQuestion: get('choice-question'),
+      choiceOptions: get('choice-options'),
 
-      debateTurnLabel: document.getElementById('debate-turn-label'),
-      btnDebateBack: document.getElementById('btn-debate-back'),
-      debateOpponentAvatar: document.getElementById('debate-opponent-avatar'),
-      debateSpeakerLabel: document.querySelector('.speech-speaker-label'),
-      debateOpponentSpeech: document.getElementById('debate-opponent-speech'),
-      btnReplayDebateVoice: document.getElementById('btn-replay-debate-voice'),
-      debateHintText: document.getElementById('debate-hint-text'),
-      selectedEvidencePreview: document.getElementById('selected-evidence-preview'),
-      debateEvidenceList: document.getElementById('debate-evidence-list'),
-      btnPresentEvidence: document.getElementById('btn-present-evidence'),
+      // 会話ノベルウィンドウ
+      novelWindow: get('novel-window'),
+      dialogueSpeaker: get('dialogue-speaker'),
+      voiceWaveIndicator: get('voice-wave-indicator'),
+      dialogueText: get('dialogue-text'),
+      dialoguePrompt: get('dialogue-prompt'),
+      btnDialogueAuto: get('btn-dialogue-auto'),
+      btnDialogueSkip: get('btn-dialogue-skip'),
+      btnDialogueLog: get('btn-dialogue-log'),
 
-      endingIcon: document.getElementById('ending-icon'),
-      endingTitle: document.getElementById('ending-title'),
-      endingSub: document.getElementById('ending-sub'),
-      endingUnlockedBanner: document.getElementById('ending-unlocked-banner'),
-      endingDesc: document.getElementById('ending-desc'),
-      btnEndingNext: document.getElementById('btn-ending-next'),
-      btnEndingExploreAgain: document.getElementById('btn-ending-explore-again'),
-      btnEndingNovel: document.getElementById('btn-ending-novel'),
-      btnEndingGallery: document.getElementById('btn-ending-gallery'),
+      // カットイン
+      overlayCutin: get('overlay-cutin'),
+      cutinText: get('cutin-text'),
 
-      dialogueStage: document.getElementById('dialogue-stage'),
-      dialogueBackdrop: document.getElementById('dialogue-backdrop'),
-      characterStage: document.getElementById('character-stage'),
-      characterSpriteBox: document.getElementById('character-sprite-box'),
-      dialogueIllustrationStage: document.getElementById('dialogue-illustration-stage'),
-      dialogueIllustrationImg: document.getElementById('dialogue-illustration-img'),
-      dialogueIllustrationCaption: document.getElementById('dialogue-illustration-caption'),
-      btnCloseIllustration: document.getElementById('btn-close-illustration'),
-      dialogueSpeaker: document.getElementById('dialogue-speaker'),
-      voiceWaveIndicator: document.getElementById('voice-wave-indicator'),
-      btnDialogueAuto: document.getElementById('btn-dialogue-auto'),
-      btnDialogueSkip: document.getElementById('btn-dialogue-skip'),
-      btnDialogueLog: document.getElementById('btn-dialogue-log'),
-      dialogueText: document.getElementById('dialogue-text'),
-      dialoguePrompt: document.getElementById('dialogue-prompt'),
+      // エンディング画面
+      screenEnding: get('screen-ending'),
+      endingTitle: get('ending-title'),
+      endingSub: get('ending-sub'),
+      endingDesc: get('ending-desc'),
+      endingUnlockedBanner: get('ending-unlocked-banner'),
+      btnEndingNovel: get('btn-ending-novel'),
+      btnEndingNext: get('btn-ending-next'),
+      btnEndingGallery: get('btn-ending-gallery'),
 
-      overlayCutin: document.getElementById('overlay-cutin'),
-      cutinText: document.getElementById('cutin-text'),
+      // モーダル
+      modalLog: get('modal-log'),
+      modalLogList: get('modal-log-list'),
+      btnCloseLog: get('btn-close-log'),
 
-      modalEvidence: document.getElementById('modal-evidence'),
-      backdropEvidence: document.getElementById('backdrop-evidence'),
-      btnCloseEvidence: document.getElementById('btn-close-evidence'),
-      modalEvidenceList: document.getElementById('modal-evidence-list'),
+      modalEvidence: get('modal-evidence'),
+      modalEvidenceList: get('modal-evidence-list'),
+      modalEvidenceDetail: get('modal-evidence-detail'),
+      detailEvName: get('detail-ev-name'),
+      detailEvType: get('detail-ev-type'),
+      detailEvImg: get('detail-ev-img'),
+      detailEvDesc: get('detail-ev-desc'),
+      btnCloseEvidence: get('btn-close-evidence'),
 
-      modalNovel: document.getElementById('modal-novel'),
-      backdropNovel: document.getElementById('backdrop-novel'),
-      btnCloseNovel: document.getElementById('btn-close-novel'),
-      novelChapterTabs: document.getElementById('novel-chapter-tabs'),
-      modalNovelBody: document.getElementById('modal-novel-body'),
+      modalNovel: get('modal-novel'),
+      modalNovelBody: get('modal-novel-body'),
+      btnCloseNovel: get('btn-close-novel'),
 
-      modalBacklog: document.getElementById('modal-backlog'),
-      backdropBacklog: document.getElementById('backdrop-backlog'),
-      btnCloseBacklog: document.getElementById('btn-close-backlog'),
-      modalBacklogList: document.getElementById('modal-backlog-list'),
-
-      modalGallery: document.getElementById('modal-gallery'),
-      backdropGallery: document.getElementById('backdrop-gallery'),
-      btnCloseGallery: document.getElementById('btn-close-gallery'),
+      modalGallery: get('modal-gallery'),
+      modalGalleryBody: get('modal-gallery-body'),
+      btnCloseGallery: get('btn-close-gallery'),
     };
-
-    if (this.dom.voiceWaveIndicator && !this.dom.voiceWaveIndicator.hasChildNodes()) {
-      this.dom.voiceWaveIndicator.innerHTML =
-        '<span class="voice-wave-bar"></span><span class="voice-wave-bar"></span><span class="voice-wave-bar"></span>';
-    }
   }
 
-  bindEvents() {
-    this.bindTitleEvents();
-    this.bindExploreEvents();
-    this.bindDebateEvents();
-    this.bindDialogueEvents();
-    this.bindModalEvents();
-    this.bindKeyboardShortcuts();
-  }
+  // 2. イベントリスナー登録
+  initEventListeners() {
+    this.dom.btnStartGame?.addEventListener('click', () => this.handleStartGame());
+    this.dom.btnContinueGame?.addEventListener('click', () => this.handleContinueGame());
+    this.dom.btnResetSave?.addEventListener('click', () => this.handleResetSave());
 
-  bindTitleEvents() {
-    this.dom.btnStartGame?.addEventListener('click', () => {
-      this.audio.playSe('click');
-      this.startNewInvestigation();
+    this.dom.novelWindow?.addEventListener('click', (e) => {
+      if (e.target.closest('.dialogue-ctrl-btn')) return;
+      this.advanceDialogue();
     });
 
-    this.dom.btnContinueGame?.addEventListener('click', () => {
-      this.audio.playSe('click');
-      this.resumeSavedSession();
-    });
+    this.dom.btnDialogueAuto?.addEventListener('click', () => this.toggleAuto());
+    this.dom.btnDialogueSkip?.addEventListener('click', () => this.toggleSkip());
+    this.dom.btnDialogueLog?.addEventListener('click', () => this.openLogModal());
 
-    this.dom.btnOpenNovel?.addEventListener('click', () => {
-      this.audio.playSe('click');
-      this.openNovelModal('all');
-    });
+    this.dom.btnHudNovel?.addEventListener('click', () => this.openNovelModal());
+    this.dom.btnOpenNovel?.addEventListener('click', () => this.openNovelModal());
+    this.dom.btnEndingNovel?.addEventListener('click', () => this.openNovelModal());
 
-    this.dom.btnOpenGallery?.addEventListener('click', () => {
-      this.audio.playSe('click');
-      this.openGalleryModal();
-    });
-
-    this.dom.btnResetSave?.addEventListener('click', () => {
-      this.handleResetSaveData();
-    });
+    this.dom.btnEvidenceBag?.addEventListener('click', () => this.openEvidenceModal());
+    this.dom.btnOpenGallery?.addEventListener('click', () => this.openGalleryModal());
+    this.dom.btnEndingGallery?.addEventListener('click', () => this.openGalleryModal());
 
     this.dom.btnToggleVoice?.addEventListener('click', () => this.toggleVoice());
     this.dom.btnToggleSe?.addEventListener('click', () => this.toggleSe());
     this.dom.btnToggleBgm?.addEventListener('click', () => this.toggleBgm());
+    this.dom.btnHudReturnTitle?.addEventListener('click', () => this.returnToTitle());
+    this.dom.btnEndingNext?.addEventListener('click', () => this.returnToTitle());
 
-    this.dom.btnHudReturnTitle?.addEventListener('click', () => {
-      this.audio.playSe('click');
-      this.returnToTitle();
-    });
+    this.dom.btnCloseLog?.addEventListener('click', () => this.closeModal(this.dom.modalLog));
+    this.dom.btnCloseEvidence?.addEventListener('click', () =>
+      this.closeModal(this.dom.modalEvidence),
+    );
+    this.dom.btnCloseNovel?.addEventListener('click', () => this.closeModal(this.dom.modalNovel));
+    this.dom.btnCloseGallery?.addEventListener('click', () =>
+      this.closeModal(this.dom.modalGallery),
+    );
+    this.dom.btnCloseIllustration?.addEventListener('click', () => this.hideIllustration());
+
+    this.setupKeyboardShortcuts();
   }
 
-  bindExploreEvents() {
-    this.dom.btnAreaDesk?.addEventListener('click', () => this.switchArea('desk'));
-    this.dom.btnAreaLiving?.addEventListener('click', () => this.switchArea('living'));
-    this.dom.btnReplayChapterStory?.addEventListener('click', () => {
-      this.audio.playSe('click');
-      this.playChapterIntro(this.state.currentChapter);
-    });
-
-    this.dom.btnGoToDebate?.addEventListener('click', () => this.startDebate());
-    this.dom.btnHudGotoDebate?.addEventListener('click', () => this.startDebate());
-    this.dom.btnHudBackToExplore?.addEventListener('click', () => this.backToExploration());
-  }
-
-  bindDebateEvents() {
-    this.dom.btnDebateBack?.addEventListener('click', () => this.backToExploration());
-
-    this.dom.btnPresentEvidence?.addEventListener('click', () => {
-      if (this.selectedEvidenceId) {
-        this.presentEvidence(this.selectedEvidenceId);
+  setupKeyboardShortcuts() {
+    window.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+      switch (e.key) {
+        case ' ':
+        case 'Enter':
+          e.preventDefault();
+          this.advanceDialogue();
+          break;
+        case 'a':
+        case 'A':
+          this.toggleAuto();
+          break;
+        case 's':
+        case 'S':
+          this.toggleSkip();
+          break;
+        case 'l':
+        case 'L':
+          this.openLogModal();
+          break;
+        case 'n':
+        case 'N':
+          this.openNovelModal();
+          break;
+        case 'e':
+        case 'E':
+          this.openEvidenceModal();
+          break;
+        case 'Escape':
+          this.closeAllModals();
+          break;
       }
     });
-
-    this.dom.btnReplayDebateVoice?.addEventListener('click', () => {
-      this.replayDebateQuestionVoice();
-    });
-
-    this.dom.btnEndingNext?.addEventListener('click', () => {
-      this.audio.playSe('click');
-      this.returnToTitle();
-    });
-
-    this.dom.btnEndingExploreAgain?.addEventListener('click', () => {
-      this.audio.playSe('click');
-      this.backToExploration();
-    });
-
-    this.dom.btnEndingNovel?.addEventListener('click', () => {
-      this.audio.playSe('click');
-      this.openNovelModal('all');
-    });
-
-    this.dom.btnEndingGallery?.addEventListener('click', () => {
-      this.audio.playSe('click');
-      this.openGalleryModal();
-    });
   }
 
-  bindDialogueEvents() {
-    this.dom.dialogueStage?.addEventListener('click', (e) => {
-      if (e.target.closest('.dialogue-ctrls') || e.target.closest('#dialogue-illustration-stage')) {
-        return;
-      }
-      this.advanceDialogue();
-    });
-
-    this.dom.btnDialogueAuto?.addEventListener('click', (e) => {
-      e.stopPropagation();
-      this.toggleAutoMode();
-    });
-
-    this.dom.btnDialogueSkip?.addEventListener('click', (e) => {
-      e.stopPropagation();
-      this.toggleSkipMode();
-    });
-
-    this.dom.btnDialogueLog?.addEventListener('click', (e) => {
-      e.stopPropagation();
-      this.openBacklogModal();
-    });
-
-    this.dom.btnCloseIllustration?.addEventListener('click', (e) => {
-      e.stopPropagation();
-      this.dom.dialogueIllustrationStage?.classList.add('hidden');
-    });
-  }
-
-  bindModalEvents() {
-    this.dom.btnEvidenceBag?.addEventListener('click', () => this.openEvidenceModal());
-    this.dom.btnCloseEvidence?.addEventListener('click', () => this.closeEvidenceModal());
-    this.dom.backdropEvidence?.addEventListener('click', () => this.closeEvidenceModal());
-
-    this.dom.btnHudNovel?.addEventListener('click', () => this.openNovelModal('all'));
-    this.dom.btnCloseNovel?.addEventListener('click', () => this.closeNovelModal());
-    this.dom.backdropNovel?.addEventListener('click', () => this.closeNovelModal());
-
-    this.dom.btnCloseBacklog?.addEventListener('click', () => this.closeBacklogModal());
-    this.dom.backdropBacklog?.addEventListener('click', () => this.closeBacklogModal());
-
-    this.dom.btnCloseGallery?.addEventListener('click', () => this.closeGalleryModal());
-    this.dom.backdropGallery?.addEventListener('click', () => this.closeGalleryModal());
-  }
-
-  bindKeyboardShortcuts() {
-    window.addEventListener('keydown', (e) => this.handleKeyDown(e));
-  }
-
-  handleKeyDown(e) {
-    if (this.handleModalShortcuts(e.key)) return;
-    if (this.handleDialogueShortcuts(e)) return;
-    if (this.handleAreaShortcuts(e)) return;
-    this.handleDebateShortcuts(e);
-  }
-
-  handleModalShortcuts(key) {
-    const lower = key.toLowerCase();
-    if (lower === 'escape' || lower === 'b') {
-      this.handleBackShortcut();
-      return true;
+  // 3. タイトル＆セッション管理
+  checkSavedSession() {
+    if (this.state.isGameCleared()) {
+      this.dom.titleClearBadge?.classList.remove('hidden');
     }
-    const actions = {
-      e: () => this.toggleEvidenceModal(),
-      n: () => this.toggleNovelModal(),
-      l: () => this.toggleBacklogModal(),
-    };
-    if (actions[lower]) {
-      actions[lower]();
-      return true;
+    if (this.state.hasSavedSession()) {
+      this.dom.btnContinueGame?.classList.remove('hidden');
     }
-    return false;
+    this.updateAudioButtons();
   }
 
-  handleDialogueShortcuts(e) {
-    if (
-      (e.key === ' ' || e.key === 'Enter') &&
-      !this.dom.dialogueStage?.classList.contains('hidden')
-    ) {
-      e.preventDefault();
-      this.advanceDialogue();
-      return true;
-    }
-    return false;
-  }
-
-  isModalOrDialogueOpen() {
-    return Boolean(
-      !this.dom.dialogueStage?.classList.contains('hidden') ||
-        !this.dom.modalEvidence?.classList.contains('hidden') ||
-        !this.dom.modalNovel?.classList.contains('hidden') ||
-        !this.dom.modalBacklog?.classList.contains('hidden') ||
-        !this.dom.modalGallery?.classList.contains('hidden'),
-    );
-  }
-
-  handleAreaShortcuts(e) {
-    if (this.isModalOrDialogueOpen() || this.currentScreen !== 'explore') return false;
-    if (e.key === 'Tab' || e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
-      e.preventDefault();
-      const nextArea = this.currentArea === 'desk' ? 'living' : 'desk';
-      this.switchArea(nextArea);
-      return true;
-    }
-    return false;
-  }
-
-  handleDebateShortcuts(e) {
-    if (this.isModalOrDialogueOpen() || this.currentScreen !== 'debate') return;
-    if (['1', '2', '3', '4', '5', '6'].includes(e.key)) {
-      e.preventDefault();
-      const index = Number.parseInt(e.key, 10) - 1;
-      this.selectEvidenceByIndex(index);
-    }
-  }
-
-  selectEvidenceByIndex(index) {
-    const list = Array.from(this.state.collectedEvidence);
-    if (index >= 0 && index < list.length) {
-      this.selectDebateEvidence(list[index]);
-    }
-  }
-
-  isElementOpen(el) {
-    return Boolean(el && !el.classList.contains('hidden'));
-  }
-
-  handleBackShortcut() {
-    const modalClosers = [
-      [this.dom.modalNovel, () => this.closeNovelModal()],
-      [this.dom.modalEvidence, () => this.closeEvidenceModal()],
-      [this.dom.modalBacklog, () => this.closeBacklogModal()],
-      [this.dom.modalGallery, () => this.closeGalleryModal()],
-    ];
-    for (const [modalEl, closeFn] of modalClosers) {
-      if (this.isElementOpen(modalEl)) {
-        closeFn();
-        return;
-      }
-    }
-    if (this.currentScreen === 'debate') {
-      this.backToExploration();
-    }
-  }
-
-  checkInitialState() {
-    this.updateAudioButtonStates();
-    this.updateTitleScreenUI();
-    this.audio.playBgm('title');
-  }
-
-  updateTitleScreenUI() {
-    const isCleared = this.state.isGameCleared();
-
-    if (this.dom.titleLoopInfo) {
-      this.dom.titleLoopInfo.innerHTML = isCleared
-        ? '<span class="loop-tag true-tag">🏆 ALL 5 CHAPTERS CLEARED</span> <span class="loop-text">能動的サイバー防御「公表なき発動第1号」達成</span>'
-        : '<span class="loop-tag phase1-tag">⚡ 全5章・長編体験型ノベル</span> <span class="loop-text">26,739台のVPS停止・Reverse RDP・直接補償・発動第1号の真相</span>';
-    }
-
-    if (this.dom.titleClearBadge) {
-      this.dom.titleClearBadge.classList.toggle('hidden', !isCleared);
-    }
-
-    if (this.dom.btnContinueGame) {
-      this.dom.btnContinueGame.classList.toggle('hidden', !this.state.hasSavedSession());
-    }
-  }
-
-  showScreen(screenName) {
-    this.currentScreen = screenName;
-    const screens = [
-      this.dom.screenTitle,
-      this.dom.screenExplore,
-      this.dom.screenDebate,
-      this.dom.screenEnding,
-    ];
-    screens.forEach((s) => {
-      s?.classList.remove('active');
-    });
-
-    this.applyScreenTransition(screenName);
-  }
-
-  applyScreenTransition(screenName) {
-    if (screenName === 'title') {
-      this.dom.screenTitle?.classList.add('active');
-      this.dom.hud?.classList.add('hidden');
-      this.audio.playBgm('title');
-      this.updateTitleScreenUI();
-      return;
-    }
-
-    this.dom.hud?.classList.remove('hidden');
-    if (screenName === 'explore') {
-      this.dom.screenExplore?.classList.add('active');
-      this.dom.btnHudBackToExplore?.classList.add('hidden');
-      this.dom.hudLifeContainer?.classList.add('hidden');
-      this.audio.playBgm('investigate');
-      this.updateExploreUI();
-    } else if (screenName === 'debate') {
-      this.dom.screenDebate?.classList.add('active');
-      this.dom.btnHudBackToExplore?.classList.remove('hidden');
-      this.dom.btnHudGotoDebate?.classList.add('hidden');
-      this.dom.hudLifeContainer?.classList.remove('hidden');
-      this.audio.playBgm('crisis');
-      this.updateDebateUI();
-    } else if (screenName === 'ending') {
-      this.dom.screenEnding?.classList.add('active');
-      this.dom.btnHudBackToExplore?.classList.add('hidden');
-      this.dom.btnHudGotoDebate?.classList.add('hidden');
-      this.dom.hudLifeContainer?.classList.add('hidden');
-    }
-  }
-
-  getChapterData(chapterNum) {
-    const chapters = this.scenario.chapters || [];
-    return chapters.find((c) => c.id === chapterNum) || chapters[0] || null;
-  }
-
-  getPreferredAreaForChapter(chapterNum) {
-    const livingSpots = this.scenario.exploreSpots.living || [];
-    const hasUninspectedInLiving = livingSpots.some(
-      (s) => s.chapter === chapterNum && !this.state.isSpotInspected(s.id),
-    );
-    if (hasUninspectedInLiving) return 'living';
-
-    const deskSpots = this.scenario.exploreSpots.desk || [];
-    const hasUninspectedInDesk = deskSpots.some(
-      (s) => s.chapter === chapterNum && !this.state.isSpotInspected(s.id),
-    );
-    if (hasUninspectedInDesk) return 'desk';
-
-    return chapterNum === 2 || chapterNum === 4 ? 'living' : 'desk';
-  }
-
-  startNewInvestigation() {
+  handleStartGame() {
     this.state.resetTransientState();
-    this.state.currentChapter = 1;
-    this.currentArea = 'desk';
-    this.showScreen('explore');
-    this.switchArea('desk');
-
-    const ch1 = this.getChapterData(1);
-    const introSeq = [...(this.scenario.prologue || []), ...(ch1?.introDialogue || [])];
-    this.playDialogueSequence(introSeq, () => {
-      this.state.saveSessionProgress('explore');
-    });
+    this.state.clearSessionProgress();
+    this.audio.playBgm('investigate');
+    this.switchScreen('novel');
+    this.loadChapter(0);
   }
 
-  playChapterIntro(chapterNum, onDone = null) {
-    const ch = this.getChapterData(chapterNum);
-    if (!ch?.introDialogue) {
-      if (onDone) onDone();
+  handleContinueGame() {
+    const session = this.state.loadSessionProgress();
+    if (!session) {
+      this.handleStartGame();
       return;
     }
-    this.playDialogueSequence(ch.introDialogue, () => {
-      this.state.saveSessionProgress('explore');
-      if (onDone) onDone();
-    });
+    this.audio.playBgm('investigate');
+    this.switchScreen('novel');
+    this.loadChapter(this.state.currentChapter, true);
   }
 
-  selectChapter(chapterNum, playIntro = false) {
-    this.state.currentChapter = chapterNum;
-    this.state.unlockChapter(chapterNum);
-    const targetArea = this.getPreferredAreaForChapter(chapterNum);
-    this.switchArea(targetArea);
-    this.updateExploreUI();
-    if (playIntro) {
-      this.playChapterIntro(chapterNum);
-    }
-  }
-
-  resumeSavedSession() {
-    const data = this.state.loadSessionProgress();
-    if (!data) {
-      this.startNewInvestigation();
-      return;
-    }
-    this.currentArea =
-      data.currentArea || this.getPreferredAreaForChapter(this.state.currentChapter);
-    if (data.activePhase === 'debate') {
-      this.prepareDebateListForCurrentState();
-      this.showScreen('debate');
-      this.renderDebateQuestion();
-    } else {
-      this.showScreen('explore');
-      this.switchArea(this.currentArea);
+  handleResetSave() {
+    if (window.confirm('すべての進行状況とセーブデータを初期化しますか？')) {
+      this.state.resetAllData();
+      window.location.reload();
     }
   }
 
   returnToTitle() {
-    this.stopDialogueTimers();
+    this.stopAuto();
+    this.stopSkip();
     this.audio.stopVoice();
-    this.lastActiveNpcChar = null;
-    if (this.dom.characterSpriteBox) {
-      this.dom.characterSpriteBox.innerHTML = '';
-    }
-    if (this.dom.voiceWaveIndicator) {
-      this.dom.voiceWaveIndicator.classList.add('hidden');
-    }
-    this.dom.dialogueStage?.classList.add('hidden');
-    this.showScreen('title');
+    this.audio.playBgm('title');
+    this.switchScreen('title');
+    this.checkSavedSession();
   }
 
-  backToExploration() {
-    this.state.recoverLife();
-    this.showScreen('explore');
-    this.renderExplorePins();
-    this.state.saveSessionProgress('explore');
-  }
+  switchScreen(screenName) {
+    this.dom.screenTitle?.classList.remove('active');
+    this.dom.screenNovel?.classList.remove('active');
+    this.dom.screenEnding?.classList.remove('active');
 
-  switchArea(areaName) {
-    this.audio.playSe('click');
-    this.currentArea = areaName;
-    const isDesk = areaName === 'desk';
-    this.dom.btnAreaDesk?.classList.toggle('active', isDesk);
-    this.dom.btnAreaLiving?.classList.toggle('active', !isDesk);
-    this.dom.areaDesk?.classList.toggle('hidden', !isDesk);
-    this.dom.areaLiving?.classList.toggle('hidden', isDesk);
-
-    if (this.dom.hudLocationBadge) {
-      this.dom.hudLocationBadge.textContent = isDesk
-        ? 'アリアの鑑識端末 (Secure VM)'
-        : '対策室＆NCO緊急聴聞モニター';
+    if (screenName === 'title') {
+      this.dom.screenTitle?.classList.add('active');
+      this.dom.hud?.classList.add('hidden');
+    } else if (screenName === 'novel') {
+      this.dom.screenNovel?.classList.add('active');
+      this.dom.hud?.classList.remove('hidden');
+    } else if (screenName === 'ending') {
+      this.dom.screenEnding?.classList.add('active');
+      this.dom.hud?.classList.remove('hidden');
     }
-    this.renderExplorePins();
-    this.state.saveSessionProgress('explore');
   }
 
-  renderChapterTimeline() {
+  // 4. チャプター進行とエピソード制御
+  loadChapter(chapterNum, isResuming = false) {
+    this.state.currentChapter = chapterNum;
+    this.updateTimelineBar();
+    this.updateEvidenceHud();
+
+    if (chapterNum === 0) {
+      // プロローグ
+      this.currentDialogueQueue = [...this.scenario.prologue.dialogue];
+      this.queueIndex = isResuming ? this.state.currentLineIndex : 0;
+      this.updateHudBadge('PROLOGUE', '予兆なき暗転');
+      this.renderCurrentLine();
+      return;
+    }
+
+    if (chapterNum >= 1 && chapterNum <= 5) {
+      const chapterData = this.scenario.chapters.find((c) => c.id === chapterNum);
+      if (!chapterData) return;
+      this.currentChapterData = chapterData;
+      this.updateHudBadge(chapterData.number, chapterData.title);
+
+      // チャプターの導入ダイアログ
+      this.currentDialogueQueue = [...chapterData.introDialogue];
+      this.queueIndex = isResuming ? this.state.currentLineIndex : 0;
+      this.renderCurrentLine();
+      return;
+    }
+
+    if (chapterNum === 6) {
+      // エピローグ
+      this.currentDialogueQueue = [...this.scenario.epilogue.dialogue];
+      this.queueIndex = isResuming ? this.state.currentLineIndex : 0;
+      this.updateHudBadge('EPILOGUE', '静寂の反撃と夜明け');
+      this.renderCurrentLine();
+    }
+  }
+
+  updateHudBadge(title, desc) {
+    if (!this.dom.hudLoopBadge) return;
+    this.dom.hudLoopBadge.innerHTML = `<span class="phase-title">${title}</span><span class="phase-desc-text">: ${desc}</span>`;
+  }
+
+  updateTimelineBar() {
     if (!this.dom.chapterTimelineBar) return;
-    this.dom.chapterTimelineBar.innerHTML = '';
-    const currentCh = this.state.currentChapter;
+    const chapters = this.scenario.chapters;
+    let html = '';
+    chapters.forEach((ch) => {
+      const isActive = this.state.currentChapter === ch.id;
+      const isCleared = this.state.isChapterCleared(ch.id);
+      let cls = 'timeline-step';
+      if (isActive) cls += ' active';
+      if (isCleared) cls += ' cleared';
+      html += `<span class="${cls}">${ch.number}: ${ch.date}</span>`;
+    });
+    this.dom.chapterTimelineBar.innerHTML = html;
+  }
 
-    for (let ch = 1; ch <= 5; ch++) {
+  updateEvidenceHud() {
+    if (this.dom.evidenceCount) {
+      this.dom.evidenceCount.textContent = this.state.collectedEvidence.size;
+    }
+  }
+
+  // 5. ダイアログレンダリング
+  renderCurrentLine() {
+    if (this.queueIndex >= this.currentDialogueQueue.length) {
+      this.handleEndOfQueue();
+      return;
+    }
+
+    const item = this.currentDialogueQueue[this.queueIndex];
+    this.state.currentLineIndex = this.queueIndex;
+    this.state.saveSessionProgress();
+
+    this.updateSpeaker(item.speaker);
+    this.updateCharacterSprite(item.sprite || (item.speaker !== 'narrator' ? item.speaker : null));
+    this.handleLineIllustration(item.illustration);
+    this.startTyping(item.text, item.speaker);
+    this.addToBacklog(item.speaker, item.text);
+  }
+
+  updateSpeaker(speakerId) {
+    const char = this.characters[speakerId] || { name: speakerId, color: '#f8fafc' };
+    this.currentSpeaker = char;
+    if (this.dom.dialogueSpeaker) {
+      this.dom.dialogueSpeaker.textContent = char.name;
+      this.dom.dialogueSpeaker.style.color = char.color || '#00f3ff';
+    }
+  }
+
+  updateCharacterSprite(spriteId) {
+    if (!this.dom.characterSpriteBox) return;
+    if (!spriteId || spriteId === 'narrator' || spriteId === 'kei') {
+      this.dom.characterSpriteBox.innerHTML = '';
+      return;
+    }
+    const char = this.characters[spriteId];
+    if (char?.sprite) {
+      this.dom.characterSpriteBox.innerHTML = `<img src="${char.sprite}" alt="${char.name}">`;
+    }
+  }
+
+  handleLineIllustration(imgSrc) {
+    if (imgSrc) {
+      this.showIllustration(imgSrc);
+    } else {
+      this.hideIllustration();
+    }
+  }
+
+  showIllustration(src, caption = '') {
+    if (!this.dom.dialogueIllustrationStage) return;
+    if (this.dom.dialogueIllustrationImg) {
+      this.dom.dialogueIllustrationImg.src = src;
+    }
+    if (this.dom.dialogueIllustrationCaption) {
+      this.dom.dialogueIllustrationCaption.textContent = caption;
+    }
+    this.dom.dialogueIllustrationStage.classList.remove('hidden');
+    this.audio.playEvidence();
+  }
+
+  hideIllustration() {
+    this.dom.dialogueIllustrationStage?.classList.add('hidden');
+  }
+
+  startTyping(text, speakerId) {
+    this.clearTypingTimer();
+    this.isTyping = true;
+    this.fullText = text;
+    this.charIndex = 0;
+    if (this.dom.dialogueText) this.dom.dialogueText.textContent = '';
+    this.dom.dialoguePrompt?.classList.add('hidden');
+
+    if (!this.isSkipActive) {
+      this.speakText(text, speakerId);
+    }
+
+    if (this.isSkipActive) {
+      this.finishTyping();
+      this.scheduleNextLine(80);
+      return;
+    }
+
+    const typeStep = () => {
+      if (this.charIndex < this.fullText.length) {
+        if (this.dom.dialogueText) {
+          this.dom.dialogueText.textContent += this.fullText[this.charIndex];
+        }
+        this.charIndex += 1;
+        this.typingTimer = setTimeout(typeStep, 20);
+      } else {
+        this.finishTyping();
+      }
+    };
+    typeStep();
+  }
+
+  finishTyping() {
+    this.clearTypingTimer();
+    this.isTyping = false;
+    if (this.dom.dialogueText) this.dom.dialogueText.textContent = this.fullText;
+    this.dom.dialoguePrompt?.classList.remove('hidden');
+
+    if (this.isAutoActive && !this.isSkipActive) {
+      const delay = Math.max(1600, this.fullText.length * 65);
+      this.scheduleNextLine(delay);
+    }
+  }
+
+  clearTypingTimer() {
+    if (this.typingTimer) {
+      clearTimeout(this.typingTimer);
+      this.typingTimer = null;
+    }
+  }
+
+  advanceDialogue() {
+    if (this.isTyping) {
+      this.finishTyping();
+      return;
+    }
+    this.stopVoicePlayback();
+    this.queueIndex += 1;
+    this.renderCurrentLine();
+  }
+
+  scheduleNextLine(ms) {
+    if (this.autoTimer) clearTimeout(this.autoTimer);
+    this.autoTimer = setTimeout(() => {
+      this.advanceDialogue();
+    }, ms);
+  }
+
+  speakText(text, speakerId) {
+    const char = this.characters[speakerId] || this.characters.narrator;
+    this.dom.voiceWaveIndicator?.classList.remove('hidden');
+    this.audio.speak(text, char, () => {
+      this.dom.voiceWaveIndicator?.classList.add('hidden');
+    });
+  }
+
+  stopVoicePlayback() {
+    this.audio.stopVoice();
+    this.dom.voiceWaveIndicator?.classList.add('hidden');
+  }
+
+  addToBacklog(speakerId, text) {
+    const char = this.characters[speakerId] || { name: speakerId };
+    this.backlog.push({ speaker: char.name, text });
+  }
+
+  // 6. キュー終了処理＆体験型選択肢
+  handleEndOfQueue() {
+    const chapterNum = this.state.currentChapter;
+
+    if (chapterNum === 0) {
+      // プロローグ終了 -> Chapter 1 へ
+      this.loadChapter(1);
+      return;
+    }
+
+    if (chapterNum >= 1 && chapterNum <= 5) {
+      const chapterData = this.currentChapterData;
+      if (chapterData?.choice && !this.hasChosenForChapter(chapterData.choice.id)) {
+        this.showChoice(chapterData.choice);
+        return;
+      }
+      this.completeChapter(chapterNum);
+      return;
+    }
+
+    if (chapterNum === 6) {
+      // エピローグ終了 -> エンディング画面へ
+      this.showEnding();
+    }
+  }
+
+  hasChosenForChapter(choiceId) {
+    return Boolean(this.state.selectedChoices[choiceId]);
+  }
+
+  showChoice(choiceData) {
+    this.stopAuto();
+    this.stopSkip();
+    this.stopVoicePlayback();
+
+    if (!this.dom.choiceStage) return;
+    this.dom.choiceQuestion.textContent = choiceData.question;
+    this.dom.choiceOptions.innerHTML = '';
+
+    choiceData.options.forEach((opt) => {
       const btn = document.createElement('button');
       btn.type = 'button';
-      const isCleared = this.state.isChapterCleared(ch);
-      const isActive = ch === currentCh;
-      btn.className = this.getChapterPillClass(isActive, isCleared);
-      const prefix = isCleared ? '✓ ' : '';
-      btn.textContent = `${prefix}${CHAPTER_SHORT_TITLES[ch]}`;
-      btn.addEventListener('click', () => {
-        this.audio.playSe('click');
-        this.selectChapter(ch, true);
-      });
-      this.dom.chapterTimelineBar.appendChild(btn);
-    }
-  }
-
-  getChapterPillClass(isActive, isCleared) {
-    const classes = ['chapter-pill', 'is-unlocked'];
-    if (isCleared) classes.push('is-cleared');
-    if (isActive) classes.push('is-active');
-    return classes.join(' ');
-  }
-
-  renderExplorePins() {
-    const areaEl = this.currentArea === 'desk' ? this.dom.areaDesk : this.dom.areaLiving;
-    if (!areaEl) return;
-    areaEl.innerHTML = '';
-
-    const spots = this.scenario.exploreSpots[this.currentArea] || [];
-    spots.forEach((spot) => {
-      const pinBtn = this.createExplorePinElement(spot);
-      areaEl.appendChild(pinBtn);
-    });
-
-    this.updateExploreUI();
-  }
-
-  getExplorePinClasses(isInspected, isChapterTarget) {
-    const base = isInspected ? 'explore-pin inspected' : 'explore-pin new';
-    return isChapterTarget ? `${base} is-chapter-target` : base;
-  }
-
-  appendPinBadgeIfNeeded(iconWrap, spot, isInspected, isChapterTarget) {
-    if (isInspected) return;
-    const badgeSpan = document.createElement('span');
-    badgeSpan.className = isChapterTarget ? 'pin-status-badge target-badge' : 'pin-status-badge';
-    badgeSpan.textContent = isChapterTarget ? `第${spot.chapter}章` : 'NEW';
-    iconWrap.appendChild(badgeSpan);
-  }
-
-  createExplorePinElement(spot) {
-    const isInspected = this.state.isSpotInspected(spot.id);
-    const isChapterTarget = spot.chapter === this.state.currentChapter && !isInspected;
-
-    const pinBtn = document.createElement('button');
-    pinBtn.type = 'button';
-    pinBtn.className = this.getExplorePinClasses(isInspected, isChapterTarget);
-    pinBtn.style.left = `${spot.coords.x}%`;
-    pinBtn.style.top = `${spot.coords.y}%`;
-    pinBtn.setAttribute('aria-label', spot.name);
-
-    const iconWrap = document.createElement('div');
-    iconWrap.className = 'pin-icon-wrap';
-
-    const iconSpan = document.createElement('span');
-    iconSpan.className = 'pin-icon';
-    iconSpan.textContent = spot.icon;
-    iconWrap.appendChild(iconSpan);
-    this.appendPinBadgeIfNeeded(iconWrap, spot, isInspected, isChapterTarget);
-
-    const labelSpan = document.createElement('span');
-    labelSpan.className = 'pin-label';
-    labelSpan.textContent = spot.name;
-
-    pinBtn.appendChild(iconWrap);
-    pinBtn.appendChild(labelSpan);
-    pinBtn.addEventListener('click', () => this.handleSpotClick(spot));
-    return pinBtn;
-  }
-
-  handleSpotClick(spot) {
-    this.audio.playSe('click');
-    this.state.markSpotInspected(spot.id);
-
-    let acquired = false;
-    if (spot.evidenceId) {
-      acquired = this.state.addEvidence(spot.evidenceId);
-      if (acquired) {
-        this.audio.playSe('evidence');
-      }
-    }
-
-    this.renderExplorePins();
-
-    this.playDialogueSequence(spot.dialogue, () => {
-      if (acquired) {
-        const ev = this.scenario.evidence[spot.evidenceId];
-        this.showEvidenceNotification(ev);
-      }
-      this.updateExploreUI();
-      this.state.saveSessionProgress('explore');
-    });
-  }
-
-  showEvidenceNotification(evidence) {
-    if (!evidence) return;
-    const notificationSeq = [
-      {
-        speaker: 'narrator',
-        text: `【鑑識ファイル入手】『${evidence.name}』をデータベースに記録した！\n${evidence.easyExplain || ''}`,
-        illustration: evidence.image,
-        caption: evidence.summary,
-      },
-    ];
-    this.playDialogueSequence(notificationSeq);
-  }
-
-  renderSingleAreaTabBadge(btn, titleText, spots) {
-    if (!btn) return;
-    const remaining = spots.filter((s) => !this.state.isSpotInspected(s.id)).length;
-    const badgeClass = remaining === 0 ? 'is-complete' : 'has-remaining';
-    const badgeText = remaining === 0 ? '✓ 完了' : `残り ${remaining}`;
-    btn.innerHTML = `${titleText} <span class="area-tab-badge ${badgeClass}">${badgeText}</span>`;
-  }
-
-  updateAreaBadges() {
-    this.renderSingleAreaTabBadge(
-      this.dom.btnAreaDesk,
-      '🛡️ アリアの鑑識端末 (VM)',
-      this.scenario.exploreSpots.desk || [],
-    );
-    this.renderSingleAreaTabBadge(
-      this.dom.btnAreaLiving,
-      '📡 対策室＆NCO聴聞モニター',
-      this.scenario.exploreSpots.living || [],
-    );
-  }
-
-  updateExploreUI() {
-    const collectedCount = this.state.collectedEvidence.size;
-    const currentCh = this.state.currentChapter;
-    const canEnter = this.state.canEnterDebate();
-
-    if (this.dom.evidenceCount) {
-      this.dom.evidenceCount.textContent = collectedCount;
-    }
-
-    if (this.dom.evidenceNeededCounter) {
-      this.dom.evidenceNeededCounter.textContent = `第${currentCh}章 / 全5章 (鑑識: ${collectedCount} / 6)`;
-    }
-
-    if (this.dom.hudLoopBadge) {
-      const shortTitle = CHAPTER_SHORT_TITLES[currentCh] || `CHAPTER ${currentCh}`;
-      this.dom.hudLoopBadge.innerHTML = `<span class="phase-title">${shortTitle}</span><span class="phase-desc-text"> (鑑識 ${collectedCount}/6)</span>`;
-    }
-
-    this.renderChapterTimeline();
-    this.updateAreaBadges();
-    this.updateExploreDebateButtons(canEnter, currentCh);
-  }
-
-  updateExploreDebateButtons(canEnter, currentCh) {
-    if (canEnter) {
-      this.dom.btnGoToDebate?.classList.remove('hidden');
-      this.dom.btnGoToDebate?.removeAttribute('disabled');
-      this.dom.btnHudGotoDebate?.classList.remove('hidden');
-      this.dom.btnHudGotoDebate?.removeAttribute('disabled');
-      this.updateReadyStatusText(currentCh);
-    } else {
-      this.dom.btnGoToDebate?.classList.add('hidden');
-      this.dom.btnGoToDebate?.setAttribute('disabled', 'true');
-      this.dom.btnHudGotoDebate?.classList.add('hidden');
-      this.dom.btnHudGotoDebate?.setAttribute('disabled', 'true');
-      this.updatePendingStatusText(currentCh);
-    }
-  }
-
-  updateReadyStatusText(currentCh) {
-    if (!this.dom.exploreStatusText) return;
-    this.dom.exploreStatusText.textContent =
-      currentCh < 5
-        ? `【第${currentCh}章の鑑識完了】下のボタンから第${currentCh}章の謎を解明し、次の章の物語へ進もう！`
-        : '【全鑑識データ収集完了】最終NCO聴聞へ進み、能動的サイバー防御「3つの壁」を突破せよ！';
-  }
-
-  updatePendingStatusText(currentCh) {
-    if (!this.dom.exploreStatusText) return;
-    const targetAreaLabel =
-      currentCh === 2 || currentCh === 4 ? '対策室＆NCO聴聞モニター' : 'アリアの鑑識端末 (VM)';
-    this.dom.exploreStatusText.textContent = `【第${currentCh}章】『${targetAreaLabel}』にある第${currentCh}章のスポットを調査して鑑識ファイルを入手しよう`;
-  }
-
-  prepareDebateListForCurrentState() {
-    const allDebates = this.scenario.debates || [];
-    const currentCh = this.state.currentChapter;
-
-    if (this.state.hasAllCriticalEvidence() && this.state.clearedChapters.size === 0) {
-      this.activeDebateList = allDebates;
-      return;
-    }
-
-    const chapterDebates = allDebates.filter((d) => d.chapter === currentCh);
-    this.activeDebateList = chapterDebates.length > 0 ? chapterDebates : allDebates;
-  }
-
-  startDebate() {
-    if (!this.state.canEnterDebate()) {
-      this.audio.playSe('damage');
-      alert(
-        `【鑑識データ不足】第${this.state.currentChapter}章の真相解明に進むには、この章の鑑識スポットを調査してください！`,
-      );
-      return;
-    }
-
-    this.stopDialogueTimers();
-    this.dom.dialogueStage?.classList.add('hidden');
-    this.audio.playSe('cutin');
-    this.prepareDebateListForCurrentState();
-    this.state.currentDebateStep = 0;
-    this.state.recoverLife();
-    this.showScreen('debate');
-    this.renderDebateQuestion();
-    this.state.saveSessionProgress('debate');
-  }
-
-  renderOpponentHeader(opponentData) {
-    if (this.dom.debateOpponentAvatar) {
-      this.dom.debateOpponentAvatar.innerHTML = `<img src="${opponentData.sprite}" alt="${opponentData.name}" class="opponent-portrait-img" />`;
-    }
-    if (this.dom.debateSpeakerLabel) {
-      this.dom.debateSpeakerLabel.textContent = opponentData.name;
-      this.dom.debateSpeakerLabel.style.color = opponentData.color || '#f97316';
-    }
-  }
-
-  renderDebateOpponentBox(debateItem) {
-    const opponentData = this.characters[debateItem.opponent] || this.characters.kuroda;
-    this.renderOpponentHeader(opponentData);
-    const speechText = debateItem.speech || debateItem.opponentSpeech || '';
-    if (this.dom.debateOpponentSpeech) {
-      this.dom.debateOpponentSpeech.textContent = speechText;
-    }
-    if (this.dom.debateHintText) {
-      this.dom.debateHintText.textContent = debateItem.hint;
-    }
-    this.audio.speak(speechText, opponentData);
-  }
-
-  renderDebateQuestion() {
-    const step = this.state.currentDebateStep;
-    const debateItem = this.activeDebateList[step];
-    if (!debateItem) {
-      this.handleDebateSequenceCompleted();
-      return;
-    }
-
-    const totalSteps = this.activeDebateList.length;
-    if (this.dom.debateTurnLabel) {
-      this.dom.debateTurnLabel.textContent =
-        debateItem.turnLabel || `問答 ${step + 1} / ${totalSteps}`;
-    }
-
-    this.updateHeartsUI();
-    this.renderDebateOpponentBox(debateItem);
-    this.renderDebateEvidenceGrid();
-    this.selectedEvidenceId = null;
-    this.updateSelectedEvidencePreview();
-  }
-
-  replayDebateQuestionVoice() {
-    const step = this.state.currentDebateStep;
-    const debateItem = this.activeDebateList[step];
-    if (debateItem) {
-      const opponentData = this.characters[debateItem.opponent] || this.characters.kuroda;
-      const speechText = debateItem.speech || debateItem.opponentSpeech || '';
-      this.audio.speak(speechText, opponentData);
-    }
-  }
-
-  updateHeartsUI() {
-    if (!this.dom.hudHearts) return;
-    let heartsHtml = '';
-    for (let i = 0; i < 3; i++) {
-      heartsHtml +=
-        i < this.state.life
-          ? '<span class="heart active" title="ライフ残">♥</span>'
-          : '<span class="heart lost" title="ライフ消失">♡</span>';
-    }
-    this.dom.hudHearts.innerHTML = heartsHtml;
-    this.dom.hudHearts.setAttribute('aria-label', `残りライフ ${this.state.life} / 3`);
-  }
-
-  renderDebateEvidenceGrid() {
-    if (!this.dom.debateEvidenceList) return;
-    this.dom.debateEvidenceList.innerHTML = '';
-
-    const collectedIds = Array.from(this.state.collectedEvidence);
-    collectedIds.forEach((id, idx) => {
-      const ev = this.scenario.evidence[id];
-      if (!ev) return;
-
-      const card = document.createElement('button');
-      card.type = 'button';
-      card.className = 'debate-evidence-card';
-      card.dataset.evidenceId = id;
-
-      card.innerHTML = `
-        <span class="card-num-badge" title="キーボード[${idx + 1}]で選択">${idx + 1}</span>
-        <span class="card-icon">${ev.icon}</span>
-        <div class="card-text">
-          <span class="card-name">${ev.name}</span>
-          ${ev.easyExplain ? `<span class="card-easy-explain">${ev.easyExplain}</span>` : ''}
-          <span class="card-type">${ev.type}</span>
-        </div>
+      btn.className = 'choice-btn';
+      btn.innerHTML = `
+        <span class="choice-btn-label">${opt.label}</span>
+        <span class="choice-btn-desc">${opt.description}</span>
       `;
-
-      card.addEventListener('click', () => {
-        this.selectDebateEvidence(id);
-      });
-
-      this.dom.debateEvidenceList.appendChild(card);
-    });
-  }
-
-  selectDebateEvidence(evidenceId) {
-    this.audio.playSe('click');
-    this.selectedEvidenceId = evidenceId;
-
-    const cards = this.dom.debateEvidenceList?.querySelectorAll('.debate-evidence-card');
-    cards?.forEach((c) => {
-      c.classList.toggle('selected', c.dataset.evidenceId === evidenceId);
+      btn.addEventListener('click', () => this.handleOptionSelected(choiceData, opt));
+      this.dom.choiceOptions.appendChild(btn);
     });
 
-    this.updateSelectedEvidencePreview();
+    this.dom.choiceStage.classList.remove('hidden');
   }
 
-  updateSelectedEvidencePreview() {
-    if (!this.dom.selectedEvidencePreview || !this.dom.btnPresentEvidence) return;
+  handleOptionSelected(choiceData, option) {
+    this.dom.choiceStage?.classList.add('hidden');
+    this.state.recordChoice(choiceData.id, option.id);
 
-    if (!this.selectedEvidenceId) {
-      this.dom.selectedEvidencePreview.innerHTML =
-        '<span class="placeholder-text">提示する鑑識ファイルを一覧から選択してください</span>';
-      this.dom.btnPresentEvidence.setAttribute('disabled', 'true');
-      return;
+    // カットイン演出の強制リフロー再トリガー
+    this.triggerCutin('客観的反証があります！');
+    this.audio.playCutin();
+
+    // リアクションダイアログの注入
+    const reaction = option.reaction || [];
+    const resolution = this.currentChapterData.resolution || [];
+    this.currentDialogueQueue = [...reaction, ...resolution];
+    this.queueIndex = 0;
+
+    // 証拠アンロック
+    if (this.currentChapterData.requiredEvidence) {
+      this.state.addEvidence(this.currentChapterData.requiredEvidence);
+      this.updateEvidenceHud();
     }
 
-    const ev = this.scenario.evidence[this.selectedEvidenceId];
-    if (ev) {
-      this.dom.selectedEvidencePreview.innerHTML = `
-        <div class="preview-active-wrap">
-          <span class="preview-icon">${ev.icon}</span>
-          <div class="preview-info">
-            <strong class="preview-title">${ev.name}</strong>
-            ${ev.easyExplain ? `<span class="preview-easy-explain">${ev.easyExplain}</span>` : ''}
-            <p class="preview-summary">${ev.summary}</p>
-          </div>
-        </div>
-      `;
-      this.dom.btnPresentEvidence.removeAttribute('disabled');
-    }
+    setTimeout(() => {
+      this.renderCurrentLine();
+    }, 700);
   }
 
-  updateDebateUI() {
-    this.renderDebateQuestion();
-  }
-
-  presentEvidence(evidenceId = this.selectedEvidenceId) {
-    if (!evidenceId) return;
-    const step = this.state.currentDebateStep;
-    const debateItem = this.activeDebateList[step];
-    if (!debateItem) return;
-
-    if (evidenceId === debateItem.correctEvidenceId) {
-      this.onDebateCorrect(debateItem);
-    } else {
-      this.onDebateWrong(debateItem);
-    }
-  }
-
-  onDebateCorrect(debateItem) {
-    const cutinText = debateItem.correctCutin || '客観的反証があります！';
-    this.triggerCutin(cutinText, () => {
-      this.audio.playSe('correct');
-      const successSeq = debateItem.correctDialogue || debateItem.successDialogue || [];
-      this.playDialogueSequence(successSeq, () => {
-        this.state.currentDebateStep += 1;
-        this.state.saveSessionProgress('debate');
-        if (this.state.currentDebateStep >= this.activeDebateList.length) {
-          this.handleDebateSequenceCompleted(debateItem);
-        } else {
-          this.renderDebateQuestion();
-        }
-      });
-    });
-  }
-
-  handleDebateSequenceCompleted(lastDebateItem = null) {
-    const solvedChapter = lastDebateItem?.chapter || this.state.currentChapter;
-    this.state.markChapterCleared(solvedChapter);
-
-    const isFinalHearingDone = solvedChapter >= 5 || lastDebateItem?.step === 5;
-    if (isFinalHearingDone) {
-      this.onDebateSuccessAll();
-      return;
-    }
-
-    const nextChapter = solvedChapter + 1;
-    this.state.currentChapter = nextChapter;
-    const nextArea = this.getPreferredAreaForChapter(nextChapter);
-    this.showScreen('explore');
-    this.switchArea(nextArea);
-    this.playChapterIntro(nextChapter);
-  }
-
-  onDebateWrong(debateItem) {
-    this.audio.playSe('damage');
-    const remainingLife = this.state.decreaseLife();
-    this.updateHeartsUI();
-
-    const failureSeq = this.buildWrongFeedbackSequence(debateItem);
-    this.playDialogueSequence(failureSeq, () => {
-      if (remainingLife <= 0) {
-        this.onGameOver();
-      } else {
-        this.renderDebateQuestion();
-      }
-    });
-  }
-
-  buildWrongFeedbackSequence(debateItem) {
-    const seq = [];
-    if (debateItem.wrongFeedback) {
-      if (debateItem.wrongFeedback.speaker && debateItem.wrongFeedback.text) {
-        seq.push({
-          speaker: debateItem.wrongFeedback.speaker,
-          text: debateItem.wrongFeedback.text,
-        });
-      }
-      if (debateItem.wrongFeedback.hintDialogue) {
-        seq.push({
-          speaker: debateItem.wrongFeedback.hintDialogue.speaker,
-          text: debateItem.wrongFeedback.hintDialogue.text,
-        });
-      }
-    } else if (debateItem.failureDialogue) {
-      seq.push(...debateItem.failureDialogue);
-    }
-    return seq;
-  }
-
-  triggerCutin(text, callback) {
-    this.audio.playSe('cutin');
-    if (!this.dom.overlayCutin || !this.dom.cutinText) {
-      if (callback) callback();
-      return;
-    }
-    this.dom.cutinText.textContent = text;
+  triggerCutin(text = '客観的反証があります！') {
+    if (!this.dom.overlayCutin) return;
+    if (this.dom.cutinText) this.dom.cutinText.textContent = text;
     this.dom.overlayCutin.classList.remove('hidden');
     this.dom.overlayCutin.classList.remove('active');
-    void this.dom.overlayCutin.offsetWidth;
+    void this.dom.overlayCutin.offsetWidth; // 強制リフロー
     this.dom.overlayCutin.classList.add('active');
 
     setTimeout(() => {
       this.dom.overlayCutin?.classList.remove('active');
       this.dom.overlayCutin?.classList.add('hidden');
-      if (callback) callback();
-    }, 1100);
+    }, 1800);
   }
 
-  onDebateSuccessAll() {
-    this.audio.playSe('victory');
-    this.state.markTrueEndCleared();
-    const epilogueSeq = this.scenario.epilogue || this.scenario.dialogues?.epilogue || [];
-
-    this.playDialogueSequence(epilogueSeq, () => {
-      this.showEnding('trueEnd');
-      this.state.clearSessionProgress();
-    });
-  }
-
-  onGameOver() {
-    this.audio.playSe('gameover');
-    this.showEnding('gameover');
-  }
-
-  showEnding(type) {
-    const endingData = this.scenario.endings[type] || this.scenario.endings.trueEnd;
-    this.showScreen('ending');
-
-    if (type === 'trueEnd') {
-      this.audio.playBgm('truth');
+  completeChapter(chapterNum) {
+    this.state.markChapterCleared(chapterNum);
+    this.updateTimelineBar();
+    if (chapterNum < 5) {
+      this.loadChapter(chapterNum + 1);
+    } else {
+      this.loadChapter(6); // エピローグへ
     }
-
-    if (this.dom.endingIcon) this.dom.endingIcon.textContent = endingData.icon;
-    if (this.dom.endingTitle) this.dom.endingTitle.textContent = endingData.title;
-    if (this.dom.endingSub) this.dom.endingSub.textContent = endingData.sub;
-    if (this.dom.endingDesc) this.dom.endingDesc.textContent = endingData.desc;
-
-    this.updateEndingBannersAndButtons(type, endingData);
   }
 
-  updateEndingBannersAndButtons(type, endingData) {
+  showEnding() {
+    this.state.markGameCleared();
+    this.stopAuto();
+    this.stopSkip();
+    this.audio.playBgm('truth');
+    this.switchScreen('ending');
+
+    if (this.dom.endingTitle) {
+      this.dom.endingTitle.textContent = 'TRUE END: 静寂の反撃と夜明け';
+    }
+    if (this.dom.endingSub) {
+      this.dom.endingSub.textContent =
+        '能動的サイバー防御「公表なき発動第1号」達成・26,739台の救出';
+    }
+    if (this.dom.endingDesc) {
+      this.dom.endingDesc.textContent =
+        '四重恐喝の無力化、リバースRDPの看破、そしてカナリアトークンによる真C2の特定と非公然無害化措置の完遂。26,739人の日常と資産は守り抜かれた。';
+    }
+    this.dom.endingUnlockedBanner?.classList.remove('hidden');
     if (this.dom.endingUnlockedBanner) {
-      if (endingData.unlockedBanner) {
-        this.dom.endingUnlockedBanner.textContent = endingData.unlockedBanner;
-        this.dom.endingUnlockedBanner.classList.remove('hidden');
-      } else {
-        this.dom.endingUnlockedBanner.classList.add('hidden');
-      }
-    }
-
-    if (this.dom.btnEndingExploreAgain) {
-      this.dom.btnEndingExploreAgain.classList.toggle('hidden', type !== 'gameover');
+      this.dom.endingUnlockedBanner.textContent =
+        '🏆 全5章・完全制覇達成！ 全編小説＆深層解説レポートが全解禁されました。';
     }
   }
 
-  playDialogueSequence(sequence, onComplete = null) {
-    if (!sequence || sequence.length === 0) {
-      if (onComplete) onComplete();
-      return;
-    }
-    this.stopDialogueTimers();
-    this.dialogueQueue = [...sequence];
-    this.currentDialogueIndex = -1;
-    this.onDialogueComplete = onComplete;
-    this.dom.dialogueStage?.classList.remove('hidden');
-    this.advanceDialogue();
-  }
-
-  advanceDialogue() {
-    if (this.isTyping) {
-      this.stopTypewriter();
-      const currentItem = this.dialogueQueue[this.currentDialogueIndex];
-      if (currentItem && this.dom.dialogueText) {
-        this.dom.dialogueText.textContent = currentItem.text;
-      }
-      this.dom.dialoguePrompt?.classList.remove('hidden');
-      this.setupAutoAdvance();
-      return;
-    }
-
-    this.currentDialogueIndex += 1;
-    if (this.currentDialogueIndex >= this.dialogueQueue.length) {
-      this.finishDialogueSequence();
-      return;
-    }
-
-    const item = this.dialogueQueue[this.currentDialogueIndex];
-    this.renderDialogueItem(item);
-  }
-
-  renderDialogueItem(item) {
-    this.dom.dialoguePrompt?.classList.add('hidden');
-    const speakerKey = item.speaker;
-    const char = this.characters[speakerKey] || {
-      name: speakerKey,
-      color: '#f8fafc',
-      sprite: null,
-    };
-
-    const isMonologue = this.isMonologueLine(item.text, speakerKey);
-    this.updateDialogueSpeakerHeader(char, speakerKey, isMonologue);
-    this.updateCharacterSprite(char, speakerKey, isMonologue);
-    this.updateIllustration(item);
-    this.backlog.push({ speaker: char.name, text: item.text });
-
-    if (!this.isSkipActive && !isMonologue) {
-      this.audio.speak(item.text, char);
+  // 7. AUTO / SKIP コントロール
+  toggleAuto() {
+    this.isAutoActive = !this.isAutoActive;
+    if (this.isAutoActive) {
+      this.isSkipActive = false;
+      this.dom.btnDialogueAuto?.classList.add('active');
+      this.dom.btnDialogueSkip?.classList.remove('active');
+      if (!this.isTyping) this.advanceDialogue();
     } else {
-      this.audio.stopVoice();
-    }
-
-    this.startTypewriter(item.text, isMonologue);
-  }
-
-  isMonologueLine(text, speakerKey) {
-    return (
-      Boolean(text.startsWith('（') && text.endsWith('）')) ||
-      text.includes('（……') ||
-      speakerKey.includes('思考') ||
-      speakerKey.includes('心の声')
-    );
-  }
-
-  updateDialogueSpeakerHeader(char, speakerKey, isMonologue) {
-    if (!this.dom.dialogueSpeaker) return;
-    if (speakerKey === 'kei' && isMonologue) {
-      this.dom.dialogueSpeaker.innerHTML = `${char.name} <span class="speaker-thought-tag">💭 心の声</span>`;
-    } else {
-      this.dom.dialogueSpeaker.textContent = char.name;
-    }
-    this.dom.dialogueSpeaker.style.color = char.color || '#00f3ff';
-  }
-
-  shouldShowDimmedPreviousNpc(speakerKey) {
-    const isPlayerOrNarrator = speakerKey === 'kei' || speakerKey === 'narrator';
-    return Boolean(isPlayerOrNarrator && this.lastActiveNpcChar?.sprite);
-  }
-
-  updateCharacterSprite(char, speakerKey, isMonologue = false) {
-    if (!this.dom.characterStage || !this.dom.characterSpriteBox) return;
-
-    if (char.sprite) {
-      this.lastActiveNpcChar = char;
-      this.dom.characterStage.classList.remove('hidden');
-      this.dom.characterSpriteBox.innerHTML = `<img src="${char.sprite}" alt="${char.name}" class="char-sprite-img" />`;
-      return;
-    }
-
-    if (this.shouldShowDimmedPreviousNpc(speakerKey)) {
-      this.dom.characterStage.classList.remove('hidden');
-      const dimClass = isMonologue ? 'is-monologue-bg' : 'is-dimmed';
-      this.dom.characterSpriteBox.innerHTML = `<img src="${this.lastActiveNpcChar.sprite}" alt="${this.lastActiveNpcChar.name}" class="char-sprite-img ${dimClass}" />`;
-      return;
-    }
-
-    this.dom.characterStage.classList.add('hidden');
-    this.dom.characterSpriteBox.innerHTML = '';
-  }
-
-  updateIllustration(item) {
-    if (!this.dom.dialogueIllustrationStage) return;
-    if (item.illustration && this.dom.dialogueIllustrationImg) {
-      this.dom.dialogueIllustrationImg.src = item.illustration;
-      if (this.dom.dialogueIllustrationCaption) {
-        this.dom.dialogueIllustrationCaption.textContent = item.caption || '';
-      }
-      this.dom.dialogueIllustrationStage.classList.remove('hidden');
-    } else {
-      this.dom.dialogueIllustrationStage.classList.add('hidden');
+      this.stopAuto();
     }
   }
 
-  startTypewriter(text, isMonologue = false) {
-    this.isTyping = true;
-    if (!this.dom.dialogueText) return;
-    this.dom.dialogueText.textContent = '';
-    let index = 0;
-    const speed = this.isSkipActive ? 6 : 22;
-
-    if (this.dom.voiceWaveIndicator) {
-      const showWave = !isMonologue && !this.isSkipActive;
-      this.dom.voiceWaveIndicator.classList.toggle('hidden', !showWave);
-    }
-
-    this.typewriterTimer = setInterval(() => {
-      index += 1;
-      this.dom.dialogueText.textContent = text.slice(0, index);
-      if (index >= text.length) {
-        this.stopTypewriter();
-        this.dom.dialoguePrompt?.classList.remove('hidden');
-        this.setupAutoAdvance();
-      }
-    }, speed);
-  }
-
-  stopTypewriter() {
-    this.isTyping = false;
-    this.dom.voiceWaveIndicator?.classList.add('hidden');
-    if (this.typewriterTimer) {
-      clearInterval(this.typewriterTimer);
-      this.typewriterTimer = null;
-    }
-  }
-
-  setupAutoAdvance() {
-    if (this.autoTimer) clearTimeout(this.autoTimer);
-    if (!this.isAutoActive && !this.isSkipActive) return;
-
-    const delay = this.isSkipActive ? 110 : 2000;
-    this.autoTimer = setTimeout(() => {
-      this.advanceDialogue();
-    }, delay);
-  }
-
-  stopDialogueTimers() {
-    this.stopTypewriter();
+  stopAuto() {
+    this.isAutoActive = false;
+    this.dom.btnDialogueAuto?.classList.remove('active');
     if (this.autoTimer) {
       clearTimeout(this.autoTimer);
       this.autoTimer = null;
     }
   }
 
-  finishDialogueSequence() {
-    this.stopDialogueTimers();
-    this.dom.dialogueStage?.classList.add('hidden');
-    this.lastActiveNpcChar = null;
-    if (this.dom.characterSpriteBox) {
-      this.dom.characterSpriteBox.innerHTML = '';
-    }
-    this.dom.voiceWaveIndicator?.classList.add('hidden');
-    if (this.onDialogueComplete) {
-      const cb = this.onDialogueComplete;
-      this.onDialogueComplete = null;
-      cb();
-    }
-  }
-
-  toggleAutoMode() {
-    this.isAutoActive = !this.isAutoActive;
-    if (!this.dom.btnDialogueAuto) return;
-    this.dom.btnDialogueAuto.classList.toggle('active', this.isAutoActive);
-    if (this.isAutoActive) {
-      this.isSkipActive = false;
-      this.dom.btnDialogueSkip?.classList.remove('active');
-      if (!this.isTyping) this.setupAutoAdvance();
-    } else if (this.autoTimer) {
-      clearTimeout(this.autoTimer);
-    }
-  }
-
-  toggleSkipMode() {
+  toggleSkip() {
     this.isSkipActive = !this.isSkipActive;
-    if (!this.dom.btnDialogueSkip) return;
-    this.dom.btnDialogueSkip.classList.toggle('active', this.isSkipActive);
     if (this.isSkipActive) {
-      this.audio.stopVoice();
       this.isAutoActive = false;
+      this.dom.btnDialogueSkip?.classList.add('active');
       this.dom.btnDialogueAuto?.classList.remove('active');
-      this.stopTypewriter();
       this.advanceDialogue();
-    } else if (this.autoTimer) {
-      clearTimeout(this.autoTimer);
+    } else {
+      this.stopSkip();
     }
+  }
+
+  stopSkip() {
+    this.isSkipActive = false;
+    this.dom.btnDialogueSkip?.classList.remove('active');
+  }
+
+  // 8. モーダル制御
+  openLogModal() {
+    this.stopAuto();
+    this.renderBacklog();
+    this.openModal(this.dom.modalLog);
+  }
+
+  renderBacklog() {
+    if (!this.dom.modalLogList) return;
+    this.dom.modalLogList.innerHTML = '';
+    this.backlog.forEach((item) => {
+      const el = document.createElement('div');
+      el.className = 'log-item';
+      el.innerHTML = `
+        <div class="log-speaker">${item.speaker}</div>
+        <div class="log-text">${item.text}</div>
+      `;
+      this.dom.modalLogList.appendChild(el);
+    });
+    this.dom.modalLogList.scrollTop = this.dom.modalLogList.scrollHeight;
   }
 
   openEvidenceModal() {
-    this.audio.playSe('click');
-    if (!this.dom.modalEvidence || !this.dom.modalEvidenceList) return;
+    this.stopAuto();
+    this.renderEvidenceList();
+    this.openModal(this.dom.modalEvidence);
+  }
+
+  renderEvidenceList() {
+    if (!this.dom.modalEvidenceList) return;
     this.dom.modalEvidenceList.innerHTML = '';
+    const allEvidence = Object.values(this.scenario.evidence);
 
-    const collected = Array.from(this.state.collectedEvidence);
-    if (collected.length === 0) {
-      this.dom.modalEvidenceList.innerHTML =
-        '<div class="empty-hint">現在収集した鑑識ファイルはありません。各章のスポットを調査してください。</div>';
-    } else {
-      collected.forEach((id) => {
-        const ev = this.scenario.evidence[id];
-        if (ev) {
-          this.dom.modalEvidenceList.appendChild(this.createEvidenceModalCard(ev));
-        }
-      });
-    }
-
-    this.dom.modalEvidence.classList.remove('hidden');
-  }
-
-  createEvidenceModalCard(ev) {
-    const itemEl = document.createElement('div');
-    itemEl.className = 'evidence-modal-card';
-    itemEl.innerHTML = `
-      <div class="card-left">
-        <span class="card-modal-icon">${ev.icon}</span>
-        <span class="card-modal-type">${ev.type}</span>
-        ${ev.image ? `<img src="${ev.image}" alt="${ev.name}" class="card-modal-thumb" />` : ''}
-      </div>
-      <div class="card-right">
-        <strong class="card-modal-title">${ev.name}</strong>
-        ${ev.easyExplain ? `<div class="card-modal-easy">${ev.easyExplain}</div>` : ''}
-        <p class="card-modal-desc">${ev.detail}</p>
-      </div>
-    `;
-    return itemEl;
-  }
-
-  closeEvidenceModal() {
-    this.dom.modalEvidence?.classList.add('hidden');
-  }
-
-  toggleEvidenceModal() {
-    if (this.dom.modalEvidence?.classList.contains('hidden')) {
-      this.openEvidenceModal();
-    } else {
-      this.closeEvidenceModal();
-    }
-  }
-
-  // 全編小説＆事件真相レポートモーダル
-  openNovelModal(tabKey = 'all') {
-    this.audio.playSe('click');
-    if (!this.dom.modalNovel) return;
-    this.currentNovelTab = tabKey;
-    this.renderNovelTabs();
-    this.renderNovelBody(tabKey);
-    this.dom.modalNovel.classList.remove('hidden');
-  }
-
-  closeNovelModal() {
-    this.dom.modalNovel?.classList.add('hidden');
-  }
-
-  toggleNovelModal() {
-    if (this.dom.modalNovel?.classList.contains('hidden')) {
-      this.openNovelModal('all');
-    } else {
-      this.closeNovelModal();
-    }
-  }
-
-  renderNovelTabs() {
-    if (!this.dom.novelChapterTabs) return;
-    this.dom.novelChapterTabs.innerHTML = '';
-    const tabs = [
-      { key: 'all', label: '📚 全編通読' },
-      { key: 'ch1', label: '第1章: 口座焼却' },
-      { key: 'ch2', label: '第2章: 亡霊接続' },
-      { key: 'ch3', label: '第3章: 逆流RDP' },
-      { key: 'ch4', label: '第4章: 直接補償' },
-      { key: 'ch5', label: '第5章・終章: 発動第1号' },
-    ];
-
-    tabs.forEach((t) => {
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = `novel-tab-btn ${this.currentNovelTab === t.key ? 'active' : ''}`;
-      btn.textContent = t.label;
-      btn.addEventListener('click', () => {
-        this.audio.playSe('click');
-        this.openNovelModal(t.key);
-      });
-      this.dom.novelChapterTabs.appendChild(btn);
-    });
-  }
-
-  getTargetNovelChapters(tabKey) {
-    const chapters = this.scenario.chapters || [];
-    if (tabKey === 'all') return chapters;
-    return chapters.filter((c) => `ch${c.id}` === tabKey);
-  }
-
-  renderNovelBody(tabKey) {
-    if (!this.dom.modalNovelBody) return;
-    this.dom.modalNovelBody.innerHTML = '';
-
-    if (tabKey === 'all' || tabKey === 'ch1') {
-      this.dom.modalNovelBody.appendChild(
-        this.createNovelSectionElement(
-          'PROLOGUE',
-          'プロローグ：2026年10月1日・新しい盾と悪夢の幕開け',
-          this.scenario.prologue || [],
-        ),
-      );
-    }
-
-    this.getTargetNovelChapters(tabKey).forEach((ch) => {
-      this.appendChapterNovelSections(ch);
-    });
-
-    if (tabKey === 'all' || tabKey === 'ch5') {
-      this.dom.modalNovelBody.appendChild(
-        this.createNovelSectionElement(
-          'EPILOGUE',
-          'エピローグ：公表なき無害化と、夜明けのアーキテクチャ',
-          this.scenario.epilogue || [],
-        ),
-      );
-    }
-    this.dom.modalNovelBody.scrollTop = 0;
-  }
-
-  appendChapterNovelSections(ch) {
-    const allSpots = [
-      ...(this.scenario.exploreSpots.desk || []),
-      ...(this.scenario.exploreSpots.living || []),
-    ].filter((s) => s.chapter === ch.id);
-
-    const allDebates = (this.scenario.debates || []).filter((d) => d.chapter === ch.id);
-    const lines = [...(ch.introDialogue || [])];
-
-    allSpots.forEach((s) => {
-      lines.push(...(s.dialogue || []));
-    });
-    allDebates.forEach((d) => {
-      lines.push(...(d.correctDialogue || []));
-    });
-
-    const secEl = this.createNovelSectionElement(ch.code, `${ch.title} (${ch.date})`, lines);
-    allSpots.forEach((s) => {
-      const ev = this.scenario.evidence[s.evidenceId];
-      if (ev) {
-        const callout = document.createElement('div');
-        callout.className = 'novel-truth-callout';
-        callout.innerHTML = `<strong>${ev.icon} ${ev.name}</strong><div>${ev.detail}</div>`;
-        secEl.appendChild(callout);
-      }
-    });
-    this.dom.modalNovelBody.appendChild(secEl);
-  }
-
-  createNovelSectionElement(code, title, lines) {
-    const wrap = document.createElement('article');
-    wrap.className = 'novel-section-block';
-    wrap.innerHTML = `
-      <div class="novel-section-header">
-        <span class="novel-section-code">${code}</span>
-        <h4 class="novel-section-title">${title}</h4>
-      </div>
-    `;
-    lines.forEach((line) => {
-      wrap.appendChild(this.createNovelLineElement(line));
-    });
-    return wrap;
-  }
-
-  createNovelLineElement(line) {
-    const p = document.createElement('div');
-    if (line.speaker === 'narrator') {
-      p.className = 'novel-line-row novel-line-narrator';
-      p.textContent = line.text;
-      return p;
-    }
-    const char = this.characters[line.speaker] || { name: line.speaker, color: '#38bdf8' };
-    p.className = 'novel-line-row';
-    p.innerHTML = `<span class="novel-line-speaker" style="color:${char.color || '#38bdf8'}">${char.name}:</span><span>${line.text}</span>`;
-    return p;
-  }
-
-  openBacklogModal() {
-    this.audio.playSe('click');
-    if (!this.dom.modalBacklog || !this.dom.modalBacklogList) return;
-    this.dom.modalBacklogList.innerHTML = '';
-
-    this.backlog.forEach((log) => {
-      const row = document.createElement('div');
-      row.className = 'backlog-item';
-      row.innerHTML = `
-        <span class="backlog-speaker">${log.speaker}:</span>
-        <span class="backlog-text">${log.text}</span>
+    allEvidence.forEach((ev) => {
+      const isUnlocked = this.state.hasEvidence(ev.id);
+      const card = document.createElement('div');
+      card.className = `evidence-card ${isUnlocked ? '' : 'locked'}`;
+      card.innerHTML = `
+        <div class="evidence-icon">${isUnlocked ? ev.icon : '🔒'}</div>
+        <div class="evidence-card-info">
+          <div class="evidence-card-name">${isUnlocked ? ev.name : '未解析の鑑識データ'}</div>
+          <div class="evidence-card-type">${isUnlocked ? ev.type : 'LOCKED'}</div>
+        </div>
       `;
-      this.dom.modalBacklogList.appendChild(row);
+      if (isUnlocked) {
+        card.addEventListener('click', () => this.showEvidenceDetail(ev));
+      }
+      this.dom.modalEvidenceList.appendChild(card);
     });
-
-    this.dom.modalBacklog.classList.remove('hidden');
-    this.dom.modalBacklogList.scrollTop = this.dom.modalBacklogList.scrollHeight;
   }
 
-  closeBacklogModal() {
-    this.dom.modalBacklog?.classList.add('hidden');
+  showEvidenceDetail(ev) {
+    if (!this.dom.modalEvidenceDetail) return;
+    this.dom.detailEvName.textContent = ev.name;
+    this.dom.detailEvType.textContent = ev.type;
+    this.dom.detailEvImg.src = ev.image;
+    this.dom.detailEvDesc.textContent = `${ev.summary}\n\n【詳細フォレンジック鑑識】\n${ev.detail}`;
+    this.dom.modalEvidenceDetail.classList.remove('hidden');
   }
 
-  toggleBacklogModal() {
-    if (this.dom.modalBacklog?.classList.contains('hidden')) {
-      this.openBacklogModal();
-    } else {
-      this.closeBacklogModal();
+  openNovelModal() {
+    this.stopAuto();
+    if (this.dom.modalNovelBody) {
+      this.dom.modalNovelBody.innerHTML = this.formatMarkdown(this.scenario.novelFullText);
     }
+    this.openModal(this.dom.modalNovel);
   }
 
   openGalleryModal() {
-    this.audio.playSe('click');
-    this.dom.modalGallery?.classList.remove('hidden');
+    this.stopAuto();
+    if (this.dom.modalGalleryBody) {
+      this.dom.modalGalleryBody.innerHTML = this.renderGalleryArchive();
+    }
+    this.openModal(this.dom.modalGallery);
   }
 
-  closeGalleryModal() {
-    this.dom.modalGallery?.classList.add('hidden');
+  renderGalleryArchive() {
+    let html = `<h3>⚡ GHOST PROTOCOL 機密フォレンジック設定資料</h3><div class="gallery-grid">`;
+    Object.values(this.scenario.evidence).forEach((ev) => {
+      const unlocked = this.state.hasEvidence(ev.id) || this.state.isGameCleared();
+      html += `
+        <div class="gallery-card">
+          <h4>${ev.icon} ${unlocked ? ev.name : '機密ファイル (未解禁)'}</h4>
+          <p class="badge">${ev.type}</p>
+          <img src="${ev.image}" alt="${ev.name}" class="gallery-img">
+          <p class="gallery-text">${unlocked ? ev.detail : '全5章を制覇して閲覧権限を獲得してください。'}</p>
+        </div>
+      `;
+    });
+    html += `</div>`;
+    return html;
   }
 
+  formatMarkdown(mdText) {
+    if (!mdText) return '';
+    return mdText
+      .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+      .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+      .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+      .replace(/^---$/gim, '<hr>')
+      .replace(/\n\n/g, '</p><p>')
+      .replace(/\n/g, '<br>');
+  }
+
+  openModal(modalEl) {
+    modalEl?.classList.remove('hidden');
+  }
+
+  closeModal(modalEl) {
+    modalEl?.classList.add('hidden');
+  }
+
+  closeAllModals() {
+    this.closeModal(this.dom.modalLog);
+    this.closeModal(this.dom.modalEvidence);
+    this.closeModal(this.dom.modalNovel);
+    this.closeModal(this.dom.modalGallery);
+    this.hideIllustration();
+  }
+
+  // 9. オーディオトグル
   toggleVoice() {
-    this.state.voiceEnabled = !this.state.voiceEnabled;
-    this.audio.voiceEnabled = this.state.voiceEnabled;
+    this.audio.voiceEnabled = !this.audio.voiceEnabled;
+    this.state.voiceEnabled = this.audio.voiceEnabled;
     this.state.savePersistentState();
-    this.updateAudioButtonStates();
-    if (!this.state.voiceEnabled) this.audio.stopVoice();
+    this.updateAudioButtons();
   }
 
   toggleSe() {
-    this.state.seEnabled = !this.state.seEnabled;
-    this.audio.seEnabled = this.state.seEnabled;
+    this.audio.seEnabled = !this.audio.seEnabled;
+    this.state.seEnabled = this.audio.seEnabled;
     this.state.savePersistentState();
-    this.updateAudioButtonStates();
-    if (this.state.seEnabled) this.audio.playSe('click');
+    this.updateAudioButtons();
   }
 
   toggleBgm() {
-    this.state.bgmEnabled = !this.state.bgmEnabled;
-    this.audio.bgmEnabled = this.state.bgmEnabled;
+    this.audio.bgmEnabled = !this.audio.bgmEnabled;
+    this.state.bgmEnabled = this.audio.bgmEnabled;
     this.state.savePersistentState();
-    this.updateAudioButtonStates();
-    if (this.state.bgmEnabled) {
-      this.audio.playBgm(this.currentScreen === 'debate' ? 'crisis' : 'title');
-    } else {
+    if (!this.audio.bgmEnabled) {
       this.audio.stopBgm();
+    } else {
+      this.audio.playBgm(
+        this.dom.screenNovel?.classList.contains('active') ? 'investigate' : 'title',
+      );
     }
+    this.updateAudioButtons();
   }
 
-  updateAudioButtonStates() {
-    this.updateAudioToggleButton(this.dom.btnToggleVoice, this.state.voiceEnabled, {
-      onLabel: ' 音声: ON',
-      offLabel: ' 音声: OFF',
-      onTitle: '音声合成: ON',
-      offTitle: '音声合成: OFF',
-    });
-    this.updateAudioToggleButton(this.dom.btnToggleSe, this.state.seEnabled, {
-      onLabel: ' SE: ON',
-      offLabel: ' SE: OFF',
-      onTitle: '効果音 (SE): ON',
-      offTitle: '効果音 (SE): OFF',
-    });
-    this.updateAudioToggleButton(this.dom.btnToggleBgm, this.state.bgmEnabled, {
-      onLabel: ' BGM: ON',
-      offLabel: ' BGM: OFF',
-      onTitle: 'BGM音楽: ON',
-      offTitle: 'BGM音楽: OFF',
-    });
-  }
-
-  updateAudioToggleButton(btn, enabled, labels) {
-    if (!btn) return;
-    btn.classList.toggle('active', Boolean(enabled));
-    const lbl = btn.querySelector('.hud-audio-label');
-    if (lbl) {
-      lbl.textContent = enabled ? labels.onLabel : labels.offLabel;
-    }
-    btn.title = enabled ? labels.onTitle : labels.offTitle;
-  }
-
-  handleResetSaveData() {
-    if (confirm('【確認】セーブデータを完全に初期化し、第1章からやり直しますか？')) {
-      this.audio.playSe('damage');
-      this.state.resetAllData();
-      this.updateTitleScreenUI();
-      alert('セーブデータを初期化しました。');
-    }
+  updateAudioButtons() {
+    this.dom.btnToggleVoice?.classList.toggle('active', this.audio.voiceEnabled);
+    this.dom.btnToggleSe?.classList.toggle('active', this.audio.seEnabled);
+    this.dom.btnToggleBgm?.classList.toggle('active', this.audio.bgmEnabled);
   }
 }
 
+// アプリケーション起動
 window.addEventListener('DOMContentLoaded', () => {
-  window.gameApp = new GameApp();
+  window.gameApp = new NovelApp();
 });
