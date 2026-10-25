@@ -82,6 +82,8 @@ class NovelApp {
 
       // カットイン
       overlayCutin: get('overlay-cutin'),
+      cutinBox: get('cutin-box'),
+      cutinSub: get('cutin-sub'),
       cutinText: get('cutin-text'),
 
       // エンディング画面
@@ -136,15 +138,60 @@ class NovelApp {
   }
 
   initDialogueEventListeners() {
-    this.dom.novelWindow?.addEventListener('click', (e) => {
-      if (e.target.closest('.dialogue-ctrl-btn')) return;
+    // 画面全体（またはノベルウィンドウ）のクリックでセリフ進行
+    this.dom.screenNovel?.addEventListener('click', (e) => {
+      if (this.shouldIgnoreNovelClick(e.target)) return;
       this.advanceDialogue();
     });
 
-    this.dom.btnDialogueAuto?.addEventListener('click', () => this.toggleAuto());
-    this.dom.btnDialogueSkip?.addEventListener('click', () => this.toggleSkip());
-    this.dom.btnDialogueLog?.addEventListener('click', () => this.openLogModal());
-    this.dom.btnCloseIllustration?.addEventListener('click', () => this.hideIllustration());
+    this.dom.btnDialogueAuto?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.toggleAuto();
+    });
+    this.dom.btnDialogueSkip?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.toggleSkip();
+    });
+    this.dom.btnDialogueLog?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.openLogModal();
+    });
+    this.dom.btnCloseIllustration?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.hideIllustration();
+    });
+
+    // タイムラインバーのチャプター直接選択
+    this.dom.chapterTimelineBar?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const stepEl = e.target.closest('.timeline-step');
+      if (!stepEl?.dataset.chapterId) return;
+      const chapterId = Number.parseInt(stepEl.dataset.chapterId, 10);
+      if (!Number.isNaN(chapterId)) {
+        this.handleTimelineStepClick(chapterId);
+      }
+    });
+  }
+
+  shouldIgnoreNovelClick(target) {
+    return Boolean(
+      target.closest('.dialogue-ctrl-btn') ||
+        target.closest('#chapter-timeline-bar') ||
+        target.closest('#dialogue-illustration-stage') ||
+        target.closest('#choice-stage') ||
+        target.closest('.modal') ||
+        target.closest('#hud'),
+    );
+  }
+
+  handleTimelineStepClick(chapterId) {
+    if (this.state.isChapterCleared(chapterId) || this.state.currentChapter >= chapterId) {
+      this.stopAuto();
+      this.stopSkip();
+      this.stopVoicePlayback();
+      this.audio.playSe('click');
+      this.loadChapter(chapterId);
+    }
   }
 
   initModalEventListeners() {
@@ -163,6 +210,15 @@ class NovelApp {
     this.dom.btnCloseNovel?.addEventListener('click', () => this.closeModal(this.dom.modalNovel));
     this.dom.btnCloseGallery?.addEventListener('click', () =>
       this.closeModal(this.dom.modalGallery),
+    );
+
+    // モーダルの背景（backdrop）タップで閉じる
+    [this.dom.modalLog, this.dom.modalEvidence, this.dom.modalNovel, this.dom.modalGallery].forEach(
+      (m) => {
+        m?.addEventListener('click', (e) => {
+          if (e.target === m) this.closeModal(m);
+        });
+      },
     );
   }
 
@@ -326,7 +382,7 @@ class NovelApp {
       let cls = 'timeline-step';
       if (isActive) cls += ' active';
       if (isCleared) cls += ' cleared';
-      html += `<span class="${cls}">${ch.number}: ${ch.date}</span>`;
+      html += `<span class="${cls}" data-chapter-id="${ch.id}" title="${ch.number} ${ch.title} (クリックで移動)">${ch.number}: ${ch.date}</span>`;
     });
     this.dom.chapterTimelineBar.innerHTML = html;
   }
@@ -580,15 +636,24 @@ class NovelApp {
 
   handleTacticOptionSelected(option) {
     this.audio.playSe('evidence_a');
+    this.triggerCutin(
+      '作戦指令承認：直ちに電脳措置を発動！',
+      '⚡ NCO TACTICAL DIRECTIVE / 作戦指示承認',
+      'tactic',
+    );
     const reaction = option.reaction || [];
     const mid = this.currentChapterData?.midDialogue || [];
     this.currentDialogueQueue = [...reaction, ...mid];
     this.queueIndex = 0;
-    setTimeout(() => this.renderCurrentLine(), 300);
+    setTimeout(() => this.renderCurrentLine(), 800);
   }
 
   handleForensicOptionSelected(option) {
-    this.triggerCutin('客観的反証があります！');
+    this.triggerCutin(
+      '欺瞞工作を論破！ 侵入痕跡・因果関係立証！',
+      '⚡ FORENSIC PROOF ESTABLISHED / 電脳鑑識立証',
+      'forensic',
+    );
     this.audio.playCutin();
 
     const reaction = option.reaction || [];
@@ -601,7 +666,7 @@ class NovelApp {
       this.updateEvidenceHud();
     }
 
-    setTimeout(() => this.renderCurrentLine(), 700);
+    setTimeout(() => this.renderCurrentLine(), 800);
   }
 
   // 6.1 最終証拠連結 (FINAL DEDUCTION) コントローラー
@@ -690,7 +755,11 @@ class NovelApp {
 
   handleDeductionSuccess(step) {
     this.dom.choiceStage?.classList.add('hidden');
-    this.triggerCutin('真実は全て暴かれた！');
+    this.triggerCutin(
+      '全証拠連結完了！ 能動的サイバー防御発動承認！',
+      '⚡ ACTIVE CYBER DEFENSE AUTHORIZED / 発動第1号要請',
+      'gold',
+    );
     this.audio.playCutin();
 
     this.deductionStepIndex += 1;
@@ -719,9 +788,18 @@ class NovelApp {
     hintBanner.textContent = `❌ 不正解です！ 【ヒント】${step.hint}`;
   }
 
-  triggerCutin(text = '客観的反証があります！') {
+  triggerCutin(
+    text = '欺瞞工作を論破！ 侵入痕跡・因果関係立証！',
+    subText = '⚡ FORENSIC PROOF ESTABLISHED / 電脳鑑識立証',
+    type = 'forensic',
+  ) {
     if (!this.dom.overlayCutin) return;
+    if (this.dom.cutinSub) this.dom.cutinSub.textContent = subText;
     if (this.dom.cutinText) this.dom.cutinText.textContent = text;
+    if (this.dom.cutinBox) {
+      this.dom.cutinBox.className = `cutin-box ${type}`;
+    }
+
     this.dom.overlayCutin.classList.remove('hidden');
     this.dom.overlayCutin.classList.remove('active');
     void this.dom.overlayCutin.offsetWidth; // 強制リフロー

@@ -524,10 +524,13 @@ body {
 #screen-novel {
   position: relative;
   flex: 1;
-  display: flex;
   flex-direction: column;
   overflow: hidden;
   min-height: calc(100dvh - 58px);
+}
+
+#screen-novel:not(.active) .novel-window {
+  display: none !important;
 }
 
 /* タイムライン作戦マップ（INCIDENT TIMELINE BUS） */
@@ -558,6 +561,14 @@ body {
   white-space: nowrap;
   letter-spacing: 0.04em;
   transition: all 0.22s ease;
+  cursor: pointer;
+  user-select: none;
+}
+
+.timeline-step:hover {
+  border-color: var(--nco-cyan);
+  color: #ffffff;
+  background: rgba(0, 240, 255, 0.12);
 }
 
 .timeline-step.active {
@@ -1168,34 +1179,100 @@ body {
 }
 
 .cutin-box {
-  width: 92vw;
-  max-width: 560px;
-  background: linear-gradient(135deg, rgba(244, 63, 94, 0.96), rgba(8, 14, 28, 0.98));
-  border: 2px solid #ffffff;
-  box-shadow: 0 0 50px rgba(244, 63, 94, 0.85);
-  padding: 20px 28px;
-  transform: skew(-6deg);
+  width: 94vw;
+  max-width: 620px;
+  background: linear-gradient(135deg, rgba(8, 20, 48, 0.97) 0%, rgba(2, 6, 16, 0.99) 100%);
+  border: 2px solid var(--nco-cyan);
+  box-shadow: 0 0 54px var(--nco-cyan-glow);
+  padding: 22px 30px;
+  border-radius: 6px;
   text-align: center;
   box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
+  animation: cutinZoom 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes cutinZoom {
+  0% {
+    transform: scale(0.88);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.cutin-box::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--nco-cyan), transparent);
+}
+
+.cutin-box::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--nco-cyan), transparent);
+}
+
+/* タクティカル作戦承認モード（Emerald） */
+.cutin-box.tactic {
+  border-color: var(--nco-emerald);
+  box-shadow: 0 0 54px var(--nco-emerald-glow);
+}
+
+.cutin-box.tactic::before,
+.cutin-box.tactic::after {
+  background: linear-gradient(90deg, transparent, var(--nco-emerald), transparent);
+}
+
+.cutin-box.tactic .cutin-sub {
+  color: var(--nco-emerald);
+}
+
+/* 能動的サイバー防御・真実連結モード（Gold/Amber） */
+.cutin-box.gold {
+  border-color: var(--nco-amber);
+  box-shadow: 0 0 54px var(--nco-amber-glow);
+}
+
+.cutin-box.gold::before,
+.cutin-box.gold::after {
+  background: linear-gradient(90deg, transparent, var(--nco-amber), transparent);
+}
+
+.cutin-box.gold .cutin-sub {
+  color: var(--nco-amber);
 }
 
 .cutin-sub {
   font-family: var(--font-hud);
-  font-size: 0.82rem;
+  font-size: clamp(0.75rem, 2.8vw, 0.92rem);
   font-weight: 800;
-  letter-spacing: 0.12em;
-  color: #ffffff;
-  margin-bottom: 4px;
+  letter-spacing: 0.16em;
+  color: var(--nco-cyan);
+  margin-bottom: 6px;
+  text-transform: uppercase;
 }
 
 .cutin-text {
   font-family: var(--font-hud);
-  font-size: clamp(1.25rem, 5.6vw, 2.3rem);
+  font-size: clamp(1.2rem, 5vw, 2.1rem);
   font-weight: 900;
   color: #ffffff;
   white-space: nowrap;
-  letter-spacing: 0.05em;
-  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.9);
+  letter-spacing: 0.06em;
+  text-shadow: 0 0 20px rgba(0, 240, 255, 0.6);
+  line-height: 1.3;
 }
 
 /* ==========================================================================
