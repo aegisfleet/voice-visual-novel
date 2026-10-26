@@ -72,7 +72,7 @@ window.SCENARIO_DATA = {
       summary:
         'ハニーポット端末の重要ファイル内に潜伏させたカナリアが発火し、偽装プロキシの背後を捉えた追跡記録。',
       detail:
-        'Chapter 3の \\\\tsclient\\C 逆流調査時、ハニーポット端末のダミーLogin Data内に仕込まれた特殊なカナリアトークン（Canary Token）。攻撃者が自前の攻撃インフラで解凍・照会した瞬間、逆探知ビーコンが発火。多段プロキシの奥に隠されていた真のC2サーバー（91.240.118.174）と、26,739台の自宅PCへ送信予定だったランサムウェア配信キューをピンポイントで特定した決定打。',
+        'ハニーポット端末への \\\\tsclient\\C 逆流潜入調査時、ダミーLogin Data内に仕込まれた特殊なカナリアトークン（Canary Token）。攻撃者が自前の攻撃インフラで解凍・照会した瞬間、逆探知ビーコンが発火。多段プロキシの奥に隠されていた真のC2サーバー（91.240.118.174）と、26,739台の自宅PCへ送信予定だったランサムウェア配信キューをピンポイントで特定した決定打。',
     },
   },
   prologue: {
@@ -132,6 +132,10 @@ window.SCENARIO_DATA = {
         text: '26,739台の全停止……！ 日本の金融インフラを揺るがす未曾有のインシデントになるぞ……！',
       },
       {
+        speaker: 'narrator',
+        text: '深夜の死闘の末、運命の午前4時00分が訪れた。対策本部は苦渋の決断として、全仮想マシンの強制回線切断に踏み切った。',
+      },
+      {
         speaker: 'aria',
         sprite: 'aria',
         text: 'マスター、シャットダウンが執行されました。全サーバーが沈黙……ですが、不吉なデータを受信しました！',
@@ -151,7 +155,7 @@ window.SCENARIO_DATA = {
       {
         speaker: 'aria',
         sprite: 'aria',
-        text: '了解しました、マスター。26,739台の亡霊（ゴースト）との、命を削る6日間の電脳戦争の幕開けです——！',
+        text: '了解しました、マスター。26,739台の亡霊（ゴースト）との、命を削る電脳戦争の幕開けです——！',
       },
     ],
   },
@@ -399,7 +403,7 @@ window.SCENARIO_DATA = {
           speaker: 'aria',
           sprite: 'aria',
           illustration: 'assets/evidence/sinkhole.jpg',
-          text: '核心鑑識データ『AD侵入痕跡・取引プロトコル生ログ』を取得しました。第1章の真実が立証されました！',
+          text: '核心鑑識データ『AD侵入痕跡・取引プロトコル生ログ』を取得しました。口座焼却の真相が完全に立証されました！',
         },
         {
           speaker: 'takamiya',
@@ -440,7 +444,7 @@ window.SCENARIO_DATA = {
       introDialogue: [
         {
           speaker: 'narrator',
-          text: '10月22日夜。企業側は第2報を緊急発表し、ユーザーに対して直ちに金融取引口座のパスワードを変更するよう強く呼びかけた。「これで口座破壊は食い止められるはずだ」。対策室に漂った安堵の空気。',
+          text: '第2報の緊急発表から一日が経過した10月22日夜。ユーザーによるパスワード変更が進み、「これで口座破壊は食い止められるはずだ」と対策室に安堵の空気が漂っていた。',
         },
         {
           speaker: 'narrator',
@@ -644,7 +648,7 @@ window.SCENARIO_DATA = {
           speaker: 'aria',
           sprite: 'aria',
           illustration: 'assets/evidence/cdn_network.png',
-          text: '核心鑑識データ『取引通信ソケット監査票＆脅迫添付Excel』を取得しました。第2章の真実が立証されました！',
+          text: '核心鑑識データ『取引通信ソケット監査票＆脅迫添付Excel』を取得しました。永続ソケットと偽旗工作の真相が立証されました！',
         },
         {
           speaker: 'narrator',
@@ -741,7 +745,6 @@ window.SCENARIO_DATA = {
                 {
                   speaker: 'aria',
                   sprite: 'aria',
-                  illustration: 'assets/evidence/honeypot.jpg',
                   text: 'ビンゴです！ 自宅PCからVPSに接続した瞬間、VPS側から自宅PCの全ドライブが『\\\\tsclient\\C』として自動認識されていました！',
                 },
                 {
@@ -848,7 +851,7 @@ window.SCENARIO_DATA = {
           speaker: 'aria',
           sprite: 'aria',
           illustration: 'assets/evidence/honeypot.jpg',
-          text: '核心鑑識データ『クライアント接続構成ファイル＆共有API証跡』を取得しました。第3章の真実が立証されました！',
+          text: '核心鑑識データ『クライアント接続構成ファイル＆共有API証跡』を取得しました。リバースRDPの真相が立証されました！',
         },
         {
           speaker: 'narrator',
@@ -1055,7 +1058,6 @@ window.SCENARIO_DATA = {
                 {
                   speaker: 'aria',
                   sprite: 'aria',
-                  illustration: 'assets/evidence/active_memory.jpg',
                   text: '素晴らしい着眼点です！ Investor Passwordなら出金権限なしでサーバー側のミリ秒取引生ログのみを客観監査できます！ VPSの侵入時刻と突合すれば、1円の狂いもなく不正取引だけを特定可能です！',
                 },
                 {
@@ -1082,7 +1084,7 @@ window.SCENARIO_DATA = {
           speaker: 'aria',
           sprite: 'aria',
           illustration: 'assets/evidence/active_memory.jpg',
-          text: '核心鑑識データ『顧客実損算定マトリクス＆API照会監査票』を取得しました。第4章の真実が立証されました！',
+          text: '核心鑑識データ『顧客実損算定マトリクス＆API照会監査票』を取得しました。四重脅迫無力化の論拠が立証されました！',
         },
         {
           speaker: 'narrator',
@@ -1196,7 +1198,7 @@ window.SCENARIO_DATA = {
             {
               speaker: 'aria',
               sprite: 'aria',
-              text: 'マスター！！ 緊急通信を捕捉しました！ Chapter 3でハニーポット端末のダミーLogin Dataに仕込んだ【逆探知用カナリアトークン】から、DNS/HTTP逆探知コールバックが着弾しました！！',
+              text: 'マスター！！ 緊急通信を捕捉しました！ あのハニーポット端末のダミーLogin Dataに仕込んだ【逆探知用カナリアトークン】から、DNS/HTTP逆探知コールバックが着弾しました！！',
             },
             {
               speaker: 'kei',
@@ -1242,7 +1244,7 @@ window.SCENARIO_DATA = {
             {
               id: 'opt5_c2_node_b',
               label: '185.220.101.5 (Bucharest, RO) を真のC2として標的指定する',
-              description: '第2章の脅迫メールでも観測された185.220.101系のルーマニア通信ノード。',
+              description: '以前の脅迫メールでも観測された185.220.101系のルーマニア通信ノード。',
               isCorrect: false,
               damagePenalty: 10,
               retryPrompt:
@@ -1250,7 +1252,7 @@ window.SCENARIO_DATA = {
               reaction: [
                 {
                   speaker: 'kei',
-                  text: 'ルーマニアの 185.220.101.5 はどうだ？ 第2章のメールでも使われていたIP帯だぞ！',
+                  text: 'ルーマニアの 185.220.101.5 はどうだ？ 以前の脅迫メールでも使われていたIP帯だぞ！',
                 },
                 {
                   speaker: 'aria',
@@ -1277,7 +1279,7 @@ window.SCENARIO_DATA = {
                 },
                 {
                   speaker: 'kei',
-                  text: 'Chapter 3でリスクを冒してカナリアを仕込ませた甲斐があったな……！ これで最後のピースが揃った！',
+                  text: 'あの時、リスクを冒してカナリアを仕込ませた甲斐があったな……！ これで最後のピースが揃った！',
                 },
               ],
             },
@@ -1374,7 +1376,7 @@ window.SCENARIO_DATA = {
             reaction: [
               {
                 speaker: 'kei',
-                text: 'これが最後の決定打だ！ Chapter 3でハニーポットに仕込んだ【ハニーポット端末・外部通信ビーコン記録】！',
+                text: 'これが最後の決定打だ！ あの逆流潜入調査でハニーポットに仕込んだ【ハニーポット端末・外部通信ビーコン記録】！',
               },
               {
                 speaker: 'aria',
@@ -1434,7 +1436,7 @@ window.SCENARIO_DATA = {
       },
       {
         speaker: 'narrator',
-        text: 'カーテンを開けると、東京の空が白み始めていた。26,739台の沈黙から始まった6日間の電脳金融戦争は、ここに静かなる勝利で幕を閉じたのである。',
+        text: 'カーテンを開けると、東京の空が白み始めていた。26,739台の沈黙から始まった足掛け6日間の電脳金融戦争は、ここに静かなる勝利で幕を閉じたのである。',
       },
     ],
   },
@@ -1514,7 +1516,7 @@ window.SCENARIO_DATA = {
 ケイたちはこれまで手に入れた6つの鑑識証拠を結集し、最後の推論連結（FINAL DEDUCTION）を挑む。
 第1に、企業の100%任意ログ提供と警職法6条の2（重大危害防止）による職権認知を立証して制度の壁を突破。
 第2に、リバースRDP（drivestoredirect:s:*）の接続経路を暴いて物理パイプラインを遮断。
-第3に、Chapter 3でケイが自らリスクを取って敵に持ち帰らせた「カナリア逆探知ビーコン」が敵の解凍によって見事に発火！ 多段プロキシをバイパスし、真のC2サーバーIP（91.240.118.174）とランサムウェア配信キューをピンポイントで捕捉！
+第3に、逆流潜入調査の現場でケイが自らリスクを取って敵に持ち帰らせた「カナリア逆探知ビーコン」が敵の解凍によって見事に発火！ 多段プロキシをバイパスし、真のC2サーバーIP（91.240.118.174）とランサムウェア配信キューをピンポイントで捕捉！
 全証拠の連結を認めたクロダ統括官の号令のもと、警察庁特捜隊とNCOによる史上初の「非公然アクセス・無害化措置」が秒読み段階で断行された。
 
 ---
