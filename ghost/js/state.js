@@ -30,9 +30,51 @@ class GameState {
     this.selectedChoices = {};
     this.collectedEvidence = new Set();
     this.clearedChapters = new Set();
+    this.defenseRate = 100; // 残存資産防衛率 (100%スタート、ミスで減少)
     this.voiceEnabled = true;
     this.seEnabled = true;
     this.bgmEnabled = true;
+  }
+
+  // 防衛率の減算（ペナルティ適用）
+  applyDefensePenalty(amount = 10) {
+    this.defenseRate = Math.max(0, this.defenseRate - amount);
+    this.saveSessionProgress();
+    return this.defenseRate;
+  }
+
+  // クリアランク判定 (S / A / B / C)
+  getDefenseRank() {
+    if (this.defenseRate >= 90) {
+      return {
+        rank: 'S',
+        title: '完全電脳防衛（Sランク）',
+        color: '#10b981',
+        desc: '卓越した鑑識眼と判断力により、資産流出を最小限に抑え込み、26,739台の救出作戦を伝説的成功へと導いた！',
+      };
+    }
+    if (this.defenseRate >= 75) {
+      return {
+        rank: 'A',
+        title: '優秀防衛作戦（Aランク）',
+        color: '#06b6d4',
+        desc: '軽微な被害とタイムロスを被りながらも、冷静な論戦と鑑識で攻撃者の四重恐喝を瓦解させた！',
+      };
+    }
+    if (this.defenseRate >= 60) {
+      return {
+        rank: 'B',
+        title: '電脳戦辛勝（Bランク）',
+        color: '#f59e0b',
+        desc: '敵の偽旗工作とブラフに翻弄され被害が拡大したものの、土壇場のカナリア逆探知で反撃を成し遂げた。',
+      };
+    }
+    return {
+      rank: 'C',
+      title: '薄氷の防衛（Cランク）',
+      color: '#ef4444',
+      desc: '多くの口座と資産が犠牲となり炎上を招いたが、国家サイバー防御の発動により最悪の全滅は免れた。',
+    };
   }
 
   // セッション進行（オートセーブ）の保存
@@ -46,6 +88,7 @@ class GameState {
         selectedChoices: this.selectedChoices,
         collectedEvidence: Array.from(this.collectedEvidence),
         clearedChapters: Array.from(this.clearedChapters),
+        defenseRate: this.defenseRate,
         savedAt: Date.now(),
       };
       localStorage.setItem(this.sessionKey, JSON.stringify(sessionData));
@@ -76,6 +119,7 @@ class GameState {
       this.selectedChoices = data.selectedChoices || {};
       this.collectedEvidence = new Set(data.collectedEvidence || []);
       this.clearedChapters = new Set(data.clearedChapters || []);
+      this.defenseRate = typeof data.defenseRate === 'number' ? data.defenseRate : 100;
       return data;
     } catch (e) {
       console.warn('Failed to load session progress:', e);

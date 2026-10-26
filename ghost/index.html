@@ -50,6 +50,7 @@
       <div class="hud-left">
         <span id="hud-location-badge" class="badge">SECURE TERMINAL</span>
         <span id="hud-loop-badge" class="badge loop-badge"><span class="phase-title">CHAPTER 1</span><span class="phase-desc-text">: 26,739台の沈黙</span></span>
+        <span id="hud-defense-meter" class="badge defense-badge" title="残存資産防衛率（誤判断で減少）"><span class="defense-icon">🛡️</span> 防衛率: <strong id="hud-defense-val">100%</strong></span>
       </div>
       <div class="hud-right">
         <button type="button" id="btn-hud-novel" class="hud-btn" title="全編小説＆事件真相レポートを読む [N]">
@@ -157,6 +158,18 @@
               <span id="choice-badge" class="choice-badge">⚡ FORENSIC DECISION / 鑑識の決断</span>
               <h2 id="choice-question" class="choice-question">設問テキスト</h2>
             </div>
+            <div id="choice-log-container" class="choice-log-container hidden">
+              <div class="log-terminal-header">
+                <span class="log-terminal-dots">
+                  <span class="log-dot red"></span>
+                  <span class="log-dot yellow"></span>
+                  <span class="log-dot green"></span>
+                </span>
+                <span id="choice-log-title" class="log-terminal-title">FORENSIC TELEMETRY</span>
+              </div>
+              <pre id="choice-log-content" class="choice-log-content"></pre>
+            </div>
+            <div id="choice-retry-banner" class="choice-retry-banner hidden"></div>
             <div id="choice-options" class="choice-options"></div>
           </div>
         </div>
@@ -182,6 +195,7 @@
       <!-- 3. エンディング画面 -->
       <section id="screen-ending" class="screen">
         <div id="ending-icon" class="ending-icon">🌟</div>
+        <div id="ending-rank-badge" class="ending-rank-badge hidden"></div>
         <h2 id="ending-title" class="ending-title">エンディングタイトル</h2>
         <div id="ending-sub" class="ending-sub">サブタイトル</div>
         <div id="ending-unlocked-banner" class="ending-unlocked-banner hidden"></div>

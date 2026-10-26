@@ -20,6 +20,7 @@ class NovelApp {
     this.deductionStepIndex = 0;
     this.selectedDeductionEvidence = null;
     this.isFinalDeductionComplete = false;
+    this.pendingRetryChoice = null;
 
     this.bindDomElements();
     this.initEventListeners();
@@ -35,6 +36,8 @@ class NovelApp {
       hud: get('hud'),
       hudLocationBadge: get('hud-location-badge'),
       hudLoopBadge: get('hud-loop-badge'),
+      hudDefenseMeter: get('hud-defense-meter'),
+      hudDefenseVal: get('hud-defense-val'),
       btnHudNovel: get('btn-hud-novel'),
       btnEvidenceBag: get('btn-evidence-bag'),
       evidenceCount: get('evidence-count'),
@@ -68,6 +71,10 @@ class NovelApp {
       choiceStage: get('choice-stage'),
       choiceBadge: get('choice-badge'),
       choiceQuestion: get('choice-question'),
+      choiceLogContainer: get('choice-log-container'),
+      choiceLogTitle: get('choice-log-title'),
+      choiceLogContent: get('choice-log-content'),
+      choiceRetryBanner: get('choice-retry-banner'),
       choiceOptions: get('choice-options'),
 
       // 会話ノベルウィンドウ
@@ -88,6 +95,7 @@ class NovelApp {
 
       // エンディング画面
       screenEnding: get('screen-ending'),
+      endingRankBadge: get('ending-rank-badge'),
       endingTitle: get('ending-title'),
       endingSub: get('ending-sub'),
       endingDesc: get('ending-desc'),
@@ -335,6 +343,7 @@ class NovelApp {
     this.state.currentChapter = chapterNum;
     this.updateTimelineBar();
     this.updateEvidenceHud();
+    this.updateDefenseHud();
 
     if (chapterNum === 0) {
       // プロローグ
@@ -390,6 +399,21 @@ class NovelApp {
   updateEvidenceHud() {
     if (this.dom.evidenceCount) {
       this.dom.evidenceCount.textContent = this.state.collectedEvidence.size;
+    }
+  }
+
+  updateDefenseHud() {
+    const rate = this.state.defenseRate;
+    if (this.dom.hudDefenseVal) {
+      this.dom.hudDefenseVal.textContent = `${rate}%`;
+    }
+    if (this.dom.hudDefenseMeter) {
+      this.dom.hudDefenseMeter.classList.remove('warning', 'danger');
+      if (rate < 60) {
+        this.dom.hudDefenseMeter.classList.add('danger');
+      } else if (rate < 80) {
+        this.dom.hudDefenseMeter.classList.add('warning');
+      }
     }
   }
 
@@ -544,6 +568,13 @@ class NovelApp {
 
   // 6. キュー終了処理＆体験型選択肢
   handleEndOfQueue() {
+    if (this.pendingRetryChoice) {
+      const retry = this.pendingRetryChoice;
+      this.pendingRetryChoice = null;
+      this.showChoice(retry.choiceData, retry.type, retry.retryPrompt);
+      return;
+    }
+
     const chapterNum = this.state.currentChapter;
 
     if (chapterNum === 0) {
@@ -563,23 +594,32 @@ class NovelApp {
     }
   }
 
+  getChapterChoiceSteps(chapterData) {
+    if (Array.isArray(chapterData.choiceSteps)) {
+      return chapterData.choiceSteps;
+    }
+    const steps = [];
+    if (chapterData.tacticChoice) {
+      steps.push({ ...chapterData.tacticChoice, type: 'tactic' });
+    }
+    if (chapterData.choice) {
+      steps.push({ ...chapterData.choice, type: 'forensic' });
+    }
+    return steps;
+  }
+
   handleChapterProgress(chapterNum) {
     const chapterData = this.currentChapterData;
     if (!chapterData) return;
 
-    // 1. 中盤の作戦判断選択肢 (tacticChoice)
-    if (chapterData.tacticChoice && !this.hasChosenForChapter(chapterData.tacticChoice.id)) {
-      this.showChoice(chapterData.tacticChoice, 'tactic');
+    const steps = this.getChapterChoiceSteps(chapterData);
+    const nextStep = steps.find((s) => !this.hasChosenForChapter(s.id));
+    if (nextStep) {
+      this.showChoice(nextStep, nextStep.type || 'forensic');
       return;
     }
 
-    // 2. 終盤の核心鑑識選択肢 (choice)
-    if (chapterData.choice && !this.hasChosenForChapter(chapterData.choice.id)) {
-      this.showChoice(chapterData.choice, 'forensic');
-      return;
-    }
-
-    // 3. Chapter 5 最終証拠連結フェーズ (finalDeduction)
+    // Chapter 5 最終証拠連結フェーズ (finalDeduction)
     if (chapterNum === 5 && chapterData.finalDeduction && !this.isFinalDeductionComplete) {
       this.startFinalDeduction(chapterData.finalDeduction);
       return;
@@ -592,12 +632,21 @@ class NovelApp {
     return Boolean(this.state.selectedChoices[choiceId]);
   }
 
-  showChoice(choiceData, type = 'forensic') {
+  showChoice(choiceData, type = 'forensic', retryMessage = null) {
     this.stopAuto();
     this.stopSkip();
     this.stopVoicePlayback();
 
     if (!this.dom.choiceStage) return;
+    this.setupChoiceHeader(choiceData, type);
+    this.setupChoiceLogBox(choiceData);
+    this.setupChoiceRetryBanner(retryMessage);
+    this.renderChoiceOptions(choiceData, type);
+
+    this.dom.choiceStage.classList.remove('hidden');
+  }
+
+  setupChoiceHeader(choiceData, type) {
     if (this.dom.choiceBadge) {
       this.dom.choiceBadge.textContent =
         choiceData.badge ||
@@ -605,7 +654,36 @@ class NovelApp {
           ? '⚡ TACTICAL DECISION / 作戦判断'
           : '⚡ FORENSIC DECISION / 鑑識の決断');
     }
-    this.dom.choiceQuestion.textContent = choiceData.question;
+    if (this.dom.choiceQuestion) {
+      this.dom.choiceQuestion.textContent = choiceData.question;
+    }
+  }
+
+  setupChoiceLogBox(choiceData) {
+    if (choiceData.logBox && this.dom.choiceLogContainer) {
+      if (this.dom.choiceLogTitle) {
+        this.dom.choiceLogTitle.textContent = choiceData.logBox.title || 'FORENSIC TELEMETRY';
+      }
+      if (this.dom.choiceLogContent) {
+        this.dom.choiceLogContent.textContent = choiceData.logBox.content || '';
+      }
+      this.dom.choiceLogContainer.classList.remove('hidden');
+    } else {
+      this.dom.choiceLogContainer?.classList.add('hidden');
+    }
+  }
+
+  setupChoiceRetryBanner(retryMessage) {
+    if (retryMessage && this.dom.choiceRetryBanner) {
+      this.dom.choiceRetryBanner.textContent = retryMessage;
+      this.dom.choiceRetryBanner.classList.remove('hidden');
+    } else {
+      this.dom.choiceRetryBanner?.classList.add('hidden');
+    }
+  }
+
+  renderChoiceOptions(choiceData, type) {
+    if (!this.dom.choiceOptions) return;
     this.dom.choiceOptions.innerHTML = '';
 
     choiceData.options.forEach((opt) => {
@@ -619,50 +697,83 @@ class NovelApp {
       btn.addEventListener('click', () => this.handleOptionSelected(choiceData, opt, type));
       this.dom.choiceOptions.appendChild(btn);
     });
-
-    this.dom.choiceStage.classList.remove('hidden');
   }
 
   handleOptionSelected(choiceData, option, type = 'forensic') {
     this.dom.choiceStage?.classList.add('hidden');
+
+    if (option.isCorrect === false) {
+      this.handleIncorrectOption(choiceData, option, type);
+      return;
+    }
+
+    this.pendingRetryChoice = null;
     this.state.recordChoice(choiceData.id, option.id);
 
     if (type === 'tactic') {
-      this.handleTacticOptionSelected(option);
+      this.handleTacticOptionSelected(choiceData, option);
     } else {
-      this.handleForensicOptionSelected(option);
+      this.handleForensicOptionSelected(choiceData, option);
     }
   }
 
-  handleTacticOptionSelected(option) {
+  handleIncorrectOption(choiceData, option, type) {
+    const penalty = option.damagePenalty || 10;
+    this.state.applyDefensePenalty(penalty);
+    this.updateDefenseHud();
+    this.audio.playSe('evidence_b');
+
+    this.pendingRetryChoice = {
+      choiceData,
+      type,
+      retryPrompt:
+        option.retryPrompt || `❌ 調査空振り：残存資産防衛率 -${penalty}%！ 別のアプローチを選べ！`,
+    };
+
+    const reaction = option.reaction || [
+      {
+        speaker: 'aria',
+        sprite: 'aria',
+        text: 'マスター、その仮説では異常を立証できません！ 調査時間を空費してしまいました！',
+      },
+    ];
+    this.currentDialogueQueue = [...reaction];
+    this.queueIndex = 0;
+    setTimeout(() => this.renderCurrentLine(), 200);
+  }
+
+  handleTacticOptionSelected(choiceData, option) {
     this.audio.playSe('evidence_a');
     this.triggerCutin(
-      '作戦指令承認：直ちに電脳措置を発動！',
-      '⚡ NCO TACTICAL DIRECTIVE / 作戦指示承認',
+      choiceData.cutinText || '作戦指令承認：直ちに電脳措置を発動！',
+      choiceData.cutinSub || '⚡ NCO TACTICAL DIRECTIVE / 作戦指示承認',
       'tactic',
     );
     const reaction = option.reaction || [];
-    const mid = this.currentChapterData?.midDialogue || [];
-    this.currentDialogueQueue = [...reaction, ...mid];
+    const nextDialogue = choiceData.nextDialogue || this.currentChapterData?.midDialogue || [];
+    this.currentDialogueQueue = [...reaction, ...nextDialogue];
     this.queueIndex = 0;
     setTimeout(() => this.renderCurrentLine(), 800);
   }
 
-  handleForensicOptionSelected(option) {
+  handleForensicOptionSelected(choiceData, option) {
     this.triggerCutin(
-      '欺瞞工作を論破！ 侵入痕跡・因果関係立証！',
-      '⚡ FORENSIC PROOF ESTABLISHED / 電脳鑑識立証',
+      choiceData.cutinText || '欺瞞工作を論破！ 侵入痕跡・因果関係立証！',
+      choiceData.cutinSub || '⚡ FORENSIC PROOF ESTABLISHED / 電脳鑑識立証',
       'forensic',
     );
     this.audio.playCutin();
 
     const reaction = option.reaction || [];
-    const resolution = this.currentChapterData?.resolution || [];
-    this.currentDialogueQueue = [...reaction, ...resolution];
+    const nextDialogue = choiceData.nextDialogue || this.currentChapterData?.resolution || [];
+    this.currentDialogueQueue = [...reaction, ...nextDialogue];
     this.queueIndex = 0;
 
-    if (this.currentChapterData?.requiredEvidence) {
-      this.state.addEvidence(this.currentChapterData.requiredEvidence);
+    const rewardEv =
+      choiceData.rewardEvidence ||
+      (choiceData.isFinalStep ? this.currentChapterData?.requiredEvidence : null);
+    if (rewardEv) {
+      this.state.addEvidence(rewardEv);
       this.updateEvidenceHud();
     }
 
@@ -828,16 +939,27 @@ class NovelApp {
     this.audio.playBgm('truth');
     this.switchScreen('ending');
 
+    const rankInfo = this.state.getDefenseRank();
+
+    if (this.dom.endingRankBadge) {
+      this.dom.endingRankBadge.className = `ending-rank-badge rank-${rankInfo.rank.toLowerCase()}`;
+      this.dom.endingRankBadge.innerHTML = `
+        <div class="rank-char">${rankInfo.rank}</div>
+        <div class="rank-title">${rankInfo.title}</div>
+        <div class="rank-defense">残存資産防衛率: <strong>${this.state.defenseRate}%</strong></div>
+      `;
+      this.dom.endingRankBadge.classList.remove('hidden');
+    }
+
     if (this.dom.endingTitle) {
-      this.dom.endingTitle.textContent = 'TRUE END: 静寂の反撃と夜明け';
+      this.dom.endingTitle.textContent = `TRUE END: 静寂の反撃と夜明け [${rankInfo.rank} RANK]`;
     }
     if (this.dom.endingSub) {
       this.dom.endingSub.textContent =
         '能動的サイバー防御「公表なき発動第1号」達成・26,739台の救出';
     }
     if (this.dom.endingDesc) {
-      this.dom.endingDesc.textContent =
-        '四重恐喝の無力化、リバースRDPの看破、そしてカナリアトークンによる真C2の特定と非公然無害化措置の完遂。26,739人の日常と資産は守り抜かれた。';
+      this.dom.endingDesc.textContent = `${rankInfo.desc} 四重恐喝の無力化、リバースRDPの看破、そしてカナリアトークンによる真C2の特定と非公然無害化措置の完遂。26,739人の日常と資産は守り抜かれた。`;
     }
     this.dom.endingUnlockedBanner?.classList.remove('hidden');
     if (this.dom.endingUnlockedBanner) {

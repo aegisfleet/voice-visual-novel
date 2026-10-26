@@ -10,68 +10,69 @@ window.SCENARIO_DATA = {
   evidence: {
     ad_demofastloss_log: {
       id: 'ad_demofastloss_log',
-      name: 'AD侵害ログと『DEMOFASTLOSS』口座焼却記録',
+      name: 'AD侵入痕跡・取引プロトコル生ログ',
       icon: '🔥',
       image: 'assets/evidence/sinkhole.jpg',
-      type: '【Chapter 1 核心鑑識】AD管理基盤侵害・往復注文ログ',
+      type: '【Chapter 1 核心鑑識】AD基盤侵害・ミリ秒注文パラメータ',
       summary:
-        '攻撃者が資金を出金せず、高スプレッド往復注文『DEMOFASTLOSS』で口座残高を2秒で蒸発させた恐喝ログ。',
+        '出金制限を逆手に取り、高スプレッド通貨の即時往復売買で口座残高を蒸発させた恐喝注文テレメトリ。',
       detail:
-        '8月31日に取得された偽装ドメイン coronamgt-c2.net を起点にActive Directory管理プレーンが侵入され、26,739台のVPSに保管されていたFT4/FT5（世界標準の金融自動売買端末）の認証情報が窃取された。金融機関には『本人名義口座への出金制限』と『Web二段階認証』があるため攻撃者は直接出金できない。そのため超高スプレッドの即時往復注文（DEMOFASTLOSS）で顧客資産を意図的に焼き払い、インフラ企業への身代金要求の人質に変えた決定打の鑑識記録。',
+        '8月31日に取得された偽装ドメイン coronamgt-c2.net を起点にActive Directory管理プレーンが侵入され、26,739台のVPSに保管されていたFT4/FT5（世界標準の金融自動売買端末）の認証情報が窃取された。金融機関には本人名義口座への出金制限とWeb二段階認証があるため攻撃者は直接出金できない。そのため超高スプレッドの即時往復注文（DEMOFASTLOSS）で顧客資産を意図的に焼き払い、インフラ企業への身代金要求の人質に変えた決定打の鑑識記録。',
     },
     persistent_session_trap: {
       id: 'persistent_session_trap',
-      name: 'FT4/FT5永続セッションと『工作表』偽旗工作ファイル',
+      name: '取引通信ソケット監査票＆脅迫添付Excel',
       icon: '🌐',
       image: 'assets/evidence/cdn_network.png',
       type: '【Chapter 2 核心鑑識】永続ソケット監査・脅迫メールメタデータ',
       summary:
-        'パスワード変更後も既存TCPソケットが維持されるFT4仕様と、中国語KPS Office痕跡を持つ偽旗工作データ。',
+        'パスワード変更後も維持されるTCP接続仕様と、内部XMLに偽旗工作の痕跡を残した脅迫ファイル。',
       detail:
         '第2報でユーザーにパスワード変更を求めた後も不正取引が続いた原因は、FT4/FT5プロトコルが既存の確立済みTCP接続（ソケット）をサーバー側で強制切断（Session Kill）しない限り注文を受け続ける仕様にあった。また、ロシア系を騙る攻撃者『Hacking Team (Dmitry Orlov)』が被害者懐柔のために送ってきた集団訴訟煽動Excelの内部XMLには、中国語版KPS Office特有の『工作表』というシート名が残存しており、多国籍偽旗工作（False Flag）が暴かれた。',
     },
     reverse_rdp_tsclient: {
       id: 'reverse_rdp_tsclient',
-      name: 'drivestoredirect:s:* と \\\\tsclient\\C 逆流侵害証跡',
+      name: 'クライアント接続構成ファイル＆共有API証跡',
       icon: '💻',
       image: 'assets/evidence/honeypot.jpg',
-      type: '【Chapter 3 核心鑑識】リバースRDP設定・漏洩ファイル監査',
+      type: '【Chapter 3 核心鑑識】RDPリダイレクト設定・ローカル共有監査',
       summary:
-        '接続用.rdpファイルの全ドライブ共有設定により、クラウドVPSから自宅PCのCドライブが丸裸にされた痕跡。',
+        '接続用.rdpファイルの自動共有設定により、クラウドVPS側へ自宅PCの全ドライブが露出した痕跡。',
       detail:
         '2019年から配布されていた接続用 .rdp ファイル内に『drivestoredirect:s:*』が記述されていたため、ユーザーが自宅PCからVPSへリモート接続した瞬間、VPS側から被害者のCドライブが \\\\tsclient\\C として自動マウントされていた。マルウェアなしで被害者自宅PCから確定申告書やブラウザの Login Data（4,352ファイルコピー・10,891ファイルリスト化）が吸い出された『リバースRDP』の物理的・技術的証明。',
     },
     direct_compensation_matrix: {
       id: 'direct_compensation_matrix',
-      name: '第4報・顧客実損100%直接補償と閲覧パスワード監査票',
+      name: '顧客実損算定マトリクス＆API照会監査票',
       icon: '⚖️',
       image: 'assets/evidence/active_memory.jpg',
       type: '【Chapter 4 核心鑑識】ゲーム理論的反撃・Investor Password監査',
-      summary: '約款免責を突破した100%直接補償と、閲覧専用パスワードによる客観的損害算定スキーム。',
+      summary:
+        '約款免責を超えた100%直接補償方針と、閲覧専用パスワードによる客観的損害算定スキーム。',
       detail:
         '攻撃者による『四重恐喝（口座破壊・自宅PC暴露・ランサムウェア・内部情報公開）』に対し、企業側は『攻撃者への支払ゼロ』を宣言。約款の免責条項を超えて『不正取引による実現損失の100%直接補償＋見舞金5,000円＋新基盤6ヶ月無償移行』を断行した。これにより攻撃者の人質レバレッジ（被害者を煽る分断工作）は完全に崩壊。損害額はFT4/FT5の閲覧専用パスワード（Investor Password）とVPS不正アクセス時刻を突合することで、モラルハザードを防ぎ客観的算定を完遂した。',
     },
     nco_three_walls_report: {
       id: 'nco_three_walls_report',
-      name: '能動的サイバー防御法『制度上の3つの壁』と突破法理',
+      name: '国家サイバー対処法理・要件適合性審査レポート',
       icon: '🏛️',
       image: 'assets/evidence/nco_alert.png',
       type: '【Chapter 5 核心鑑識】能動的サイバー防御発動要件監査レポート',
       summary:
-        '2026年10月1日施行の能動的サイバー防御法を阻む3つの壁と、発動第1号を合法的に成立させた法理構造。',
+        'サイバー対処能力強化法における要件の壁と、民間任意ログ提供および警職法に基づく突破法理。',
       detail:
         '①基幹インフラ15分野の壁（民間直接申請不可）→70社超の金融機関への波及と個人資産への重大危害を根拠に警察官職務執行法第6条の2で職権認知。②2027年秋まで未施行の無同意通信取得の壁→民間被害企業による100%任意ログ提供により通信の秘密侵害を回避。③外国主権と偽旗工作の壁→誤爆を防ぐため真の発信源の100%特定を要求。これら3つの壁をクリアすることで、史上初となる『能動的サイバー防御・措置要請』が正式成立した。',
     },
     canary_c2_origin: {
       id: 'canary_c2_origin',
-      name: 'ダミーLogin Dataカナリア逆探知ログと真C2特定座標',
+      name: 'ハニーポット端末・外部通信ビーコン記録',
       icon: '🎯',
       image: 'assets/evidence/c2_origin.png',
-      type: '【Chapter 5 核心鑑識】能動的サイバー防御・真C2座標特定データ',
+      type: '【Chapter 5 核心鑑識】逆探知ビーコン発火・外部通信テレメトリ',
       summary:
-        'アリアがハニーポット自宅PCに仕込んだカナリアトークンが発火し、偽装プロキシの裏の真C2を暴いたログ。',
+        'ハニーポット端末の重要ファイル内に潜伏させたカナリアが発火し、偽装プロキシの背後を捉えた追跡記録。',
       detail:
-        'Chapter 3の \\\\tsclient\\C 逆流調査時、アリアが監視対象のダミーLogin Data内に仕込んでおいた特殊なカナリアトークン（Canary Token）。攻撃者が持ち帰り自前の攻撃インフラで解凍・照会した瞬間、逆探知ビーコンが発火。多段プロキシの奥に隠されていた真のC2サーバー（185.220.101.xx）と、26,739台の自宅PCへ送信予定だったランサムウェア配信キューをピンポイントで特定した決定打。',
+        'Chapter 3の \\\\tsclient\\C 逆流調査時、ハニーポット端末のダミーLogin Data内に仕込まれた特殊なカナリアトークン（Canary Token）。攻撃者が自前の攻撃インフラで解凍・照会した瞬間、逆探知ビーコンが発火。多段プロキシの奥に隠されていた真のC2サーバー（185.220.101.xx）と、26,739台の自宅PCへ送信予定だったランサムウェア配信キューをピンポイントで特定した決定打。',
     },
   },
   prologue: {
@@ -177,134 +178,193 @@ window.SCENARIO_DATA = {
           text: 'ケイ、問い合わせ窓口が完全にパンクしている……！ 1時間で数千件の口座破綻報告だ。一体どこから手を付ければいいんだ！？',
         },
       ],
-      tacticChoice: {
-        id: 'tactic_ch1',
-        badge: '⚡ TACTICAL DECISION / 初動作戦の決断',
-        question:
-          '【初動作戦の判断】1時間で数千件に達した被害報告に対し、エンジニアとしてまずどの情報源から切り崩すか？',
-        options: [
-          {
-            id: 'tactic1_a',
-            label:
-              '被害報告の多いアカウントの取引ログから、狙われた通貨ペアの共通パターンを抽出する',
-            description:
-              '口座タイプや取引銘柄の偏りを突き止め、攻撃者の注文アルゴリズムの癖を掴む。',
-            reaction: [
-              {
-                speaker: 'kei',
-                text: 'アリア、被害を受けた上位50口座の取引履歴から、狙われた通貨ペアの流動性とスプレッドを横断比較しろ！',
-              },
-              {
-                speaker: 'aria',
-                sprite: 'aria',
-                text: '承知しました！ 明らかな共通項があります……全口座で、通常は取引されない極めてスプレッドの広い超マイナー通貨ペアばかりが狙われています！',
-              },
-            ],
-          },
-          {
-            id: 'tactic1_b',
-            label: 'Active Directoryの侵入時刻と各VPSの最終通信タイムスタンプを照合する',
-            description:
-              '中央管理サーバーから各VPSへ取引コマンドが一斉注入されたミリ秒単位の痕跡を洗う。',
-            reaction: [
-              {
-                speaker: 'kei',
-                text: '侵入者がADプレーンから各VPSに取引コマンドを一括送信したミリ秒ログを洗ってくれ！',
-              },
-              {
-                speaker: 'aria',
-                sprite: 'aria',
-                text: 'タイムスタンプを特定しました！ サーバー停止のわずか数分前、同一のスクリプトから26,739台へ一斉に自動売買APIの実行命令が叩き込まれています！',
-              },
-            ],
-          },
-        ],
-      },
-      midDialogue: [
+      choiceSteps: [
         {
-          speaker: 'takamiya',
-          sprite: 'takamiya',
-          text: '被害の傾向は掴めた……だが、不可解すぎるんだ！ 証券会社には本人名義出金制限と二段階認証がある。攻撃者は1円も出金できていない！ 金を盗めないのに、なぜ他人の口座をゼロにするんだ！？',
+          id: 'ch1_step1_target',
+          type: 'tactic',
+          badge: '⚡ TACTICAL DECISION / 初動作戦の決断',
+          question:
+            '【初動作戦の判断】1時間で数千件に達した被害報告に対し、限られた時間の中でどこから鑑識のメスを入れるか？',
+          cutinText: '作戦指令承認：FT4取引プロトコル生ログを抽出！',
+          cutinSub: '⚡ NCO TACTICAL DIRECTIVE / 作戦指示承認',
+          options: [
+            {
+              id: 'opt1_target_ft4',
+              label: '取引端末FT4のミリ秒注文履歴と通信パラメータの精査',
+              description:
+                '口座タイプや銘柄を問わず、直前に叩き込まれた全注文テレメトリを直接洗う。',
+              isCorrect: true,
+              reaction: [
+                {
+                  speaker: 'kei',
+                  text: 'アリア、被害を受けた上位50口座のFT4取引プロトコルから、ミリ秒単位の注文パラメータをすべて抽出しろ！',
+                },
+                {
+                  speaker: 'aria',
+                  sprite: 'aria',
+                  text: '承知しました！ 異常な注文テレメトリを捕捉しました……全口座で極めて特異なシグネチャが刻まれています！',
+                },
+              ],
+            },
+            {
+              id: 'opt1_target_malware',
+              label: 'サーバーOSのシステムログから、外部不正送金マルウェアの痕跡をスキャン',
+              description: '一般的な金融型トロイの木馬（バンキング型マルウェア）の活動痕跡を探す。',
+              isCorrect: false,
+              damagePenalty: 10,
+              retryPrompt:
+                '外部送金マルウェアは検出されなかった！ 調査に1時間を浪費し、SNSの炎上がさらに拡大した……！ 別のアプローチを選べ！',
+              reaction: [
+                {
+                  speaker: 'kei',
+                  text: '外部へ不正送金するバンキング型マルウェアが仕組まれていないか、OSログを洗ってくれ！',
+                },
+                {
+                  speaker: 'aria',
+                  sprite: 'aria',
+                  text: '外部送金マルウェアは……ゼロです！ 攻撃者は送金など行っていません。調査時間を1時間ロスしてしまいました！',
+                },
+              ],
+            },
+            {
+              id: 'opt1_target_weblogin',
+              label: '証券会社Webポータルに対する不正ログイン試行ログの調査',
+              description: 'ブラウザ経由でのパスワード総当たりやセッション乗っ取りを調べる。',
+              isCorrect: false,
+              damagePenalty: 10,
+              retryPrompt:
+                'Webポータル経由のアクセスは皆無！ 調査空振りの間に被害報告がさらに1,200件拡大した……！ 別の調査対象を選べ！',
+              reaction: [
+                {
+                  speaker: 'kei',
+                  text: '証券会社のWeb画面にブルートフォースや二段階認証突破の形跡がないか照会しろ！',
+                },
+                {
+                  speaker: 'aria',
+                  sprite: 'aria',
+                  text: 'Webログイン試行はゼロ件です！ 攻撃者はWeb画面ではなく、端末内部から直接仕掛けています！',
+                },
+              ],
+            },
+          ],
+          nextDialogue: [
+            {
+              speaker: 'takamiya',
+              sprite: 'takamiya',
+              text: '被害の傾向は掴めた……だが不可解すぎる！ 証券会社には本人名義出金制限と二段階認証がある。攻撃者は1円も出金できていない！ 金を盗めないのに、なぜ他人の口座をゼロにするんだ！？',
+            },
+            {
+              speaker: 'kei',
+              text: '出金できないのに残高が消える……？ アリア、抽出したFT4取引ログの生テレメトリをモニターに展開しろ！',
+            },
+          ],
         },
         {
-          speaker: 'kei',
-          text: '金を自分の口座へ盗み出せないのに、なぜ他人の口座残高をゼロにする必要がある……？ アリア、流出VPSから抽出した注文ログとAD侵入ログを極限解析しろ！',
+          id: 'ch1_step2_log_decode',
+          type: 'forensic',
+          badge: '⚡ FORENSIC DEDUCTION / 生ログ解読の推理',
+          question:
+            '【生ログ解読の推理】攻撃者は1円も出金できないにもかかわらず、なぜこの異常な注文を繰り返したのか？',
+          cutinText: '口座焼却の手口を看破！ 恐喝の構図を立証！',
+          cutinSub: '⚡ FORENSIC PROOF ESTABLISHED / 電脳鑑識立証',
+          logBox: {
+            title: 'FT4 TRANSACTION LOG [EXTRACTED FROM INSTANCE #10482]',
+            content:
+              'TIMESTAMP: 2026-10-21 03:58:12.104\nPAIR: TRY/ZAR (Turkish Lira / S.African Rand) | SPREAD: 850 pps\nACTION: BUY 50.0 LOTS -> INSTANT CLOSE (HoldTime: 0.1s)\nACTION: SELL 50.0 LOTS -> INSTANT CLOSE (HoldTime: 0.1s)\nCOMMENT: DEMOFASTLOSS | OUTGOING_TRANSFER: 0.00 JPY\nACCOUNT_BALANCE: 4,000,000 JPY -> 0 JPY (LOSS BY SPREAD: 4,000,000 JPY)',
+          },
+          options: [
+            {
+              id: 'opt1_decode_cross',
+              label:
+                '自己の別口座と相対取引（クロス取引）を成立させ、スプレッド越しに資金を吸い上げている',
+              description: '薄商いの通貨で反対売買をぶつけ、利益を移転させているという仮説。',
+              isCorrect: false,
+              damagePenalty: 10,
+              retryPrompt:
+                '流動性プロバイダ（LP）経由のECN市場のため、特定口座への直接付け替えは不可能だ！ 別の意図を推理せよ！',
+              reaction: [
+                {
+                  speaker: 'kei',
+                  text: '攻撃者が別口座で反対売買を待ち構え、資金を自己口座へ移転させたんじゃないか？',
+                },
+                {
+                  speaker: 'takamiya',
+                  sprite: 'takamiya',
+                  text: 'いや、被害口座はすべてインターバンク市場に直結したECN口座だ！ 流動性プロバイダを介すため、特定口座へ資金を吸い上げることは構造的に不可能だ！',
+                },
+              ],
+            },
+            {
+              id: 'opt1_decode_burn',
+              label:
+                '超高スプレッド通貨の高速往復売買で残高を手数料として市場へ蒸発させ、顧客を人質にして当社を脅迫しようとしている',
+              description:
+                '『DEMOFASTLOSS』により残高を即座に消滅させ、顧客の怒りをテコにインフラ企業を恐喝する手口。',
+              isCorrect: true,
+              rewardEvidence: 'ad_demofastloss_log',
+              reaction: [
+                {
+                  speaker: 'kei',
+                  text: 'やっぱりだ……！ 高スプレッド通貨を0.1秒で高速往復売買させ、残高を手数料として瞬時に市場へ蒸発させている！ 送金ではなく『口座の焼却』だ！',
+                },
+                {
+                  speaker: 'aria',
+                  sprite: 'aria',
+                  illustration: 'assets/evidence/sinkhole.jpg',
+                  text: 'ビンゴですマスター！ 出金制限を逆手に取り、顧客資産を人質（レバレッジ）に変えてインフラ企業を脅迫する構造です！',
+                },
+              ],
+            },
+          ],
+          nextDialogue: [
+            {
+              speaker: 'takamiya',
+              sprite: 'takamiya',
+              text: 'なんて残酷な……顧客の運用資金を人質にして焼き払ったというのか！ しかしこれで手口は暴かれた。至急、第2報でユーザーに対策を呼びかけるぞ！',
+            },
+          ],
         },
         {
-          speaker: 'aria',
-          sprite: 'aria',
-          text: '解析完了しました。侵入者は8月31日取得の偽装ドメイン『coronamgt-c2.net』を経由してActive Directory管理者権限を奪取。取引コマンドに極めて異常な売買を注入しています！',
+          id: 'ch1_step3_trap',
+          type: 'tactic',
+          badge: '⚡ EMERGENCY DIRECTIVE / 緊急対応の決断',
+          question:
+            '【緊急対応の決断】第2報として、26,739人のユーザーへどの初動対策を公式アナウンスするか？',
+          cutinText: '第2報発令：全ユーザーへの緊急パスワード変更指示！',
+          cutinSub: '⚡ INCIDENT RESPONSE ANNOUNCEMENT / 第2報発令',
+          isFinalStep: true,
+          options: [
+            {
+              id: 'opt1_trap_password',
+              label: '全ユーザーに対し、金融取引口座のWebパスワードの即時変更を強く呼びかける',
+              description: '侵入された認証情報を無力化し、これ以上の口座焼却を防ぐ王道の初動対応。',
+              isCorrect: true,
+              reaction: [
+                {
+                  speaker: 'kei',
+                  text: '全ユーザーにパスワードの即時変更を呼びかけろ！ これでアカウントの不正操作は防げるはずだ！',
+                },
+                {
+                  speaker: 'takamiya',
+                  sprite: 'takamiya',
+                  text: 'よし、第2報として公式発表する！ これで最悪の事態は防げるはずだ！',
+                },
+              ],
+            },
+          ],
         },
       ],
-      choice: {
-        id: 'choice_ch1',
-        badge: '⚡ FORENSIC DECISION / 鑑識の決断',
-        question:
-          '【電脳鑑識の判断】攻撃者が金を盗めないにもかかわらず口座残高をゼロにした手口をどう暴くか？',
-        options: [
-          {
-            id: 'opt1_a',
-            label: '取引端末FT4のミリ秒注文ログから、通貨ペアと注文コメント（Comment）を抽出する',
-            description:
-              '取引プロトコルレベルの注文パラメータを精査し、意図的な往復売買の痕跡を掴む。',
-            reaction: [
-              {
-                speaker: 'kei',
-                text: 'アリア、FT4の取引履歴からミリ秒単位の『Comment』フィールドと通貨ペアのスプレッドを抜き出せ！',
-              },
-              {
-                speaker: 'aria',
-                sprite: 'aria',
-                text: 'ビンゴですマスター！ 注文コメントに『DEMOFASTLOSS』という攻撃者のシグネチャを発見！ 流動性が極端に低いマイナー通貨ペアで、0.1秒間隔の超高速往復売買を繰り返しています！',
-              },
-              {
-                speaker: 'kei',
-                text: 'やっぱりだ……！ 高いスプレッド（手数料差）の通貨をわざと超高速で売り買いさせ、口座残高を手数料として瞬時に市場へ蒸発させている！',
-              },
-            ],
-          },
-          {
-            id: 'opt1_b',
-            label: 'サーバーOSのシステムログから、外部送金マルウェアの痕跡をスキャンする',
-            description: '一般的な金融型トロイの木馬（バンキング型マルウェア）の活動痕跡を探す。',
-            reaction: [
-              {
-                speaker: 'kei',
-                text: '外部へ資金を不正送金するバンキング型マルウェアが仕組まれていないか、OSログを洗ってくれ！',
-              },
-              {
-                speaker: 'aria',
-                sprite: 'aria',
-                text: '外部送金マルウェアは……ゼロです！ 攻撃者は送金など最初から狙っていません。注文コメント欄に『DEMOFASTLOSS』と刻み、超高スプレッド往復注文で残高そのものを焼き払っています！',
-              },
-              {
-                speaker: 'kei',
-                text: '送金ではなく口座の『焼却』……！ 資金を奪えないからこそ、資産を人質にしてインフラ企業を脅迫する構造か！',
-              },
-            ],
-          },
-        ],
-      },
       resolution: [
-        {
-          speaker: 'kei',
-          text: 'レン、見えたぞ。攻撃者の手口は『DEMOFASTLOSS』……出金制限を逆手に取った口座残高の意図的破壊だ！',
-        },
-        {
-          speaker: 'takamiya',
-          sprite: 'takamiya',
-          text: 'なんて残酷な……顧客にとって命の次に大事な運用資金を、インフラ企業を脅迫するためのレバレッジ（人質）として焼き払ったというのか……！',
-        },
         {
           speaker: 'aria',
           sprite: 'aria',
           illustration: 'assets/evidence/sinkhole.jpg',
-          text: '核心鑑識データ『AD侵害ログとDEMOFASTLOSS口座焼却記録』を取得しました。第1章の真実が立証されました！',
+          text: '核心鑑識データ『AD侵入痕跡・取引プロトコル生ログ』を取得しました。第1章の真実が立証されました！',
         },
         {
           speaker: 'takamiya',
           sprite: 'takamiya',
-          text: 'すぐさま証券各社へ緊急アラートを流し、口座凍結の協力を要請する。これで最悪の事態は防げるはずだ……！',
+          text: '第2報のリリース完了！ これで今夜の不正取引は阻止できるはずだ……！',
         },
         {
           speaker: 'narrator',
@@ -322,7 +382,7 @@ window.SCENARIO_DATA = {
         {
           speaker: 'takamiya',
           sprite: 'takamiya',
-          text: '『無様な抵抗だ。第2報を出してユーザーにパスワード変更を呼びかけてみろ。貴様らの無力さを全国に晒してやる』……だと！？ なぜ我々が次にパスワード変更を呼びかけようとしていることを知っているんだ！？',
+          text: '『無様な抵抗だ。第2報を出してユーザーにパスワード変更を呼びかけてみろ。貴様らの無力さを全国に晒してやる』……だと！？ なぜ我々がパスワード変更を呼びかけたことを知っているんだ！？',
         },
         {
           speaker: 'kei',
@@ -352,115 +412,140 @@ window.SCENARIO_DATA = {
           text: 'くそっ……！ なぜだ……！ パスワード変更が反映されていないのか！？ 俺たちのせいでまた被害者が……！',
         },
       ],
-      tacticChoice: {
-        id: 'tactic_ch2',
-        badge: '⚡ TACTICAL DECISION / 危機管理の決断',
-        question:
-          '【心理戦・危機管理の判断】攻撃者による被害者懐柔と集団訴訟の扇動に対し、対策室としてまずどう構えるか？',
-        options: [
-          {
-            id: 'tactic2_a',
-            label:
-              '敵のメール文面と配布ファイルを即座に隔離し、法務・広報と連携して偽情報への警戒を呼びかける',
-            description:
-              'パニックになった被害者が攻撃者の扇動に乗らないよう、二次被害防止のアナウンスを打つ。',
-            reaction: [
-              {
-                speaker: 'kei',
-                text: 'レン、敵のメールは巧妙な心理工作だ。ユーザーがパニックで敵の甘言に乗らないよう、直ちに注意喚起を出せ！',
-              },
-              {
-                speaker: 'takamiya',
-                sprite: 'takamiya',
-                text: '了解した！ 『攻撃者が配布するファイルには二次被害の危険がある』と緊急アナウンスを打つ！',
-              },
-            ],
-          },
-          {
-            id: 'tactic2_b',
-            label:
-              '敵から届いたメールのヘッダー情報と添付ファイルのメタデータを最優先でフォレンジック鑑識に回す',
-            description:
-              '敵の素性と使用環境のボロを暴き、分断工作の嘘を技術的に打ち崩す準備を進める。',
-            reaction: [
-              {
-                speaker: 'kei',
-                text: 'アリア、敵のメールヘッダーと添付された『訴訟用証拠Excel』の生バイナリをサンドボックスに放り込め！',
-              },
-              {
-                speaker: 'aria',
-                sprite: 'aria',
-                text: '既に解析環境へ展開済みです！ 送信経路の偽装と、ファイル作成環境のメタデータ抽出を開始します！',
-              },
-            ],
-          },
-        ],
-      },
-      midDialogue: [
+      choiceSteps: [
         {
-          speaker: 'takamiya',
-          sprite: 'takamiya',
-          text: '初動の手を打った……だが、根本的な謎が残っている。なぜ被害者がパスワードを変更した直後にもかかわらず、攻撃者は平然と取引コマンドを叩き込めたんだ！？ 企業の発表が嘘だと叩かれて、信用は完全に失墜寸前だ！',
+          id: 'ch2_step1_socket',
+          type: 'forensic',
+          badge: '⚡ FORENSIC DEDUCTION / 技術的死角の特定',
+          question:
+            '【技術的死角の特定】ユーザーが指示通りパスワードを変更したにもかかわらず、なぜ攻撃者は不正注文を通せたのか？',
+          cutinText: 'FT4永続ソケット仕様を看破！ 認証の盲点を立証！',
+          cutinSub: '⚡ FORENSIC PROOF ESTABLISHED / 電脳鑑識立証',
+          options: [
+            {
+              id: 'opt2_socket_dbdelay',
+              label: 'パスワード変更APIのデータベース同期遅延・レプリケーション障害を疑う',
+              description:
+                'DB反映にタイムラグがあり、古いパスワードが一時的に通用していたという仮説。',
+              isCorrect: false,
+              damagePenalty: 10,
+              retryPrompt:
+                'DB同期遅延はわずか5ミリ秒。全パスワードは即座に更新されている！ 認証そのものの通信仕様を疑え！',
+              reaction: [
+                {
+                  speaker: 'kei',
+                  text: 'データベースのレプリケーション遅延で、新パスワードの反映が遅れているんじゃないか？',
+                },
+                {
+                  speaker: 'aria',
+                  sprite: 'aria',
+                  text: '各クラスタのDB同期遅延を検証しました……遅延はわずか5ミリ秒以下です！ パスワードは全サーバーで即時更新されています！ 原因はDB遅延ではありません！',
+                },
+              ],
+            },
+            {
+              id: 'opt2_socket_tcp',
+              label: 'Web認証とFT4取引専用TCPソケットのセッション維持仕様を突合する',
+              description:
+                'Webパスワードが変わっても、既存接続が切断されないプロトコルの死角を検証。',
+              isCorrect: true,
+              reaction: [
+                {
+                  speaker: 'kei',
+                  text: 'アリア、FT4/FT5の通信仕様書と既存ソケットのハンドシェイク状態を調べろ！',
+                },
+                {
+                  speaker: 'aria',
+                  sprite: 'aria',
+                  text: '判明しました！ FT4/FT5はWeb上でパスワードを変更しても、既に確立されたTCP接続（ソケット）をサーバー側で強制切断（Session Kill）しない限り、既存セッションから自動売買コマンドを受け付け続けます！',
+                },
+                {
+                  speaker: 'kei',
+                  text: 'やっぱりだ！ Webパスワードを変えても、攻撃者が繋ぎっぱなしにしているセッションを強制切断しない限り、注文は通り続けていたんだ！',
+                },
+              ],
+            },
+          ],
+          nextDialogue: [
+            {
+              speaker: 'takamiya',
+              sprite: 'takamiya',
+              text: '全ブローカーに要請し、全セッション強制パージ（Session Kill）を発令した！ これで不正注文は完全に止まったぞ！',
+            },
+            {
+              speaker: 'narrator',
+              text: 'だがその直後、対策本部のモニターに緊急メールが着弾した。送信者はロシア系ハッカー集団を名乗る『Hacking Team (Dmitry Orlov)』。',
+            },
+            {
+              speaker: 'aria',
+              sprite: 'aria',
+              text: 'メールの文面をモニターに投影します。『親愛なる被害者の皆様。貴方の損失は企業側の隠蔽と脆弱性のせいです。当社を相手取った集団訴訟を起こすなら、企業が隠蔽している証拠リストを無償で提供します』……完璧な分断工作です！',
+            },
+            {
+              speaker: 'takamiya',
+              sprite: 'takamiya',
+              text: 'くそっ……！ 被害の45%は金融庁無登録の海外FX業者（ApexTrading、IS8FX等）だ。被害者の怒りが会社へ集中し、集団訴訟の呼びかけがSNSで大拡散されている！ どうやってこの信用を突き崩すんだ！？',
+            },
+          ],
         },
         {
-          speaker: 'aria',
-          sprite: 'aria',
-          text: 'メールの文面をモニターに投影します。『親愛なる被害者の皆様。貴方の損失は企業側の隠蔽と脆弱性のせいです。当社を相手取った集団訴訟を起こすなら、企業が隠蔽している証拠リストを無償で提供します』……完璧な分断工作です！',
-        },
-        {
-          speaker: 'kei',
-          text: '被害者の怒りを企業に向けさせ、集団訴訟で挟み撃ちにする心理戦か……。被害の45%が無登録の海外FX業者（ApexTrading、IS8FX等）に集中している点も、日本の金融庁の管轄外を突いた狡猾な罠だ！',
+          id: 'ch2_step2_false_flag',
+          type: 'forensic',
+          badge: '⚡ FORENSIC DECISION / 偽旗工作の看破',
+          question:
+            '【偽旗工作の看破】ロシア人『Dmitry Orlov』を名乗る集団訴訟煽動メールの信用を客観的物証でどう突き崩すか？',
+          cutinText: '偽旗工作を完全論破！ 中国語KPS痕跡を特定！',
+          cutinSub: '⚡ FORENSIC PROOF ESTABLISHED / 電脳鑑識立証',
+          isFinalStep: true,
+          options: [
+            {
+              id: 'opt2_ff_warning',
+              label: '海外FX業者が金融庁無登録業者であることを理由に、法務から法的警告を出す',
+              description: '無登録業者の利用規約違反を盾に、集団訴訟の正当性を否定するアプローチ。',
+              isCorrect: false,
+              damagePenalty: 10,
+              retryPrompt:
+                '逆効果だ！ 被害者から『無登録業者のせいにして企業が責任逃れをしている』と猛反発を受け炎上ゲージが増加した！ 物証で語れ！',
+              reaction: [
+                {
+                  speaker: 'kei',
+                  text: '海外FX業者は金融庁無登録だ。法務から公式に警告を出し、訴訟の不当性を主張してはどうか？',
+                },
+                {
+                  speaker: 'takamiya',
+                  sprite: 'takamiya',
+                  text: '逆効果だ！ 被害者たちから『会社が責任逃れのために被害者を脅迫している』とSNSで猛反発を受け、炎上がさらに激化してしまった！',
+                },
+              ],
+            },
+            {
+              id: 'opt2_ff_metadata',
+              label:
+                '添付された証拠Excel（.xlsx）をZIP解凍し、workbook.xml のシート定義メタデータを洗う',
+              description:
+                'ファイル生成環境の深部XMLをバイナリ解剖し、作成者の真のOS・言語環境を特定。',
+              isCorrect: true,
+              rewardEvidence: 'persistent_session_trap',
+              reaction: [
+                {
+                  speaker: 'kei',
+                  text: 'アリア、ロシア人を名乗る攻撃者が添付してきた『集団訴訟用証拠Excel』をZIP解凍し、内部XMLメタデータを全解剖しろ！',
+                },
+                {
+                  speaker: 'aria',
+                  sprite: 'aria',
+                  illustration: 'assets/evidence/cdn_network.png',
+                  text: '内部XMLから決定的な痕跡を抽出しました！ デフォルトのシート名がロシア語ではなく、中国語簡体字版KPS Office特有の『工作表』となっています！',
+                },
+                {
+                  speaker: 'kei',
+                  text: '中国語版オフィスソフトの痕跡……！ ロシアのハッカー集団を装った多国籍の偽旗工作（False Flag）だ！ 敵の分断工作を客観的物証で粉砕できる！',
+                },
+              ],
+            },
+          ],
         },
       ],
-      choice: {
-        id: 'choice_ch2',
-        badge: '⚡ FORENSIC DECISION / 鑑識の決断',
-        question:
-          '【電脳鑑識の判断】パスワード変更が効かない技術的死角と、攻撃者の正体をどう暴くか？',
-        options: [
-          {
-            id: 'opt2_a',
-            label: '金融取引端末FT4/FT5の通信仕様と、サーバー側のTCPセッション切断状況を検証する',
-            description:
-              'なぜパスワードを変更しても古いセッションから注文が通るのか、プロトコルの盲点を突く。',
-            reaction: [
-              {
-                speaker: 'kei',
-                text: 'アリア、FT4/FT5の通信仕様書と既存ソケットのハンドシェイク状態を調べろ！',
-              },
-              {
-                speaker: 'aria',
-                sprite: 'aria',
-                text: '判明しました！ FT4/FT5はWeb上でパスワードを変更しても、既に確立されたTCP接続（ソケット）をサーバー側で強制切断（Session Kill）しない限り、既存セッションから自動売買コマンドを受け付け続けます！',
-              },
-              {
-                speaker: 'kei',
-                text: 'やっぱりだ！ Webパスワードを変えても、攻撃者が繋ぎっぱなしにしているセッションを強制切断しない限り、注文は通り続けていたんだ！',
-              },
-            ],
-          },
-          {
-            id: 'opt2_b',
-            label: '攻撃者が送りつけてきた『集団訴訟用証拠Excel』のバイナリメタデータを解析する',
-            description: 'ロシア人を名乗る送信者の真の出自や使用環境をフォレンジック調査する。',
-            reaction: [
-              {
-                speaker: 'kei',
-                text: 'アリア、ロシア人『Dmitry Orlov』を名乗る攻撃者の添付Excelファイルをバイナリ解剖しろ！',
-              },
-              {
-                speaker: 'aria',
-                sprite: 'aria',
-                text: '内部XMLから決定的な痕跡を抽出しました！ デフォルトのシート名がロシア語ではなく、中国語簡体字版KPS Office特有の『工作表』となっています！',
-              },
-              {
-                speaker: 'kei',
-                text: '中国語版オフィスソフトの痕跡……！ ロシアのハッカー集団を装った多国籍の偽旗工作（False Flag）だ！',
-              },
-            ],
-          },
-        ],
-      },
       resolution: [
         {
           speaker: 'kei',
@@ -475,7 +560,7 @@ window.SCENARIO_DATA = {
           speaker: 'aria',
           sprite: 'aria',
           illustration: 'assets/evidence/cdn_network.png',
-          text: '核心鑑識データ『FT4/FT5永続セッションと工作表偽旗工作ファイル』を取得しました。第2章の真実が立証されました！',
+          text: '核心鑑識データ『取引通信ソケット監査票＆脅迫添付Excel』を取得しました。第2章の真実が立証されました！',
         },
         {
           speaker: 'takamiya',
@@ -528,130 +613,163 @@ window.SCENARIO_DATA = {
           text: 'ケイ、被害者の自宅PCからはマルウェアが一切出ない。一体どこに突破口があるんだ！？',
         },
       ],
-      tacticChoice: {
-        id: 'tactic_ch3',
-        badge: '⚡ TACTICAL DECISION / 調査方針の決断',
-        question:
-          '【侵入経路特定の判断】マルウェアが検出されない自宅PCからのファイル流出に対し、どこに鑑識のメスを入れるか？',
-        options: [
-          {
-            id: 'tactic3_a',
-            label:
-              '自宅PCとクラウドVPSの間に確立されていた暗号化通信トンネルのセッション構成を検証する',
-            description: '通信パケットの仮想チャネル割り振りとデバイスマッピングフラグを精査する。',
-            reaction: [
-              {
-                speaker: 'kei',
-                text: 'アリア、ユーザーがVPSにアクセスしていた時のプロトコルのセッションパイプラインを分解しろ！',
-              },
-              {
-                speaker: 'aria',
-                sprite: 'aria',
-                text: 'パケット解析を実行します……通信自体は正規のリモートデスクトップ（RDP）ですが、仮想チャネルの割り振りに極めて異常なデバイス共有フラグが立っています！',
-              },
-            ],
-          },
-          {
-            id: 'tactic3_b',
-            label:
-              'クラウド運用本部が長年ユーザーに配布していた接続支援ツールや設定ファイルの履歴を洗う',
-            description:
-              'ユーザーが初期設定時に導入した接続用構成ファイルに脆弱な設定がないか確認する。',
-            reaction: [
-              {
-                speaker: 'kei',
-                text: 'レン、ユーザーがクラウドに繋ぐ際、手動でIPを入力していたのか？ それとも何か接続設定ファイルを配っていたのか！？',
-              },
-              {
-                speaker: 'takamiya',
-                sprite: 'takamiya',
-                text: '2019年のサービス開始当初から、ワンクリックで接続できるように構成済みの接続用『.rdp』ファイルをダウンロードさせていたはずだ！',
-              },
-            ],
-          },
-        ],
-      },
-      midDialogue: [
+      choiceSteps: [
         {
-          speaker: 'kei',
-          text: 'その接続設定だ……！ リモート接続クライアントには、ローカルリソースをサーバー側へ透過させるための特殊な共有オプションが存在する！',
+          id: 'ch3_step1_rdp_config',
+          type: 'forensic',
+          badge: '⚡ CONFIG AUDIT / 構成ファイル生鑑識',
+          question:
+            '【構成ファイルの異常特定】マルウェアなしで自宅PCのCドライブを丸裸にした致命的な設定パラメータはどれか？',
+          cutinText: 'リバースRDPの元凶を特定！ drivestoredirect:s:*！',
+          cutinSub: '⚡ FORENSIC PROOF ESTABLISHED / 電脳鑑識立証',
+          logBox: {
+            title: 'NEODOTCOM_CONNECT.RDP [DEFAULT CONFIG SINCE 2019]',
+            content:
+              'screen mode id:i:2\nuse multimon:i:0\nadministrative session:i:1\ndrivestoredirect:s:*\nredirectclipboard:i:1\nprompt for credentials:i:1',
+          },
+          options: [
+            {
+              id: 'opt3_cfg_admin',
+              label: 'administrative session:i:1',
+              description: 'サーバーへの管理者コンソールセッション接続を要求するパラメータ。',
+              isCorrect: false,
+              damagePenalty: 10,
+              retryPrompt:
+                'これはサーバー側のセッション種別指定であり、ローカルPCのファイル共有とは無関係だ！ ドライブ関連の設定を見極めろ！',
+              reaction: [
+                {
+                  speaker: 'kei',
+                  text: 'administrative session:i:1 か？ 管理者セッションの強制フラグだが……',
+                },
+                {
+                  speaker: 'aria',
+                  sprite: 'aria',
+                  text: 'いいえマスター、これはVPSサーバー側のコンソール接続フラグです！ クライアント自宅PCのファイル共有とは無関係です！',
+                },
+              ],
+            },
+            {
+              id: 'opt3_cfg_drives',
+              label: 'drivestoredirect:s:*',
+              description:
+                'クライアント端末のすべての接続ドライブをサーバー側へ自動マウントするパラメータ。',
+              isCorrect: true,
+              reaction: [
+                {
+                  speaker: 'kei',
+                  text: 'これだ……！ 『drivestoredirect:s:*』！ ローカルドライブの全自動リダイレクト共有設定！',
+                },
+                {
+                  speaker: 'aria',
+                  sprite: 'aria',
+                  illustration: 'assets/evidence/honeypot.jpg',
+                  text: 'ビンゴです！ 自宅PCからVPSに接続した瞬間、VPS側から自宅PCの全ドライブが『\\\\tsclient\\C』として自動認識されていました！',
+                },
+                {
+                  speaker: 'kei',
+                  text: '正規のRDPパイプラインだから、自宅PCのウイルス対策ソフトを完全に素通りして確定申告書やChromeのLogin Dataが吸い出されたんだ！',
+                },
+              ],
+            },
+            {
+              id: 'opt3_cfg_clipboard',
+              label: 'redirectclipboard:i:1',
+              description: 'リモート端末とローカル端末の間でクリップボードを共有するパラメータ。',
+              isCorrect: false,
+              damagePenalty: 10,
+              retryPrompt:
+                'これはクリップボード（コピー＆ペースト）の共有フラグだ！ 4,352件のファイル大量流出の直接原因ではない！',
+              reaction: [
+                {
+                  speaker: 'kei',
+                  text: 'redirectclipboard:i:1 だろうか？',
+                },
+                {
+                  speaker: 'aria',
+                  sprite: 'aria',
+                  text: 'これはテキストや画像の一時コピー用フラグです！ 4,352件におよぶディレクトリ全体の自動探索・コピーの元凶ではありません！',
+                },
+              ],
+            },
+          ],
+          nextDialogue: [
+            {
+              speaker: 'aria',
+              sprite: 'aria',
+              text: 'マスター！ 緊急警告です！！ 今まさに攻撃者が、調査用ハニーポット端末のCドライブから『Login Data』をコピーしようとしています！',
+            },
+            {
+              speaker: 'takamiya',
+              sprite: 'takamiya',
+              text: 'な、なんだって！？ 転送完了まで残り15秒……！ すぐに回線をブチ切らないと、ハニーポット端末まで完全に掌握されるぞ！！',
+            },
+          ],
         },
         {
-          speaker: 'aria',
-          sprite: 'aria',
-          text: 'マスター、配布されていた接続構成ファイルの内部パラメータを直ちに展開します！',
+          id: 'ch3_step2_canary_decision',
+          type: 'tactic',
+          badge: '⚡ COUNTER-SURVEILLANCE / 迎撃トラップの決断',
+          question:
+            '【電脳迎撃の決断】ハニーポット端末からファイルを吸い出そうとしている攻撃者に対し、どう決断するか？',
+          cutinText: '逆探知トラップ発動！ カナリアトークンを敵地へ潜伏！',
+          cutinSub: '⚡ ACTIVE HONEYPOT DIRECTIVE / 逆探知トラップ執行',
+          isFinalStep: true,
+          options: [
+            {
+              id: 'opt3_canary_abort',
+              label: '直ちにRDPセッションを強制切断し、ファイルの流出を阻止する！',
+              description: '防衛を最優先し、これ以上のファイル窃取を物理的にシャットアウトする。',
+              isCorrect: false,
+              damagePenalty: 5,
+              retryPrompt:
+                '流出は防いだが、敵のC2サーバーを追跡する唯一の手がかりを完全に失ってしまった……！ あえてファイルを盗ませ、逆探知の罠を仕込むべきだ！',
+              reaction: [
+                {
+                  speaker: 'kei',
+                  text: '直ちに回線を切断しろ！ ファイルの流出を何としても阻止するんだ！',
+                },
+                {
+                  speaker: 'aria',
+                  sprite: 'aria',
+                  text: 'セッションを強制切断しました……ファイルの流出は防ぎましたが、多段プロキシの奥に潜む敵の真のC2サーバーを追跡する手がかりを完全に失ってしまいました……！ マスター、ここはあえて罠を仕掛けるべきです！',
+                },
+              ],
+            },
+            {
+              id: 'opt3_canary_deploy',
+              label:
+                '切断するな！ ダミーのLogin Dataに逆探知用カナリアトークンを混入させ、あえて敵に持ち帰らせる！',
+              description:
+                '自前の解凍環境で開いた瞬間に外部ビーコンを発火させる毒入りファイルを掴ませる。',
+              isCorrect: true,
+              rewardEvidence: 'reverse_rdp_tsclient',
+              reaction: [
+                {
+                  speaker: 'kei',
+                  text: '切断するな！ ダミーのLogin Dataの中に、解凍した瞬間に発火する逆探知用カナリアトークンを混入させろ！ あえて敵に持ち帰らせるんだ！',
+                },
+                {
+                  speaker: 'aria',
+                  sprite: 'aria',
+                  illustration: 'assets/evidence/honeypot.jpg',
+                  text: 'カナリアトークン混入完了！ 攻撃者が自前の攻撃サーバーでこのファイルを解凍した瞬間、偽装プロキシの背後にある真のC2サーバー座標が逆探知されます！',
+                },
+                {
+                  speaker: 'takamiya',
+                  sprite: 'takamiya',
+                  text: 'リスクを冒して敵を罠にハメ返したのか……！ 頼もしすぎるぞケイ！ これでリバースRDPの全容を公表し、ユーザーに手動共有解除を周知できる！',
+                },
+              ],
+            },
+          ],
         },
       ],
-      choice: {
-        id: 'choice_ch3',
-        badge: '⚡ FORENSIC DECISION / 鑑識の決断',
-        question:
-          '【電脳鑑識の判断】マルウェアなしで自宅PCからファイルが抜かれた物理経路をどう突き止めるか？',
-        options: [
-          {
-            id: 'opt3_a',
-            label: '2019年から配布されている接続用『.rdp』設定ファイルのデフォルト記述を精査する',
-            description:
-              'ユーザーがVPSに接続する際にダブルクリックしていた構成ファイルを解析する。',
-            reaction: [
-              {
-                speaker: 'kei',
-                text: 'アリア、昔からユーザーに配られていた接続用『.rdp』ファイルをテキストエディタで開け！',
-              },
-              {
-                speaker: 'aria',
-                sprite: 'aria',
-                text: 'ありました……！ 設定項目の奥深くに『drivestoredirect:s:*』という一行が記述されています！',
-              },
-              {
-                speaker: 'kei',
-                text: 'これだ……！ ローカルドライブの全自動共有設定！ 自宅PCからVPSに接続した瞬間、VPS側から自宅PCのCドライブが『\\\\tsclient\\C』として丸見えになっていたんだ！',
-              },
-            ],
-          },
-          {
-            id: 'opt3_b',
-            label:
-              'Windowsイベントログから、リモートデスクトップのクリップボード・デバイスマッピング履歴を追う',
-            description: 'RDPセッション中のファイル共有APIとパイプ通信の挙動を追跡する。',
-            reaction: [
-              {
-                speaker: 'kei',
-                text: 'RDP接続時のデバイスリダイレクトAPIの呼び出しログを追跡してくれ！',
-              },
-              {
-                speaker: 'aria',
-                sprite: 'aria',
-                text: 'ログから明確なコマンドを確認！ 攻撃者はVPS側で侵入後、自動マウントされた『\\\\tsclient\\C\\Users\\...\\AppData』へ直にアクセスし、マルウェアを使わず正規のファイルコピーを実行しています！',
-              },
-              {
-                speaker: 'kei',
-                text: 'マルウェア不要の『リバースRDP』……！ クラウドを守るはずの鍵が、自宅への裏口を開けていたのか！',
-              },
-            ],
-          },
-        ],
-      },
       resolution: [
-        {
-          speaker: 'kei',
-          text: '恐ろしい手口だ。設定ファイルひとつで自宅PCが丸裸にされていたとはな。だがアリア、ただやられるだけじゃないな？',
-        },
-        {
-          speaker: 'aria',
-          sprite: 'aria',
-          text: 'もちろんですマスター！ 私が用意したハニーポット自宅PCのダミー『Login Data』内部に、攻撃者が自前の環境で解凍した瞬間に発火する『逆探知用カナリアトークン』を仕込んでおきました！',
-        },
-        {
-          speaker: 'takamiya',
-          sprite: 'takamiya',
-          text: '頼もしすぎるぞ二人とも……！ これでリバースRDPの全容を公表し、ユーザーに手動共有解除を周知できる！',
-        },
         {
           speaker: 'aria',
           sprite: 'aria',
           illustration: 'assets/evidence/honeypot.jpg',
-          text: '核心鑑識データ『drivestoredirect:s:* と \\\\tsclient\\C 逆流侵害証跡』を取得しました。第3章の真実が立証されました！',
+          text: '核心鑑識データ『クライアント接続構成ファイル＆共有API証跡』を取得しました。第3章の真実が立証されました！',
         },
         {
           speaker: 'narrator',
@@ -699,119 +817,178 @@ window.SCENARIO_DATA = {
           text: 'ケイ、このままじゃ社内が空中分解する……！ 経営陣をどう説得すればいいんだ！？',
         },
       ],
-      tacticChoice: {
-        id: 'tactic_ch4',
-        badge: '⚡ TACTICAL DECISION / 経営判断の決断',
-        question:
-          '【四重脅迫への初動判断】完全なデッドロックに陥った経営陣に対し、エンジニアとしてどう切り込むか？',
-        options: [
-          {
-            id: 'tactic4_a',
-            label:
-              '身代金を支払ってもデータが消滅・返還される保証がゼロであることを、過去の攻撃集団データから論証する',
-            description:
-              '犯罪組織への資金供与が更なる恐喝を呼ぶ悪循環を、客観的ファクトで突きつける。',
-            reaction: [
-              {
-                speaker: 'kei',
-                text: '身代金の支払いは絶対にダメだ！ 国際的なサイバー犯罪統計を見ろ、一度金を払った標的の80%が二重恐喝を受けている！',
-              },
-              {
-                speaker: 'takamiya',
-                sprite: 'takamiya',
-                text: 'その通りだ……！ 犯罪者に金を渡しても、データを消す保証なんてどこにもない！',
-              },
-            ],
-          },
-          {
-            id: 'tactic4_b',
-            label:
-              '約款免責を盾に逃げた場合、国内外の全金融ブローカーからの接続遮断と信用失墜で会社が倒産することを突きつける',
-            description:
-              '免責による顧客切り捨てが、金融インフラ企業としての息の根を止める自殺行為であると説く。',
-            reaction: [
-              {
-                speaker: 'kei',
-                text: '約款で免責だからと顧客を見捨てれば、70社超の金融機関から即座にAPIを切断されてインフラ事業そのものが息絶えるぞ！',
-              },
-              {
-                speaker: 'takamiya',
-                sprite: 'takamiya',
-                text: 'ケイの言う通りだ……顧客を裏切れば、会社に未来はない！',
-              },
-            ],
-          },
-        ],
-      },
-      midDialogue: [
+      choiceSteps: [
         {
-          speaker: 'takamiya',
-          sprite: 'takamiya',
-          text: '役員会も現実を直視し始めた……だが、払っても地獄、逃げても地獄だ！ 攻撃者は顧客の怒りを武器にして企業を締め上げている。この構造をどう壊すんだ！？',
+          id: 'ch4_step1_policy_debate',
+          type: 'tactic',
+          badge: '⚡ BOARDROOM DEBATE / 役員会ディベート：基本方針',
+          question:
+            '【経営方針の決断】「身代金支払い」か「約款免責による突っぱね」かで紛糾する役員会に対し、どの第3の道をぶつけるか？',
+          cutinText: 'ゲーム理論的反撃！ 身代金ゼロ・実損100%直接補償！',
+          cutinSub: '⚡ BOARDROOM STRATEGY DIRECTIVE / 経営判断承認',
+          options: [
+            {
+              id: 'opt4_pol_ransom',
+              label:
+                '身代金を支払い、これ以上の口座破壊と顧客情報のダークウェブ暴露の停止を懇願する',
+              description:
+                '犯罪組織の要求を飲み、目前の四重恐喝被害を一時的に回避しようとする選択。',
+              isCorrect: false,
+              damagePenalty: 15,
+              retryPrompt:
+                '犯罪集団に金を払えば格好のカモにされ、更なる恐喝を呼ぶだけだ！ データ消去の保証もない！ 別の反撃手段を提示せよ！',
+              reaction: [
+                {
+                  speaker: 'kei',
+                  text: '身代金を支払って事態の沈静化を図るべきでは……？',
+                },
+                {
+                  speaker: 'takamiya',
+                  sprite: 'takamiya',
+                  text: 'ダメだ！ 国際的なサイバー犯罪統計を見ろ、一度金を払った標的の80%が二重恐喝を受けている！ 犯罪者に金を渡しても、データを消す保証なんてどこにもない！',
+                },
+              ],
+            },
+            {
+              id: 'opt4_pol_disclaimer',
+              label: '約款の免責条項を盾に、補償を拒否して法務防衛に徹する',
+              description:
+                '規約通りの法的免責を主張し、企業としての金銭的支出をゼロに抑え込む選択。',
+              isCorrect: false,
+              damagePenalty: 15,
+              retryPrompt:
+                '免責で逃げれば70社超の金融機関から信用を失い、インフラ企業として即死する！ 顧客と会社を救う道を提示せよ！',
+              reaction: [
+                {
+                  speaker: 'kei',
+                  text: '約款に明記された免責条項を盾に、法務防衛を貫くべきでは……？',
+                },
+                {
+                  speaker: 'takamiya',
+                  sprite: 'takamiya',
+                  text: '顧客を見捨てれば、70社超の国内外金融機関から即座にAPIを切断されてインフラ企業として即死するぞ！ 被害者の怒りを放置すれば集団訴訟で会社は倒産だ！',
+                },
+              ],
+            },
+            {
+              id: 'opt4_pol_direct_comp',
+              label: '攻撃者への支払ゼロを宣言し、その原資で顧客の不正取引実損を100%直接補償する',
+              description:
+                '約款免責を自ら破棄し、企業の腹を括って攻撃者の人質レバレッジを根底から粉砕する。',
+              isCorrect: true,
+              reaction: [
+                {
+                  speaker: 'kei',
+                  text: '約款の免責条項を破り捨てろ！ 被害者の不正取引損失を企業が100%直接補償し、身代金支払ゼロを全世界に宣言するんだ！',
+                },
+                {
+                  speaker: 'takamiya',
+                  sprite: 'takamiya',
+                  text: '実損の100%直接補償……！ さらに全員への見舞金5,000円と新基盤半年間無償移行をつける！ これなら顧客と企業が再び一枚岩になり、攻撃者の分断工作は完全に破綻する！',
+                },
+                {
+                  speaker: 'aria',
+                  sprite: 'aria',
+                  text: 'ゲーム理論に基づく最適解です！ 攻撃者が持っていた『被害者を人質にして企業を脅す』というレバレッジが完全に消滅しました！',
+                },
+              ],
+            },
+          ],
+          nextDialogue: [
+            {
+              speaker: 'narrator',
+              text: 'だがその瞬間、財務役員と法務役員が机を叩いて立ち上がった！',
+            },
+            {
+              speaker: 'takamiya',
+              sprite: 'takamiya',
+              text: '『100%補償だと！？ 被害の45%は金融庁無登録の海外FX業者（ApexTrading、IS8FX等）だぞ！ 顧客が通常のトレードの負けまで不正取引だと嘘をついて請求してきたらどう見分けるんだ！？ 会社が破産するぞ！』と猛反発されている！',
+            },
+            {
+              speaker: 'kei',
+              text: 'モラルハザードを防ぐ客観的鑑識手段……！ レン、諦めるな、取引端末の通信プロトコルには必ずそのための安全弁が備わっている！',
+            },
+          ],
         },
         {
-          speaker: 'kei',
-          text: '諦めるなレン！ 敵の最大の武器は何だ？ 『被害者を絶望させ、企業と争わせる分断工作』だ。敵が握っているレバレッジはそれだけだ。ならば、そのレバレッジを根底から粉砕する【ゲーム理論】の一手を打つ！',
-        },
-        {
-          speaker: 'aria',
-          sprite: 'aria',
-          text: 'ゲーム理論に基づく最適解シミュレーションを開始します。攻撃者の狙いは、企業と顧客を敵対させることです。この前提を覆す唯一の選択肢が存在します！',
+          id: 'ch4_step2_investor_password',
+          type: 'forensic',
+          badge: '⚡ AUDIT SCHEME / 客観損害算定の切り札',
+          question:
+            '【客観損害算定の切り札】無登録業者を含む虚偽請求を防ぎ、改ざん不能な実損額のみを1円単位で立証する技術的スキームとは？',
+          cutinText: 'Investor Password監査成立！ 役員会を完全説得！',
+          cutinSub: '⚡ FORENSIC PROOF ESTABLISHED / 電脳鑑識立証',
+          isFinalStep: true,
+          options: [
+            {
+              id: 'opt4_inv_broker_inquiry',
+              label: '海外FX業者各社へ公式照会状を送り、取引履歴データの代理開示を要請する',
+              description: 'ブローカーの協力を仰ぎ、公式の売買明細を取り寄せるアプローチ。',
+              isCorrect: false,
+              damagePenalty: 10,
+              retryPrompt:
+                '金融庁無登録業者が日本企業や警察の要請に応じるはずがなく時間切れになる！ 顧客側から客観取得できる手段を選べ！',
+              reaction: [
+                {
+                  speaker: 'kei',
+                  text: '海外ブローカー各社に照会状を送り、公式ログを提供してもらっては？',
+                },
+                {
+                  speaker: 'takamiya',
+                  sprite: 'takamiya',
+                  text: '相手は無登録業者だぞ！ 日本の民間企業の照会に応じる法的義務などなく、返答を待つ間にタイムリミットが過ぎてしまう！',
+                },
+              ],
+            },
+            {
+              id: 'opt4_inv_user_screenshot',
+              label: '顧客から取引履歴画面のスクリーンショットおよび画面収録動画を提出させる',
+              description: '画面キャプチャを一次証拠として損害額を算出するアプローチ。',
+              isCorrect: false,
+              damagePenalty: 10,
+              retryPrompt:
+                'ブラウザ検証ツール（F12）によるHTML改ざんで簡単に偽造できてしまう！ 改ざん不能な暗号化認証を選べ！',
+              reaction: [
+                {
+                  speaker: 'kei',
+                  text: '顧客から取引画面のスクリーンショットや録画動画を提出してもらおう！',
+                },
+                {
+                  speaker: 'aria',
+                  sprite: 'aria',
+                  text: '危険ですマスター！ ブラウザの開発者ツール（F12）でHTML数値を書き換える画像・動画の偽造を防げません！ 監査証拠として脆弱すぎます！',
+                },
+              ],
+            },
+            {
+              id: 'opt4_inv_read_only',
+              label:
+                'FT4/FT5の『閲覧専用パスワード（Investor Password）』を顧客から提出させ、サーバー生履歴とVPS侵入時刻をミリ秒突合する',
+              description:
+                '出金権限を排した閲覧専用キーでブローカー生ログを取得し、VPS侵害タイムスタンプと完全一致検証。',
+              isCorrect: true,
+              rewardEvidence: 'direct_compensation_matrix',
+              reaction: [
+                {
+                  speaker: 'kei',
+                  text: 'これだ！ FT4/FT5に標準搭載されている『閲覧専用パスワード（Investor Password）』を提供してもらおう！',
+                },
+                {
+                  speaker: 'aria',
+                  sprite: 'aria',
+                  illustration: 'assets/evidence/active_memory.jpg',
+                  text: '素晴らしい着眼点です！ Investor Passwordなら出金権限なしでサーバー側のミリ秒取引生ログのみを客観監査できます！ VPSの侵入時刻と突合すれば、1円の狂いもなく不正取引だけを特定可能です！',
+                },
+                {
+                  speaker: 'takamiya',
+                  sprite: 'takamiya',
+                  text: '技術的裏付けが完全に取れた！ これなら取締役会も100%納得する！ 直ちに第4報として全世界へ公式発表するぞ！！',
+                },
+              ],
+            },
+          ],
         },
       ],
-      choice: {
-        id: 'choice_ch4',
-        badge: '⚡ FORENSIC DECISION / 鑑識の決断',
-        question:
-          '【危機管理・ゲーム理論の決断】四重脅迫を無力化し、顧客を救うための歴史的経営判断とは？',
-        options: [
-          {
-            id: 'opt4_a',
-            label: '約款免責を超え、『顧客の不正取引実損を100%直接補償』し身代金支払ゼロを宣言する',
-            description:
-              '企業の腹を括り、攻撃者の脅迫レバレッジを根底から消滅させるゲーム理論的反撃。',
-            reaction: [
-              {
-                speaker: 'kei',
-                text: '約款の免責条項を破り捨てろ！ 被害者の不正取引損失を企業が100%直接補償し、身代金支払ゼロを全世界に宣言するんだ！',
-              },
-              {
-                speaker: 'takamiya',
-                sprite: 'takamiya',
-                text: '実損の100%直接補償……！ さらに全員への見舞金5,000円と新基盤への半年間無償移行をつける！ これなら顧客と企業が再び一枚岩になり、攻撃者の分断工作は完全に破綻する！',
-              },
-              {
-                speaker: 'aria',
-                sprite: 'aria',
-                text: '見事です。攻撃者が持っていた『被害者を人質にして企業を脅す』というレバレッジが完全に消滅しました！',
-              },
-            ],
-          },
-          {
-            id: 'opt4_b',
-            label:
-              'FT4/FT5の『閲覧専用パスワード（Investor Password）』を活用した客観損害算定スキームを構築する',
-            description:
-              '海外無登録FX業者を含む複雑な損失額を、虚偽申請なく正確に査定する技術的裏付け。',
-            reaction: [
-              {
-                speaker: 'kei',
-                text: '補償するにしても虚偽申請のモラルハザードを防ぐ必要がある。FT4/FT5の『閲覧専用Investor Password』を提供してもらおう！',
-              },
-              {
-                speaker: 'aria',
-                sprite: 'aria',
-                text: '素晴らしい着眼点です！ Investor Passwordなら出金権限なしで口座のミリ秒履歴のみを監査できます。VPSの侵入時刻と突合すれば、客観的実損額を1円単位で完璧に特定可能です！',
-              },
-              {
-                speaker: 'takamiya',
-                sprite: 'takamiya',
-                text: '技術的裏付けが取れた！ これなら取締役会も説得できる。第4報として全世界へ即時発表するぞ！',
-              },
-            ],
-          },
-        ],
-      },
       resolution: [
         {
           speaker: 'takamiya',
@@ -826,7 +1003,7 @@ window.SCENARIO_DATA = {
           speaker: 'aria',
           sprite: 'aria',
           illustration: 'assets/evidence/active_memory.jpg',
-          text: '核心鑑識データ『第4報・顧客実損100%直接補償と閲覧パスワード監査票』を取得しました。第4章の真実が立証されました！',
+          text: '核心鑑識データ『顧客実損算定マトリクス＆API照会監査票』を取得しました。第4章の真実が立証されました！',
         },
         {
           speaker: 'narrator',
@@ -874,131 +1051,81 @@ window.SCENARIO_DATA = {
           text: 'ナギサ君、タカミヤ君。状況は把握している。2026年10月1日に施行された『能動的サイバー防御法（サイバー対処能力強化法）』を発動し、敵の司令塔へ非公然アクセス・無害化措置を撃ち込みたいところだが……現行法には【制度上の3つの壁】が存在する。',
         },
       ],
-      tacticChoice: {
-        id: 'tactic_ch5',
-        badge: '⚡ TACTICAL DECISION / 官民連携の決断',
-        question:
-          '【国家共同作戦の初動判断】能動的サイバー防御の壁に直面するクロダ統括官に対し、民間側から何を提示するか？',
-        options: [
-          {
-            id: 'tactic5_a',
-            label:
-              '企業が保有するすべての侵入パケットとADログの完全な任意提出を誓約し、通信の秘密の壁を無力化する',
-            description:
-              '2027年秋まで未施行の「無同意通信取得」を待たず、民間合意ログで法的主権侵害を回避する。',
-            reaction: [
-              {
-                speaker: 'kei',
-                text: 'クロダ統括官、企業側の全フォレンジックログを100%任意提出します！ 通信の秘密を侵害する懸念は一切ありません！',
-              },
-              {
-                speaker: 'kuroda',
-                sprite: 'kuroda',
-                text: 'よし、それならば2027年秋まで未施行の無同意通信取得の壁は完全に回避できる！',
-              },
-            ],
-          },
-          {
-            id: 'tactic5_b',
-            label:
-              '2万6千人の個人PC破壊が金融・経済秩序に及ぼす壊滅的打撃を提示し、警職法6条の2の要件充足を主張する',
-            description:
-              '民間申請制度の不在を乗り越え、警察官職務執行法の職権認知を発動させる法理を固める。',
-            reaction: [
-              {
-                speaker: 'kei',
-                text: 'これは2万6千世帯の財産と生命に対する明白かつ重大な危害です！ 警察官職務執行法第6条の2に基づく職権認知の要件を満たしています！',
-              },
-              {
-                speaker: 'mio',
-                sprite: 'mio',
-                text: '法務担当官と即時協議しました……！ 警察庁特捜隊の職権発動要件として成立します！',
-              },
-            ],
-          },
-        ],
-      },
-      midDialogue: [
+      choiceSteps: [
         {
-          speaker: 'mio',
-          sprite: 'mio',
-          text: '法理の突破口は見えました！ ですが残る最大の壁……誤爆を防ぐための外国主権と『真の発信源特定』です……！',
-        },
-        {
-          speaker: 'kuroda',
-          sprite: 'kuroda',
-          text: '敵は多段プロキシと海外サーバーの奥深くに身を隠している。誤ったサーバーを攻撃すれば外交上の重大問題になる。敵の真のC2サーバー座標を100%特定する決定打はあるのか！？',
+          id: 'ch5_step1_legal_walls',
+          type: 'forensic',
+          badge: '⚡ LEGAL DEFENSE / 国家サイバー対処法理の構築',
+          question:
+            '【法理の突破】基幹インフラ15分野限定の壁、および2027年秋まで未施行の無同意通信取得の壁をどう突破するか？',
+          cutinText: '警職法6条の2と100%任意ログ提供！ 法の壁を突破！',
+          cutinSub: '⚡ LEGAL AUTHORIZATION ESTABLISHED / 法理論拠承認',
+          options: [
+            {
+              id: 'opt5_law_unauthorized_access',
+              label: '不正アクセス禁止法の被害届を警察に提出し、司法判断に基づく通常捜査令状を待つ',
+              description:
+                '刑事訴訟法の原則に則り、裁判所の捜査令状発付を待ってから対処するアプローチ。',
+              isCorrect: false,
+              damagePenalty: 10,
+              retryPrompt:
+                '通常令状の取得には数日かかる！ 明日正午の26,739台破壊テロに間に合わない！ 警察官職務執行法等の緊急職権法理を構築せよ！',
+              reaction: [
+                {
+                  speaker: 'kei',
+                  text: '不正アクセス禁止法で被害届を出し、裁判所の捜査令状を待つべきでは？',
+                },
+                {
+                  speaker: 'kuroda',
+                  sprite: 'kuroda',
+                  text: '甘い！ 通常令状の発付には数日を要する！ 明日正午の26,739台一斉ランサムウェア投下まで残り数時間だ。そんな猶予はない！',
+                },
+              ],
+            },
+            {
+              id: 'opt5_law_police_duties',
+              label:
+                '民間企業の100%任意ログ提供で通信の秘密をクリアし、警職法6条の2（重大危害防止）による職権認知を成立させる',
+              description:
+                '被害企業の完全合意で通信の秘密侵害を回避し、個人の生命・財産への明白な危害を根拠に警察庁が職権介入。',
+              isCorrect: true,
+              rewardEvidence: 'nco_three_walls_report',
+              reaction: [
+                {
+                  speaker: 'kei',
+                  text: 'クロダ統括官、企業側はすべての侵入ログと通信パケットを100%任意提出します！ これで通信の秘密侵害の懸念は完全にクリアされます！',
+                },
+                {
+                  speaker: 'takamiya',
+                  sprite: 'takamiya',
+                  text: 'さらに2万6千人の自宅PC破壊予告は、個人の財産と生活に対する明白かつ重大な危害です！ 警察官職務執行法第6条の2に基づく職権認知要件を完全に満たしています！',
+                },
+                {
+                  speaker: 'kuroda',
+                  sprite: 'kuroda',
+                  text: '……見事な法理論拠だ！ これで制度上の第1の壁（基幹インフラ外）と第2の壁（無同意通信取得）は完全に打ち破られた！',
+                },
+              ],
+            },
+          ],
         },
       ],
-      choice: {
-        id: 'choice_ch5',
-        badge: '⚡ FORENSIC DECISION / 鑑識の決断',
-        question:
-          '【国家反撃の決断】制度上の3つの壁を突破し、能動的サイバー防御「発動第1号」を成立させる決定打は？',
-        options: [
-          {
-            id: 'opt5_a',
-            label:
-              '民間企業の100%任意ログ提供と、警職法6条の2（重大危害防止）による職権認知を成立させる',
-            description: '法制度の隙間を埋め、国家機関が適法に動くための制度的突破口を開く。',
-            reaction: [
-              {
-                speaker: 'kei',
-                text: 'クロダ統括官、企業側はすべての侵入ログとパケットを100%任意提出します！ これで通信の秘密侵害の壁はクリアできる！',
-              },
-              {
-                speaker: 'takamiya',
-                sprite: 'takamiya',
-                text: 'さらに2万6千人の自宅PC破壊予告は個人の生命・財産への重大危害です！ 警察官職務執行法第6条の2に基づく職権認知要件を満たしています！',
-              },
-              {
-                speaker: 'kuroda',
-                sprite: 'kuroda',
-                text: '……見事な法理論拠だ。だが最後に残る『第3の壁』……敵の真の発信源を100%立証できなければ、外務大臣協議も監理委員会の承認も下りんぞ！',
-              },
-            ],
-          },
-          {
-            id: 'opt5_b',
-            label:
-              'Chapter 3で仕掛けたダミーLogin Data『カナリア逆探知ビーコン』の発火ログを提示する',
-            description: '多段プロキシの奥に潜む真のC2サーバー座標を特定した物理的決定打。',
-            reaction: [
-              {
-                speaker: 'aria',
-                sprite: 'aria',
-                text: 'クロダ統括官、こちらをご覧ください！ ハニーポットに仕込んだカナリアトークンが、たった今、攻撃者の解凍によって発火しました！',
-              },
-              {
-                speaker: 'mio',
-                sprite: 'mio',
-                text: '真のC2サーバーIPアドレス『185.220.101.xx』を確認！ 多段偽装プロキシの背後にあるランサムウェア配信キューを完全に捕捉しました！',
-              },
-              {
-                speaker: 'kuroda',
-                sprite: 'kuroda',
-                text: '真の発信源を特定したか……！ これより警察庁サイバー特別捜査隊と連携し、サイバー通信情報監理委員会の緊急承認を取り付ける！',
-              },
-            ],
-          },
-        ],
-      },
       resolution: [
         {
           speaker: 'aria',
           sprite: 'aria',
-          illustration: 'assets/evidence/c2_origin.png',
-          text: '核心鑑識データ『能動的サイバー防御法3つの壁レポート』および『カナリア真C2特定座標』を取得しました！',
+          illustration: 'assets/evidence/nco_alert.png',
+          text: '核心鑑識データ『国家サイバー対処法理・要件適合性審査レポート』を取得しました！',
         },
         {
           speaker: 'kuroda',
           sprite: 'kuroda',
-          text: 'だが待て！ 国家の武力に等しい能動的サイバー防御を発動するには、サイバー通信情報監理委員会と外務大臣協議に対する【完全無欠の証拠連結（ロジックチェーン）】が必須だ！',
+          text: 'だが最後に立ち塞がる最大の壁……外国主権と『真の発信源特定』だ！ 誤ったサーバーを攻撃すれば外交上の重大問題になる！',
         },
         {
           speaker: 'kuroda',
           sprite: 'kuroda',
-          text: 'ナギサ君、君が集めた鑑識証拠のすべてを、ここで結集して立証してみせろ！ 1つでも論理が崩れれば、作戦は中止だ！',
+          text: '能動的サイバー防御を発動するには、サイバー通信情報監理委員会と外務大臣協議に対する【完全無欠の証拠連結（ロジックチェーン）】が必須だ！',
         },
         {
           speaker: 'kei',
@@ -1016,22 +1143,22 @@ window.SCENARIO_DATA = {
             stepNumber: 1,
             title: 'STEP 1: 制度上の壁の突破',
             question:
-              '【法的根拠の立証】民間企業からの直接申請手続きがなく基幹インフラ15分野に限定される壁を突破し、国家機関が職権で強制介入するための法理論拠を示す証拠を提示せよ！',
+              '【法的根拠の立証】民間直接申請がなく基幹インフラ15分野に縛られる壁を突破し、国家機関が職権介入するための法理論拠を示す証拠を提示せよ！',
             correctEvidenceId: 'nco_three_walls_report',
-            hint: 'ケイ、その証拠じゃ行政や警察が動くための法律要件を証明できない！ 国家機関の制度と法理を分析した鑑識レポートがあるはずだ！',
+            hint: '行政や警察が職権で動くための法律要件と、民間任意ログ提供を整理した鑑識レポートがあるはずだ！',
             reaction: [
               {
                 speaker: 'kei',
-                text: 'これを見てください、統括官！ 『能動的サイバー防御法 制度上の3つの壁と突破法理』です！',
+                text: 'これを見てください、統括官！ 『国家サイバー対処法理・要件適合性審査レポート』です！',
               },
               {
                 speaker: 'kei',
-                text: '被害企業の100%任意ログ提供により通信の秘密侵害を回避し、さらに個人の生命・財産への重大危害を根拠に、警職法6条の2による職権認知を成立させます！',
+                text: '被害企業の100%任意ログ提供により通信の秘密侵害を回避し、さらに26,739人の個人財産への重大危害を根拠に、警職法6条の2による職権認知を成立させます！',
               },
               {
                 speaker: 'kuroda',
                 sprite: 'kuroda',
-                text: '見事だ……！ 法の壁は完全に打ち破られた！ だが次は攻撃ルートの特定だ！',
+                text: '見事だ……！ 法の壁は完全に打ち破られた！ だが次は攻撃ルートの物理的遮断だ！',
               },
             ],
           },
@@ -1039,17 +1166,17 @@ window.SCENARIO_DATA = {
             stepNumber: 2,
             title: 'STEP 2: 侵入経路の物理的遮断',
             question:
-              '【物理的侵害ルートの立証】なぜ攻撃者はマルウェアなしで被害者の自宅PCを掌握できたのか？ 今回の26,739台への無差別ランサムウェア投下を可能にした物理的接続設定の証拠を提示せよ！',
+              '【物理的侵害ルートの立証】なぜ攻撃者はマルウェアなしで被害者の自宅PCを掌握できたのか？ 26,739台への無差別ランサムウェア投下を可能にした物理的接続設定の証拠を提示せよ！',
             correctEvidenceId: 'reverse_rdp_tsclient',
-            hint: 'マスター、その証拠は別のフェーズのものです。被害者の自宅PCからファイルが奪われ、ランサムウェアが送り込まれようとしている物理的接続設定の証拠を探してください！',
+            hint: '被害者の自宅PCからファイルが奪われ、ランサムウェアが送り込まれようとしている物理的接続設定の証拠を探せ！',
             reaction: [
               {
                 speaker: 'kei',
-                text: '接続設定に潜んでいた『drivestoredirect:s:* と \\\\tsclient\\C 逆流侵害証跡』です！',
+                text: '接続構成に潜んでいた『クライアント接続構成ファイル＆共有API証跡』です！',
               },
               {
                 speaker: 'kei',
-                text: 'ユーザーがVPSに接続した瞬間、VPS側から自宅PCのCドライブが全自動共有されていた！ 敵はこのリバースRDPのパイプラインを使って、自宅PCへランサムウェアを一斉配信する気です！',
+                text: 'drivestoredirect:s:* の記述により、ユーザーがVPSに接続した瞬間、VPS側から自宅PCのCドライブが全自動共有されていた！ 敵はこのリバースRDPのパイプラインを使ってランサムウェアを一斉配信する気です！',
               },
               {
                 speaker: 'mio',
@@ -1059,7 +1186,7 @@ window.SCENARIO_DATA = {
               {
                 speaker: 'kuroda',
                 sprite: 'kuroda',
-                text: 'よし！ そして最後に残る最大の謎……真の発信源を特定する決定打を出せ！',
+                text: 'よし！ そして最後に残る最大の謎……多段プロキシの奥に潜む真の発信源を特定する決定打を出せ！',
               },
             ],
           },
@@ -1069,16 +1196,17 @@ window.SCENARIO_DATA = {
             question:
               '【最終決定打の立証】多段偽装プロキシの奥に潜む真の発信源を暴き、秒読み段階に入ったランサムウェア配信キューを完全消去するための最終決定打となる証拠を提示せよ！',
             correctEvidenceId: 'canary_c2_origin',
-            hint: 'そのデータでは外国主権の壁を越えられん！ 多段プロキシの裏にある真のC2サーバー座標を特定した物理的証拠はどこにある！？',
+            hint: '多段プロキシの裏にある真のC2サーバー座標をピンポイントで捉えた逆探知テレメトリはどこにある！？',
             reaction: [
               {
                 speaker: 'kei',
-                text: 'これが最後の決定打だ！ 『ダミーLogin Dataカナリア逆探知ログと真C2特定座標』！',
+                text: 'これが最後の決定打だ！ Chapter 3でハニーポットに仕込んだ【ハニーポット端末・外部通信ビーコン記録】！',
               },
               {
                 speaker: 'aria',
                 sprite: 'aria',
-                text: 'ハニーポットに仕込んだカナリアトークンが発火！ 真のC2サーバーIPアドレス【185.220.101.xx】および、送信直前のランサムウェア配信キューをピンポイントで捕捉しました！！',
+                illustration: 'assets/evidence/c2_origin.png',
+                text: 'マスターが自らリスクを取って敵に持ち帰らせたダミーLogin Dataが、攻撃者のアジトで解凍されました！ カナリア逆探知ビーコンが発火！ 真のC2サーバーIPアドレス【185.220.101.xx】および、26,739件のランサムウェア配信キューをピンポイントで捕捉しました！！',
               },
               {
                 speaker: 'kuroda',

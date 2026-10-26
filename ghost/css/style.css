@@ -202,6 +202,36 @@ body {
   font-weight: 800;
 }
 
+/* 残存資産防衛率メーターバッジ */
+.defense-badge {
+  background: rgba(16, 185, 129, 0.14);
+  border-color: rgba(16, 185, 129, 0.5);
+  color: var(--nco-emerald);
+  transition: all 0.3s ease;
+}
+
+.defense-badge.warning {
+  background: rgba(245, 158, 11, 0.16);
+  border-color: rgba(245, 158, 11, 0.55);
+  color: #f59e0b;
+}
+
+.defense-badge.danger {
+  background: rgba(239, 68, 68, 0.22);
+  border-color: rgba(239, 68, 68, 0.65);
+  color: #ef4444;
+  animation: defenseDangerPulse 1s infinite alternate;
+}
+
+@keyframes defenseDangerPulse {
+  0% {
+    box-shadow: 0 0 4px rgba(239, 68, 68, 0.3);
+  }
+  100% {
+    box-shadow: 0 0 16px rgba(239, 68, 68, 0.85);
+  }
+}
+
 /* HUDボタン：角切りミリタリーグレードスイッチ */
 .hud-btn {
   display: inline-flex;
@@ -794,6 +824,94 @@ body {
   line-height: 1.45;
 }
 
+.choice-log-container {
+  background: #020617;
+  border: 1px solid rgba(0, 240, 255, 0.35);
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8);
+}
+
+.log-terminal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 12px;
+  background: rgba(15, 23, 42, 0.95);
+  border-bottom: 1px solid rgba(0, 240, 255, 0.2);
+}
+
+.log-terminal-dots {
+  display: inline-flex;
+  gap: 6px;
+}
+
+.log-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.log-dot.red {
+  background: #ef4444;
+}
+
+.log-dot.yellow {
+  background: #f59e0b;
+}
+
+.log-dot.green {
+  background: #10b981;
+}
+
+.log-terminal-title {
+  font-family: var(--font-hud);
+  font-size: 0.72rem;
+  color: var(--nco-cyan);
+  letter-spacing: 0.08em;
+  font-weight: 700;
+}
+
+.choice-log-content {
+  margin: 0;
+  padding: 12px 14px;
+  font-family: "Courier New", Consolas, monospace;
+  font-size: clamp(0.74rem, 2.4vw, 0.84rem);
+  line-height: 1.5;
+  color: #38bdf8;
+  background: transparent;
+  white-space: pre-wrap;
+  overflow-x: auto;
+}
+
+.choice-retry-banner {
+  padding: 10px 14px;
+  background: rgba(239, 68, 68, 0.16);
+  border: 1px solid rgba(239, 68, 68, 0.65);
+  border-radius: 6px;
+  color: #fca5a5;
+  font-size: 0.88rem;
+  font-weight: 700;
+  line-height: 1.45;
+  animation: retryShake 0.4s ease;
+}
+
+@keyframes retryShake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  20%,
+  60% {
+    transform: translateX(-6px);
+  }
+  40%,
+  80% {
+    transform: translateX(6px);
+  }
+}
+
 .choice-options {
   display: flex;
   flex-direction: column;
@@ -1289,6 +1407,58 @@ body {
 .ending-icon {
   font-size: 3.2rem;
   animation: pulseGlow 2s infinite ease-in-out;
+}
+
+.ending-rank-badge {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 28px;
+  border-radius: 8px;
+  font-family: var(--font-hud);
+  margin-bottom: 8px;
+  transition: all 0.3s ease;
+}
+
+.ending-rank-badge.rank-s {
+  background: rgba(16, 185, 129, 0.18);
+  border: 2px solid #10b981;
+  color: #10b981;
+  box-shadow: 0 0 28px rgba(16, 185, 129, 0.45);
+}
+
+.ending-rank-badge.rank-a {
+  background: rgba(6, 182, 212, 0.18);
+  border: 2px solid #06b6d4;
+  color: #06b6d4;
+  box-shadow: 0 0 28px rgba(6, 182, 212, 0.45);
+}
+
+.ending-rank-badge.rank-b {
+  background: rgba(245, 158, 11, 0.18);
+  border: 2px solid #f59e0b;
+  color: #f59e0b;
+  box-shadow: 0 0 28px rgba(245, 158, 11, 0.45);
+}
+
+.ending-rank-badge.rank-c {
+  background: rgba(239, 68, 68, 0.18);
+  border: 2px solid #ef4444;
+  color: #ef4444;
+  box-shadow: 0 0 28px rgba(239, 68, 68, 0.45);
+}
+
+.rank-char {
+  font-size: 2.8rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.rank-title {
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
 }
 
 .ending-title {
