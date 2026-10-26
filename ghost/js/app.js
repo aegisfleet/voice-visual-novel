@@ -709,11 +709,23 @@ class NovelApp {
 
     this.pendingRetryChoice = null;
     this.state.recordChoice(choiceData.id, option.id);
+    this.applyOptionReward(choiceData, option);
 
     if (type === 'tactic') {
       this.handleTacticOptionSelected(choiceData, option);
     } else {
       this.handleForensicOptionSelected(choiceData, option);
+    }
+  }
+
+  applyOptionReward(choiceData, option) {
+    const rewardEv =
+      option?.rewardEvidence ||
+      choiceData?.rewardEvidence ||
+      (choiceData?.isFinalStep ? this.currentChapterData?.requiredEvidence : null);
+    if (rewardEv) {
+      this.state.addEvidence(rewardEv);
+      this.updateEvidenceHud();
     }
   }
 
@@ -768,14 +780,6 @@ class NovelApp {
     const nextDialogue = choiceData.nextDialogue || this.currentChapterData?.resolution || [];
     this.currentDialogueQueue = [...reaction, ...nextDialogue];
     this.queueIndex = 0;
-
-    const rewardEv =
-      choiceData.rewardEvidence ||
-      (choiceData.isFinalStep ? this.currentChapterData?.requiredEvidence : null);
-    if (rewardEv) {
-      this.state.addEvidence(rewardEv);
-      this.updateEvidenceHud();
-    }
 
     setTimeout(() => this.renderCurrentLine(), 800);
   }

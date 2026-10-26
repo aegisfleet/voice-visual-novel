@@ -13,7 +13,7 @@ window.SCENARIO_DATA = {
       name: 'AD侵入痕跡・取引プロトコル生ログ',
       icon: '🔥',
       image: 'assets/evidence/sinkhole.jpg',
-      type: '【Chapter 1 核心鑑識】AD基盤侵害・ミリ秒注文パラメータ',
+      type: '【通信プロトコル鑑識】AD基盤侵害・ミリ秒注文パラメータ',
       summary:
         '出金制限を逆手に取り、高スプレッド通貨の即時往復売買で口座残高を蒸発させた恐喝注文テレメトリ。',
       detail:
@@ -24,7 +24,7 @@ window.SCENARIO_DATA = {
       name: '取引通信ソケット監査票＆脅迫添付Excel',
       icon: '🌐',
       image: 'assets/evidence/cdn_network.png',
-      type: '【Chapter 2 核心鑑識】永続ソケット監査・脅迫メールメタデータ',
+      type: '【セッション・偽旗鑑識】永続ソケット監査・脅迫メールメタデータ',
       summary:
         'パスワード変更後も維持されるTCP接続仕様と、内部XMLに偽旗工作の痕跡を残した脅迫ファイル。',
       detail:
@@ -35,7 +35,7 @@ window.SCENARIO_DATA = {
       name: 'クライアント接続構成ファイル＆共有API証跡',
       icon: '💻',
       image: 'assets/evidence/honeypot.jpg',
-      type: '【Chapter 3 核心鑑識】RDPリダイレクト設定・ローカル共有監査',
+      type: '【エンドポイント構成鑑識】RDPリダイレクト設定・ローカル共有監査',
       summary:
         '接続用.rdpファイルの自動共有設定により、クラウドVPS側へ自宅PCの全ドライブが露出した痕跡。',
       detail:
@@ -46,7 +46,7 @@ window.SCENARIO_DATA = {
       name: '顧客実損算定マトリクス＆API照会監査票',
       icon: '⚖️',
       image: 'assets/evidence/active_memory.jpg',
-      type: '【Chapter 4 核心鑑識】ゲーム理論的反撃・Investor Password監査',
+      type: '【法理・制度監査証跡】ゲーム理論的反撃・Investor Password監査',
       summary:
         '約款免責を超えた100%直接補償方針と、閲覧専用パスワードによる客観的損害算定スキーム。',
       detail:
@@ -57,7 +57,7 @@ window.SCENARIO_DATA = {
       name: '国家サイバー対処法理・要件適合性審査レポート',
       icon: '🏛️',
       image: 'assets/evidence/nco_alert.png',
-      type: '【Chapter 5 核心鑑識】能動的サイバー防御発動要件監査レポート',
+      type: '【サイバー防衛法理証跡】能動的サイバー防御発動要件監査レポート',
       summary:
         'サイバー対処能力強化法における要件の壁と、民間任意ログ提供および警職法に基づく突破法理。',
       detail:
@@ -68,7 +68,7 @@ window.SCENARIO_DATA = {
       name: 'ハニーポット端末・外部通信ビーコン記録',
       icon: '🎯',
       image: 'assets/evidence/c2_origin.png',
-      type: '【Chapter 5 核心鑑識】逆探知ビーコン発火・外部通信テレメトリ',
+      type: '【真性C2逆探知ビーコン】逆探知ビーコン発火・外部通信テレメトリ',
       summary:
         'ハニーポット端末の重要ファイル内に潜伏させたカナリアが発火し、偽装プロキシの背後を捉えた追跡記録。',
       detail:
@@ -335,6 +335,47 @@ window.SCENARIO_DATA = {
           isFinalStep: true,
           options: [
             {
+              id: 'opt1_trap_silent',
+              label: '原因が完全特定できるまで事実公表を控え、サイレント調査を継続する',
+              description: '風評被害を最小限に抑え、裏で原因特定とパッチ適用を完了させる。',
+              isCorrect: false,
+              damagePenalty: 10,
+              retryPrompt:
+                'SNSのパニックが暴動化し、金融庁から即時公表の厳命が下った！ 沈黙は許されない！',
+              reaction: [
+                {
+                  speaker: 'kei',
+                  text: '原因が完全特定できるまで公表を控え、水面下でサイレント調査を進めるべきだ。',
+                },
+                {
+                  speaker: 'takamiya',
+                  sprite: 'takamiya',
+                  text: 'だめだ！ すでにSNSで被害報告が爆発している！ 沈黙すれば隠蔽工作とみなされ金融庁から業務改善命令どころか業務停止命令が飛ぶぞ！',
+                },
+              ],
+            },
+            {
+              id: 'opt1_trap_freeze',
+              label:
+                '国内外70社の全ブローカーに対し、無関係な一般口座を含む全顧客口座の無期限凍結を要請する',
+              description: 'システム全体を一斉停止し、すべての資金移動と取引を物理的に封殺する。',
+              isCorrect: false,
+              damagePenalty: 10,
+              retryPrompt:
+                '被害に遭っていない数百万人の口座まで止めることは金融市場への影響が大きすぎると各社から拒絶された！',
+              reaction: [
+                {
+                  speaker: 'kei',
+                  text: '全ブローカーに要請し、無関係な一般口座も含めて全顧客口座を無期限凍結してはどうだ？',
+                },
+                {
+                  speaker: 'takamiya',
+                  sprite: 'takamiya',
+                  text: '無茶を言うな！ 被害のない正常な数百万口座まで止めたら金融市場が大混乱に陥る！ ブローカー各社から即座に拒絶された！',
+                },
+              ],
+            },
+            {
               id: 'opt1_trap_password',
               label: '全ユーザーに対し、金融取引口座のWebパスワードの即時変更を強く呼びかける',
               description: '侵入された認証情報を無力化し、これ以上の口座焼却を防ぐ王道の初動対応。',
@@ -491,55 +532,79 @@ window.SCENARIO_DATA = {
         {
           id: 'ch2_step2_false_flag',
           type: 'forensic',
-          badge: '⚡ FORENSIC DECISION / 偽旗工作の看破',
+          badge: '⚡ FORENSIC DEDUCTION / 偽旗工作の看破',
           question:
-            '【偽旗工作の看破】ロシア人『Dmitry Orlov』を名乗る集団訴訟煽動メールの信用を客観的物証でどう突き崩すか？',
+            '【偽旗工作の看破】ロシア人『Dmitry Orlov』を名乗る集団訴訟煽動メールの信用を突き崩す、ファイル内部の決定的な矛盾はどこか？',
           cutinText: '偽旗工作を完全論破！ 中国語KPS痕跡を特定！',
           cutinSub: '⚡ FORENSIC PROOF ESTABLISHED / 電脳鑑識立証',
           isFinalStep: true,
+          logBox: {
+            title: 'FORENSIC DUMP: LAWSUIT_EVIDENCE.XLSX (UNZIPPED XML)',
+            content:
+              'Sender: Dmitry Orlov <dmitry@hacking-team-ru.org>\nSMTP Relay: 185.220.101.44 (Tor Exit Node)\nFile Format: OpenXML Spreadsheet (.xlsx)\ndocProps/core.xml: <dc:creator>Dmitry_RU</dc:creator>\nxl/workbook.xml: <sheets><sheet name="工作表1" sheetId="1" r:id="rId1"/></sheets>',
+          },
           options: [
             {
-              id: 'opt2_ff_warning',
-              label: '海外FX業者が金融庁無登録業者であることを理由に、法務から法的警告を出す',
-              description: '無登録業者の利用規約違反を盾に、集団訴訟の正当性を否定するアプローチ。',
+              id: 'opt2_ff_sender',
+              label: '送信元メールアドレスとメタデータ作成者名（Dmitry_RU）の整合性',
+              description: '自称ロシア人ハッカーのプロファイルと文面の一致を確認するアプローチ。',
               isCorrect: false,
               damagePenalty: 10,
               retryPrompt:
-                '逆効果だ！ 被害者から『無登録業者のせいにして企業が責任逃れをしている』と猛反発を受け炎上ゲージが増加した！ 物証で語れ！',
+                '表層の送信者情報はいくらでも偽装可能だ！ 攻撃者の偽装に踊らされ、時間を浪費してしまった！ XMLの深層データを検証せよ！',
               reaction: [
                 {
                   speaker: 'kei',
-                  text: '海外FX業者は金融庁無登録だ。法務から公式に警告を出し、訴訟の不当性を主張してはどうか？',
+                  text: '送信元アドレスやXML作成者名がロシア人名義になっている点から、ロシア系組織と断定してはどうか？',
                 },
                 {
-                  speaker: 'takamiya',
-                  sprite: 'takamiya',
-                  text: '逆効果だ！ 被害者たちから『会社が責任逃れのために被害者を脅迫している』とSNSで猛反発を受け、炎上がさらに激化してしまった！',
+                  speaker: 'aria',
+                  sprite: 'aria',
+                  text: 'だめですマスター！ 表層のメタデータは攻撃者がいくらでも偽装できます！ 表層の看板に惑わされてはいけません！',
                 },
               ],
             },
             {
-              id: 'opt2_ff_metadata',
-              label:
-                '添付された証拠Excel（.xlsx）をZIP解凍し、workbook.xml のシート定義メタデータを洗う',
+              id: 'opt2_ff_relay',
+              label: 'Tor出口ノード（185.220.101.44）を経由したSMTPリレーIPアドレスの追跡',
               description:
-                'ファイル生成環境の深部XMLをバイナリ解剖し、作成者の真のOS・言語環境を特定。',
+                '送信元IPの地理位置を特定し、ロシア国内の通信網であるか検証するアプローチ。',
+              isCorrect: false,
+              damagePenalty: 10,
+              retryPrompt:
+                'Tor出口ノードのIPを追っても発信源は特定できない！ 敵の偽装工作のボロが出ているファイル内部の記述を見抜け！',
+              reaction: [
+                {
+                  speaker: 'kei',
+                  text: 'SMTPリレーIPの185.220.101.44を調査し、サーバーの物理位置から発信源を特定できないか？',
+                },
+                {
+                  speaker: 'aria',
+                  sprite: 'aria',
+                  text: 'このIPは公開されているTor出口ノードです！ 匿名化ネットワークを経由しているため、IPアドレスから発信国を特定することは不可能です！',
+                },
+              ],
+            },
+            {
+              id: 'opt2_ff_worksheet',
+              label: 'xl/workbook.xml 内に記録されたデフォルトシート名定義（工作表1）',
+              description: 'ファイル生成時に自動生成されるスプレッドシート定義タグの文字列を検証。',
               isCorrect: true,
               rewardEvidence: 'persistent_session_trap',
               reaction: [
                 {
                   speaker: 'kei',
-                  text: 'アリア、ロシア人を名乗る攻撃者が添付してきた『集団訴訟用証拠Excel』をZIP解凍し、内部XMLメタデータを全解剖しろ！',
+                  text: 'アリア、内部XMLの xl/workbook.xml を見ろ！ シート名定義タグが「工作表1」になっているぞ！',
                 },
                 {
                   speaker: 'aria',
                   sprite: 'aria',
                   illustration: 'assets/evidence/cdn_network.png',
-                  text: '内部XMLから決定的な痕跡を抽出しました！ デフォルトのシート名がロシア語ではなく、中国語簡体字版KPS Office特有の『工作表』となっています！',
+                  text: 'ビンゴですマスター！ ロシア語版Officeなら「Лист1」、英語版なら「Sheet1」のはずです。「工作表」は中国語簡体字版KPS Office特有の自動付与シート名です！',
                 },
                 {
                   speaker: 'kei',
-                  text: '中国語版オフィスソフトの痕跡……！ ロシアのハッカー集団を装った多国籍の偽旗工作（False Flag）だ！ 敵の分断工作を客観的物証で粉砕できる！',
+                  text: 'ロシア人を騙りながら、ファイル生成環境は中国語圏のオフィスソフト……多国籍の偽旗工作（False Flag）だ！ 敵の分断工作を客観的物証で粉砕できる！',
                 },
               ],
             },
@@ -549,23 +614,18 @@ window.SCENARIO_DATA = {
       resolution: [
         {
           speaker: 'kei',
-          text: 'レン、証拠は揃った。パスワード変更が効かないのはFT4/FT5の永続ソケット仕様だ。全ブローカーに既存セッションの強制切断を要請しろ！',
+          text: 'レン、偽旗工作の決定打が掴めた。集団訴訟を煽るExcelの正体は中国語版オフィスの『工作表』だ。直ちにこの物証を公表し、敵の分断工作を無力化しろ！',
         },
         {
           speaker: 'takamiya',
           sprite: 'takamiya',
-          text: 'すぐ手配する！ そしてロシア人を装った偽旗工作の正体も暴かれた……これで敵の分断工作に反撃できる！',
+          text: '了解だ！ 偽旗工作の解析結果を公式リリースした。敵の煽動に乗せられていた被害者たちも冷静さを取り戻し、集団訴訟パニックは一気に沈静化したぞ！',
         },
         {
           speaker: 'aria',
           sprite: 'aria',
           illustration: 'assets/evidence/cdn_network.png',
           text: '核心鑑識データ『取引通信ソケット監査票＆脅迫添付Excel』を取得しました。第2章の真実が立証されました！',
-        },
-        {
-          speaker: 'takamiya',
-          sprite: 'takamiya',
-          text: '全セッション強制パージの実行により、不正注文は完全に停止した……！ ケイ、お前のおかげで最悪の炎上を止められたぞ！',
         },
         {
           speaker: 'narrator',
@@ -631,7 +691,7 @@ window.SCENARIO_DATA = {
             {
               id: 'opt3_cfg_admin',
               label: 'administrative session:i:1',
-              description: 'サーバーへの管理者コンソールセッション接続を要求するパラメータ。',
+              description: '接続先サーバーのセッション接続モードを指定する構成フラグ。',
               isCorrect: false,
               damagePenalty: 10,
               retryPrompt:
@@ -652,7 +712,7 @@ window.SCENARIO_DATA = {
               id: 'opt3_cfg_drives',
               label: 'drivestoredirect:s:*',
               description:
-                'クライアント端末のすべての接続ドライブをサーバー側へ自動マウントするパラメータ。',
+                'ローカル環境のリソース割り当て対象をワイルドカード（*）で指定する構成パラメータ。',
               isCorrect: true,
               reaction: [
                 {
@@ -674,7 +734,8 @@ window.SCENARIO_DATA = {
             {
               id: 'opt3_cfg_clipboard',
               label: 'redirectclipboard:i:1',
-              description: 'リモート端末とローカル端末の間でクリップボードを共有するパラメータ。',
+              description:
+                'ローカル環境とリモート環境間のデータ転送バッファを有効化する構成フラグ。',
               isCorrect: false,
               damagePenalty: 10,
               retryPrompt:
@@ -1031,7 +1092,7 @@ window.SCENARIO_DATA = {
       date: '10月24日 22:00〜未明',
       title: '能動的サイバー防御「発動第1号」と3つの壁の突破',
       subtitle: '法理の迷宮とカナリアの奇襲',
-      requiredEvidence: 'canary_c2_origin',
+      requiredEvidence: 'direct_compensation_matrix',
       introDialogue: [
         {
           speaker: 'narrator',
@@ -1108,28 +1169,105 @@ window.SCENARIO_DATA = {
               ],
             },
           ],
+          nextDialogue: [
+            {
+              speaker: 'kuroda',
+              sprite: 'kuroda',
+              text: 'だが最後に立ち塞がる第3の壁……外国主権と『真の発信源特定』だ！ 敵は多段プロキシの奥に隠れており、誤爆すれば外交上の重大問題になる！ 真のC2を100%特定する物証はあるのか！？',
+            },
+            {
+              speaker: 'aria',
+              sprite: 'aria',
+              text: 'マスター！！ 緊急通信を捕捉しました！ Chapter 3でハニーポット端末のダミーLogin Dataに仕込んだ【逆探知用カナリアトークン】から、DNS/HTTP逆探知コールバックが着弾しました！！',
+            },
+            {
+              speaker: 'kei',
+              text: 'カナリアが発火したか……！ アリア、多段偽装プロキシを突き破ったコールバックの生テレメトリを直ちに展開しろ！',
+            },
+          ],
+        },
+        {
+          id: 'ch5_step2_canary_beacon',
+          type: 'forensic',
+          badge: '⚡ BEACON TELEMETRY / 逆探知ビーコン解析',
+          question:
+            '【真C2特定の立証】解凍されたダミーLogin Dataから発火した逆探知ログを解析し、多段プロキシの背後に潜む真の司令塔をどこに特定するか？',
+          cutinText: '逆探知成功！ 多段プロキシを突破し真C2を捕捉！',
+          cutinSub: '⚡ CRITICAL TRACE ESTABLISHED / 真発信源特定',
+          isFinalStep: true,
+          logBox: {
+            title: 'BEACON TELEMETRY: CANARY TOKEN CALLBACK HIT',
+            content:
+              'Reverse Callback: [CRITICAL HIT]\nProxy Node A: 45.154.255.89 (Amsterdam, NL) [Tor Relay]\nProxy Node B: 185.220.101.5 (Bucharest, RO) [SOCKS5 Bridge]\nDirect Payload Execution Source: 91.240.118.174 (Frankfurt Datacenter DC-4)\nTarget File Opened: %APPDATA%\\Google\\Chrome\\User Data\\Default\\Login Data (Dummy)\nTrigger Event: SQLite Header Decryption Hook\nPayload Auth Token: 26739_RANSOM_ACTIVE',
+          },
+          options: [
+            {
+              id: 'opt5_c2_proxy',
+              label: 'オランダ・アムステルダムの中継プロキシ（45.154.255.89）への攻撃指令要請',
+              description: '最初に検知された外部リレーノードのIPアドレスへ反撃を要請する。',
+              isCorrect: false,
+              damagePenalty: 10,
+              retryPrompt:
+                'それは単なるTor中継ノードだ！ 無関係な海外サーバーを攻撃すれば国際問題になる！ カナリアが直接コールバックを叩いた真の実行元IPを見抜け！',
+              reaction: [
+                {
+                  speaker: 'kei',
+                  text: 'オランダのアムステルダムにあるプロキシノードが攻撃拠点ではないか？',
+                },
+                {
+                  speaker: 'aria',
+                  sprite: 'aria',
+                  text: '違いますマスター！ それは表層のTorリレーノードです！ そこを叩いても敵の本体には届かず、無関係な海外拠点を巻き込んでしまいます！',
+                },
+              ],
+            },
+            {
+              id: 'opt5_c2_direct',
+              label: 'SQLite復号フックを直接発火させた真の実行元IP（91.240.118.174）への標的固定',
+              description:
+                'ダミーファイルを解凍・参照した瞬間に直接通信を返してきた攻撃者の実体サーバー。',
+              isCorrect: true,
+              rewardEvidence: 'canary_c2_origin',
+              reaction: [
+                {
+                  speaker: 'kei',
+                  text: 'アリア、SQLite復号フックを直接発火させたIP『91.240.118.174』を見ろ！ これが多段プロキシの裏にある真のC2サーバーだ！',
+                },
+                {
+                  speaker: 'aria',
+                  sprite: 'aria',
+                  illustration: 'assets/evidence/c2_origin.png',
+                  text: 'ビンゴですマスター！ オランダやルーマニアのプロキシを完全にバイパスし、攻撃者が自前でダミーLogin Dataを開いた真の実行元IPと、26,739件のランサムウェア配信キューを完全に捕捉しました！！',
+                },
+                {
+                  speaker: 'kei',
+                  text: 'Chapter 3でリスクを冒してカナリアを仕込ませた甲斐があったな……！ これで最後のピースが揃った！',
+                },
+              ],
+            },
+          ],
         },
       ],
       resolution: [
         {
           speaker: 'aria',
           sprite: 'aria',
-          illustration: 'assets/evidence/nco_alert.png',
-          text: '核心鑑識データ『国家サイバー対処法理・要件適合性審査レポート』を取得しました！',
+          illustration: 'assets/evidence/c2_origin.png',
+          text: '核心鑑識データ『ハニーポット端末・外部通信ビーコン記録』を取得しました！ 全6つの鑑識が手元に揃いました！',
         },
         {
           speaker: 'kuroda',
           sprite: 'kuroda',
-          text: 'だが最後に立ち塞がる最大の壁……外国主権と『真の発信源特定』だ！ 誤ったサーバーを攻撃すれば外交上の重大問題になる！',
+          text: '見事だナギサ君、タカミヤ君！ これで第1・第2・第3の壁を突破するすべての物証が揃った！',
         },
         {
           speaker: 'kuroda',
           sprite: 'kuroda',
-          text: '能動的サイバー防御を発動するには、サイバー通信情報監理委員会と外務大臣協議に対する【完全無欠の証拠連結（ロジックチェーン）】が必須だ！',
+          text: 'サイバー通信情報監理委員会と外務大臣協議に対する【完全無欠の証拠連結（FINAL DEDUCTION）】を直ちに構築し、無害化措置の承認を勝ち取るぞ！',
         },
         {
           speaker: 'kei',
-          text: '望むところだ……！ アリア、これまで集めた全鑑識ファイルを手元に展開しろ！ 最後のパズルを完成させる！',
+          text: '了解だ！ 集めた全鑑識カードを手元に展開しろ、アリア！ 最後のパズルを完成させる！',
         },
         {
           speaker: 'aria',
@@ -1316,7 +1454,7 @@ window.SCENARIO_DATA = {
 原因は、2019年から配布されていた接続用『.rdp』ファイルにあった。
 ファイル内に『drivestoredirect:s:*』が記述されていたため、自宅PCからVPSへリモート接続した瞬間、VPS側から被害者のCドライブが『\\\\tsclient\\C』として丸見えになっていたのだ。
 マルウェアを使わずに自宅PCを丸裸にする「リバースRDP」。
-アリアは機転を利かせ、ハニーポット自宅PCのダミーLogin Data内に「逆探知用カナリアトークン」を密かに仕込んだ。
+攻撃者がハニーポット端末からLogin Dataをコピーしようとしたまさにその瞬間、ケイは即時切断を止め、『あえて敵に持ち帰らせろ』と決断。ダミーのLogin Data内に「逆探知用カナリアトークン」を混入させ、敵の懐へ電脳トラップを潜伏させた。
 その直後、攻撃者から全メディアと対策室へ【四重脅迫状】が叩きつけられる！ 金融口座破壊の再開、自宅PC情報のダークウェブ公開、内部構成暴露、身代金要求。タイムリミットは翌日正午！
 
 ---
@@ -1340,7 +1478,7 @@ window.SCENARIO_DATA = {
 ケイたちはこれまで手に入れた6つの鑑識証拠を結集し、最後の推論連結（FINAL DEDUCTION）を挑む。
 第1に、企業の100%任意ログ提供と警職法6条の2（重大危害防止）による職権認知を立証して制度の壁を突破。
 第2に、リバースRDP（drivestoredirect:s:*）の接続経路を暴いて物理パイプラインを遮断。
-第3に、アリアが仕掛けていた「カナリア逆探知ビーコン」が敵の解凍によって奇跡的に発火し、真のC2サーバーIP（185.220.101.xx）とランサムウェア配信キューを捕捉！
+第3に、Chapter 3でケイが自らリスクを取って敵に持ち帰らせた「カナリア逆探知ビーコン」が敵の解凍によって見事に発火！ 多段プロキシをバイパスし、真のC2サーバーIP（91.240.118.174）とランサムウェア配信キューをピンポイントで捕捉！
 全証拠の連結を認めたクロダ統括官の号令のもと、警察庁特捜隊とNCOによる史上初の「非公然アクセス・無害化措置」が秒読み段階で断行された。
 
 ---
