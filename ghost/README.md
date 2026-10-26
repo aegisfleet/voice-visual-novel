@@ -47,8 +47,7 @@
 
 - `ghost/index.html` - 5章タイムラインバー・小説リーダー・最終証拠連結UI搭載メイン画面
 - `ghost/css/style.css` - サイバーサスペンスUI・証拠連結カード・小説リーダー用スタイルシート
-- `ghost/ghost_scenario.json` - 全5章シナリオ・6大フォレンジック証拠・最終推論マスターデータ
-- `ghost/js/scenario.js` - ブラウザ直接実行用シナリオバンドル＆小説全文
+- `ghost/js/scenario.js` - 全5章シナリオ・6大フォレンジック証拠・最終推論立証＆小説全文マスターデータ
 - `ghost/js/character.js` - 登場人物（ナギサ ケイ・アリア・タカミヤ レン・クロダ統括官・ミオ分析官）定義
 - `ghost/js/state.js` - 章進行（Chapter 1〜5）・証拠収集・セーブ状態管理エンジン
 - `ghost/js/app.js` - 体験型ノベル再生・作戦選択・最終証拠連結立証制御コントローラー
