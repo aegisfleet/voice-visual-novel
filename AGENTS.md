@@ -7,6 +7,8 @@
   - Webノベルゲーム・ADVのUX、ゲームループ、ステート設計の必須要件定義書。
 - [docs/agent-novel-game-dev-protocol.md](file:///d:/Work/voice-visual-novel/docs/agent-novel-game-dev-protocol.md)
   - AIエージェントが過去に引き起こした5大過誤の防止策と、2画面実機検証プロトコル。
+- [docs/bgm-production-guide.md](file:///d:/Work/voice-visual-novel/docs/bgm-production-guide.md)
+  - BGM の生成・差し替えを行う場合の標準手順（生成方針、記号解析によるループ継ぎ目の検証、Web Audio ギャップレス再生、受け入れチェックリスト）。BGM 作業時は必読。
 
 ## 最重要ルール
 1. **可逆性の確保（詰み防止）**: 探索 ⇔ 立証の双方向遷移、ゲームオーバーからの現場再調査導線を絶対に断たないこと。

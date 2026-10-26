@@ -189,5 +189,7 @@ GitHub Actions（CI）により PR/Push 時に Biome 解析およびシナリオ
   物語の矛盾・ご都合主義を未然に排除し、「なぜなぜ分析」で論理的必然性を構築するフレームワーク。
 * 🎵 **[AI音響生成・サウンドデザイン設計書 (SFX & BGM)](docs/audio-and-sound-design-guide.md)**:  
   Vertex AI (Lyria 3) によるシネマティック効果音・BGM生成、Web Audio API ハイブリッドアーキテクチャ、ビート同期シームレスループ、冒頭ソフトフェードイン設計。
+* 🎼 **[BGM制作ガイドライン](docs/bgm-production-guide.md)**:  
+  全タイトル共通のBGM生成・ループ加工・再生の標準方針。AI生成曲の実測ベース切り出し、記号解析（クロマ／MIDI）による継ぎ目検証、Web Audio API ギャップレス再生の受け入れ基準。
 * 📖 **[OGP画像・サイトアセット生成＆改変ガイド](docs/ogp-image-guide.md)**:  
   SNSシェア用OGPバナーやファビコン群の自動生成スクリプト、文言・背景改変手順。

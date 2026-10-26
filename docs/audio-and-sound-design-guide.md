@@ -308,4 +308,5 @@ class AudioManager {
 * **試聴・音響アーカイブ室**: [`box/samples.html`](file:///d:/Work/voice-visual-novel/box/samples.html)
 * **作品仕様書**: [`box/README.md`](file:///d:/Work/voice-visual-novel/box/README.md)
 * **AIエージェント開発プロトコル**: [`docs/agent-novel-game-dev-protocol.md`](file:///d:/Work/voice-visual-novel/docs/agent-novel-game-dev-protocol.md)
+* **BGM制作ガイドライン（全タイトル共通の標準方針）**: [`docs/bgm-production-guide.md`](file:///d:/Work/voice-visual-novel/docs/bgm-production-guide.md)
 
