@@ -3643,3 +3643,35 @@ body {
     transform: translateY(-2px);
   }
 }
+
+/* 6. 選択肢誤答時のグレーアウト＆無効化スタイル */
+.choice-btn.disabled-choice {
+  opacity: 0.35 !important;
+  filter: grayscale(0.85);
+  border-color: rgba(239, 68, 68, 0.3) !important;
+  background: rgba(15, 23, 42, 0.6) !important;
+  cursor: not-allowed !important;
+  pointer-events: none !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+.choice-btn.disabled-choice .choice-btn-label {
+  color: var(--text-sub) !important;
+  text-decoration: line-through;
+  text-decoration-color: rgba(239, 68, 68, 0.7);
+}
+
+.choice-failed-badge {
+  font-family: var(--font-hud);
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: #f87171;
+  border: 1px solid rgba(248, 113, 113, 0.4);
+  background: rgba(239, 68, 68, 0.12);
+  padding: 1px 6px;
+  border-radius: 3px;
+  margin-left: 8px;
+  text-decoration: none !important;
+  display: inline-block;
+}

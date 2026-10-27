@@ -285,11 +285,12 @@ class NovelApp {
       return;
     }
 
-    // 該当チャプターの選択済みフラグをリセットして選択肢を再体験できるようにする
+    // 該当チャプターの選択済みフラグおよび失敗フラグをリセットして選択肢を再体験できるようにする
     const chData = this.scenario.chapters.find((c) => c.id === chapterId);
     if (chData?.choiceSteps) {
       chData.choiceSteps.forEach((step) => {
         delete this.state.selectedChoices[step.id];
+        delete this.state.failedChoices[step.id];
       });
     }
     if (chapterId === 5) {
@@ -440,7 +441,9 @@ class NovelApp {
     if (!['1', '2', '3'].includes(key)) return;
     const idx = Number.parseInt(key, 10) - 1;
     const btns = this.dom.choiceOptions?.querySelectorAll('.choice-btn');
-    if (btns?.[idx]) btns[idx].click();
+    if (btns?.[idx] && !btns[idx].disabled) {
+      btns[idx].click();
+    }
   }
 
   handleDialogueKeydown(e) {
@@ -1401,14 +1404,20 @@ class NovelApp {
     this.dom.choiceOptions.innerHTML = '';
 
     choiceData.options.forEach((opt) => {
+      const isFailed = this.state.isChoiceOptionFailed(choiceData.id, opt.id);
       const btn = document.createElement('button');
       btn.type = 'button';
-      btn.className = 'choice-btn';
+      btn.className = `choice-btn ${isFailed ? 'disabled-choice' : ''}`;
+      if (isFailed) {
+        btn.disabled = true;
+      }
       btn.innerHTML = `
-        <span class="choice-btn-label">${opt.label}</span>
+        <span class="choice-btn-label">${opt.label} ${isFailed ? '<span class="choice-failed-badge">✕ 調査済・空振り</span>' : ''}</span>
         <span class="choice-btn-desc">${opt.description}</span>
       `;
-      btn.addEventListener('click', () => this.handleOptionSelected(choiceData, opt, type));
+      if (!isFailed) {
+        btn.addEventListener('click', () => this.handleOptionSelected(choiceData, opt, type));
+      }
       this.dom.choiceOptions.appendChild(btn);
     });
   }
@@ -1446,6 +1455,7 @@ class NovelApp {
 
   handleIncorrectOption(choiceData, option, type) {
     const penalty = option.damagePenalty || 10;
+    this.state.recordFailedChoice(choiceData.id, option.id);
     this.state.applyDefensePenalty(penalty);
     this.updateDefenseHud();
     this.audio.playSe('evidence_b');
@@ -2146,5 +2156,7 @@ class NovelApp {
 
 // アプリケーション起動
 window.addEventListener('DOMContentLoaded', () => {
-  window.gameApp = new NovelApp();
+  const app = new NovelApp();
+  window.gameApp = app;
+  window.ghostApp = app;
 });

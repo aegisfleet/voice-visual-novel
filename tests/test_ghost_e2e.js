@@ -103,6 +103,11 @@ async function runE2ETest() {
       console.error('⚠️ ブラウザページエラー:', err.message);
       pageErrors.push(err.message);
     });
+    page.on('console', (msg) => {
+      if (msg.type() === 'error') {
+        console.error('⚠️ ブラウザコンソールエラー:', msg.text());
+      }
+    });
 
     console.log('1️⃣ ページ読み込み検証...');
     await page.goto(baseUrl, { waitUntil: 'domcontentloaded' });
@@ -266,6 +271,60 @@ async function runE2ETest() {
       return modal && modal.classList.contains('hidden');
     });
     console.log('   ✅ インゲーム音響設定モーダル正常確認');
+
+    // Test 5.5: 選択肢誤答時のグレーアウト＆無効化検証
+    console.log('6.5️⃣ 選択肢誤答時のグレーアウト＆選択不可検証...');
+    await page.evaluate(() => {
+      window.ghostApp?.stopAuto();
+      window.ghostApp?.stopSkip();
+      clearTimeout(window.ghostApp?.chapterCardTimer);
+      clearTimeout(window.ghostApp?.typingTimer);
+      const ch1 = window.ghostApp?.scenario?.chapters?.find((c) => c.id === 1);
+      const step = ch1?.choiceSteps?.[0];
+      if (step) {
+        window.ghostApp.currentChapterData = ch1;
+        window.ghostApp.showChoice(step, step.type || 'tactic');
+      }
+    });
+
+    await page.waitForFunction(() => {
+      const stage = document.getElementById('choice-stage');
+      return stage && !stage.classList.contains('hidden');
+    }, { timeout: 5000 });
+
+    // 誤答オプション（isCorrect: false の opt1_target_malware）をクリック
+    await page.evaluate(() => {
+      const btns = Array.from(document.querySelectorAll('.choice-btn'));
+      const incorrectBtn = btns.find((b) => b.textContent.includes('外部不正送金マルウェア'));
+      if (incorrectBtn) incorrectBtn.click();
+      else btns[1]?.click();
+    });
+
+    // 誤答リアクション（セリフ進行）を最後まで進めて選択肢再表示を待つ
+    for (let i = 0; i < 5; i++) {
+      await new Promise((r) => setTimeout(r, 300));
+      const isOpen = await page.evaluate(() => {
+        const stage = document.getElementById('choice-stage');
+        return stage && !stage.classList.contains('hidden');
+      });
+      if (isOpen) break;
+      await page.click('#novel-window');
+    }
+
+    await page.waitForFunction(() => {
+      const stage = document.getElementById('choice-stage');
+      return stage && !stage.classList.contains('hidden');
+    }, { timeout: 5000 });
+
+    const disabledCount = await page.$$eval('.choice-btn.disabled-choice', (els) => els.length);
+    if (disabledCount === 0) {
+      throw new Error('誤答した選択肢に .disabled-choice が付与されていません！');
+    }
+    const hasFailedBadge = await page.$$eval('.choice-failed-badge', (els) => els.length);
+    if (hasFailedBadge === 0) {
+      throw new Error('誤答した選択肢に .choice-failed-badge が表示されていません！');
+    }
+    console.log(`   ✅ 誤答選択肢のグレーアウト無効化＆「✕ 調査済・空振り」バッジ正常確認 (検出: ${disabledCount}件)`);
 
     // Test 6: タイトル画面へ戻る検証
     console.log('7️⃣ タイトル画面復帰の検証...');

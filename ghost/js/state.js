@@ -41,9 +41,25 @@ class GameState {
     this.currentBgmMode = 'investigate';
     this.currentLineIndex = 0;
     this.selectedChoices = {};
+    this.failedChoices = {}; // { [choiceId]: [optionId, ...] }
     this.collectedEvidence = new Set();
     this.clearedChapters = new Set();
     this.defenseRate = 100; // 残存資産防衛率 (100%スタート、ミスで減少)
+  }
+
+  // 不正解の選択肢を記録（再試行時のグレーアウト無効化用）
+  recordFailedChoice(choiceId, optionId) {
+    if (!this.failedChoices[choiceId]) {
+      this.failedChoices[choiceId] = [];
+    }
+    if (!this.failedChoices[choiceId].includes(optionId)) {
+      this.failedChoices[choiceId].push(optionId);
+    }
+    this.saveSessionProgress();
+  }
+
+  isChoiceOptionFailed(choiceId, optionId) {
+    return Boolean(this.failedChoices?.[choiceId]?.includes(optionId));
   }
 
   // 防衛率の減算（ペナルティ適用）
@@ -97,6 +113,7 @@ class GameState {
         currentLineIndex: this.currentLineIndex,
         maxUnlockedChapter: this.maxUnlockedChapter,
         selectedChoices: this.selectedChoices,
+        failedChoices: this.failedChoices,
         collectedEvidence: Array.from(this.collectedEvidence),
         clearedChapters: Array.from(this.clearedChapters),
         defenseRate: this.defenseRate,
@@ -129,6 +146,7 @@ class GameState {
       this.currentLineIndex = typeof data.currentLineIndex === 'number' ? data.currentLineIndex : 0;
       this.maxUnlockedChapter = data.maxUnlockedChapter || 1;
       this.selectedChoices = data.selectedChoices || {};
+      this.failedChoices = data.failedChoices || {};
       this.collectedEvidence = new Set(data.collectedEvidence || []);
       this.clearedChapters = new Set(data.clearedChapters || []);
       this.defenseRate = typeof data.defenseRate === 'number' ? data.defenseRate : 100;
