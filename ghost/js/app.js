@@ -953,29 +953,47 @@ class NovelApp {
   updateSpeaker(speakerId) {
     const char = this.characters[speakerId] || { name: speakerId, color: '#f8fafc' };
     this.currentSpeaker = char;
+    const accentColor = char.color || '#00f0ff';
+
     if (this.dom.dialogueSpeaker) {
       this.dom.dialogueSpeaker.textContent = char.name;
-      this.dom.dialogueSpeaker.style.color = char.color || '#00f3ff';
+      this.dom.dialogueSpeaker.style.color = accentColor;
     }
 
-    // スピーカー名の左横にキャラクターの顔アイコン（ケイを含む）を表示
-    const wrap = this.dom.dialogueSpeaker?.parentElement;
-    if (wrap) {
-      let avatarEl = wrap.querySelector('.speaker-avatar-thumb');
-      const avatarSrc = char.sprites?.normal || char.sprite;
-      if (avatarSrc) {
-        if (!avatarEl) {
-          avatarEl = document.createElement('img');
-          avatarEl.className = 'speaker-avatar-thumb';
-          wrap.insertBefore(avatarEl, this.dom.dialogueSpeaker);
-        }
-        avatarEl.src = avatarSrc;
-        avatarEl.alt = char.name;
-        avatarEl.classList.remove('hidden');
-      } else if (avatarEl) {
-        avatarEl.classList.add('hidden');
-      }
+    // 会話ウィンドウの上部ボーダーを発話者のテーマカラーに連動させる
+    if (this.dom.novelWindow) {
+      this.dom.novelWindow.style.borderTopColor = accentColor;
     }
+
+    this.updateSpeakerAvatar(char, accentColor);
+  }
+
+  updateSpeakerAvatar(char, accentColor) {
+    const wrap = this.dom.dialogueSpeaker?.parentElement;
+    if (!wrap) return;
+
+    let frameEl = wrap.querySelector('.speaker-avatar-frame');
+    const avatarSrc = char.sprites?.normal || char.sprite;
+    if (!avatarSrc) {
+      if (frameEl) frameEl.classList.add('hidden');
+      return;
+    }
+
+    if (!frameEl) {
+      frameEl = document.createElement('div');
+      frameEl.className = 'speaker-avatar-frame';
+      const imgEl = document.createElement('img');
+      imgEl.className = 'speaker-avatar-thumb';
+      frameEl.appendChild(imgEl);
+      wrap.insertBefore(frameEl, this.dom.dialogueSpeaker);
+    }
+    frameEl.style.borderColor = accentColor;
+    const imgEl = frameEl.querySelector('.speaker-avatar-thumb');
+    if (imgEl) {
+      imgEl.src = avatarSrc;
+      imgEl.alt = char.name;
+    }
+    frameEl.classList.remove('hidden');
   }
 
   updateCharacterSprite(spriteId, emotion = 'normal') {

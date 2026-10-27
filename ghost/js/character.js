@@ -105,12 +105,12 @@ window.CHARACTER_DATA = {
     ttsModel: 'Aoede',
     ttsRate: 1.08,
     ttsPitch: 1.0,
-    sprite: 'assets/characters/takamiya.png',
+    sprite: 'assets/characters/takamiya_serious.png',
     sheet: 'assets/characters/sheets/sheet_takamiya.jpg',
     profile:
       'クラウドVPS侵害の最前線で闘うCSIRT現場リーダー。ケイの無二の親友。アッシュブラウン髪にネイビーのタクティカルベスト、腕まくり白シャツ。',
     sprites: {
-      normal: 'assets/characters/takamiya_normal.png',
+      normal: 'assets/characters/takamiya_serious.png',
       panic: 'assets/characters/takamiya_panic.png',
       serious: 'assets/characters/takamiya_serious.png',
       smile: 'assets/characters/takamiya_smile.png',
