@@ -211,7 +211,7 @@ window.SCENARIO_DATA = {
             cuts: [
               {
                 frame: 1,
-                image: 'assets/evidence/sinkhole.jpg',
+                image: 'assets/sequences/ch1_cut1.jpg',
                 sfx: 'alert',
                 visualType: 'meter-high',
                 caption: 'FT4注文端末: TRY/ZAR 850pps往復注文乱発 [残高: 4,000,000円]',
@@ -219,7 +219,7 @@ window.SCENARIO_DATA = {
               },
               {
                 frame: 2,
-                image: 'assets/evidence/sinkhole.jpg',
+                image: 'assets/sequences/ch1_cut2.jpg',
                 sfx: 'glitch',
                 visualType: 'meter-mid',
                 caption: '残高激減: スプレッド手数料で残高が猛烈に市場へ蒸発 [残高: 1,420,000円]',
@@ -227,7 +227,7 @@ window.SCENARIO_DATA = {
               },
               {
                 frame: 3,
-                image: 'assets/evidence/sinkhole.jpg',
+                image: 'assets/sequences/ch1_cut3.jpg',
                 sfx: 'impact',
                 visualType: 'meter-zero',
                 caption: '口座完全焼却: DEMOFASTLOSS刻印 [残高: 0円 / 強制ロスカット]',
@@ -542,7 +542,7 @@ window.SCENARIO_DATA = {
             cuts: [
               {
                 frame: 1,
-                image: 'assets/evidence/cdn_network.png',
+                image: 'assets/sequences/ch2_cut1.jpg',
                 sfx: 'click',
                 visualType: 'socket-step1',
                 caption:
@@ -551,7 +551,7 @@ window.SCENARIO_DATA = {
               },
               {
                 frame: 2,
-                image: 'assets/evidence/cdn_network.png',
+                image: 'assets/sequences/ch2_cut2.jpg',
                 sfx: 'alert',
                 visualType: 'socket-step2',
                 caption:
@@ -560,7 +560,7 @@ window.SCENARIO_DATA = {
               },
               {
                 frame: 3,
-                image: 'assets/evidence/cdn_network.png',
+                image: 'assets/sequences/ch2_cut3.jpg',
                 sfx: 'glitch',
                 visualType: 'socket-step3',
                 caption:
@@ -841,14 +841,14 @@ window.SCENARIO_DATA = {
             cuts: [
               {
                 frame: 1,
-                image: 'assets/evidence/honeypot.jpg',
+                image: 'assets/sequences/ch3_cut1.jpg',
                 sfx: 'click',
                 caption: '自宅PCからリモートデスクトップ接続開始 [drivestoredirect:s:*]',
                 visualDesc: 'Windowsの接続ダイアログと全ドライブ共有フラグ',
               },
               {
                 frame: 2,
-                image: 'assets/evidence/honeypot.jpg',
+                image: 'assets/sequences/ch3_cut2.jpg',
                 sfx: 'alert',
                 caption:
                   'クラウドVPS内部に自宅PCのCドライブが \\\\tsclient\\\\C として自動マウント',
@@ -856,7 +856,7 @@ window.SCENARIO_DATA = {
               },
               {
                 frame: 3,
-                image: 'assets/evidence/honeypot.jpg',
+                image: 'assets/sequences/ch3_cut3.jpg',
                 sfx: 'glitch',
                 caption: 'アンチウイルスを完全素通りして確定申告書とLogin Dataが自動吸出',
                 visualDesc: '正規RDPパイプラインを悪用して4,352ファイルが吸い出されるアニメ',
@@ -1337,21 +1337,21 @@ window.SCENARIO_DATA = {
             cuts: [
               {
                 frame: 1,
-                image: 'assets/evidence/active_memory.jpg',
+                image: 'assets/sequences/ch4_cut1.jpg',
                 sfx: 'victory',
                 caption: '【第4報発表】身代金支払ゼロ＆不正取引実損100%直接補償を公式宣言',
                 visualDesc: 'ニュース速報テロップと称賛に沸くSNSのタイムライン',
               },
               {
                 frame: 2,
-                image: 'assets/evidence/active_memory.jpg',
+                image: 'assets/sequences/ch4_cut2.jpg',
                 sfx: 'alert',
                 caption: '【レバレッジ消滅】顧客と企業が結束し、犯人が握っていた人質が完全消滅',
                 visualDesc: '崩れ落ちる犯人の恐喝レバレッジ概念図',
               },
               {
                 frame: 3,
-                image: 'assets/evidence/active_memory.jpg',
+                image: 'assets/sequences/ch4_cut3.jpg',
                 sfx: 'glitch',
                 caption:
                   '【5,000万ドル→100万ドル】焦った犯人が要求額を98%大幅値下げし27日正午へ再設定',
@@ -1464,28 +1464,28 @@ window.SCENARIO_DATA = {
             cuts: [
               {
                 frame: 1,
-                image: 'assets/evidence/c2_origin.png',
+                image: 'assets/sequences/ch5_cut1.jpg',
                 sfx: 'alert',
                 caption: '【12:00:00】ランサム不発に逆上した犯人が「被害者 第1号」公開作業を開始',
                 visualDesc: '犯行サイト coronamng.store にアップロードされる確定申告書',
               },
               {
                 frame: 2,
-                image: 'assets/evidence/c2_origin.png',
+                image: 'assets/sequences/ch5_cut2.jpg',
                 sfx: 'glitch',
                 caption: '【復号フック作動】犯人のアジトでダミーLogin DataのSQLite復号フックが作動',
                 visualDesc: '攻撃者PC端末で実行されるデータ加工プロセス画面',
               },
               {
                 frame: 3,
-                image: 'assets/evidence/c2_origin.png',
+                image: 'assets/sequences/ch5_cut3.jpg',
                 sfx: 'beacon',
                 caption: '【カナリア発火】Tor/SOCKS5多段プロキシをバイパスして逆探知ビーコンが飛翔',
                 visualDesc: 'オランダ・ルーマニアの踏み台を突き破り放たれる追跡パケットの光',
               },
               {
                 frame: 4,
-                image: 'assets/evidence/c2_origin.png',
+                image: 'assets/sequences/ch5_cut4.jpg',
                 sfx: 'impact',
                 caption: '【真C2ロックオン】フランクフルト真C2【91.240.118.174】と保管庫を特定',
                 visualDesc: '世界地図上のドイツデータセンターDC-4が赤くロックオンされるレーダー',

@@ -1526,18 +1526,66 @@ class NovelApp {
   }
 
   renderGalleryArchive() {
-    let html = `<h3>⚡ GHOST PROTOCOL 機密フォレンジック設定資料</h3><div class="gallery-grid">`;
-    Object.values(this.scenario.evidence).forEach((ev) => {
+    return `
+      <div class="gallery-archive-container">
+        ${this.renderCharacterSheetsSection()}
+        ${this.renderEvidenceArchiveSection()}
+      </div>
+    `;
+  }
+
+  renderCharacterSheetsSection() {
+    const chars = Object.values(window.CHARACTER_DATA || {}).filter((c) => c.sheet);
+    let html = `
+      <div class="gallery-section-header">
+        <h3 class="gallery-section-title">👥 登場人物キャラクター設定資料（三面図・表情集）</h3>
+        <p class="gallery-section-desc">本作の主要登場人物の公式デザインシート（正面・側面・表情差分・装飾ディテール・カラーパレット）</p>
+      </div>
+      <div class="gallery-grid character-sheets-grid">
+    `;
+
+    chars.forEach((c) => {
+      html += `
+        <div class="gallery-card character-sheet-card">
+          <div class="sheet-card-header">
+            <span class="sheet-badge" style="border-color:${c.color}; color:${c.color}">OFFICIAL SHEET</span>
+            <h4 class="sheet-name">${c.name}</h4>
+          </div>
+          <p class="sheet-role">${c.role}</p>
+          <a href="${c.sheet}" target="_blank" rel="noopener" class="sheet-img-wrap" title="クリックして高解像度で確認">
+            <img src="${c.sheet}" alt="${c.name} 設定資料" class="gallery-img sheet-img" loading="lazy">
+            <span class="sheet-zoom-hint">🔍 クリックで原寸拡大</span>
+          </a>
+          <p class="gallery-text sheet-desc">${c.profile || ''}</p>
+        </div>
+      `;
+    });
+
+    html += `</div>`;
+    return html;
+  }
+
+  renderEvidenceArchiveSection() {
+    let html = `
+      <div class="gallery-section-header" style="margin-top: 32px;">
+        <h3 class="gallery-section-title">⚡ GHOST PROTOCOL 機密フォレンジック証拠資料</h3>
+        <p class="gallery-section-desc">捜査過程で押収・解読された核心鑑識ファイル</p>
+      </div>
+      <div class="gallery-grid">
+    `;
+
+    Object.values(this.scenario.evidence || {}).forEach((ev) => {
       const unlocked = this.state.hasEvidence(ev.id) || this.state.isGameCleared();
       html += `
         <div class="gallery-card">
           <h4>${ev.icon} ${unlocked ? ev.name : '機密ファイル (未解禁)'}</h4>
           <p class="badge">${ev.type}</p>
-          <img src="${ev.image}" alt="${ev.name}" class="gallery-img">
+          <img src="${ev.image}" alt="${ev.name}" class="gallery-img" loading="lazy">
           <p class="gallery-text">${unlocked ? ev.detail : '全5章を制覇して閲覧権限を獲得してください。'}</p>
         </div>
       `;
     });
+
     html += `</div>`;
     return html;
   }

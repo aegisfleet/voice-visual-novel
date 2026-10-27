@@ -10,6 +10,7 @@ window.CHARACTER_DATA = {
     ttsRate: 1.0,
     ttsPitch: 0.9,
     sprite: null,
+    sheet: null,
   },
   kei: {
     id: 'kei',
@@ -20,7 +21,10 @@ window.CHARACTER_DATA = {
     ttsModel: 'Puck',
     ttsRate: 1.05,
     ttsPitch: 1.0,
-    sprite: null, // 主人公（プレイヤー視点）
+    sprite: 'assets/characters/kei.png', // 主人公（透過立ち絵アセット配備済み）
+    sheet: 'assets/characters/sheets/sheet_kei.jpg',
+    profile:
+      '主人公。金融取引プロトコルとリバースエンジニアリングの達人。黒髪スクエア眼鏡、ダークスレートジャケット。',
   },
   aria: {
     id: 'aria',
@@ -32,6 +36,9 @@ window.CHARACTER_DATA = {
     ttsRate: 1.05,
     ttsPitch: 1.15,
     sprite: 'assets/characters/aria.png',
+    sheet: 'assets/characters/sheets/sheet_aria.jpg',
+    profile:
+      '自律型電脳鑑識＆防衛AI。発光するアクアブルーツインテール、サイバーバイザー、未来型スーツを纏う少女型ホログラム。',
   },
   kuroda: {
     id: 'kuroda',
@@ -43,6 +50,9 @@ window.CHARACTER_DATA = {
     ttsRate: 0.92,
     ttsPitch: 0.8,
     sprite: 'assets/characters/kuroda.png',
+    sheet: 'assets/characters/sheets/sheet_kuroda.jpg',
+    profile:
+      '国家サイバー統括室の最高責任者。白髪混じりのオールバックに重厚なスーツ。能動的サイバー防御第1号の法理突破を決断する。',
   },
   mio: {
     id: 'mio',
@@ -54,6 +64,9 @@ window.CHARACTER_DATA = {
     ttsRate: 1.08,
     ttsPitch: 1.05,
     sprite: 'assets/characters/mio.png',
+    sheet: 'assets/characters/sheets/sheet_mio.jpg',
+    profile:
+      '国家サイバー統括室の若き天才通信分析官。ラベンダーショートボブに丸眼鏡、首掛けヘッドセットとゆったりカーディガン。',
   },
   takamiya: {
     id: 'takamiya',
@@ -65,5 +78,8 @@ window.CHARACTER_DATA = {
     ttsRate: 1.08,
     ttsPitch: 1.0,
     sprite: 'assets/characters/takamiya.png',
+    sheet: 'assets/characters/sheets/sheet_takamiya.jpg',
+    profile:
+      'クラウドVPS侵害の最前線で闘うCSIRT現場リーダー。ケイの無二の親友。アッシュブラウン髪にネイビーのタクティカルベスト。',
   },
 };
