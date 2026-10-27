@@ -3,7 +3,7 @@
 window.SCENARIO_DATA = {
   meta: {
     title: 'GHOST PROTOCOL 〜26,739台の亡霊と能動的サイバー防御・発動第1号〜',
-    version: '2026.10.27-novel-v4',
+    version: '2026.10.27-novel-v5-directives',
     description:
       '2026年10月VPS大規模サイバー侵害事件と能動的サイバー防御発動第1号を追体験する長編体験型ビジュアルノベル（10月27日最新事実反映版）',
   },
@@ -81,19 +81,27 @@ window.SCENARIO_DATA = {
       {
         speaker: 'narrator',
         text: '2026年10月20日、火曜日、深夜23時45分。',
+        bgm: 'investigate',
+        telop: '【2026.10.20 23:45 都内ケイ私設ラボ】',
       },
       {
         speaker: 'narrator',
         text: '都内の静まり返った自室で、独立系金融インフラエンジニア・ナギサ ケイの監視モニターが突如、断末魔のようなエラーログを吹き鳴らした。',
+        sfx: 'alert',
+        effect: 'alert-flash',
       },
       {
         speaker: 'kei',
         text: '……なんだ？ 自前の自動取引アルゴリズム監視サーバーから、全APIの異常切断アラートが連続で出ている……！？',
+        sfx: 'glitch',
       },
       {
         speaker: 'aria',
         sprite: 'aria',
         text: 'マスター、緊急事態です！ 接続先の金融VPSクラウド基盤……国内最大手『ネオドットコム デスクトップクラウド』の全インスタンスで、一斉に内部RPCエラーが検知されました！',
+        bgm: 'crisis',
+        telop: '【EMERGENCY: 国内最大手ネオドットコム 全面RPC異常検知】',
+        effect: 'glitch',
       },
       {
         speaker: 'kei',
@@ -103,15 +111,19 @@ window.SCENARIO_DATA = {
         speaker: 'aria',
         sprite: 'aria',
         text: 'はい。稼働仮想マシン総数は26,739台……そのほぼすべてが管理ネットワークから次々と蒸発し、応答を喪失しつつあります！',
+        sfx: 'alert',
       },
       {
         speaker: 'narrator',
         text: 'その直後、ケイの私用スマートフォンが狂ったように震え出した。発信元は——クラウド運用本部CSIRT現場リーダーであり、大学時代からの親友、タカミヤ レン。',
+        sfx: 'ring',
       },
       {
         speaker: 'takamiya',
         sprite: 'takamiya',
         text: '『ケイ……！ 頼む、助けてくれ！ 現場のAD（Active Directory）管理プレーンが……全部乗っ取られた！』',
+        effect: 'shake',
+        telop: '【CRITICAL BREACH: AD管理プレーン完全掌握】',
       },
       {
         speaker: 'kei',
@@ -126,6 +138,7 @@ window.SCENARIO_DATA = {
         speaker: 'takamiya',
         sprite: 'takamiya',
         text: '『このまま夜が明ければ、数万人の顧客資産が全滅する……！ 我々は午前4時をもって、26,739台すべての【全回線切断・強制シャットダウン】を決断する！』',
+        sfx: 'impact',
       },
       {
         speaker: 'kei',
@@ -134,11 +147,16 @@ window.SCENARIO_DATA = {
       {
         speaker: 'narrator',
         text: '深夜の死闘の末、運命の午前4時00分が訪れた。対策本部は苦渋の決断として、全仮想マシンの強制回線切断に踏み切った。',
+        bgm: 'silence',
+        sfx: 'impact',
+        effect: 'blackout',
+        telop: '【2026.10.21 04:00 全26,739台強制回線切断執行】',
       },
       {
         speaker: 'aria',
         sprite: 'aria',
         text: 'マスター、シャットダウンが執行されました。全サーバーが沈黙……ですが、不吉なデータを受信しました！',
+        bgm: 'crisis',
       },
       {
         speaker: 'kei',
@@ -147,15 +165,20 @@ window.SCENARIO_DATA = {
       {
         speaker: 'narrator',
         text: 'ブラックアウトした画面の中央に、攻撃者からの暗号化メッセージが浮かび上がった。《シャットダウンご苦労様。だが、本当のゲームはこれからだ》。',
+        sfx: 'glitch',
+        effect: 'glitch',
       },
       {
         speaker: 'kei',
         text: '敵はこちらを嘲笑っている……！ アリア、セキュアVMを展開しろ！ これよりクラウド緊急対策本部の支援に入る！',
+        bgm: 'investigate',
+        sfx: 'cutin',
       },
       {
         speaker: 'aria',
         sprite: 'aria',
         text: '了解しました、マスター。26,739台の亡霊（ゴースト）との、命を削る電脳戦争の幕開けです——！',
+        sfx: 'correct',
       },
     ],
   },
@@ -171,15 +194,44 @@ window.SCENARIO_DATA = {
         {
           speaker: 'narrator',
           text: '10月21日、午前4時00分。国内大手GNOインターネットグループは、26,739台におよぶWindows VPSのネットワークを全面遮断し、全サーバーの緊急停止に踏み切った。',
+          bgm: 'crisis',
+          telop: '【10.21 04:00 全26,739台ネットワーク全面遮断】',
         },
         {
           speaker: 'narrator',
           text: 'しかし夜明けとともに、SNS上には全国のトレーダーたちの悲鳴と怒号が津波のように押し寄せた。「ふざけるな！ サーバー停止直前に勝手に見覚えのないハイレバ注文が乱発され、口座残高400万円が2秒でゼロになった！」「全財産が消えた、返せ！」',
+          sfx: 'impact',
+          effect: 'shake',
+          telop: '【WARNING: 全国数千件の口座残高蒸発被害報告】',
+          cutSequence: {
+            id: 'seq_ch1_balance_drain',
+            title: '口座残高超高速蒸発シークエンス（パラパラ漫画演出）',
+            description: 'TRY/ZAR 850pps超高スプレッド即時往復注文による残高焼却の連続カット',
+            intervalMs: 1600,
+            cuts: [
+              {
+                frame: 1,
+                caption: 'FT4注文端末: TRY/ZAR 850pps往復注文乱発 [残高: 4,000,000円]',
+                visualDesc: '取引画面に残高400万円の表示と赤い注文矢印',
+              },
+              {
+                frame: 2,
+                caption: '残高激減: スプレッド手数料で残高が猛烈に市場へ蒸発 [残高: 1,420,000円]',
+                visualDesc: '高速点滅するチャートと急落する口座残高メーター',
+              },
+              {
+                frame: 3,
+                caption: '口座完全焼却: DEMOFASTLOSS刻印 [残高: 0円 / 強制ロスカット]',
+                visualDesc: '残高0円と赤文字のロスカット警告ダイアログ',
+              },
+            ],
+          },
         },
         {
           speaker: 'takamiya',
           sprite: 'takamiya',
           text: 'ケイ、問い合わせ窓口が完全にパンクしている……！ 1時間で数千件の口座破綻報告だ。一体どこから手を付ければいいんだ！？',
+          sfx: 'alert',
         },
       ],
       choiceSteps: [
@@ -685,15 +737,44 @@ window.SCENARIO_DATA = {
         {
           speaker: 'narrator',
           text: '10月23日午後。事態はインフラの停止を超え、個人のプライバシー空間への全面侵食という戦慄のフェーズへ突入した。',
+          bgm: 'crisis',
+          telop: '【10.23 15:00 自宅PC侵食フェーズ突入】',
         },
         {
           speaker: 'narrator',
           text: '攻撃者から対策室とメディア宛てに『samples.zip』というアーカイブが送りつけられた。中身は被害者たちの「自宅PC」のデスクトップにあった確定申告書、家族写真、そしてChromeブラウザの暗号化パスワード保管ファイル『Login Data』。実に4,352ファイルが抜き取られ、10,891ファイルがリスト化されていた。',
+          sfx: 'alert',
+          effect: 'alert-flash',
+          telop: '【WARNING: 被害者自宅PCから4,352ファイル流出確認】',
+          cutSequence: {
+            id: 'seq_ch3_reverse_rdp',
+            title: 'リバースRDP（\\tsclientC）自動マウントシークエンス（パラパラ漫画演出）',
+            description: '自宅PCからVPSに接続した瞬間、Cドライブが全自動共有される連続カット',
+            intervalMs: 1600,
+            cuts: [
+              {
+                frame: 1,
+                caption: '自宅PCからリモートデスクトップ接続開始 [drivestoredirect:s:*]',
+                visualDesc: 'Windowsの接続ダイアログと全ドライブ共有フラグ',
+              },
+              {
+                frame: 2,
+                caption: 'クラウドVPS内部に自宅PCのCドライブが \\tsclientC として自動マウント',
+                visualDesc: 'VPS側のエクスプローラーにクライアントのCドライブが出現',
+              },
+              {
+                frame: 3,
+                caption: 'アンチウイルスを完全素通りして確定申告書とLogin Dataが自動吸出',
+                visualDesc: '正規RDPパイプラインを悪用して4,352ファイルが吸い出されるアニメ',
+              },
+            ],
+          },
         },
         {
           speaker: 'takamiya',
           sprite: 'takamiya',
           text: 'ケイ、被害者の自宅PCからはマルウェアが一切出ない。それだけじゃない……実はこの事態、防げたはずだったんだ……！',
+          bgm: 'investigate',
         },
         {
           speaker: 'kei',
@@ -703,10 +784,12 @@ window.SCENARIO_DATA = {
           speaker: 'takamiya',
           sprite: 'takamiya',
           text: '社内のホワイトハッカー集団や現場チームが、以前からこの接続設定の危険性を上層部に警告していたんだ。だが「稼働中の金融自動売買を止めるな」「サービスの可用性最優先だ」と却下され、対策が後手に回ってしまった……！ 我々現場の痛恨の極みだ……！',
+          sfx: 'impact',
         },
         {
           speaker: 'kei',
           text: 'レン、過去を悔やんでも始まらない！ 防げなかった痛恨があるなら、今この手で被害拡大を食い止めるんだ！ この通信のからくりを完全に暴くぞ！',
+          sfx: 'cutin',
         },
       ],
       choiceSteps: [
@@ -848,11 +931,14 @@ window.SCENARIO_DATA = {
                 {
                   speaker: 'kei',
                   text: '切断するな！ ダミーのLogin Dataの中に、解凍した瞬間に発火する逆探知用カナリアトークンを混入させろ！ あえて敵に持ち帰らせるんだ！',
+                  sfx: 'beacon',
+                  cutin: { text: '逆探知トラップ発動！', sub: 'ダミーファイルへカナリア潜伏' },
                 },
                 {
                   speaker: 'aria',
                   sprite: 'aria',
                   text: 'カナリアトークン混入完了！ 攻撃者が自前の攻撃サーバーでこのファイルを解凍した瞬間、偽装プロキシの背後にある真のC2サーバー座標が逆探知されます！',
+                  telop: '【CANARY DEPLOYED: 逆探知ビーコン潜伏完了】',
                 },
                 {
                   speaker: 'takamiya',
@@ -870,15 +956,25 @@ window.SCENARIO_DATA = {
           sprite: 'aria',
           illustration: 'assets/evidence/honeypot.jpg',
           text: '核心鑑識データ『クライアント接続構成ファイル＆共有API証跡』を取得しました。リバースRDPの真相が立証されました！',
+          bgm: 'truth',
+          sfx: 'evidence',
+          telop: '【FORENSIC PROOF: drivestoredirect:s:* リバースRDP解明】',
         },
         {
           speaker: 'narrator',
           text: 'リバースRDPの解明により、社内には勝利の空気が漂いかけた。しかし——その時、社内のすべてのプリンターと内線電話が一斉に狂ったように動き始めた！',
+          bgm: 'silence',
+          sfx: 'impact',
+          effect: 'shake',
         },
         {
           speaker: 'takamiya',
           sprite: 'takamiya',
           text: 'ひっ……！？ プリンターから、犯行声明が一斉に印刷されている……！？ 全国の報道機関にもFAXが一斉送信されたぞ！',
+          bgm: 'crisis',
+          sfx: 'alert',
+          effect: 'alert-flash',
+          telop: '【ALERT: 社内全プリンターから四重脅迫状が一斉印刷】',
         },
         {
           speaker: 'kei',
@@ -888,6 +984,7 @@ window.SCENARIO_DATA = {
           speaker: 'takamiya',
           sprite: 'takamiya',
           text: '【四重脅迫状】だ……！ ①国内外70社超の金融口座の破壊再開、②自宅PC個人情報のダークウェブ無制限公開、③内部システム構成の暴露、④数百万ドルの身代金要求……！ タイムリミットは明日10月24日12時！ 1秒でも遅れれば、すべてを実行すると……！！',
+          sfx: 'impact',
         },
         {
           speaker: 'kei',
@@ -906,19 +1003,26 @@ window.SCENARIO_DATA = {
         {
           speaker: 'narrator',
           text: '10月24日午前。四重脅迫のタイムリミットまで、あと数十分。',
+          bgm: 'crisis',
+          telop: '【10.24 11:50 四重脅迫タイムリミット寸前】',
         },
         {
           speaker: 'narrator',
           text: '役員会議室からは、机を叩く怒号と悲痛な叫びが廊下にまで響き渡っていた。「身代金を払うべきだ！」「いや、払ってもデータが消える保証はない！」「約款には『サイバー攻撃による損害は免責』と明記されている！ 免責を盾に突っぱねるべきだ！」',
+          sfx: 'impact',
+          effect: 'shake',
         },
         {
           speaker: 'takamiya',
           sprite: 'takamiya',
           text: 'ケイ、実は犯人は10月21日の最初期メールで、暗号資産で【5,000万ドル（約80億円）】という天文学的な身代金を要求してきたんだ！ 経営陣は公表すらできず、80億円なんて払えるはずもない！ 役員会は空中分解寸前だ！',
+          sfx: 'alert',
+          telop: '【SHOCKING: 最初期要求額5,000万ドル（約80億円）判明】',
         },
         {
           speaker: 'kei',
           text: '5,000万ドル（約80億円）だと……！？ 払えば会社は破産、突っぱねれば集団訴訟で倒産。敵の武器は「顧客を人質にした分断工作」だ。経営陣を説得するぞ！',
+          bgm: 'investigate',
         },
       ],
       choiceSteps: [
@@ -1097,6 +1201,9 @@ window.SCENARIO_DATA = {
           speaker: 'takamiya',
           sprite: 'takamiya',
           text: '11時50分、第4報リリース完了！ 『攻撃者への支払ゼロ、不正取引実損の100%直接補償、見舞金支給、新基盤無償移行』……ネットの空気が一変した！ 『企業の覚悟が凄い』『攻撃者に屈するな』と、応援の声が殺到している！',
+          bgm: 'truth',
+          sfx: 'victory',
+          telop: '【第4報発表: 支払ゼロ・実損100%直接補償断行】',
         },
         {
           speaker: 'kei',
@@ -1107,15 +1214,44 @@ window.SCENARIO_DATA = {
           sprite: 'aria',
           illustration: 'assets/evidence/active_memory.jpg',
           text: '核心鑑識データ『顧客実損算定マトリクス＆API照会監査票』を取得しました。四重脅迫無力化の論拠が立証されました！',
+          sfx: 'evidence',
         },
         {
           speaker: 'narrator',
           text: 'その刹那、対策本部のメインモニターが激しく点滅し、攻撃者からの新たな緊急メッセージが突き刺さった。',
+          sfx: 'glitch',
+          effect: 'glitch',
         },
         {
           speaker: 'takamiya',
           sprite: 'takamiya',
           text: 'ケイ、信じられない事態が起きた！ 5,000万ドルの要求を完全黙殺され、顧客への直接補償で人質を奪われた攻撃者が……パニックを起こして自ら要求額を【100万ドル（約1.6億円）】へと98%もダンピング（値下げ）してきたぞ！！',
+          sfx: 'alert',
+          telop: '【PRICE COLLAPSE: 要求額5,000万ドル→100万ドルへ98%値下げ】',
+          cutSequence: {
+            id: 'seq_ch4_ransom_collapse',
+            title: '身代金要求98%価格崩壊シークエンス（パラパラ漫画演出）',
+            description: '第4報により人質を失った犯人が焦燥し、自ら98%値下げする連続カット',
+            intervalMs: 1600,
+            cuts: [
+              {
+                frame: 1,
+                caption: '【第4報発表】身代金支払ゼロ＆不正取引実損100%直接補償を公式宣言',
+                visualDesc: 'ニュース速報テロップと称賛に沸くSNSのタイムライン',
+              },
+              {
+                frame: 2,
+                caption: '【レバレッジ消滅】顧客と企業が結束し、犯人が握っていた人質が完全消滅',
+                visualDesc: '崩れ落ちる犯人の恐喝レバレッジ概念図',
+              },
+              {
+                frame: 3,
+                caption:
+                  '【5,000万ドル→100万ドル】焦った犯人が要求額を98%大幅値下げし27日正午へ再設定',
+                visualDesc: '犯行サイト上の要求額が80億円から1.6億円へ書き換わる様子',
+              },
+            ],
+          },
         },
         {
           speaker: 'kei',
@@ -1125,6 +1261,10 @@ window.SCENARIO_DATA = {
           speaker: 'takamiya',
           sprite: 'takamiya',
           text: 'だが……プライドをズタズタにされた犯人が、命乞いのように血文字の最後通牒を叩きつけてきた！ 『期限は10月27日正午！ それまでに100万ドルを支払わなければ、リバースRDPで掌握済みの【26,739台の自宅PCへ一斉にランサムウェアを投下】し、全家庭のPCを完全破壊して文房具に変えてやる』……！！',
+          bgm: 'crisis',
+          sfx: 'impact',
+          effect: 'alert-flash',
+          telop: '【FINAL DEADLINE: 10月27日正午 26,739台PC破壊予告】',
         },
         {
           speaker: 'kei',
@@ -1431,10 +1571,14 @@ window.SCENARIO_DATA = {
       {
         speaker: 'narrator',
         text: '2026年10月27日、月曜日、午後13時30分。',
+        bgm: 'truth',
+        telop: '【2026.10.27 13:30 完全鎮火】',
       },
       {
         speaker: 'narrator',
         text: 'ドイツ・フランクフルトのC2サーバー内に展開されていた犯行公開サイトと盗難データ保管庫は、NCOと警察庁特捜隊の非公然アクセス措置により、痕跡ひとつ残さず完全に消去・無害化された。正午に晒された『被害者 第1号』のページも即座に消滅し、予告されていた『第2号』以降の公開は永久に阻止された。',
+        sfx: 'correct',
+        telop: '【VICTORY: 被害者第2号以降の晒しを永久封殺】',
       },
       {
         speaker: 'takamiya',
@@ -1459,10 +1603,12 @@ window.SCENARIO_DATA = {
         speaker: 'aria',
         sprite: 'aria',
         text: 'はい、マスター！ 亡霊（ゴースト）たちは完全に消え去り、澄み渡る秋の青空が広がっています！',
+        sfx: 'victory',
       },
       {
         speaker: 'narrator',
         text: '窓の外を見上げると、東京の街並みの上に抜けるような青空が広がっていた。26,739台の沈黙から始まった足掛け8日間の電脳金融戦争は、ここに完全なる勝利で幕を閉じたのである。',
+        telop: '【GHOST PROTOCOL: MISSION COMPLETE】',
       },
     ],
   },

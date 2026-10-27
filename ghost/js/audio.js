@@ -264,6 +264,10 @@ class AudioManager {
   // BGMの再生（Web Audioでギャップレス再生 & 失敗時はHTMLAudioへ）
   playBgm(mode = 'title') {
     this.currentBgmMode = mode;
+    if (mode === 'silence' || mode === 'stop') {
+      this.stopBgm();
+      return;
+    }
     if (!this.bgmEnabled) return;
 
     const current = this.currentBgmTrack;
@@ -443,12 +447,108 @@ class AudioManager {
         case 'victory':
           this.synthesizeVictory();
           break;
+        case 'alert':
+          this.synthesizeAlert();
+          break;
+        case 'glitch':
+          this.synthesizeGlitch();
+          break;
+        case 'impact':
+          this.synthesizeImpact();
+          break;
+        case 'ring':
+          this.synthesizeRing();
+          break;
+        case 'beacon':
+          this.synthesizeBeacon();
+          break;
         default:
           this.synthesizeClick();
       }
     } catch (e) {
       console.warn('SE playback error:', e);
     }
+  }
+
+  synthesizeAlert() {
+    const now = this.ctx.currentTime;
+    [0, 0.12].forEach((offset) => {
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      const t = now + offset;
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(880, t);
+      osc.frequency.setValueAtTime(1760, t + 0.05);
+      gain.gain.setValueAtTime(0.2, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.1);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start(t);
+      osc.stop(t + 0.1);
+    });
+  }
+
+  synthesizeGlitch() {
+    const now = this.ctx.currentTime;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    osc.type = 'square';
+    osc.frequency.setValueAtTime(150, now);
+    osc.frequency.setValueAtTime(1200, now + 0.03);
+    osc.frequency.setValueAtTime(320, now + 0.06);
+    osc.frequency.setValueAtTime(90, now + 0.09);
+    gain.gain.setValueAtTime(0.25, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.14);
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.14);
+  }
+
+  synthesizeImpact() {
+    const now = this.ctx.currentTime;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(160, now);
+    osc.frequency.exponentialRampToValueAtTime(35, now + 0.35);
+    gain.gain.setValueAtTime(0.4, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.35);
+  }
+
+  synthesizeRing() {
+    const now = this.ctx.currentTime;
+    [400, 450].forEach((freq) => {
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, now);
+      gain.gain.setValueAtTime(0.12, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.3);
+    });
+  }
+
+  synthesizeBeacon() {
+    const now = this.ctx.currentTime;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(2400, now);
+    osc.frequency.exponentialRampToValueAtTime(1200, now + 0.25);
+    gain.gain.setValueAtTime(0.2, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.25);
   }
 
   synthesizeClick() {

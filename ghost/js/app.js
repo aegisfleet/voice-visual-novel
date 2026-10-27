@@ -67,6 +67,17 @@ class NovelApp {
       dialogueIllustrationCaption: get('dialogue-illustration-caption'),
       btnCloseIllustration: get('btn-close-illustration'),
 
+      // シネマティックテロップ＆マルチカットシークエンス
+      cinematicTelop: get('cinematic-telop'),
+      cinematicTelopText: get('cinematic-telop-text'),
+      cutSequenceStage: get('cut-sequence-stage'),
+      sequenceTitle: get('sequence-title'),
+      btnCloseSequence: get('btn-close-sequence'),
+      sequenceFrameImg: get('sequence-frame-img'),
+      sequenceFrameVisualDesc: get('sequence-frame-visual-desc'),
+      sequenceProgressFill: get('sequence-progress-fill'),
+      sequenceCaption: get('sequence-caption'),
+
       // 選択肢パネル
       choiceStage: get('choice-stage'),
       choiceBadge: get('choice-badge'),
@@ -168,6 +179,10 @@ class NovelApp {
       e.stopPropagation();
       this.hideIllustration();
     });
+    this.dom.btnCloseSequence?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.closeCutSequence();
+    });
 
     // タイムラインバーのチャプター直接選択
     this.dom.chapterTimelineBar?.addEventListener('click', (e) => {
@@ -186,6 +201,7 @@ class NovelApp {
       target.closest('.dialogue-ctrl-btn') ||
         target.closest('#chapter-timeline-bar') ||
         target.closest('#dialogue-illustration-stage') ||
+        target.closest('#cut-sequence-stage') ||
         target.closest('#choice-stage') ||
         target.closest('.modal') ||
         target.closest('#hud'),
@@ -431,8 +447,130 @@ class NovelApp {
     this.updateSpeaker(item.speaker);
     this.updateCharacterSprite(item.sprite || (item.speaker !== 'narrator' ? item.speaker : null));
     this.handleLineIllustration(item.illustration);
+    this.applyDialogueDirectives(item);
     this.startTyping(item.text, item.speaker);
     this.addToBacklog(item.speaker, item.text);
+  }
+
+  // 演出ディレクティブ（BGM・SE・エフェクト・テロップ・マルチカットシークエンス）の適用
+  applyDialogueDirectives(item) {
+    if (!item) return;
+
+    // 1. BGM切り替え (crisis / investigate / truth / title / silence / stop)
+    if (item.bgm) {
+      this.audio.playBgm(item.bgm);
+    }
+
+    // 2. 効果音SE (alert / glitch / impact / ring / beacon / cutin / evidence / correct / victory 等)
+    const seType = item.sfx || item.se;
+    if (seType) {
+      this.audio.playSe(seType);
+    }
+
+    // 3. 画面演出エフェクト (glitch / alert-flash / shake / blackout)
+    if (item.effect) {
+      this.triggerScreenEffect(item.effect);
+    }
+
+    // 4. シネマティック緊急テロップ
+    if (item.telop) {
+      this.showCinematicTelop(item.telop);
+    }
+
+    // 5. インラインカットイン
+    if (item.cutin) {
+      this.showCutin(item.cutin.text, item.cutin.sub);
+    }
+
+    // 6. マルチカット・アニメーションシークエンス（パラパラ漫画演出）
+    if (item.cutSequence) {
+      this.startCutSequence(item.cutSequence);
+    }
+  }
+
+  triggerScreenEffect(effectName) {
+    const target = this.dom.screenNovel || document.body;
+    const cls = `effect-${effectName}`;
+    target.classList.remove(cls);
+    void target.offsetWidth; // リフロー強制（ガイドライン規約）
+    target.classList.add(cls);
+    setTimeout(() => {
+      target.classList.remove(cls);
+    }, 600);
+  }
+
+  showCinematicTelop(telop) {
+    if (!this.dom.cinematicTelop || !this.dom.cinematicTelopText) return;
+    const text = typeof telop === 'string' ? telop : telop.text;
+    this.dom.cinematicTelopText.textContent = text;
+    this.dom.cinematicTelop.classList.remove('hidden');
+    clearTimeout(this.telopTimer);
+    this.telopTimer = setTimeout(() => {
+      this.dom.cinematicTelop?.classList.add('hidden');
+    }, 3200);
+  }
+
+  startCutSequence(sequence) {
+    if (!this.dom.cutSequenceStage || !sequence) return;
+    this.currentCutSequence = sequence;
+    this.currentCutIndex = 0;
+    if (this.dom.sequenceTitle) {
+      this.dom.sequenceTitle.textContent = sequence.title || 'MULTI-CUT SEQUENCE';
+    }
+    this.dom.cutSequenceStage.classList.remove('hidden');
+    this.renderCutFrame();
+  }
+
+  renderCutFrame() {
+    const seq = this.currentCutSequence;
+    if (!seq?.cuts || this.currentCutIndex >= seq.cuts.length) {
+      return;
+    }
+    const cut = seq.cuts[this.currentCutIndex];
+    const total = seq.cuts.length;
+
+    // プログレスバー更新
+    if (this.dom.sequenceProgressFill) {
+      const pct = Math.round(((this.currentCutIndex + 1) / total) * 100);
+      this.dom.sequenceProgressFill.style.width = `${pct}%`;
+    }
+
+    // 画像またはプレースホルダー表示
+    if (cut.image && this.dom.sequenceFrameImg) {
+      this.dom.sequenceFrameImg.src = cut.image;
+      this.dom.sequenceFrameImg.classList.remove('hidden');
+      const placeholder = document.getElementById('sequence-frame-placeholder');
+      placeholder?.classList.add('hidden');
+    } else {
+      this.dom.sequenceFrameImg?.classList.add('hidden');
+      const placeholder = document.getElementById('sequence-frame-placeholder');
+      placeholder?.classList.remove('hidden');
+      if (this.dom.sequenceFrameVisualDesc) {
+        this.dom.sequenceFrameVisualDesc.textContent = `[CUT ${cut.frame}/${total}] ${cut.visualDesc || cut.caption || ''}`;
+      }
+    }
+
+    // キャプション更新
+    if (this.dom.sequenceCaption) {
+      this.dom.sequenceCaption.textContent = cut.caption || cut.visualDesc || '';
+    }
+
+    // 自動進行タイマー
+    clearTimeout(this.cutSequenceTimer);
+    const interval = cut.durationMs || seq.intervalMs || 1800;
+    if (this.currentCutIndex + 1 < total) {
+      this.cutSequenceTimer = setTimeout(() => {
+        this.currentCutIndex++;
+        this.renderCutFrame();
+      }, interval);
+    }
+  }
+
+  closeCutSequence() {
+    clearTimeout(this.cutSequenceTimer);
+    this.currentCutSequence = null;
+    this.currentCutIndex = 0;
+    this.dom.cutSequenceStage?.classList.add('hidden');
   }
 
   updateSpeaker(speakerId) {

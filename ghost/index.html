@@ -39,7 +39,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700;800&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="css/style.css?v=20261025_ui_v3">
+  <link rel="stylesheet" href="css/style.css?v=20261027_v5">
 </head>
 <body>
   <div class="bg-grid"></div>
@@ -149,6 +149,36 @@
             <img id="dialogue-illustration-img" src="" alt="鑑識データ図" class="dialogue-illustration-img">
           </div>
           <div id="dialogue-illustration-caption" class="illustration-caption"></div>
+        </div>
+
+        <!-- シネマティック緊急テロップ帯 -->
+        <div id="cinematic-telop" class="cinematic-telop hidden" aria-live="polite">
+          <span class="telop-icon">⚡</span>
+          <span id="cinematic-telop-text" class="telop-text"></span>
+        </div>
+
+        <!-- マルチカット・アニメーションシークエンスステージ（パラパラ漫画演出） -->
+        <div id="cut-sequence-stage" class="cut-sequence-stage hidden">
+          <div class="sequence-card">
+            <div class="sequence-header">
+              <span class="sequence-badge">🎬 MULTI-CUT SEQUENCE / 電脳アニメーション演出</span>
+              <span id="sequence-title" class="sequence-title">シークエンスタイトル</span>
+              <button type="button" id="btn-close-sequence" class="sequence-close-btn" title="閉じる">✕</button>
+            </div>
+            <div class="sequence-frame-container">
+              <div id="sequence-frame-box" class="sequence-frame-box">
+                <img id="sequence-frame-img" src="" alt="カット画像" class="sequence-frame-img hidden">
+                <div id="sequence-frame-placeholder" class="sequence-frame-placeholder">
+                  <div class="placeholder-icon">🎞️</div>
+                  <div id="sequence-frame-visual-desc" class="placeholder-desc"></div>
+                </div>
+              </div>
+              <div class="sequence-progress-bar">
+                <div id="sequence-progress-fill" class="sequence-progress-fill"></div>
+              </div>
+            </div>
+            <div id="sequence-caption" class="sequence-caption"></div>
+          </div>
         </div>
 
         <!-- 選択肢パネル（体験型インタラクティブ意思決定） -->
@@ -279,10 +309,10 @@
   </div>
 
   <!-- スクリプト読み込み -->
-  <script src="js/audio.js?v=20261027_v4"></script>
-  <script src="js/character.js?v=20261027_v4"></script>
-  <script src="js/scenario.js?v=20261027_v4"></script>
-  <script src="js/state.js?v=20261027_v4"></script>
-  <script src="js/app.js?v=20261027_v4"></script>
+  <script src="js/audio.js?v=20261027_v5"></script>
+  <script src="js/character.js?v=20261027_v5"></script>
+  <script src="js/scenario.js?v=20261027_v5"></script>
+  <script src="js/state.js?v=20261027_v5"></script>
+  <script src="js/app.js?v=20261027_v5"></script>
 </body>
 </html>
