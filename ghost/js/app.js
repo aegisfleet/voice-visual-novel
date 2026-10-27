@@ -264,30 +264,41 @@ class NovelApp {
   }
 
   handleTimelineStepClick(chapterId) {
-    if (this.state.isChapterCleared(chapterId) || this.state.currentChapter >= chapterId) {
-      this.stopAuto();
-      this.stopSkip();
-      this.stopVoicePlayback();
-      this.closeCutSequence();
-      this.hideIllustration();
-      this.dom.choiceStage?.classList.add('hidden');
-      this.dom.novelWindow?.classList.remove('choice-mode-hidden');
+    const isUnlocked =
+      chapterId === 0 ||
+      this.state.isChapterCleared(chapterId) ||
+      chapterId <= (this.state.maxUnlockedChapter || 1) ||
+      this.state.currentChapter >= chapterId;
+    if (!isUnlocked) return;
 
-      // 該当チャプターの選択済みフラグをリセットして選択肢を再体験できるようにする
-      const chData = this.scenario.chapters.find((c) => c.id === chapterId);
-      if (chData?.choiceSteps) {
-        chData.choiceSteps.forEach((step) => {
-          delete this.state.selectedChoices[step.id];
-        });
-      }
-      if (chapterId === 5) {
-        this.deductionStepIndex = 0;
-        this.isFinalDeductionComplete = false;
-      }
+    this.stopAuto();
+    this.stopSkip();
+    this.stopVoicePlayback();
+    this.closeCutSequence();
+    this.hideIllustration();
+    this.dom.choiceStage?.classList.add('hidden');
+    this.dom.novelWindow?.classList.remove('choice-mode-hidden');
 
+    if (chapterId === 0) {
       this.audio.playSe('click');
-      this.loadChapter(chapterId);
+      this.loadChapter(0);
+      return;
     }
+
+    // 該当チャプターの選択済みフラグをリセットして選択肢を再体験できるようにする
+    const chData = this.scenario.chapters.find((c) => c.id === chapterId);
+    if (chData?.choiceSteps) {
+      chData.choiceSteps.forEach((step) => {
+        delete this.state.selectedChoices[step.id];
+      });
+    }
+    if (chapterId === 5) {
+      this.deductionStepIndex = 0;
+      this.isFinalDeductionComplete = false;
+    }
+
+    this.audio.playSe('click');
+    this.loadChapter(chapterId);
   }
 
   initModalEventListeners() {
@@ -665,19 +676,39 @@ class NovelApp {
 
   updateTimelineBar() {
     if (!this.dom.chapterTimelineBar) return;
-    const chapters = this.scenario.chapters;
+    const items = [
+      { id: 0, label: 'PROLOGUE', sub: '10/20 23:45', title: '予兆なき暗転' },
+      { id: 1, label: 'CH.1', sub: '10/21 04:00', title: '26,739台の沈黙' },
+      { id: 2, label: 'CH.2', sub: '10/22 19:30', title: '永続ソケットの死角' },
+      { id: 3, label: 'CH.3', sub: '10/23 15:00', title: 'リバースRDPの逆流' },
+      { id: 4, label: 'CH.4', sub: '10/24 11:50', title: '100%直接補償の決断' },
+      { id: 5, label: 'CH.5', sub: '10/27 12:00', title: '能動的サイバー防御' },
+    ];
+
     let html = '';
-    chapters.forEach((ch) => {
-      const isActive = this.state.currentChapter === ch.id;
-      const isCleared = this.state.isChapterCleared(ch.id);
+    items.forEach((item) => {
+      const isActive =
+        this.state.currentChapter === item.id || (this.state.currentChapter === 6 && item.id === 5);
+      const isCleared =
+        item.id === 0
+          ? this.state.currentChapter > 0 || this.state.isGameCleared()
+          : this.state.isChapterCleared(item.id);
+      const isUnlocked =
+        item.id === 0 ||
+        isCleared ||
+        item.id <= (this.state.maxUnlockedChapter || 1) ||
+        this.state.currentChapter >= item.id;
+
       let cls = 'timeline-step';
       if (isActive) cls += ' active';
       if (isCleared) cls += ' cleared';
-      html += `<span class="${cls}" data-chapter-id="${ch.id}" title="${ch.number} ${ch.title} (クリックで移動)">${ch.number}: ${ch.date}</span>`;
+      if (!isUnlocked) cls += ' locked';
+
+      const lockIcon = !isUnlocked ? '🔒 ' : '';
+      html += `<span class="${cls}" data-chapter-id="${item.id}" title="${item.label}: ${item.title}">${lockIcon}${item.label} <small style="opacity:0.8">(${item.sub})</small></span>`;
     });
     this.dom.chapterTimelineBar.innerHTML = html;
 
-    // アクティブなチャプターをタイムラインバーの中央へスムーズにスクロール
     requestAnimationFrame(() => {
       const activeEl = this.dom.chapterTimelineBar?.querySelector('.timeline-step.active');
       activeEl?.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
@@ -755,9 +786,11 @@ class NovelApp {
       this.triggerScreenEffect(item.effect);
     }
 
-    // 4. シネマティック緊急テロップ
-    if (item.telop) {
+    // 4. シネマティック緊急テロップ（図解やパラパラ漫画がある行では上部テロップを出さず、ポップアップに集中させる）
+    if (item.telop && !item.cutSequence && !item.illustration) {
       this.showCinematicTelop(item.telop);
+    } else if (item.cutSequence || item.illustration) {
+      this.dom.cinematicTelop?.classList.add('hidden');
     }
 
     // 5. インラインカットイン
@@ -923,6 +956,25 @@ class NovelApp {
     if (this.dom.dialogueSpeaker) {
       this.dom.dialogueSpeaker.textContent = char.name;
       this.dom.dialogueSpeaker.style.color = char.color || '#00f3ff';
+    }
+
+    // スピーカー名の左横にキャラクターの顔アイコン（ケイを含む）を表示
+    const wrap = this.dom.dialogueSpeaker?.parentElement;
+    if (wrap) {
+      let avatarEl = wrap.querySelector('.speaker-avatar-thumb');
+      const avatarSrc = char.sprites?.normal || char.sprite;
+      if (avatarSrc) {
+        if (!avatarEl) {
+          avatarEl = document.createElement('img');
+          avatarEl.className = 'speaker-avatar-thumb';
+          wrap.insertBefore(avatarEl, this.dom.dialogueSpeaker);
+        }
+        avatarEl.src = avatarSrc;
+        avatarEl.alt = char.name;
+        avatarEl.classList.remove('hidden');
+      } else if (avatarEl) {
+        avatarEl.classList.add('hidden');
+      }
     }
   }
 
@@ -1116,11 +1168,31 @@ class NovelApp {
   }
 
   advanceDialogue() {
+    // 1. カットイン（章アイキャッチ等）表示中は誤クリック進行をブロック
+    if (this.dom.overlayCutin && !this.dom.overlayCutin.classList.contains('hidden')) {
+      return;
+    }
+
+    // 2. 文字タイピング中は全文即時表示
     if (this.isTyping) {
       this.finishTyping();
       return;
     }
-    this.closeCutSequence();
+
+    // 3. パラパラ漫画（cutSequence）が表示中でまだ次のコマがある場合は、まず次のコマへ進める
+    if (
+      this.currentCutSequence &&
+      this.dom.cutSequenceStage &&
+      !this.dom.cutSequenceStage.classList.contains('hidden')
+    ) {
+      if (this.currentCutIndex + 1 < this.currentCutSequence.cuts.length) {
+        this.currentCutIndex += 1;
+        this.renderCutFrame();
+        return;
+      }
+      this.closeCutSequence();
+    }
+
     this.stopVoicePlayback();
     this.queueIndex += 1;
     this.renderCurrentLine();
@@ -1139,18 +1211,28 @@ class NovelApp {
   }
 
   speakText(text, speakerId) {
+    clearTimeout(this.voiceWaveFallbackTimer);
     if (!this.audio.voiceEnabled) {
       this.dom.voiceWaveIndicator?.classList.add('hidden');
       return;
     }
     const char = this.characters[speakerId] || this.characters.narrator;
     this.dom.voiceWaveIndicator?.classList.remove('hidden');
+
+    // Web Speech API の onend 未発火バグ対策：文字数に応じた最大時間で確実に波形を消す
+    const maxDuration = Math.min(12000, Math.max(2000, (text?.length || 10) * 150));
+    this.voiceWaveFallbackTimer = setTimeout(() => {
+      this.dom.voiceWaveIndicator?.classList.add('hidden');
+    }, maxDuration);
+
     this.audio.speak(text, char, () => {
+      clearTimeout(this.voiceWaveFallbackTimer);
       this.dom.voiceWaveIndicator?.classList.add('hidden');
     });
   }
 
   stopVoicePlayback() {
+    clearTimeout(this.voiceWaveFallbackTimer);
     this.audio.stopVoice();
     this.dom.voiceWaveIndicator?.classList.add('hidden');
   }
@@ -1273,7 +1355,13 @@ class NovelApp {
         this.dom.choiceLogTitle.textContent = choiceData.logBox.title || 'FORENSIC TELEMETRY';
       }
       if (this.dom.choiceLogContent) {
-        this.dom.choiceLogContent.textContent = choiceData.logBox.content || '';
+        const raw = choiceData.logBox.content || '';
+        const escaped = raw.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        // 鑑識の決定打となるキーワードをハイライト強調
+        this.dom.choiceLogContent.innerHTML = escaped.replace(
+          /(DEMOFASTLOSS|850 pps|工作表1|drivestoredirect:s:\*|91\.240\.118\.174|\[CRITICAL HIT\])/g,
+          '<span class="log-highlight-key">$1</span>',
+        );
       }
       this.dom.choiceLogContainer.classList.remove('hidden');
     } else {

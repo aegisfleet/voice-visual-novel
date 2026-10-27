@@ -218,7 +218,25 @@ async function runE2ETest() {
     if (Math.abs(inGameBgmVolume - 0.5) > 0.01) {
       throw new Error(`ゲーム開始時に音量設定が初期値にリセットされました (現在値: ${inGameBgmVolume})`);
     }
-    console.log('   ✅ ゲーム開始後も音量設定(0.5)が正しく維持されていることを確認');
+    // 最上部HUDの防衛率見切れ（100%が切れていないこと）およびタイムラインのPROLOGUE検証
+    const hudCheck = await page.evaluate(() => {
+      const defVal = document.getElementById('hud-defense-val')?.textContent || '';
+      const timelinePrologue = document.querySelector('.timeline-step[data-chapter-id="0"]');
+      const hudLeft = document.querySelector('.hud-left');
+      const isVisible = hudLeft && window.getComputedStyle(hudLeft).overflow === 'visible';
+      return {
+        defVal,
+        hasPrologue: Boolean(timelinePrologue),
+        isOverflowVisible: isVisible,
+      };
+    });
+    if (hudCheck.defVal !== '100%') {
+      throw new Error(`HUD防衛率テキストが 100% ではありません (現在値: "${hudCheck.defVal}")`);
+    }
+    if (!hudCheck.hasPrologue) {
+      throw new Error('タイムラインバーに PROLOGUE が存在しません');
+    }
+    console.log('   ✅ HUD防衛率テキスト(100%)全表示＆タイムラインPROLOGUE正常確認');
 
     // Test 4: ノベル会話進行の検証
     console.log('5️⃣ ノベル会話テキスト進行の検証...');

@@ -882,7 +882,7 @@ window.SCENARIO_DATA = {
           telop: '【WARNING: 被害者自宅PCから4,352ファイル流出確認】',
           cutSequence: {
             id: 'seq_ch3_reverse_rdp',
-            title: 'リバースRDP（\\\\tsclient\\\\C）自動マウントシークエンス（パラパラ漫画演出）',
+            title: 'リバースRDP（\\\\tsclient\\\\C）自動マウントシークエンス',
             description: '自宅PCからVPSに接続した瞬間、Cドライブが全自動共有される連続カット',
             intervalMs: 1600,
             cuts: [
@@ -1391,7 +1391,7 @@ window.SCENARIO_DATA = {
           telop: '【PRICE COLLAPSE: 要求額5,000万ドル→100万ドルへ98%値下げ】',
           cutSequence: {
             id: 'seq_ch4_ransom_collapse',
-            title: '身代金要求98%価格崩壊シークエンス（パラパラ漫画演出）',
+            title: '身代金要求98%価格崩壊シークエンス',
             description: '第4報により人質を失った犯人が焦燥し、自ら98%値下げする連続カット',
             intervalMs: 1600,
             cuts: [
@@ -1522,7 +1522,7 @@ window.SCENARIO_DATA = {
           sfx: 'impact',
           cutSequence: {
             id: 'seq_ch5_canary_strike',
-            title: '運命の正午・逆探知カナリアトークン発火シークエンス（パラパラ漫画演出）',
+            title: '運命の正午・逆探知カナリアトークン発火シークエンス',
             description:
               '12:00の第1号公開に伴う敵アジトでのデータ復号と逆探知ビーコン発火の連続カット',
             intervalMs: 1500,
