@@ -1,4 +1,27 @@
-// app.js - GHOST PROTOCOL 体験型インタラクティブノベル コントローラー
+// 専門用語ミニ辞典（一般向け噛み砕き解説）
+const TERM_GLOSSARY = {
+  'FT4/FT5': '世界中の個人投資家が利用しているFX（外国為替）の自動売買ソフト（モデル：MT4/MT5）。',
+  FT4: '世界中の個人投資家が利用しているFX（外国為替）の自動売買ソフト。',
+  VPS: 'ネット上に借りる「仮想のWindowsパソコン」。24時間自動で株やFXの取引をするために使われる。',
+  'AD（Active Directory）': '何万台ものサーバーのIDやパスワードを一括管理する「司令塔サーバー」。',
+  'Active Directory': '何万台ものサーバーのIDやパスワードを一括管理する「司令塔サーバー」。',
+  スプレッド: '通貨を買値と売値で往復売買した際に発生する「取引手数料（価格差）」のこと。',
+  DEMOFASTLOSS: '犯人が残した注文暗号。「デモのように一瞬で残高を溶かす（Fast Loss）」という意味。',
+  TCPソケット: '一度ログインが通った後に維持される「通信の専用パイプ（繋ぎっぱなしの電話回線）」。',
+  偽旗工作:
+    '自分の正体を隠すため、わざと別の国のハッカーのふりをして捜査を攪乱する工作（False Flag）。',
+  リバースRDP:
+    '本来は手元のPCからサーバーを操作するリモート接続機能を悪用し、逆にサーバー側から手元のPCの中身を覗き見る手口。',
+  カナリアトークン:
+    '盗まれたファイルが犯人のアジトで開かれた瞬間に、犯人の現在地をこっそり通知する「逆探知用の発信機」。',
+  'Investor Password':
+    '取引や出金は一切できず、「過去の売買履歴の閲覧だけ」ができる監査用パスワード。',
+  C2サーバー: '攻撃者が遠隔地からウイルスや犯行サイトを操るための「秘密の司令塔サーバー」。',
+  能動的サイバー防御:
+    '2026年10月施行の新法。重大なサイバー攻撃に対し、国の機関が犯人のサーバーへ侵入してデータを無害化（消去）できる制度。',
+  警職法6条の2:
+    '国民の生命や財産に差し迫った重大な危険があるとき、警察が緊急で実力行使できる法律。',
+};
 
 class NovelApp {
   constructor() {
@@ -314,6 +337,16 @@ class NovelApp {
       this.dom.btnContinueGame?.classList.remove('hidden');
     }
     this.updateAudioButtons();
+    this.checkInAppBrowserNotice();
+    this.initTermPopover();
+  }
+
+  checkInAppBrowserNotice() {
+    const noticeEl = document.getElementById('line-external-notice');
+    if (!noticeEl) return;
+    const ua = navigator.userAgent || '';
+    const isInApp = /Line\/|FBAN|FBAV|Instagram|Twitter/i.test(ua);
+    noticeEl.classList.toggle('hidden', !isInApp);
   }
 
   handleStartGame() {
@@ -461,10 +494,12 @@ class NovelApp {
       `${titleText}${subText ? `\n— ${subText} —` : ''}`,
       `⚡ ${numberText} // ${dateText}`,
       numberText === 'EPILOGUE' ? 'gold' : 'forensic',
+      1600,
     );
-    setTimeout(() => {
+    clearTimeout(this.chapterCardTimer);
+    this.chapterCardTimer = setTimeout(() => {
       if (onComplete) onComplete();
-    }, 1400);
+    }, 1650);
   }
 
   updateHudBadge(title, desc) {
@@ -593,6 +628,9 @@ class NovelApp {
 
   startCutSequence(sequence) {
     if (!this.dom.cutSequenceStage || !sequence) return;
+    // パラパラ漫画が出る時は、上部のトーストが邪魔にならないよう自動で消す
+    this.dom.cinematicTelop?.classList.add('hidden');
+    this.dom.screenNovel?.classList.add('popup-open');
     this.currentCutSequence = sequence;
     this.currentCutIndex = 0;
     if (this.dom.sequenceTitle) {
@@ -701,6 +739,9 @@ class NovelApp {
     this.currentCutSequence = null;
     this.currentCutIndex = 0;
     this.dom.cutSequenceStage?.classList.add('hidden');
+    if (this.dom.dialogueIllustrationStage?.classList.contains('hidden')) {
+      this.dom.screenNovel?.classList.remove('popup-open');
+    }
   }
 
   updateSpeaker(speakerId) {
@@ -745,6 +786,7 @@ class NovelApp {
 
   showIllustration(src, caption = '') {
     if (!this.dom.dialogueIllustrationStage) return;
+    this.dom.screenNovel?.classList.add('popup-open');
     if (this.dom.dialogueIllustrationImg) {
       this.dom.dialogueIllustrationImg.src = src;
     }
@@ -757,6 +799,9 @@ class NovelApp {
 
   hideIllustration() {
     this.dom.dialogueIllustrationStage?.classList.add('hidden');
+    if (this.dom.cutSequenceStage?.classList.contains('hidden')) {
+      this.dom.screenNovel?.classList.remove('popup-open');
+    }
   }
 
   startTyping(text, speakerId) {
@@ -799,13 +844,72 @@ class NovelApp {
   finishTyping() {
     this.clearTypingTimer();
     this.isTyping = false;
-    if (this.dom.dialogueText) this.dom.dialogueText.textContent = this.fullText;
+    if (this.dom.dialogueText) {
+      this.dom.dialogueText.innerHTML = this.decorateGlossaryTerms(this.fullText);
+    }
     this.dom.dialoguePrompt?.classList.remove('hidden');
 
     if (this.isAutoActive && !this.isSkipActive) {
       const delay = Math.max(1600, this.fullText.length * 65);
       this.scheduleNextLine(delay);
     }
+  }
+
+  decorateGlossaryTerms(text) {
+    if (!text) return '';
+    let escaped = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    Object.keys(TERM_GLOSSARY).forEach((term) => {
+      const safeTerm = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const regex = new RegExp(safeTerm, 'g');
+      escaped = escaped.replace(regex, `<span class="term-tip" data-term="${term}">${term}</span>`);
+    });
+    return escaped;
+  }
+
+  positionTermPopover(pop, target) {
+    const term = target.dataset.term;
+    const desc = TERM_GLOSSARY[term];
+    if (!desc) return;
+    pop.innerHTML = `<div class="term-popover-title">🔰 用語解説：${term}</div><div>${desc}</div>`;
+    pop.classList.remove('hidden');
+    const rect = target.getBoundingClientRect();
+    const top = Math.max(12, rect.top - pop.offsetHeight - 10);
+    const left = Math.min(window.innerWidth - pop.offsetWidth - 12, Math.max(12, rect.left));
+    pop.style.top = `${top}px`;
+    pop.style.left = `${left}px`;
+  }
+
+  initTermPopover() {
+    if (document.getElementById('term-popover')) return;
+    const pop = document.createElement('div');
+    pop.id = 'term-popover';
+    pop.className = 'hidden';
+    document.body.appendChild(pop);
+
+    const hideTip = () => pop.classList.add('hidden');
+
+    document.addEventListener('mouseover', (e) => {
+      const t = e.target.closest('.term-tip');
+      if (t) this.positionTermPopover(pop, t);
+    });
+    document.addEventListener('mouseout', (e) => {
+      if (e.target.closest('.term-tip')) hideTip();
+    });
+    document.addEventListener(
+      'click',
+      (e) => {
+        const t = e.target.closest('.term-tip');
+        if (!t) {
+          hideTip();
+          return;
+        }
+        e.stopPropagation();
+        this.positionTermPopover(pop, t);
+        clearTimeout(this.tipTimer);
+        this.tipTimer = setTimeout(hideTip, 3500);
+      },
+      true,
+    );
   }
 
   clearTypingTimer() {
@@ -950,6 +1054,15 @@ class NovelApp {
     }
     if (this.dom.choiceQuestion) {
       this.dom.choiceQuestion.textContent = choiceData.question;
+    }
+    const hintEl = document.getElementById('choice-aria-hint');
+    if (hintEl) {
+      if (choiceData.hintSummary) {
+        hintEl.innerHTML = `💡 <strong>アリアのナビ：</strong>${choiceData.hintSummary}`;
+        hintEl.classList.remove('hidden');
+      } else {
+        hintEl.classList.add('hidden');
+      }
     }
   }
 
@@ -1214,6 +1327,7 @@ class NovelApp {
     text = '欺瞞工作を論破！ 侵入痕跡・因果関係立証！',
     subText = '⚡ FORENSIC PROOF ESTABLISHED / 電脳鑑識立証',
     type = 'forensic',
+    durationMs = 1800,
   ) {
     if (!this.dom.overlayCutin) return;
     if (this.dom.cutinSub) this.dom.cutinSub.textContent = subText;
@@ -1222,15 +1336,16 @@ class NovelApp {
       this.dom.cutinBox.className = `cutin-box ${type}`;
     }
 
+    clearTimeout(this.cutinHideTimer);
     this.dom.overlayCutin.classList.remove('hidden');
     this.dom.overlayCutin.classList.remove('active');
     void this.dom.overlayCutin.offsetWidth; // 強制リフロー
     this.dom.overlayCutin.classList.add('active');
 
-    setTimeout(() => {
+    this.cutinHideTimer = setTimeout(() => {
       this.dom.overlayCutin?.classList.remove('active');
       this.dom.overlayCutin?.classList.add('hidden');
-    }, 1800);
+    }, durationMs);
   }
 
   completeChapter(chapterNum) {

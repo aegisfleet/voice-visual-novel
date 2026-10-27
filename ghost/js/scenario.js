@@ -248,6 +248,8 @@ window.SCENARIO_DATA = {
           id: 'ch1_step1_target',
           type: 'tactic',
           badge: '⚡ TACTICAL DECISION / 初動作戦の決断',
+          hintSummary:
+            '口座から勝手にお金が消えています。まずは「自動売買ソフト（FT4）の中でどんな注文が出されたのか」直接記録を調べましょう！',
           question:
             '【初動作戦の判断】1時間で数千件に達した被害報告に対し、限られた時間の中でどこから鑑識のメスを入れるか？',
           cutinText: '作戦指令承認：FT4取引プロトコル生ログを抽出！',
@@ -255,9 +257,9 @@ window.SCENARIO_DATA = {
           options: [
             {
               id: 'opt1_target_ft4',
-              label: '取引端末FT4のミリ秒注文履歴と通信パラメータの精査',
+              label: '自動売買ソフト（FT4）の「0.001秒単位の注文履歴」を直接調べる',
               description:
-                '口座タイプや銘柄を問わず、直前に叩き込まれた全注文テレメトリを直接洗う。',
+                '犯人がサーバー停止直前にどんな売買注文を出し、どうやって残高を減らしたのか記録を洗う。',
               isCorrect: true,
               reaction: [
                 {
@@ -328,6 +330,8 @@ window.SCENARIO_DATA = {
           id: 'ch1_step2_log_decode',
           type: 'forensic',
           badge: '⚡ FORENSIC DEDUCTION / 生ログ解読の推理',
+          hintSummary:
+            'ログを見ると「外部への出金（OUTGOING_TRANSFER）は0円」なのに、手数料（SPREAD）が極めて高い通貨を0.1秒で何度も売り買いして400万円を0円にしています。犯人の狙いは？',
           question:
             '【生ログ解読の推理】攻撃者は1円も出金できないにもかかわらず、なぜこの異常な注文を繰り返したのか？',
           cutinText: '口座焼却の手口を看破！ 恐喝の構図を立証！',
@@ -335,7 +339,7 @@ window.SCENARIO_DATA = {
           logBox: {
             title: 'FT4 TRANSACTION LOG [EXTRACTED FROM INSTANCE #10482]',
             content:
-              'TIMESTAMP: 2026-10-21 03:58:12.104\nPAIR: TRY/ZAR (Turkish Lira / S.African Rand) | SPREAD: 850 pps\nACTION: BUY 50.0 LOTS -> INSTANT CLOSE (HoldTime: 0.1s)\nACTION: SELL 50.0 LOTS -> INSTANT CLOSE (HoldTime: 0.1s)\nCOMMENT: DEMOFASTLOSS | OUTGOING_TRANSFER: 0.00 JPY\nACCOUNT_BALANCE: 4,000,000 JPY -> 0 JPY (LOSS BY SPREAD: 4,000,000 JPY)',
+              'TIMESTAMP: 2026-10-21 03:58:12.104\n通貨ペア: TRY/ZAR（マイナー通貨） | 手数料(スプレッド): 850 pps（通常の数百倍）\n注文内容: 50ロット購入 -> 0.1秒後に即売却（超高速の往復売買を連打）\n注文暗号: DEMOFASTLOSS | 外部への不正送金額: 0円\n口座残高: 4,000,000円 -> 0円（手数料負けによる消滅: -4,000,000円）',
           },
           options: [
             {
@@ -362,7 +366,7 @@ window.SCENARIO_DATA = {
             {
               id: 'opt1_decode_burn',
               label:
-                '超高スプレッド通貨の高速往復売買で残高を手数料として市場へ蒸発させ、顧客を人質にして当社を脅迫しようとしている',
+                'あえて「手数料が超高額な売買」を連打して口座残高を市場へ溶かし、怒った顧客を人質にして当社を脅迫しようとしている',
               description:
                 '『DEMOFASTLOSS』により残高を即座に消滅させ、顧客の怒りをテコにインフラ企業を恐喝する手口。',
               isCorrect: true,
@@ -392,6 +396,8 @@ window.SCENARIO_DATA = {
           id: 'ch1_step3_trap',
           type: 'tactic',
           badge: '⚡ EMERGENCY DIRECTIVE / 緊急対応の決断',
+          hintSummary:
+            '被害が広がり続けています。原因の全貌解明には時間がかかりますが、今すぐ顧客自身に取ってもらえる最も安全な自衛策は何でしょうか？',
           question:
             '【緊急対応の決断】第2報として、26,739人のユーザーへどの初動対策を公式アナウンスするか？',
           cutinText: '第2報発令：全ユーザーへの緊急パスワード変更指示！',
@@ -576,6 +582,8 @@ window.SCENARIO_DATA = {
           id: 'ch2_step1_socket',
           type: 'forensic',
           badge: '⚡ FORENSIC DEDUCTION / 技術的死角の特定',
+          hintSummary:
+            'スマホからパスワードを変えた人も被害に遭っています。Web画面のパスワードを変えても、「すでに繋がっている自動売買ソフトの通信パイプ」はどうなっているでしょうか？',
           question:
             '【技術的死角の特定】ユーザーが指示通りパスワードを変更したにもかかわらず、なぜ攻撃者は不正注文を通せたのか？',
           cutinText: 'FT4永続ソケット仕様を看破！ 認証の盲点を立証！',
@@ -625,9 +633,10 @@ window.SCENARIO_DATA = {
             },
             {
               id: 'opt2_socket_tcp',
-              label: 'Web認証とFT4取引専用TCPソケットのセッション維持仕様を突合する',
+              label:
+                'Webのパスワードを変えても、自動売買ソフトの「繋ぎっぱなしの通信回線（TCPソケット）」が切れていない仕様を疑う',
               description:
-                'Webパスワードが変わっても、既存接続が切断されないプロトコルの死角を検証。',
+                '玄関の鍵（Webパスワード）を替えても、すでに家の中に居座っている泥棒（確立済み通信）を追い出さない限り注文が通ってしまう盲点。',
               isCorrect: true,
               reaction: [
                 {
@@ -672,6 +681,8 @@ window.SCENARIO_DATA = {
           id: 'ch2_step2_false_flag',
           type: 'forensic',
           badge: '⚡ FORENSIC DEDUCTION / 偽旗工作の看破',
+          hintSummary:
+            '犯人はロシア人「Dmitry」を名乗っていますが、添付されたExcelファイルの設計図（一番下の行）に、作られたソフトの言語設定が残っています！',
           question:
             '【偽旗工作の看破】ロシア人『Dmitry Orlov』を名乗る集団訴訟煽動メールの信用を突き崩す、ファイル内部の決定的な矛盾はどこか？',
           cutinText: '偽旗工作を完全論破！ 中国語KPS痕跡を特定！',
@@ -680,7 +691,7 @@ window.SCENARIO_DATA = {
           logBox: {
             title: 'FORENSIC DUMP: LAWSUIT_EVIDENCE.XLSX (UNZIPPED XML)',
             content:
-              'Sender: Dmitry Orlov <dmitry@hacking-team-ru.org>\nSMTP Relay: 185.220.101.44 (Tor Exit Node)\nFile Format: OpenXML Spreadsheet (.xlsx)\ndocProps/core.xml: <dc:creator>Dmitry_RU</dc:creator>\nxl/workbook.xml: <sheets><sheet name="工作表1" sheetId="1" r:id="rId1"/></sheets>',
+              'Sender: Dmitry Orlov <dmitry@hacking-team-ru.org>\nSMTP Relay: 185.220.101.44 (Tor Exit Node)\nFile Format: OpenXML Spreadsheet (.xlsx)\ndocProps/core.xml: <dc:creator>Dmitry_RU</dc:creator>\nxl/workbook.xml: <sheet name="工作表1" />  ※シートの初期名称',
           },
           options: [
             {
@@ -726,8 +737,9 @@ window.SCENARIO_DATA = {
             },
             {
               id: 'opt2_ff_worksheet',
-              label: 'xl/workbook.xml 内に記録されたデフォルトシート名定義（工作表1）',
-              description: 'ファイル生成時に自動生成されるスプレッドシート定義タグの文字列を検証。',
+              label: 'Excel内部に記録された初期シート名「工作表1」（中国語ソフトの痕跡）',
+              description:
+                'ロシア語版なら「Лист1」、日本語版なら「Sheet1」になるはずの箇所に、中国語版ソフト特有の「工作表1」が残っている矛盾を突く。',
               isCorrect: true,
               rewardEvidence: 'persistent_session_trap',
               reaction: [
@@ -870,6 +882,8 @@ window.SCENARIO_DATA = {
           id: 'ch3_step1_rdp_config',
           type: 'forensic',
           badge: '⚡ CONFIG AUDIT / 構成ファイル生鑑識',
+          hintSummary:
+            '自宅PCからサーバーへリモート接続する際の設定ファイルです。英語で「ドライブ（Cドライブ等）をすべて共有・転送する（redirect）」と書かれている行はどれでしょう？',
           question:
             '【構成ファイルの異常特定】マルウェアなしで自宅PCのCドライブを丸裸にした致命的な設定パラメータはどれか？',
           cutinText: 'リバースRDPの元凶を特定！ drivestoredirect:s:*！',
@@ -877,7 +891,7 @@ window.SCENARIO_DATA = {
           logBox: {
             title: 'NEODOTCOM_CONNECT.RDP [DEFAULT CONFIG SINCE 2019]',
             content:
-              'screen mode id:i:2\nuse multimon:i:0\nadministrative session:i:1\ndrivestoredirect:s:*\nredirectclipboard:i:1\nprompt for credentials:i:1',
+              'screen mode id:i:2\nuse multimon:i:0\nadministrative session:i:1   （サーバー側の管理者画面モード）\ndrivestoredirect:s:*         （手元PCの全ドライブ[*]をサーバー側へ自動共有）\nredirectclipboard:i:1        （コピー＆ペーストの文字共有）\nprompt for credentials:i:1',
           },
           options: [
             {
@@ -902,7 +916,7 @@ window.SCENARIO_DATA = {
             },
             {
               id: 'opt3_cfg_drives',
-              label: 'drivestoredirect:s:*',
+              label: 'drivestoredirect:s:* （手元のPCの全ドライブをサーバー側へ自動共有する設定）',
               description:
                 'ローカル環境のリソース割り当て対象をワイルドカード（*）で指定する構成パラメータ。',
               isCorrect: true,
@@ -975,6 +989,8 @@ window.SCENARIO_DATA = {
           id: 'ch3_step2_canary_decision',
           type: 'tactic',
           badge: '⚡ COUNTER-SURVEILLANCE / 迎撃トラップの決断',
+          hintSummary:
+            'ただ回線を切るだけでは、犯人の居場所を突き止める手がかりが消えてしまいます。「盗まれたファイルが犯人のアジトで開かれた瞬間」を狙うトラップを仕掛けましょう！',
           question:
             '【電脳迎撃の決断】ハニーポット端末からファイルを吸い出そうとしている攻撃者に対し、どう決断するか？',
           cutinText: '逆探知トラップ発動！ カナリアトークンを敵地へ潜伏！',
@@ -1111,6 +1127,8 @@ window.SCENARIO_DATA = {
           id: 'ch4_step1_policy_debate',
           type: 'tactic',
           badge: '⚡ BOARDROOM DEBATE / 役員会ディベート：基本方針',
+          hintSummary:
+            '犯人に身代金を払っても裏切られ、免責で顧客を突き放せば会社は潰れます。「犯人には1円も払わず、被害に遭った顧客の損害だけを全額救う」第3の道を選びましょう！',
           question:
             '【経営方針の決断】「身代金支払い」か「約款免責による突っぱね」かで紛糾する役員会に対し、どの第3の道をぶつけるか？',
           cutinText: 'ゲーム理論的反撃！ 身代金ゼロ・実損100%直接補償！',
@@ -1203,6 +1221,8 @@ window.SCENARIO_DATA = {
           id: 'ch4_step2_investor_password',
           type: 'forensic',
           badge: '⚡ AUDIT SCHEME / 客観損害算定の切り札',
+          hintSummary:
+            'スクリーンショットは簡単に偽造でき、海外業者は照会に応じてくれません。自動売買ソフト（FT4）に標準搭載されている「履歴の閲覧だけができる専用パスワード」を使いましょう！',
           question:
             '【客観損害算定の切り札】無登録業者を含む虚偽請求を防ぎ、改ざん不能な実損額のみを1円単位で立証する技術的スキームとは？',
           cutinText: 'Investor Password監査成立！ 役員会を完全説得！',
@@ -1252,9 +1272,9 @@ window.SCENARIO_DATA = {
             {
               id: 'opt4_inv_read_only',
               label:
-                'FT4/FT5の『閲覧専用パスワード（Investor Password）』を顧客から提出させ、サーバー生履歴とVPS侵入時刻をミリ秒突合する',
+                '自動売買ソフトの「閲覧専用パスワード（Investor Password）」を顧客から提出してもらい、サーバー侵入時刻の記録と照合する',
               description:
-                '出金権限を排した閲覧専用キーでブローカー生ログを取得し、VPS侵害タイムスタンプと完全一致検証。',
+                'お金を動かす権限はないが、改ざん不可能な「取引所の公式な売買履歴」だけを直接読み取れる監査用パスワードを活用する。',
               isCorrect: true,
               rewardEvidence: 'direct_compensation_matrix',
               reaction: [
@@ -1489,6 +1509,8 @@ window.SCENARIO_DATA = {
           id: 'ch5_step1_legal_walls',
           type: 'forensic',
           badge: '⚡ LEGAL DEFENSE / 国家サイバー対処法理の構築',
+          hintSummary:
+            '通常の令状発行には数日かかり、明日の被害者晒しに間に合いません。「企業自らがログを全面提供し、差し迫った危機に対する警察の緊急権限を発動させる」道を選びましょう！',
           question:
             '【法理の突破】被害者第1号が晒され、明日正午に第2号が予告された現在進行形の現行犯危害に対し、基幹インフラ15分野限定の壁および通信の秘密の壁をどう突破するか？',
           cutinText: '警職法6条の2と100%任意ログ提供！ 法の壁を突破！',
@@ -1557,6 +1579,8 @@ window.SCENARIO_DATA = {
           id: 'ch5_step2_canary_beacon',
           type: 'forensic',
           badge: '⚡ BEACON TELEMETRY / 逆探知ビーコン解析',
+          hintSummary:
+            'A（オランダ）とB（ルーマニア）は犯人が足跡を隠すために経由した「中継地点（Relay / Bridge）」です。ダミーファイルが実際に開かれた「直接の実行元（Direct Source）」のIPを選びましょう！',
           question:
             '【真C2特定の立証】解凍されたダミーLogin Dataから発火した逆探知ログを解析し、多段プロキシの背後に潜む真の司令塔と晒しサイト保管庫をどこに特定するか？',
           cutinText: '逆探知成功！ 多段プロキシを突破し真C2を捕捉！',
@@ -1565,7 +1589,7 @@ window.SCENARIO_DATA = {
           logBox: {
             title: 'BEACON TELEMETRY: CANARY TOKEN CALLBACK HIT',
             content:
-              'Reverse Callback: [CRITICAL HIT]\nProxy Node A: 45.154.255.89 (Amsterdam, NL) [Tor Relay]\nProxy Node B: 185.220.101.5 (Bucharest, RO) [SOCKS5 Bridge]\nDirect Payload Execution Source: 91.240.118.174 (Frankfurt Datacenter DC-4)\nTarget File Opened: %APPDATA%\\Google\\Chrome\\User Data\\Default\\Login Data (Dummy)\nTrigger Event: SQLite Header Decryption Hook\nPayload Auth Token: 26739_LEAK_SITE_HOST',
+              'Reverse Callback: [CRITICAL HIT]\n中継地点 A: 45.154.255.89 (オランダ) [Tor 匿名中継ノード]\n中継地点 B: 185.220.101.5 (ルーマニア) [SOCKS5 踏み台プロキシ]\n直接のファイル開封・実行元: 91.240.118.174 (ドイツ・フランクフルト DC-4)\n発動イベント: ダミーのLogin Dataが解凍・復号された瞬間に発信\nPayload Auth Token: 26739_LEAK_SITE_HOST',
           },
           options: [
             {
@@ -1610,7 +1634,7 @@ window.SCENARIO_DATA = {
             },
             {
               id: 'opt5_c2_direct',
-              label: '91.240.118.174 (Frankfurt Datacenter DC-4) を真のC2として標的指定する',
+              label: '91.240.118.174（ドイツ・フランクフルトの直接実行元サーバー）を標的指定する',
               description: 'ログ中段に記録されたフランクフルトのデータセンター拠点。',
               isCorrect: true,
               rewardEvidence: 'canary_c2_origin',

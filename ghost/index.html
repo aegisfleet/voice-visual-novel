@@ -39,7 +39,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700;800&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="css/style.css?v=20261027_v8">
+  <link rel="stylesheet" href="css/style.css?v=20261027_v9">
 </head>
 <body>
   <div class="bg-grid"></div>
@@ -117,7 +117,7 @@
             セーブデータを初期化
           </button>
 
-          <aside id="line-external-notice" class="line-external-notice" aria-label="外部ブラウザ起動の案内">
+          <aside id="line-external-notice" class="line-external-notice hidden" aria-label="外部ブラウザ起動の案内">
             <p class="line-notice-text">【スマートフォンでプレイ中の方へ】音声が鳴らない場合はマナーモードを解除するか外部ブラウザをご利用ください</p>
             <a id="btn-line-external-open" href="?openExternalBrowser=1" class="btn-external-browser" target="_blank" rel="noopener">
               <span>🌐 Safari / 外部ブラウザで開く（推奨）</span>
@@ -187,6 +187,7 @@
             <div class="choice-header">
               <span id="choice-badge" class="choice-badge">⚡ FORENSIC DECISION / 鑑識の決断</span>
               <h2 id="choice-question" class="choice-question">設問テキスト</h2>
+              <div id="choice-aria-hint" class="choice-aria-hint hidden"></div>
             </div>
             <div id="choice-log-container" class="choice-log-container hidden">
               <div class="log-terminal-header">
@@ -309,10 +310,10 @@
   </div>
 
   <!-- スクリプト読み込み -->
-  <script src="js/audio.js?v=20261027_v8"></script>
-  <script src="js/character.js?v=20261027_v8"></script>
-  <script src="js/scenario.js?v=20261027_v8"></script>
-  <script src="js/state.js?v=20261027_v8"></script>
-  <script src="js/app.js?v=20261027_v8"></script>
+  <script src="js/audio.js?v=20261027_v9"></script>
+  <script src="js/character.js?v=20261027_v9"></script>
+  <script src="js/scenario.js?v=20261027_v9"></script>
+  <script src="js/state.js?v=20261027_v9"></script>
+  <script src="js/app.js?v=20261027_v9"></script>
 </body>
 </html>

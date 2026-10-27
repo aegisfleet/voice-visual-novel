@@ -1237,8 +1237,8 @@ body {
   color: var(--text-main);
   overflow-wrap: break-word;
   white-space: pre-wrap;
-  user-select: text;
-  -webkit-user-select: text;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .dialogue-prompt {
@@ -2563,4 +2563,144 @@ body {
     linear-gradient(180deg, rgba(14, 116, 144, 0.45) 0%, rgba(15, 23, 42, 0.88) 75%),
     url("../assets/backgrounds/nco.jpg");
   filter: brightness(0.92) contrast(1.05);
+}
+
+/* ==========================================================================
+   14. ポップアップ重なり解消・文字選択防止・用語ガイド・ギャラリー整形パッチ
+   ========================================================================== */
+
+/* 1. テキストウィンドウ連打時の文字選択（青反転）を完全に防止 */
+#novel-window,
+#novel-window *,
+.dialogue-body,
+#dialogue-text {
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+}
+
+/* 2. トースト（#cinematic-telop）とポップアップ（パラパラ漫画・図解）の上下位置分離 */
+#cinematic-telop {
+  position: absolute !important;
+  top: 42px !important; /* タイムラインバー直下の最上段 */
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(94vw, 720px);
+  padding: 5px 14px;
+  border-radius: 6px;
+  z-index: 45;
+  pointer-events: none;
+}
+
+/* パラパラ漫画・図解ステージはトーストの下（top: 86px）に配置して被りを根絶 */
+#cut-sequence-stage,
+#dialogue-illustration-stage {
+  position: absolute !important;
+  top: 86px !important;
+  bottom: auto !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: min(94vw, 560px);
+  max-height: calc(100% - 265px);
+  overflow: hidden;
+  z-index: 30;
+  padding: 12px;
+}
+
+/* ポップアップ表示中は背後の立ち絵を減光・ぼかして画面の見づらさを解消 */
+#screen-novel.popup-open .character-stage {
+  opacity: 0.22;
+  filter: blur(3px);
+  transition:
+    opacity 0.25s ease,
+    filter 0.25s ease;
+}
+
+/* 3. 一般ユーザー向け「アリアの噛み砕きヒント枠」とインライン用語解説 */
+.choice-aria-hint {
+  margin-top: 6px;
+  padding: 8px 12px;
+  background: rgba(0, 240, 255, 0.09);
+  border-left: 3px solid var(--nco-cyan);
+  border-radius: 4px;
+  font-size: clamp(0.78rem, 2.5vw, 0.88rem);
+  color: #e0f2fe;
+  line-height: 1.5;
+}
+
+/* 会話文中の専門用語ハイライト（タップ・ホバーで解説表示） */
+.term-tip {
+  color: #38bdf8;
+  border-bottom: 1px dashed rgba(56, 189, 248, 0.75);
+  cursor: help;
+  padding: 0 2px;
+  border-radius: 2px;
+  transition: background 0.15s ease;
+}
+.term-tip:hover,
+.term-tip:active {
+  background: rgba(56, 189, 248, 0.2);
+}
+
+#term-popover {
+  position: fixed;
+  z-index: 80;
+  max-width: min(88vw, 340px);
+  background: rgba(4, 12, 28, 0.98);
+  border: 1px solid var(--nco-cyan);
+  box-shadow:
+    0 8px 28px rgba(0, 0, 0, 0.85),
+    0 0 14px var(--nco-cyan-glow);
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-size: 0.82rem;
+  color: var(--text-main);
+  line-height: 1.55;
+  pointer-events: none;
+}
+#term-popover .term-popover-title {
+  font-family: var(--font-hud);
+  font-weight: 800;
+  color: var(--nco-amber);
+  margin-bottom: 4px;
+  font-size: 0.85rem;
+}
+
+/* 4. 未定義だった設定資料集（FORENSIC ARCHIVE: .gallery-*）のレイアウト定義 */
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+  margin-top: 12px;
+}
+
+.gallery-card {
+  background: rgba(12, 22, 44, 0.85);
+  border: 1px solid var(--border-nco);
+  border-radius: 8px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.gallery-card h4 {
+  color: #ffffff;
+  font-size: 0.96rem;
+  line-height: 1.4;
+}
+
+.gallery-img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid var(--border-subtle);
+  background: #020617;
+}
+
+.gallery-text {
+  font-size: 0.82rem;
+  color: var(--text-sub);
+  line-height: 1.6;
 }
