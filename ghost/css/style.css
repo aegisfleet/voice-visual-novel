@@ -3605,3 +3605,41 @@ body {
   border-radius: 3px;
   font-weight: 700;
 }
+
+/* 5. 会話ウィンドウ右下の「クリックして進む」プロンプト：テキストとの余白確保＆プレート化 */
+.dialogue-prompt {
+  align-self: flex-end;
+  margin-top: 14px !important; /* テキスト本文との間に十分なクリアランスを確保 */
+  margin-bottom: 2px;
+  padding: 4px 12px;
+  background: rgba(0, 240, 255, 0.08);
+  border: 1px solid rgba(0, 240, 255, 0.32);
+  border-radius: 4px;
+  font-family: var(--font-hud);
+  font-size: clamp(0.7rem, 2.2vw, 0.76rem);
+  font-weight: 800;
+  color: var(--nco-cyan);
+  letter-spacing: 0.08em;
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.12);
+  animation: promptBlink 1.4s infinite ease-in-out;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  user-select: none;
+}
+
+@keyframes promptBlink {
+  0%,
+  100% {
+    opacity: 0.45;
+    border-color: rgba(0, 240, 255, 0.22);
+    box-shadow: 0 0 6px rgba(0, 240, 255, 0.08);
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 1;
+    border-color: rgba(0, 240, 255, 0.7);
+    box-shadow: 0 0 14px rgba(0, 240, 255, 0.35);
+    transform: translateY(-2px);
+  }
+}
