@@ -237,5 +237,46 @@ class TestGhostJsSyntax(unittest.TestCase):
             )
 
 
+class TestGhostGlossaryDecoration(unittest.TestCase):
+    """用語解説ポップオーバー用マークアップ（decorateGlossaryTerms）のタグ破壊防止検証"""
+
+    def test_glossary_decoration_no_tag_destruction(self):
+        """FT4/FT5 と FT4 等の部分一致・多重置換でタグが破壊されないこと"""
+        js_code = """
+        const fs = require('fs');
+        const code = fs.readFileSync('ghost/js/app.js', 'utf-8');
+        // Extract TERM_GLOSSARY and decorateGlossaryTerms
+        const vm = require('vm');
+        const sandbox = {
+          window: { addEventListener: () => {} },
+          console,
+          AudioManager: class {},
+          document: { addEventListener: () => {} }
+        };
+        vm.createContext(sandbox);
+        vm.runInContext(code + '; this.NovelApp = NovelApp;', sandbox);
+        const testText = '判明しました！ FT4/FT5はWeb上でパスワードを変更しても、FT4単体やAD（Active Directory）でも安全です。';
+        const result = sandbox.NovelApp.prototype.decorateGlossaryTerms(testText);
+        console.log(JSON.stringify({ result }));
+        """
+        output = run_node(js_code)
+        data = json.loads(output)
+        res_text = data["result"]
+        # タグ属性破壊（属性値にタグがネストされるなど）が一切ないこと
+        self.assertNotIn('data-term="<span', res_text)
+        self.assertNotIn('</span>/FT5', res_text)
+        self.assertNotIn('</span>/FT5">', res_text)
+        # spanタグの開閉数が完全に一致すること
+        self.assertEqual(res_text.count('<span '), 3)
+        self.assertEqual(res_text.count('</span>'), 3)
+        # 期待される正しいタグが含まれていること
+        self.assertIn('<span class="term-tip" data-term="FT4/FT5">FT4/FT5</span>', res_text)
+        self.assertIn('<span class="term-tip" data-term="FT4">FT4</span>', res_text)
+        self.assertIn(
+            '<span class="term-tip" data-term="AD（Active Directory）">AD（Active Directory）</span>',
+            res_text,
+        )
+
+
 if __name__ == "__main__":
     unittest.main()

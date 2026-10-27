@@ -23,6 +23,13 @@ const TERM_GLOSSARY = {
     '国民の生命や財産に差し迫った重大な危険があるとき、警察が緊急で実力行使できる法律。',
 };
 
+// 用語を文字数の長い順にソートして単一パス正規表現を事前コンパイル（FT4/FT5 と FT4 等の多重置換タグ破壊を完全防止）
+const GLOSSARY_TERMS_SORTED = Object.keys(TERM_GLOSSARY).sort((a, b) => b.length - a.length);
+const GLOSSARY_REGEX = new RegExp(
+  `(${GLOSSARY_TERMS_SORTED.map((t) => t.replace(/[.*+?^${}()|[\\]\\]/g, '\\$&')).join('|')})`,
+  'g',
+);
+
 class NovelApp {
   constructor() {
     this.audio = new AudioManager();
@@ -857,13 +864,11 @@ class NovelApp {
 
   decorateGlossaryTerms(text) {
     if (!text) return '';
-    let escaped = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    Object.keys(TERM_GLOSSARY).forEach((term) => {
-      const safeTerm = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      const regex = new RegExp(safeTerm, 'g');
-      escaped = escaped.replace(regex, `<span class="term-tip" data-term="${term}">${term}</span>`);
-    });
-    return escaped;
+    const escaped = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    return escaped.replace(
+      GLOSSARY_REGEX,
+      (match) => `<span class="term-tip" data-term="${match}">${match}</span>`,
+    );
   }
 
   positionTermPopover(pop, target) {
