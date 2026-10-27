@@ -13,6 +13,7 @@ class GameState {
   constructor() {
     this.storageKey = 'ghost_protocol_novel_save_v1';
     this.sessionKey = 'ghost_protocol_novel_session_v1';
+    this.setDefaultPersistentFlags();
     this.resetTransientState();
     this.loadPersistentState();
   }
@@ -21,22 +22,28 @@ class GameState {
     return CRITICAL_EVIDENCE_IDS.every((id) => this.collectedEvidence.has(id));
   }
 
-  // 1回のプレイごとの一時状態リセット
-  resetTransientState() {
-    this.currentChapter = 0; // 0: プロローグ, 1〜5: 各章, 6: エピローグ
-    this.currentPhase = 'dialogue'; // dialogue | choice | resolution | ending
-    this.currentLineIndex = 0;
+  setDefaultPersistentFlags() {
+    this.hasClearedGame = false;
+    this.hasClearedTrueEnd = false;
     this.maxUnlockedChapter = 1;
-    this.selectedChoices = {};
-    this.collectedEvidence = new Set();
-    this.clearedChapters = new Set();
-    this.defenseRate = 100; // 残存資産防衛率 (100%スタート、ミスで減少)
     this.voiceEnabled = true;
     this.seEnabled = true;
     this.bgmEnabled = true;
     this.voiceVolume = 1.0;
     this.seVolume = 0.7;
     this.bgmVolume = 0.2;
+  }
+
+  // 1回のプレイごとの一時状態リセット（音量やクリアフラグは絶対に上書きしない）
+  resetTransientState() {
+    this.currentChapter = 0; // 0: プロローグ, 1〜5: 各章, 6: エピローグ
+    this.currentPhase = 'intro'; // intro | mid | resolution | choice | deduction
+    this.currentBgmMode = 'investigate';
+    this.currentLineIndex = 0;
+    this.selectedChoices = {};
+    this.collectedEvidence = new Set();
+    this.clearedChapters = new Set();
+    this.defenseRate = 100; // 残存資産防衛率 (100%スタート、ミスで減少)
   }
 
   // 防衛率の減算（ペナルティ適用）
@@ -86,6 +93,7 @@ class GameState {
       const sessionData = {
         currentChapter: this.currentChapter,
         currentPhase: this.currentPhase,
+        currentBgmMode: this.currentBgmMode,
         currentLineIndex: this.currentLineIndex,
         maxUnlockedChapter: this.maxUnlockedChapter,
         selectedChoices: this.selectedChoices,
@@ -116,7 +124,8 @@ class GameState {
       if (!raw) return null;
       const data = JSON.parse(raw);
       this.currentChapter = typeof data.currentChapter === 'number' ? data.currentChapter : 0;
-      this.currentPhase = data.currentPhase || 'dialogue';
+      this.currentPhase = data.currentPhase || 'intro';
+      this.currentBgmMode = data.currentBgmMode || 'investigate';
       this.currentLineIndex = typeof data.currentLineIndex === 'number' ? data.currentLineIndex : 0;
       this.maxUnlockedChapter = data.maxUnlockedChapter || 1;
       this.selectedChoices = data.selectedChoices || {};
@@ -167,11 +176,6 @@ class GameState {
       console.warn('Failed to load save data:', e);
       this.setDefaultPersistentFlags();
     }
-  }
-
-  setDefaultPersistentFlags() {
-    this.hasClearedGame = false;
-    this.hasClearedTrueEnd = false;
   }
 
   // 永続セーブデータの保存

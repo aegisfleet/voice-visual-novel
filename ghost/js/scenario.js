@@ -275,6 +275,7 @@ window.SCENARIO_DATA = {
         },
         {
           speaker: 'takamiya',
+          emotion: 'panic',
           sprite: 'takamiya',
           text: 'ケイ、問い合わせ窓口が完全にパンクしている……！ 1時間で数千件の口座破綻報告だ。一体どこから手を付ければいいんだ！？',
           sfx: 'alert',
@@ -514,6 +515,7 @@ window.SCENARIO_DATA = {
         },
         {
           speaker: 'takamiya',
+          emotion: 'smile',
           sprite: 'takamiya',
           text: '第2報のリリース完了！ これで今夜の不正取引は阻止できるはずだ……！',
         },
@@ -526,6 +528,7 @@ window.SCENARIO_DATA = {
         },
         {
           speaker: 'takamiya',
+          emotion: 'panic',
           sprite: 'takamiya',
           text: '……な、なんだ！？ 攻撃者から対策室の直通シークレットチャットに、直筆の暗号化メッセージが届いた……！？',
           bgm: 'crisis',
@@ -539,6 +542,7 @@ window.SCENARIO_DATA = {
         },
         {
           speaker: 'takamiya',
+          emotion: 'panic',
           sprite: 'takamiya',
           text: '『無様な抵抗だ。第2報を出してユーザーにパスワード変更を呼びかけてみろ。貴様らの無力さを全国に晒してやる』……だと！？ なぜ我々がパスワード変更を呼びかけたことを知っているんだ！？',
           sfx: 'impact',
@@ -696,6 +700,7 @@ window.SCENARIO_DATA = {
           nextDialogue: [
             {
               speaker: 'takamiya',
+              emotion: 'serious',
               sprite: 'takamiya',
               text: '全ブローカーに要請し、全セッション強制パージ（Session Kill）を発令した！ これで不正注文は完全に止まったぞ！',
             },
@@ -808,7 +813,7 @@ window.SCENARIO_DATA = {
         },
         {
           speaker: 'takamiya',
-          emotion: 'panic',
+          emotion: 'smile',
           sprite: 'takamiya',
           text: '了解だ！ 偽旗工作の解析結果を公式リリースした。敵の煽動に乗せられていた被害者たちも冷静さを取り戻し、集団訴訟パニックは一気に沈静化したぞ！',
           sfx: 'correct',
@@ -830,6 +835,7 @@ window.SCENARIO_DATA = {
         },
         {
           speaker: 'takamiya',
+          emotion: 'panic',
           sprite: 'takamiya',
           text: '……！？ な、なんだこれは……！？ 画面が勝手に切り替わった……？',
           bgm: 'crisis',
@@ -843,6 +849,7 @@ window.SCENARIO_DATA = {
         },
         {
           speaker: 'takamiya',
+          emotion: 'panic',
           sprite: 'takamiya',
           text: 'な、なぜだ……！？ 被害者は自宅PCからVPSにリモート接続していただけのはずだ！ なぜクラウドの外にある【自宅PCの中身】が奪われているんだ……！？',
           effect: 'shake',
@@ -906,6 +913,7 @@ window.SCENARIO_DATA = {
         },
         {
           speaker: 'takamiya',
+          emotion: 'panic',
           sprite: 'takamiya',
           text: 'ケイ、被害者の自宅PCからはマルウェアが一切検出されない。それなのに、なぜ自宅PCの確定申告書や家族写真、Login Dataが丸ごと抜き取られたのか皆目見当がつかない……！ 一体どんな手口で手元のPCへ侵入したんだ！？',
           bgm: 'investigate',
@@ -976,6 +984,7 @@ window.SCENARIO_DATA = {
                 },
                 {
                   speaker: 'takamiya',
+                  emotion: 'panic',
                   sprite: 'takamiya',
                   text: '……っ！？ まさか、.rdp のドライブ共有設定か……！ ケイ、実は数ヶ月前、社内のホワイトハッカー集団がこの設定の危険性を上層部に報告していたんだ！ だが「顧客に再設定させるな、自動売買の可用性最優先だ」と却下され、改修が後回しにされていた……！ 防げたはずの危機だったのに……！ 我々現場の痛恨の極みだ……！',
                   sfx: 'impact',
@@ -1020,6 +1029,7 @@ window.SCENARIO_DATA = {
             },
             {
               speaker: 'takamiya',
+              emotion: 'panic',
               sprite: 'takamiya',
               text: 'な、なんだって！？ 転送完了まで残り15秒……！ すぐに回線をブチ切らないと、ハニーポット端末まで完全に掌握されるぞ！！',
             },
@@ -1081,6 +1091,7 @@ window.SCENARIO_DATA = {
                 },
                 {
                   speaker: 'takamiya',
+                  emotion: 'smile',
                   sprite: 'takamiya',
                   text: 'リスクを冒して敵を罠にハメ返したのか……！ 頼もしすぎるぞケイ！ これでリバースRDPの全容を公表し、ユーザーに手動共有解除を周知できる！',
                 },
@@ -1108,6 +1119,7 @@ window.SCENARIO_DATA = {
         },
         {
           speaker: 'takamiya',
+          emotion: 'panic',
           sprite: 'takamiya',
           text: 'ひっ……！？ プリンターから、犯行声明が一斉に印刷されている……！？ 全国の報道機関にもFAXが一斉送信されたぞ！',
           bgm: 'crisis',
@@ -1121,6 +1133,7 @@ window.SCENARIO_DATA = {
         },
         {
           speaker: 'takamiya',
+          emotion: 'panic',
           sprite: 'takamiya',
           text: '【四重脅迫状】だ……！ ①国内外70社超の金融口座の破壊再開、②自宅PC個人情報のダークウェブ無制限公開、③内部システム構成の暴露、④経営陣が隠蔽している暗号資産【5,000万ドル（約80億円）】の支払い要求……！ タイムリミットは明日10月24日12時！ 1秒でも遅れれば、すべてを実行すると……！！',
           sfx: 'impact',
@@ -1233,6 +1246,7 @@ window.SCENARIO_DATA = {
                 },
                 {
                   speaker: 'takamiya',
+                  emotion: 'serious',
                   sprite: 'takamiya',
                   text: '実損の100%直接補償……！ さらに全員への見舞金5,000円と新基盤半年間無償移行をつける！ これなら顧客と企業が再び一枚岩になり、攻撃者の分断工作は完全に破綻する！',
                 },
@@ -1344,6 +1358,7 @@ window.SCENARIO_DATA = {
       resolution: [
         {
           speaker: 'takamiya',
+          emotion: 'smile',
           sprite: 'takamiya',
           text: '11時50分、第4報リリース完了！ 『攻撃者への支払ゼロ、不正取引実損の100%直接補償、見舞金支給、新基盤無償移行』……ネットの空気が一変した！ 『企業の覚悟が凄い』『攻撃者に屈するな』と、応援の声が殺到している！',
           bgm: 'truth',
@@ -1369,6 +1384,7 @@ window.SCENARIO_DATA = {
         },
         {
           speaker: 'takamiya',
+          emotion: 'smile',
           sprite: 'takamiya',
           text: 'ケイ、信じられない事態が起きた！ 5,000万ドルの要求を完全黙殺され、顧客への直接補償で人質を奪われた攻撃者が……パニックを起こして自ら要求額を【100万ドル（約1.6億円）】へと98%もダンピング（値下げ）してきたぞ！！',
           sfx: 'alert',
@@ -1410,6 +1426,7 @@ window.SCENARIO_DATA = {
         },
         {
           speaker: 'takamiya',
+          emotion: 'panic',
           sprite: 'takamiya',
           text: 'だが……プライドをズタズタにされた犯人が、血文字の最後通牒を叩きつけてきた！ 『期限は10月27日正午！ 10月21日の全VPSシャットダウン直前に、リバースRDP経由で全26,739台の自宅PC深部へ【10月27日正午に一斉起動する時限発火型ランサムウェア】をすでに潜伏配備させた。100万ドルを支払わなければ一斉起爆し、全国のPCを完全破壊して文房具に変えてやる』……！！',
           bgm: 'crisis',
@@ -1443,7 +1460,7 @@ window.SCENARIO_DATA = {
         },
         {
           speaker: 'takamiya',
-          emotion: 'panic',
+          emotion: 'serious',
           sprite: 'takamiya',
           text: 'ケイ、全国から物理回収した顧客PCの鑑識結果が出た……！ 潜伏ランサムウェアは【検出ゼロ】だ！ 犯人が言っていた「シャットダウン前に時限マルウェアを送り込んだ」というのは、パニックを煽るための完全なブラフ（ハッタリ）だったんだ！！',
           sfx: 'evidence',
@@ -1455,7 +1472,7 @@ window.SCENARIO_DATA = {
         },
         {
           speaker: 'takamiya',
-          emotion: 'panic',
+          emotion: 'smile',
           sprite: 'takamiya',
           text: '了解だ！ 午前9時58分の第8報で「12時前に念のためPCの電源コードを抜くよう」呼びかけていたが、今11時59分の【第9報】で「潜伏マルウェア検出ゼロ、万一被害が出ても新品PCを無償提供する」と電撃リリースした！ これで世間のパニックは完全に食い止めたぞ！',
           telop: '【第9報リリース: 潜伏マルウェア検出ゼロ＆新品PC無償保証】',
@@ -1472,6 +1489,7 @@ window.SCENARIO_DATA = {
         },
         {
           speaker: 'mio',
+          emotion: 'focused',
           sprite: 'mio',
           text: 'はい……！ 2026年10月1日に施行された『能動的サイバー防御法（サイバー対処能力強化法）』を発動し、敵の司令塔へ非公然アクセス・無害化措置を撃ち込みたいところですが……現行法には【制度上の3つの壁】が存在します。',
         },
@@ -1492,6 +1510,7 @@ window.SCENARIO_DATA = {
         },
         {
           speaker: 'takamiya',
+          emotion: 'panic',
           sprite: 'takamiya',
           text: 'ひっ……！？ 犯人が逆上して、犯行サイトにデータをアップロードした！ 『身代金を払わなかった見せしめに【被害者 第1号】の実名・確定申告書を公開する。明日正午には第2号、明後日は第3号と、毎日正午に1人ずつ全員の人生を晒し上げてやる』……！！',
           sfx: 'alert',
@@ -1554,7 +1573,7 @@ window.SCENARIO_DATA = {
       choiceSteps: [
         {
           id: 'ch5_step1_legal_walls',
-          type: 'forensic',
+          type: 'tactic',
           badge: '⚡ LEGAL DEFENSE / 国家サイバー対処法理の構築',
           hintSummary:
             '通常の令状発行には数日かかり、明日の被害者晒しに間に合いません。「企業自らがログを全面提供し、差し迫った危機に対する警察の緊急権限を発動させる」道を選びましょう！',
@@ -1777,6 +1796,7 @@ window.SCENARIO_DATA = {
               },
               {
                 speaker: 'mio',
+                emotion: 'focused',
                 sprite: 'mio',
                 text: '接続パイプラインの構造を完全に特定！ 各プロバイダへ緊急パッチと共有遮断フィルタを展開、さらに同等性能の新品PC無償保証で二次被害を完全封殺します！',
               },
@@ -1841,7 +1861,7 @@ window.SCENARIO_DATA = {
       },
       {
         speaker: 'takamiya',
-        emotion: 'serious',
+        emotion: 'smile',
         sprite: 'takamiya',
         text: '……終わったのか。身代金を1円も払わず、自宅PCの破壊も防ぎ、個人情報の拡散も完全に食い止めたんだな。',
       },

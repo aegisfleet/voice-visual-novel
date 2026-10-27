@@ -145,8 +145,22 @@ async function runE2ETest() {
     }
     console.log('   ✅ タイトル画面とキービジュアル正常確認');
 
-    // Test 2: タイトル画面の音響設定モーダル開閉
-    console.log('3️⃣ タイトル音響設定モーダル開閉の検証...');
+    // Test 1.5: タイトル画面での Space/Enter キーガード検証
+    console.log('2.5️⃣ タイトル画面でのキーボード裏進行ガード検証...');
+    await page.keyboard.press('Enter');
+    await page.keyboard.press('Space');
+    await new Promise((r) => setTimeout(r, 200));
+    const stillOnTitle = await page.evaluate(() => {
+      const screenTitle = document.getElementById('screen-title');
+      return screenTitle && window.getComputedStyle(screenTitle).display !== 'none';
+    });
+    if (!stillOnTitle) {
+      throw new Error('タイトル画面で Enter/Space キーにより裏進行または意図しない画面遷移が発生しました！');
+    }
+    console.log('   ✅ タイトル画面でのキーボード裏進行ガード正常確認');
+
+    // Test 2: タイトル画面の音響設定モーダル開閉＆音量変更保持検証
+    console.log('3️⃣ タイトル音響設定モーダル開閉と設定変更の検証...');
     await page.click('#btn-title-settings');
     await page.waitForFunction(() => {
       const modal = document.getElementById('modal-settings');
@@ -164,16 +178,20 @@ async function runE2ETest() {
       throw new Error(`音響スライダーが不足しています (検出数: ${sliderCount})`);
     }
 
-    // 閉じるボタンクリック
-    await page.click('#btn-close-settings');
+    // BGM音量を 50% に変更して保存
+    await page.$eval('#slider-bgm-volume', (el) => {
+      el.value = '50';
+      el.dispatchEvent(new Event('input'));
+    });
+    await page.click('#btn-confirm-settings');
     await page.waitForFunction(() => {
       const modal = document.getElementById('modal-settings');
       return modal && modal.classList.contains('hidden');
     });
-    console.log('   ✅ 音響設定モーダル開閉正常確認');
+    console.log('   ✅ 音響設定モーダル開閉およびBGM音量変更(50%)正常確認');
 
-    // Test 3: ゲーム開始ボタン押下時の画面遷移
-    console.log('4️⃣ ゲーム開始ボタン押下と画面遷移の検証...');
+    // Test 3: ゲーム開始ボタン押下時の画面遷移＆音量設定保持確認
+    console.log('4️⃣ ゲーム開始ボタン押下と画面遷移・設定保持の検証...');
     await page.click('#btn-start-game');
 
     // ノベル画面が active になり、タイトル画面が非表示になること
@@ -195,7 +213,12 @@ async function runE2ETest() {
       );
     }, { timeout: 5000 });
 
-    console.log('   ✅ ゲーム開始画面遷移（#screen-title 非表示 & #screen-novel 表示）正常確認');
+    // ゲーム開始後も音量 50% (0.5) がリセットされず維持されていることの確認
+    const inGameBgmVolume = await page.evaluate(() => window.ghostApp?.state?.bgmVolume);
+    if (Math.abs(inGameBgmVolume - 0.5) > 0.01) {
+      throw new Error(`ゲーム開始時に音量設定が初期値にリセットされました (現在値: ${inGameBgmVolume})`);
+    }
+    console.log('   ✅ ゲーム開始後も音量設定(0.5)が正しく維持されていることを確認');
 
     // Test 4: ノベル会話進行の検証
     console.log('5️⃣ ノベル会話テキスト進行の検証...');
@@ -240,6 +263,25 @@ async function runE2ETest() {
       );
     }, { timeout: 5000 });
     console.log('   ✅ タイトル画面復帰正常確認');
+
+    // Test 7: 未解禁アーカイブのネタバレ防止（ロックマスク）検証
+    console.log('8️⃣ 未解禁アーカイブのネタバレ防止（ロックマスク）検証...');
+    await page.click('#btn-open-gallery');
+    await page.waitForFunction(() => {
+      const modal = document.getElementById('modal-gallery');
+      return modal && !modal.classList.contains('hidden');
+    });
+    const lockedMaskCount = await page.$$eval('.locked-mask', (els) => els.length);
+    console.log(`   ・検出されたロックマスク画像数: ${lockedMaskCount}`);
+    if (lockedMaskCount === 0) {
+      throw new Error('未解禁アイテム・証拠画像に locked-mask が適用されていません！');
+    }
+    await page.click('#btn-close-gallery');
+    await page.waitForFunction(() => {
+      const modal = document.getElementById('modal-gallery');
+      return modal && modal.classList.contains('hidden');
+    });
+    console.log('   ✅ 未解禁アーカイブ画像のネタバレ防止（ブラー＆暗転マスク）正常確認');
 
     if (pageErrors.length > 0) {
       throw new Error(`ブラウザ実行時エラーが検出されました: ${pageErrors.join(', ')}`);

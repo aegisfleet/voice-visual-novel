@@ -389,43 +389,81 @@ class NovelApp {
   }
 
   setupKeyboardShortcuts() {
-    window.addEventListener('keydown', (e) => {
-      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-      switch (e.key) {
-        case ' ':
-        case 'Enter':
-          e.preventDefault();
-          this.advanceDialogue();
-          break;
-        case 'a':
-        case 'A':
-          this.toggleAuto();
-          break;
-        case 's':
-        case 'S':
-          this.toggleSkip();
-          break;
-        case 'l':
-        case 'L':
-          this.openLogModal();
-          break;
-        case 'n':
-        case 'N':
-          this.openNovelModal();
-          break;
-        case 'e':
-        case 'E':
-          this.openEvidenceModal();
-          break;
-        case 'c':
-        case 'C':
-          this.toggleSettingsModal();
-          break;
-        case 'Escape':
-          this.closeAllModals();
-          break;
-      }
-    });
+    window.addEventListener('keydown', (e) => this.handleKeydown(e));
+  }
+
+  isAnyModalOpen() {
+    return [
+      this.dom.modalLog,
+      this.dom.modalEvidence,
+      this.dom.modalNovel,
+      this.dom.modalGallery,
+      this.dom.modalSettings,
+    ].some((m) => m && !m.classList.contains('hidden'));
+  }
+
+  handleKeydown(e) {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+    if (e.key === 'Escape') {
+      this.closeAllModals();
+      return;
+    }
+    if (this.isAnyModalOpen()) return;
+
+    // ノベル画面以外（タイトルやエンディング）では進行ショートカットを無効化
+    if (!this.dom.screenNovel?.classList.contains('active')) return;
+
+    const isChoiceOpen = Boolean(
+      this.dom.choiceStage && !this.dom.choiceStage.classList.contains('hidden'),
+    );
+    if (isChoiceOpen) {
+      this.handleChoiceKeydown(e.key);
+      return;
+    }
+
+    this.handleDialogueKeydown(e);
+  }
+
+  handleChoiceKeydown(key) {
+    if (!['1', '2', '3'].includes(key)) return;
+    const idx = Number.parseInt(key, 10) - 1;
+    const btns = this.dom.choiceOptions?.querySelectorAll('.choice-btn');
+    if (btns?.[idx]) btns[idx].click();
+  }
+
+  handleDialogueKeydown(e) {
+    switch (e.key) {
+      case ' ':
+      case 'Enter':
+        e.preventDefault();
+        this.advanceDialogue();
+        break;
+      case 'a':
+      case 'A':
+        this.toggleAuto();
+        break;
+      case 's':
+      case 'S':
+        this.toggleSkip();
+        break;
+      case 'l':
+      case 'L':
+        this.openLogModal();
+        break;
+      case 'n':
+      case 'N':
+        this.openNovelModal();
+        break;
+      case 'e':
+      case 'E':
+        this.openEvidenceModal();
+        break;
+      case 'c':
+      case 'C':
+        this.toggleSettingsModal();
+        break;
+    }
   }
 
   // 3. タイトル＆セッション管理
@@ -466,7 +504,7 @@ class NovelApp {
       this.handleStartGame();
       return;
     }
-    this.audio.playBgm('investigate');
+    this.audio.playBgm(this.state.currentBgmMode || 'investigate');
     this.switchScreen('novel');
     this.loadChapter(this.state.currentChapter, true);
   }
@@ -544,9 +582,10 @@ class NovelApp {
     this.currentChapterData = chapterData;
     this.updateHudBadge(chapterData.number, chapterData.title);
 
-    this.currentDialogueQueue = [...chapterData.introDialogue];
-    this.queueIndex = isResuming ? this.state.currentLineIndex : 0;
     if (!isResuming) {
+      this.state.currentPhase = 'intro';
+      this.currentDialogueQueue = [...chapterData.introDialogue];
+      this.queueIndex = 0;
       this.showChapterTitleCard(
         chapterData.number,
         chapterData.date,
@@ -554,9 +593,25 @@ class NovelApp {
         () => this.renderCurrentLine(),
         chapterData.subtitle,
       );
-    } else {
-      this.renderCurrentLine();
+      return;
     }
+
+    // 再開時：保存されたフェーズと選択済み状態から正しい会話キューを復元
+    const steps = this.getChapterChoiceSteps(chapterData);
+    const allChoicesDone = steps.every((s) => this.hasChosenForChapter(s.id));
+
+    if (this.state.currentPhase === 'resolution' || allChoicesDone) {
+      this.state.currentPhase = 'resolution';
+      this.currentDialogueQueue = [...(chapterData.resolution || [])];
+    } else {
+      this.state.currentPhase = 'intro';
+      this.currentDialogueQueue = [...chapterData.introDialogue];
+    }
+    this.queueIndex = Math.min(
+      this.state.currentLineIndex || 0,
+      Math.max(0, this.currentDialogueQueue.length - 1),
+    );
+    this.renderCurrentLine();
   }
 
   loadEpilogue(isResuming) {
@@ -633,6 +688,11 @@ class NovelApp {
     if (this.dom.evidenceCount) {
       this.dom.evidenceCount.textContent = this.state.collectedEvidence.size;
     }
+    if (this.dom.btnEvidenceBag) {
+      this.dom.btnEvidenceBag.classList.remove('hud-pop-anim');
+      void this.dom.btnEvidenceBag.offsetWidth;
+      this.dom.btnEvidenceBag.classList.add('hud-pop-anim');
+    }
   }
 
   updateDefenseHud() {
@@ -641,7 +701,9 @@ class NovelApp {
       this.dom.hudDefenseVal.textContent = `${rate}%`;
     }
     if (this.dom.hudDefenseMeter) {
-      this.dom.hudDefenseMeter.classList.remove('warning', 'danger');
+      this.dom.hudDefenseMeter.classList.remove('warning', 'danger', 'hud-pop-anim');
+      void this.dom.hudDefenseMeter.offsetWidth;
+      this.dom.hudDefenseMeter.classList.add('hud-pop-anim');
       if (rate < 60) {
         this.dom.hudDefenseMeter.classList.add('danger');
       } else if (rate < 80) {
@@ -678,6 +740,7 @@ class NovelApp {
 
     // 1. BGM切り替え (crisis / investigate / truth / title / silence / stop)
     if (item.bgm) {
+      this.state.currentBgmMode = item.bgm;
       this.audio.playBgm(item.bgm);
     }
 
@@ -865,25 +928,27 @@ class NovelApp {
 
   updateCharacterSprite(spriteId, emotion = 'normal') {
     if (!this.dom.characterSpriteBox) return;
+    const currentImg = this.dom.characterSpriteBox.querySelector('img');
+
+    // 主人公（ケイ）またはナレーションの発話時は、現在の会話相手を消さずに少し暗くして残す
     if (!spriteId || spriteId === 'narrator' || spriteId === 'kei') {
-      this.currentSpriteId = null;
-      this.currentEmotion = null;
-      this.dom.characterSpriteBox.innerHTML = '';
+      if (currentImg) {
+        currentImg.classList.remove('sprite-talk-bounce');
+        currentImg.classList.add('sprite-dimmed');
+      }
       return;
     }
+
     const char = this.characters[spriteId];
     if (!char) return;
-
     const targetSrc = char.sprites?.[emotion] || char.sprites?.normal || char.sprite;
-
     if (!targetSrc) return;
 
-    const currentImg = this.dom.characterSpriteBox.querySelector('img');
     const isSameChar = this.currentSpriteId === spriteId;
     const isSameSrc = currentImg?.getAttribute('src')?.includes(targetSrc);
 
-    if (isSameChar && isSameSrc) {
-      currentImg.classList.remove('sprite-talk-bounce');
+    if (isSameChar && isSameSrc && currentImg) {
+      currentImg.classList.remove('sprite-dimmed', 'sprite-talk-bounce');
       void currentImg.offsetWidth;
       currentImg.classList.add('sprite-talk-bounce');
       return;
@@ -894,7 +959,7 @@ class NovelApp {
 
     if (isSameChar && currentImg) {
       currentImg.src = targetSrc;
-      currentImg.classList.remove('sprite-talk-bounce');
+      currentImg.classList.remove('sprite-dimmed', 'sprite-talk-bounce');
       void currentImg.offsetWidth;
       currentImg.classList.add('sprite-talk-bounce');
     } else {
@@ -904,7 +969,12 @@ class NovelApp {
 
   handleLineIllustration(imgSrc) {
     if (imgSrc) {
-      this.showIllustration(imgSrc);
+      const item = this.currentDialogueQueue[this.queueIndex];
+      const matchedEv = Object.values(this.scenario.evidence || {}).find((e) => e.image === imgSrc);
+      const matchedItem = Object.values(this.scenario.items || {}).find((i) => i.image === imgSrc);
+      const caption =
+        matchedEv?.name || matchedItem?.name || (typeof item?.telop === 'string' ? item.telop : '');
+      this.showIllustration(imgSrc, caption);
     } else {
       this.hideIllustration();
     }
@@ -912,12 +982,14 @@ class NovelApp {
 
   showIllustration(src, caption = '') {
     if (!this.dom.dialogueIllustrationStage) return;
+    this.dom.cinematicTelop?.classList.add('hidden'); // 上部トーストとの重なりを防止
     this.dom.screenNovel?.classList.add('popup-open');
     if (this.dom.dialogueIllustrationImg) {
       this.dom.dialogueIllustrationImg.src = src;
     }
     if (this.dom.dialogueIllustrationCaption) {
       this.dom.dialogueIllustrationCaption.textContent = caption;
+      this.dom.dialogueIllustrationCaption.classList.toggle('hidden', !caption);
     }
     this.dom.dialogueIllustrationStage.classList.remove('hidden');
     this.audio.playEvidence();
@@ -1057,6 +1129,11 @@ class NovelApp {
   scheduleNextLine(ms) {
     if (this.autoTimer) clearTimeout(this.autoTimer);
     this.autoTimer = setTimeout(() => {
+      const pop = document.getElementById('term-popover');
+      if (pop && !pop.classList.contains('hidden')) {
+        this.scheduleNextLine(1200);
+        return;
+      }
       this.advanceDialogue();
     }, ms);
   }
@@ -1301,6 +1378,7 @@ class NovelApp {
   }
 
   handleForensicOptionSelected(choiceData, option) {
+    this.state.currentPhase = 'resolution';
     this.triggerCutin(
       choiceData.cutinText || '欺瞞工作を論破！ 侵入痕跡・因果関係立証！',
       choiceData.cutinSub || '⚡ FORENSIC PROOF ESTABLISHED / 電脳鑑識立証',
@@ -1346,19 +1424,27 @@ class NovelApp {
     const grid = document.createElement('div');
     grid.className = 'deduction-evidence-grid';
 
+    const usedIds = this.finalDeductionData.steps
+      .slice(0, this.deductionStepIndex)
+      .map((s) => s.correctEvidenceId);
+
     const evidenceList = Object.values(this.scenario.evidence);
     evidenceList.forEach((ev) => {
+      const isUsed = usedIds.includes(ev.id);
       const card = document.createElement('div');
-      card.className = 'deduction-card';
+      card.className = `deduction-card ${isUsed ? 'already-linked' : ''}`;
       card.dataset.evId = ev.id;
       card.innerHTML = `
         <div class="deduction-card-header">
           <span class="deduction-card-icon">${ev.icon}</span>
           <span class="deduction-card-title">${ev.name}</span>
+          ${isUsed ? '<span class="deduction-linked-badge">✓ 立証済</span>' : ''}
         </div>
         <div class="deduction-card-desc">${ev.summary}</div>
       `;
-      card.addEventListener('click', () => this.handleDeductionEvidenceSelect(grid, card, ev.id));
+      if (!isUsed) {
+        card.addEventListener('click', () => this.handleDeductionEvidenceSelect(grid, card, ev.id));
+      }
       grid.appendChild(card);
     });
 
@@ -1710,6 +1796,13 @@ class NovelApp {
     const items = Object.values(this.scenario.items || {});
     if (items.length === 0) return '';
 
+    const unlockMap = {
+      item_canary_usb: this.state.hasEvidence('reverse_rdp_tsclient') || this.state.isGameCleared(),
+      item_investor_key:
+        this.state.hasEvidence('direct_compensation_matrix') || this.state.isGameCleared(),
+      item_nco_directive: this.state.isGameCleared(),
+    };
+
     let html = `
       <div class="gallery-section-header" style="margin-top: 36px;">
         <h3 class="gallery-section-title">🗝️ 重要押収・執行アイテム（KEY ASSETS）</h3>
@@ -1719,19 +1812,21 @@ class NovelApp {
     `;
 
     items.forEach((item) => {
+      const unlocked = Boolean(unlockMap[item.id]);
       html += `
         <div class="gallery-card item-card">
           <div class="sheet-card-header">
-            <span class="sheet-badge item-badge">KEY ITEM</span>
-            <h4 class="sheet-name">${item.icon} ${item.name}</h4>
+            <span class="sheet-badge item-badge">${unlocked ? 'KEY ITEM' : 'CLASSIFIED'}</span>
+            <h4 class="sheet-name">${unlocked ? `${item.icon} ${item.name}` : '🔒 機密指定アセット (未解禁)'}</h4>
           </div>
-          <p class="sheet-role item-type-label">${item.type}</p>
-          <a href="${item.image}" target="_blank" rel="noopener" class="sheet-img-wrap item-img-wrap" title="${item.name} を原寸表示">
-            <img src="${item.image}" alt="${item.name}" class="gallery-img item-img" loading="lazy">
-            <span class="sheet-zoom-hint">🔍 クリックで原寸拡大</span>
-          </a>
-          <p class="gallery-text item-summary" style="font-weight: 600; color: #a5f3fc; margin: 8px 0 4px 0;">${item.summary}</p>
-          <p class="gallery-text item-detail">${item.detail}</p>
+          <p class="sheet-role item-type-label">${unlocked ? item.type : '【閲覧権限ロック中】'}</p>
+          <div class="sheet-img-wrap item-img-wrap">
+            <img src="${item.image}" alt="${item.name}" class="gallery-img item-img ${unlocked ? '' : 'locked-mask'}" loading="lazy">
+          </div>
+          <p class="gallery-text item-summary" style="font-weight: 600; color: #a5f3fc; margin: 8px 0 4px 0;">
+            ${unlocked ? item.summary : 'ストーリーを進めて該当章をクリアすると解禁されます。'}
+          </p>
+          <p class="gallery-text item-detail">${unlocked ? item.detail : ''}</p>
         </div>
       `;
     });
@@ -1755,7 +1850,7 @@ class NovelApp {
         <div class="gallery-card">
           <h4>${ev.icon} ${unlocked ? ev.name : '機密ファイル (未解禁)'}</h4>
           <p class="badge">${ev.type}</p>
-          <img src="${ev.image}" alt="${ev.name}" class="gallery-img" loading="lazy">
+          <img src="${ev.image}" alt="${ev.name}" class="gallery-img ${unlocked ? '' : 'locked-mask'}" loading="lazy">
           <p class="gallery-text">${unlocked ? ev.detail : '全5章を制覇して閲覧権限を獲得してください。'}</p>
         </div>
       `;

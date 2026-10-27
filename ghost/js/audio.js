@@ -396,6 +396,22 @@ class AudioManager {
     return text
       .replace(/\[.*?\]/g, '')
       .replace(/[（(].*?[）)]/g, '')
+      .replace(/\\\\tsclient\\\\C/gi, 'ティーエスクライアント・シードライブ')
+      .replace(/\\tsclient\\C/gi, 'ティーエスクライアント・シードライブ')
+      .replace(/drivestoredirect:s:\*/gi, 'ドライブ・ストア・ダイレクト')
+      .replace(/FT4\/FT5/g, 'エフティーフォー・エフティーファイブ')
+      .replace(/FT4/g, 'エフティーフォー')
+      .replace(/DEMOFASTLOSS/g, 'デモ・ファスト・ロス')
+      .replace(/coronamng\.store/g, 'コロナマネージ・ドット・ストア')
+      .replace(/Login Data/g, 'ログインデータ')
+      .replace(/Investor Password/g, 'インベスター・パスワード')
+      .replace(/CSIRT/g, 'シーサート')
+      .replace(/NCO/g, 'エヌシーオー')
+      .replace(/C2/g, 'シーツー')
+      .replace(/850\s*pps/gi, '850ピップス')
+      .replace(/[《》【】「」『』]/g, ' ')
+      .replace(/……+/g, '、')
+      .replace(/——+/g, '、')
       .trim();
   }
 
