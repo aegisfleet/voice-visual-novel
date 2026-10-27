@@ -562,14 +562,35 @@ class AudioManager {
 
   // UIタップ音: 耳に刺さらない超短尺サイバークリック（12ms）
   synthesizeClick() {
-    this.playTone({ type: 'sine', freq: 1400, targetFreq: 700, rampTime: 0.012, gain: 0.08, decay: 0.015 });
+    this.playTone({
+      type: 'sine',
+      freq: 1400,
+      targetFreq: 700,
+      rampTime: 0.012,
+      gain: 0.08,
+      decay: 0.015,
+    });
     this.playTone({ type: 'sine', freq: 2800, gain: 0.03, decay: 0.005 });
   }
 
   // コマ送り・スライド音: ソフトな電子スワイプ
   synthesizeFrameStep() {
-    this.playTone({ type: 'triangle', freq: 450, targetFreq: 180, rampTime: 0.04, gain: 0.1, decay: 0.05 });
-    this.playTone({ type: 'sine', freq: 900, targetFreq: 400, rampTime: 0.03, gain: 0.04, decay: 0.04 });
+    this.playTone({
+      type: 'triangle',
+      freq: 450,
+      targetFreq: 180,
+      rampTime: 0.04,
+      gain: 0.1,
+      decay: 0.05,
+    });
+    this.playTone({
+      type: 'sine',
+      freq: 900,
+      targetFreq: 400,
+      rampTime: 0.03,
+      gain: 0.04,
+      decay: 0.04,
+    });
   }
 
   // 文字送り音: ターミナルの心地よい微小パルス
@@ -581,7 +602,15 @@ class AudioManager {
   // 緊急アラート: AD侵入・RPC全面異常の緊迫パルス（映画の軍事サイバー警報）
   synthesizeAlert() {
     [0, 0.11].forEach((delay) => {
-      this.playTone({ type: 'sawtooth', freq: 980, targetFreq: 1960, rampTime: 0.06, gain: 0.12, decay: 0.09, delay });
+      this.playTone({
+        type: 'sawtooth',
+        freq: 980,
+        targetFreq: 1960,
+        rampTime: 0.06,
+        gain: 0.12,
+        decay: 0.09,
+        delay,
+      });
       this.playTone({ type: 'sine', freq: 1960, gain: 0.08, decay: 0.09, delay });
     });
   }
@@ -599,8 +628,22 @@ class AudioManager {
 
   // 画面激震・急展開: 深いサブベース・シネマティックブーム
   synthesizeImpact() {
-    this.playTone({ type: 'sine', freq: 110, targetFreq: 30, rampTime: 0.35, gain: 0.35, decay: 0.38 });
-    this.playTone({ type: 'triangle', freq: 180, targetFreq: 45, rampTime: 0.15, gain: 0.15, decay: 0.2 });
+    this.playTone({
+      type: 'sine',
+      freq: 110,
+      targetFreq: 30,
+      rampTime: 0.35,
+      gain: 0.35,
+      decay: 0.38,
+    });
+    this.playTone({
+      type: 'triangle',
+      freq: 180,
+      targetFreq: 45,
+      rampTime: 0.15,
+      gain: 0.15,
+      decay: 0.2,
+    });
   }
 
   // 緊急電話・ホットライン着信: セキュア通信コール
@@ -613,7 +656,14 @@ class AudioManager {
 
   // カナリア逆探知ビーコン: 鋭い高周波ソナーピン＋エコー（真性C2特定）
   synthesizeBeacon() {
-    this.playTone({ type: 'sine', freq: 2400, targetFreq: 2600, rampTime: 0.08, gain: 0.18, decay: 0.22 });
+    this.playTone({
+      type: 'sine',
+      freq: 2400,
+      targetFreq: 2600,
+      rampTime: 0.08,
+      gain: 0.18,
+      decay: 0.22,
+    });
     this.playTone({ type: 'sine', freq: 1800, gain: 0.08, decay: 0.25, delay: 0.08 });
   }
 
@@ -622,16 +672,36 @@ class AudioManager {
     const notes = [659.25, 987.77, 1318.51, 1661.22]; // E5, B5, E6, G#6
     notes.forEach((freq, idx) => {
       this.playTone({ type: 'sine', freq, gain: 0.14, decay: 0.32, delay: idx * 0.06 });
-      this.playTone({ type: 'triangle', freq: freq * 2, gain: 0.04, decay: 0.18, delay: idx * 0.06 });
+      this.playTone({
+        type: 'triangle',
+        freq: freq * 2,
+        gain: 0.04,
+        decay: 0.18,
+        delay: idx * 0.06,
+      });
     });
   }
 
   // 真実暴きカットイン: サブベース＋急上昇サイバーライザー＋頂点打撃スタブ
   synthesizeCutin() {
     // 1. サブベースドロップ
-    this.playTone({ type: 'sine', freq: 140, targetFreq: 38, rampTime: 0.35, gain: 0.32, decay: 0.4 });
+    this.playTone({
+      type: 'sine',
+      freq: 140,
+      targetFreq: 38,
+      rampTime: 0.35,
+      gain: 0.32,
+      decay: 0.4,
+    });
     // 2. サイバー急上昇ライザー
-    this.playTone({ type: 'sawtooth', freq: 220, targetFreq: 1400, rampTime: 0.13, gain: 0.15, decay: 0.16 });
+    this.playTone({
+      type: 'sawtooth',
+      freq: 220,
+      targetFreq: 1400,
+      rampTime: 0.13,
+      gain: 0.15,
+      decay: 0.16,
+    });
     // 3. 頂点インパクトスタブ
     this.playTone({ type: 'triangle', freq: 880, gain: 0.22, decay: 0.25, delay: 0.12 });
   }
@@ -642,13 +712,34 @@ class AudioManager {
     chord.forEach((freq, idx) => {
       this.playTone({ type: 'sine', freq, gain: 0.12, decay: 0.45, delay: idx * 0.04 });
     });
-    this.playTone({ type: 'sine', freq: 220, targetFreq: 110, rampTime: 0.2, gain: 0.15, decay: 0.3 });
+    this.playTone({
+      type: 'sine',
+      freq: 220,
+      targetFreq: 110,
+      rampTime: 0.2,
+      gain: 0.15,
+      decay: 0.3,
+    });
   }
 
   // 立証失敗・アクセス拒絶: 不協和音低音バズ＋拒絶音
   synthesizeDamage() {
-    this.playTone({ type: 'sawtooth', freq: 90, targetFreq: 50, rampTime: 0.25, gain: 0.25, decay: 0.28 });
-    this.playTone({ type: 'square', freq: 135, targetFreq: 60, rampTime: 0.2, gain: 0.15, decay: 0.25 });
+    this.playTone({
+      type: 'sawtooth',
+      freq: 90,
+      targetFreq: 50,
+      rampTime: 0.25,
+      gain: 0.25,
+      decay: 0.28,
+    });
+    this.playTone({
+      type: 'square',
+      freq: 135,
+      targetFreq: 60,
+      rampTime: 0.2,
+      gain: 0.15,
+      decay: 0.25,
+    });
   }
 
   // 能動的防衛完遂・解決: 壮大なシネマティック・サイバーレゾナンス
@@ -661,7 +752,13 @@ class AudioManager {
     progression.forEach((step) => {
       step.notes.forEach((freq) => {
         this.playTone({ type: 'sine', freq, gain: 0.13, decay: 0.65, delay: step.delay });
-        this.playTone({ type: 'triangle', freq: freq * 0.5, gain: 0.08, decay: 0.5, delay: step.delay });
+        this.playTone({
+          type: 'triangle',
+          freq: freq * 0.5,
+          gain: 0.08,
+          decay: 0.5,
+          delay: step.delay,
+        });
       });
     });
   }
@@ -693,39 +790,6 @@ class AudioManager {
 
   playWrong() {
     this.playSe('damage');
-  }
-
-  // 文字送りデジタルブリップ音（控えめで心地よいコンソール音）
-  synthesizeTypeBlip(pitch = 1.0) {
-    if (!this.seEnabled || !this.ctx) return;
-    const now = this.ctx.currentTime;
-    const osc = this.ctx.createOscillator();
-    const gain = this.ctx.createGain();
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(920 * pitch, now);
-    gain.gain.setValueAtTime(0.025, now);
-    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.022);
-    osc.connect(gain);
-    gain.connect(this.ctx.destination);
-    osc.start(now);
-    osc.stop(now + 0.022);
-  }
-
-  // パラパラ漫画（マルチカット）のコマ切り替えシャッター・スキャン音
-  synthesizeFrameStep() {
-    if (!this.seEnabled || !this.ctx) return;
-    const now = this.ctx.currentTime;
-    const osc = this.ctx.createOscillator();
-    const gain = this.ctx.createGain();
-    osc.type = 'triangle';
-    osc.frequency.setValueAtTime(520, now);
-    osc.frequency.exponentialRampToValueAtTime(1480, now + 0.06);
-    gain.gain.setValueAtTime(0.14, now);
-    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.07);
-    osc.connect(gain);
-    gain.connect(this.ctx.destination);
-    osc.start(now);
-    osc.stop(now + 0.07);
   }
 }
 

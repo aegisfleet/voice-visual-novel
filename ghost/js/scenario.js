@@ -102,7 +102,8 @@ window.SCENARIO_DATA = {
       icon: '📜',
       image: 'assets/items/item_nco_directive.png',
       type: '【国家サイバー防御執行権限】',
-      summary: '警察官職務執行法第6条の2に基づく、史上初のアクセス・消去等措置を認可する電子執行令書。',
+      summary:
+        '警察官職務執行法第6条の2に基づく、史上初のアクセス・消去等措置を認可する電子執行令書。',
       detail:
         '内閣官房国家サイバー統括室（NCO）および警察庁サイバー特別捜査隊による合同令書。民間直接申請の壁、通信の秘密の壁、外国主権と偽旗工作の壁を突破し、国境を越えたC2攻撃インフラへの緊急無害化措置執行権限をケイ・アリアに委ねる最高機密アセット。',
     },
@@ -608,7 +609,7 @@ window.SCENARIO_DATA = {
         },
         {
           speaker: 'takamiya',
-        emotion: 'panic',
+          emotion: 'panic',
           sprite: 'takamiya',
           text: 'くそっ……！ 21日午前4時に全26,739台のVPSを完全停止させているんだぞ！？ VPSが動いていないのに、なぜ外部の取引所に注文が通るんだ……！？ パスワード変更が反映されていないのか！？',
           sfx: 'alert',
@@ -709,7 +710,7 @@ window.SCENARIO_DATA = {
             },
             {
               speaker: 'takamiya',
-        emotion: 'panic',
+              emotion: 'panic',
               sprite: 'takamiya',
               text: 'くそっ……！ 被害の45%は金融庁無登録の海外FX業者（ApexTrading、IS8FX等）だ。被害者の怒りが会社へ集中し、集団訴訟の呼びかけがSNSで大拡散されている！ どうやってこの信用を突き崩すんだ！？',
             },
@@ -807,7 +808,7 @@ window.SCENARIO_DATA = {
         },
         {
           speaker: 'takamiya',
-        emotion: 'panic',
+          emotion: 'panic',
           sprite: 'takamiya',
           text: '了解だ！ 偽旗工作の解析結果を公式リリースした。敵の煽動に乗せられていた被害者たちも冷静さを取り戻し、集団訴訟パニックは一気に沈静化したぞ！',
           sfx: 'correct',
@@ -1152,7 +1153,7 @@ window.SCENARIO_DATA = {
         },
         {
           speaker: 'takamiya',
-        emotion: 'panic',
+          emotion: 'panic',
           sprite: 'takamiya',
           text: 'ケイ、実は犯人は10月21日の最初期に、社長室宛ての極秘メールで暗号資産【5,000万ドル（約80億円）】を要求していたんだ！ 経営陣は公表すらできず抱え込んでいたが、昨日の四重脅迫状で社内とマスコミに暴露されて役員会は完全にパニックだ！ 80億円なんて払えるはずもない！',
           sfx: 'alert',
@@ -1442,7 +1443,7 @@ window.SCENARIO_DATA = {
         },
         {
           speaker: 'takamiya',
-        emotion: 'panic',
+          emotion: 'panic',
           sprite: 'takamiya',
           text: 'ケイ、全国から物理回収した顧客PCの鑑識結果が出た……！ 潜伏ランサムウェアは【検出ゼロ】だ！ 犯人が言っていた「シャットダウン前に時限マルウェアを送り込んだ」というのは、パニックを煽るための完全なブラフ（ハッタリ）だったんだ！！',
           sfx: 'evidence',
@@ -1454,7 +1455,7 @@ window.SCENARIO_DATA = {
         },
         {
           speaker: 'takamiya',
-        emotion: 'panic',
+          emotion: 'panic',
           sprite: 'takamiya',
           text: '了解だ！ 午前9時58分の第8報で「12時前に念のためPCの電源コードを抜くよう」呼びかけていたが、今11時59分の【第9報】で「潜伏マルウェア検出ゼロ、万一被害が出ても新品PCを無償提供する」と電撃リリースした！ これで世間のパニックは完全に食い止めたぞ！',
           telop: '【第9報リリース: 潜伏マルウェア検出ゼロ＆新品PC無償保証】',
@@ -1540,7 +1541,7 @@ window.SCENARIO_DATA = {
         },
         {
           speaker: 'aria',
-        emotion: 'alert',
+          emotion: 'alert',
           sprite: 'aria',
           text: 'マスター！！ 敵が「被害者 第1号」を公開するために自前のアジトでデータを復号・加工した瞬間、あのダミーLogin Dataに仕込んだ【逆探知用カナリアトークン】が発火しました！！ DNS/HTTP逆探知コールバックが着弾しました！！',
           sfx: 'beacon',
@@ -1673,7 +1674,7 @@ window.SCENARIO_DATA = {
                 },
                 {
                   speaker: 'aria',
-        emotion: 'alert',
+                  emotion: 'alert',
                   sprite: 'aria',
                   text: 'いいえマスター！ そこは [SOCKS5 Bridge] とある通り、2段目の踏み台プロキシです！ 実際にSQLite復号フックを発火させた実行元は別にあります！',
                 },
@@ -1800,7 +1801,7 @@ window.SCENARIO_DATA = {
               },
               {
                 speaker: 'aria',
-        emotion: 'alert',
+                emotion: 'alert',
                 sprite: 'aria',
                 illustration: 'assets/evidence/c2_origin.png',
                 text: '攻撃者が正午に第1号を晒すためデータを解凍した瞬間、カナリア逆探知ビーコンが発火！ 真のC2サーバーIPアドレス【91.240.118.174】および、リークサイトと全盗難データ保管庫をピンポイントで捕捉しました！！',

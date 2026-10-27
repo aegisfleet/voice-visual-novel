@@ -28,9 +28,7 @@ window.CHARACTER_DATA = {
     sprites: {
       normal: 'assets/characters/kei.png',
     },
-    spritesList: [
-      { emotion: 'normal', label: '通常・沈着', src: 'assets/characters/kei.png' },
-    ],
+    spritesList: [{ emotion: 'normal', label: '通常・沈着', src: 'assets/characters/kei.png' }],
   },
   aria: {
     id: 'aria',

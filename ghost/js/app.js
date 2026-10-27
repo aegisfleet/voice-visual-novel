@@ -775,16 +775,13 @@ class NovelApp {
     const char = this.characters[spriteId];
     if (!char) return;
 
-    const targetSrc =
-      (char.sprites && char.sprites[emotion]) ||
-      (char.sprites && char.sprites.normal) ||
-      char.sprite;
+    const targetSrc = char.sprites?.[emotion] || char.sprites?.normal || char.sprite;
 
     if (!targetSrc) return;
 
     const currentImg = this.dom.characterSpriteBox.querySelector('img');
     const isSameChar = this.currentSpriteId === spriteId;
-    const isSameSrc = currentImg && currentImg.getAttribute('src')?.includes(targetSrc);
+    const isSameSrc = currentImg?.getAttribute('src')?.includes(targetSrc);
 
     if (isSameChar && isSameSrc) {
       currentImg.classList.remove('sprite-talk-bounce');
