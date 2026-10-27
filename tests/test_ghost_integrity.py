@@ -136,7 +136,7 @@ class TestGhostScenarioAndAssets(unittest.TestCase):
         self.assertGreaterEqual(len(self.scenario["epilogue"].get("dialogue", [])), 5)
 
     def test_five_chapters_registered(self):
-        """全5章の体験型ノベルシナリオが登録され、各章に導入・選択肢・解決パートが存在すること"""
+        """全5章の体験型ノベルシナリオが登録され、各章に導入・選択肢ステップ・解決パートが存在すること"""
         chapters = self.scenario.get("chapters", [])
         self.assertEqual(len(chapters), 5)
         for idx, ch in enumerate(chapters, start=1):
@@ -144,18 +144,24 @@ class TestGhostScenarioAndAssets(unittest.TestCase):
             self.assertTrue(ch.get("title"))
             self.assertTrue(ch.get("date"))
             self.assertGreaterEqual(len(ch.get("introDialogue", [])), 3)
-            self.assertIn("choice", ch)
-            self.assertGreaterEqual(len(ch["choice"].get("options", [])), 2)
+            # choiceSteps配列またはchoiceプロパティが存在すること
+            choice_steps = ch.get("choiceSteps") or ([ch.get("choice")] if ch.get("choice") else [])
+            self.assertGreaterEqual(len(choice_steps), 1)
+            for step in choice_steps:
+                self.assertGreaterEqual(len(step.get("options", [])), 2)
             self.assertGreaterEqual(len(ch.get("resolution", [])), 2)
 
     def test_tactic_choices_and_final_deduction_registered(self):
-        """全5章に中盤の作戦判断選択肢があり、Chapter 5に最終証拠連結フェーズが存在すること"""
+        """全5章に選択肢ステップ（作戦判断または鑑識）があり、Chapter 5に最終証拠連結フェーズが存在すること"""
         chapters = self.scenario.get("chapters", [])
         for ch in chapters:
-            self.assertIn("tacticChoice", ch)
-            self.assertGreaterEqual(len(ch["tacticChoice"].get("options", [])), 2)
-            self.assertIn("midDialogue", ch)
-            self.assertGreaterEqual(len(ch["midDialogue"]), 1)
+            choice_steps = ch.get("choiceSteps") or []
+            self.assertGreaterEqual(len(choice_steps), 1)
+            has_correct = any(
+                any(opt.get("isCorrect") for opt in step.get("options", []))
+                for step in choice_steps
+            )
+            self.assertTrue(has_correct, f"Chapter {ch.get('id')} has no step with correct option")
 
         ch5 = chapters[4]
         self.assertIn("finalDeduction", ch5)
