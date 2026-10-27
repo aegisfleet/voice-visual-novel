@@ -1,281 +1,215 @@
 # Nano Banana 2.1 画像アセット生成・統合ガイド (Google Flow CLI)
 
-本書は、Google Flow CLI（`gflow`）を経由して **Nano Banana 2.1（`--model nano2`）** を活用し、ノベルゲームで使用するキャラクター立ち絵、アイテムスプライト、シネマティック背景画像を生成・加工・ゲームへ組み込む全手順をまとめた実践的ドキュメントである。
+本書は、Google Flow CLI（`gflow-cli`）を経由して **Nano Banana 2.1（`--model nano2`）** を活用し、Webノベルゲームやアドベンチャーゲームで使用する「キャラクター設定資料シート」「表情差分立ち絵」「漫画風コマ割り挿絵（パラパラ漫画演出）」「背景・UIアセット」を生成・加工・統合する最新の完全制作ガイドである。
 
 ---
 
 ## 1. ワークフロー概要
 
-ゲーム素材の制作フローは以下の3段階で構成される。
+ゲーム素材の制作フローは、キャラクター設定の一貫性管理を核とした以下のパイプラインで構成される。
 
 ```
-[1. gflow CLI] ────> [2. chromakey.py] ────> [3. ゲーム組込]
-Nano Banana 2.1       HSV色空間での自動透過    CSS/JSでの配置
-・グリーンバック立ち絵   エッジ平滑化処理        キャラクター立ち絵
-・背景アート (16:9)    透過PNG出力            探索ピン・証拠品
-・アイテムスプライト
+[1. キャラクターシート策定] ────> [2. 表情差分立ち絵生成 (i2i)] ────> [3. クロマキー透過] ────> [4. ゲーム組込]
+三面図・表情集・配色パレット       --ref でシートを参照し一貫性担保    HSV色空間による透過PNG化    emotionごとの自動切替
+(16:9, t2i)                     グリーンバック (#00FF00) (1:1)     (chromakey.py)             (character.js)
+
+[5. 漫画風コマ割り挿絵生成] ─────────────────────────────────────────────────────────────> [6. パラパラ漫画演出]
+マルチパネル・映画的構図 (16:9)                                                            cutSequence による
+吹き出しなし (no speech bubbles)                                                          タップ送り・自動アニメ
 ```
 
 ---
 
-## 2. 環境構築とセットアップ
+## 2. 環境構築とCLI実行基盤
 
 ### 2.1 必要要件
 * Python 3.10 以上（推奨: Python 3.11）
-* Google Flow アカウント
+* `gflow-cli`（v0.84.0 以上）
+* Google Flow アカウント（`gflow auth login` 認証済み）
+* Pillow, numpy（透過処理用: `pip install Pillow numpy`）
 
-### 2.2 Google Flow CLI のインストール
-CLIツール `gflow-cli` をインストールまたは最新版にアップデートする。
-
-```powershell
-# PowerShell
-[Console]::OutputEncoding = [System.Text.Encoding]::UTF8;
-pip install -U gflow-cli
-```
-
-### 2.3 認証（ログイン）
-Googleアカウントで認証を行う。ブラウザが自動的に立ち上がり、トークンが保存される。
+### 2.2 PowerShell環境における最重要ルール（文字化け・例外回避）
+Windows PowerShell 上で `gflow-cli` を実行する際、CLI内の Unicode 出力文字（`\u2014` 等）により `UnicodeEncodeError: 'cp932'` が発生することがある。**実行時は必ず先頭に `$env:PYTHONIOENCODING="utf-8";` を付与すること。**
 
 ```powershell
-# ログイン
-gflow auth login
-
-# 認証ステータスの確認
-gflow auth status
-```
-
-ステータスが `Logged in as: <メールアドレス>` となっていれば準備完了である。
-
-### 2.4 画像処理ツールの依存関係
-クロマキー透過処理スクリプト（`box/tools/chromakey.py`）用に Pillow と numpy をインストールする。
-
-```powershell
-pip install Pillow numpy
+# PowerShell での実行テンプレート
+$env:PYTHONIOENCODING="utf-8"; [Console]::OutputEncoding = [System.Text.Encoding]::UTF8;
 ```
 
 ---
 
-## 3. CLI実行コマンド仕様
+## 3. CLI実行コマンド仕様（v0.84+ 現行仕様）
 
-`gflow generate image` コマンドで `--model nano2` を指定することで、最新の **Nano Banana 2.1** エンジンが呼び出される。
+旧構文（`gflow generate image`）ではなく、現行のサブコマンド `gflow image t2i` および `gflow image i2i` を使用する。
+
+### 3.1 テキストからの新規生成 (`t2i: Text-to-Image`)
+キャラクター設定シート、背景、漫画コマ割り挿絵などの新規生成に使用する。
 
 ```powershell
-# 基本構文
-gflow generate image "<プロンプト>" --model nano2 --output "<出力ファイルパス>"
+$env:PYTHONIOENCODING="utf-8"; gflow image t2i "<PROMPT>" --model nano2 --aspect 16:9 -o "<OUTPUT_PATH>"
 ```
 
-### パラメータ解説
-| 引数 / オプション | 説明 | 推奨値 / 備考 |
+### 3.2 既存画像を参照した一貫性生成 (`i2i: Image-to-Image / Reference Image`)
+**キャラクターシート等の既存画像を `--ref` オプションで渡すことで、同一人物の顔立ち・髪型・服装・配色を維持したまま、異なる表情やポーズの立ち絵を生成できる。**
+
+```powershell
+$env:PYTHONIOENCODING="utf-8"; gflow image i2i "<PROMPT>" --ref "<REFERENCE_SHEET_PATH>" --model nano2 --aspect 1:1 -o "<OUTPUT_PATH>"
+```
+
+### 3.3 主要オプション一覧
+| オプション | 説明 | 指定可能値 / 推奨値 |
 | :--- | :--- | :--- |
-| `PROMPT` | 描画指示テキスト（英語推奨） | 構図、画風、背景色（立ち絵の場合はグリーンバック）を明確に指示 |
-| `--model` | 使用するAIモデル | `nano2`（Nano Banana 2.1） |
-| `--output` | 出力ファイル名・パス | `.png` または `.jpg` |
+| `PROMPT` | 描画指示テキスト（英語） | 画風、ポーズ、表情、ライティング、背景色を指定 |
+| `--model` | 生成モデル | `nano2` (Nano Banana 2.1 推奨) |
+| `--aspect` | アスペクト比 | `16:9` (シート・背景・コマ割り), `1:1` (立ち絵), `9:16`, `4:3`, `3:4` |
+| `--ref` | 参照画像パス（`i2i` 専用） | キャラクターシート等のローカルファイルパス（自動アップロード） |
+| `-o, --output` | 出力ファイルパス | 保存先のパス（`.jpg` または `.png`） |
 
 ---
 
-## 4. プロンプト設計テクニック
+## 4. 漫画風コマ割り画像の作り方（パラパラ漫画演出・劇中カット）
 
-### 4.1 キャラクター立ち絵（クロマキー透過用）
-キャラクターを背景から綺麗に切り抜くため、以下のキーワードをプロンプトの末尾に必ず付与する。
+### 4.1 設計思想（MangaAgentsStudio-A 準拠）
+セリフ（台詞）はゲームの会話ウィンドウ側で表示・再生するため、**画像内に文字吹き出しやテキストを直接描画させない（文字化け・フォント違和感を徹底排除する）**。
+その代わり、映画的・漫画的な「マルチパネル（分割コマ）構図」「ズームアップと全景の対比」「緊迫したサイバーライティング」を1枚の絵の中に凝縮する。
 
-> **必須キーワード**:
-> `standing pose, waist-up portrait, facing viewer, anime visual novel style, high detail, masterpiece, isolated on a solid uniform chroma key bright green background (#00FF00), completely flat clean background, no green reflection on body`
-
-* **ポイント**: 単に `green background` と書くのではなく、`solid uniform chroma key bright green background` と指定することで、グラデーションや影の混入を防ぐことができる。
-
-### 4.2 背景画像（16:9 シネマティックアート）
-ゲーム画面をリッチに彩る背景アートを生成する際の指定方法。
-
-> **必須キーワード**:
-> `visual novel background, anime background art, highly detailed, Makoto Shinkai style lighting, cinematic composition, widescreen, atmospheric cyberpunk lighting`
-
-### 4.3 アイテム・小物スプライト
-探索ピンや証拠手帳で使用するアイテム画像。
-
-> **必須キーワード**:
-> `isolated object, studio lighting, product shot, front view, clean edges, isolated on a solid uniform pure bright green background (#00FF00)`
-
----
-
-## 5. 本作（BOX WORM）での生成実績プロンプト集
-
-本作のキャラクター・背景・アイテムはすべて以下のプロンプトにより Nano Banana 2.1 で生成された。
-
-### 5.1 キャラクター立ち絵
-
-#### ① ユウタ（主人公・若手エンジニア）
-```powershell
-gflow generate image "An anime young Japanese man in his early 20s, dark messy short hair, wearing glasses, black hoodie over a navy t-shirt, headphones around neck, slight worried expression, standing pose, waist-up portrait, anime visual novel style, high detail, masterpiece, isolated on a solid uniform chroma key bright green background (#00FF00), completely flat clean background, no green reflection on body" --model nano2 --output "box/assets/characters/raw_yuta.png"
+### 4.2 コマ割り用 必須プロンプト構文
+```text
+Dynamic full color anime manga comic panel layout, split panels, cinematic composition,
+[メインの事象・人物のアクション],
+[第1パネル: 目元や計器のクローズアップ],
+[第2パネル: 現場全景や劇的変化],
+[サイバーパンク・サスペンスライティング: neon cyan and crimson alert lighting],
+no speech bubbles, no dialogue text, clean composition
 ```
 
-#### ② シバタ捜査官（警視庁サイバー犯罪対策課）
+* **`Dynamic full color anime manga comic panel layout, split panels`**:
+  漫画特有の斜めコマ割りや上下分割コマをAIに指示する。
+* **`no speech bubbles, no dialogue text, clean composition`**:
+  吹き出し（speech bubble）の発生を強力に抑止する必須ネガティブ指示。
+* **`--aspect 16:9`**:
+  横長ワイド画面により、複数のコマがダイナミックに配置されやすくなる。
+
+### 4.3 劇中カット生成実績例（『GHOST PROTOCOL』）
+
+#### ① Chapter 1: 口座残高蒸発シークエンス（高速注文とチャート急落）
 ```powershell
-gflow generate image "A stern Japanese male cybercrime police detective in his late 40s, sharp intelligent eyes behind silver rimmed glasses, slicked back hair with slight gray streaks, wearing a tailored dark navy suit and dark trench coat with a sharp crimson necktie, calm intimidating aura, waist-up portrait, anime visual novel character art, highly detailed, clean lines, isolated on a solid uniform pure bright green background (#00FF00), no shadows on background, no green reflections on clothes" --model nano2 --output "box/assets/characters/raw_shibata.png"
+$env:PYTHONIOENCODING="utf-8"; gflow image t2i "Dynamic full color anime manga comic panel layout, split panels, dramatic cyberpunk anime style, close-up of panicked trader eyes sweating, multiple monitors displaying rapid automated sell orders TRY/ZAR 850pps, falling financial chart, red emergency lights in server room, cinematic anime art, no speech bubbles, clean composition" --model nano2 --aspect 16:9 -o "ghost/assets/sequences/ch1_cut1.jpg"
 ```
 
-#### ③ 隣人アオイ（202号室住人）
+#### ② Chapter 2: 永続ソケットバイパス（暗闇のハッカー端末）
 ```powershell
-gflow generate image "A cute friendly Japanese young woman in her early 20s, medium length soft wavy brown hair, wearing a cozy lavender cardigan over a white blouse, gentle anxious facial expression, holding hands near chest nervously, waist-up portrait, modern anime visual novel character sprite, high quality, soft studio lighting, isolated on a solid uniform pure bright chroma key green background (#00FF00), flat clean background, no green spill on hair or clothing" --model nano2 --output "box/assets/characters/raw_aoi.png"
+$env:PYTHONIOENCODING="utf-8"; gflow image t2i "Dynamic full color anime manga comic panel layout, split panels, dramatic cyberpunk thriller anime style, unauthorized trade execution bypassing authentication, hooded hacker in dark room laughing at terminal screen, code streaming on multi-monitors, exchange server receiving spoofed high-speed sell orders, financial chart crashing into red abyss, dramatic neon cyan and red lighting, cinematic anime art, no speech bubbles, clean composition" --model nano2 --aspect 16:9 -o "ghost/assets/sequences/ch2_cut3.jpg"
 ```
 
-#### ④ 大家のヤエガシ（メゾン・サクラ管理人）
+#### ③ Chapter 3: リバースRDP（アンチウイルス素通りデータ流出）
 ```powershell
-gflow generate image "A genial friendly Japanese elderly landlord in his late 60s, gentle smiling face with crow's feet and neat mustache, wearing utility vest over a beige work shirt, dependable elderly character, waist-up portrait, anime visual novel sprite, high detail, isolated on a solid uniform pure bright green background (#00FF00), completely flat background, no green shadows" --model nano2 --output "box/assets/characters/raw_yaegashi.png"
+$env:PYTHONIOENCODING="utf-8"; gflow image t2i "Dynamic full color anime manga comic panel layout, split panels, cyberpunk anime style, antivirus green shield showing safe status, while tax documents and Chrome Login Data files are exfiltrated into zip file, cyber theft, neon green and red lighting, no speech bubbles" --model nano2 --aspect 16:9 -o "ghost/assets/sequences/ch3_cut3.jpg"
 ```
 
-#### ⑤ MIMI（TVボックスに宿った自己増殖電脳知性）
+#### ④ Chapter 5: 逆探知カナリア発火（真C2ロックオン）
 ```powershell
-gflow generate image "A mysterious and ethereal digital cyber AI girl entity, translucent glowing teal and cyan holographic appearance, floating in digital matrix space, delicate futuristic android features, faint glowing cybernetic lines on skin, floating data particles, waist-up visual novel character sprite, masterpiece, isolated on a solid uniform pure bright green background (#00FF00), clean edges for chroma key cutout" --model nano2 --output "box/assets/characters/raw_mimi.png"
+$env:PYTHONIOENCODING="utf-8"; gflow image t2i "Dynamic full color anime manga comic panel layout, split panels, dramatic cyberpunk anime style, command center hologram radar locking onto Frankfurt Germany datacenter, IP 91.240.118.174 displayed in bright red crosshair target, Commander Kuroda pointing forward commanding operation, decisive cyber lock on, neon cyber anime art, no speech bubbles" --model nano2 --aspect 16:9 -o "ghost/assets/sequences/ch5_cut4.jpg"
 ```
 
 ---
 
-### 5.2 背景アート
+## 5. キャラクター設定資料シート（三面図・表情集）の作り方
 
-#### ① 201号室（ユウタの自室・ワンルーム）
-```powershell
-gflow generate image "Anime visual novel background, an authentic cozy Tokyo studio apartment room at dusk, messy desk with multiple computer monitors displaying code and glowing network activity graphs, cables running neatly, a cheap black TV box glowing with a small cyan LED next to a television, bed in the corner, urban evening view through window, neon purple and teal moody cyber ambient lighting, highly detailed anime background art, Makoto Shinkai aesthetic" --model nano2 --output "box/assets/backgrounds/bg_room.jpg"
+### 5.1 キャラクターシートの構成要素
+各キャラクターのビジュアル同一性を維持するため、以下の要素を1枚に収めたモデルシートを最初に生成する。
+1. **全身三面図**: 正面（Front view）、斜め（Three-quarter view）、背面（Back view）
+2. **表情バリエーション**: 平常（Calm/Analytical）、危機・焦燥（Panicked/Alert）、決意・笑顔（Determined/Smile）
+3. **衣装・小物のディテール線画**: メガネ、IDバッジ、ヘッドセット、スーツ襟章など
+4. **カラーパレットスウォッチ**: 髪色、肌色、服色のカラーサンプル
+
+### 5.2 キャラクターシート用 プロンプト構文
+```text
+Official anime character model sheet of [名前], [年齢・性別・職業・属性],
+[固有の髪型・髪色], [瞳の色・目元の特徴], [眼鏡やアクセサリ],
+[固有の服装・ジャケット・インナー・パンツ],
+full body front view, three-quarter view, multiple facial expressions (analyzing, calm, shocked),
+costume sketches, color swatches, clean light gray background, consistent anime concept art, no text
 ```
 
-#### ② アパート共用部・外廊下
+### 5.3 設定シート生成実績例（『GHOST PROTOCOL』）
+
+#### ① ナギサ ケイ (渚 慧) / 27歳男性・主人公・独立系エンジニア
 ```powershell
-gflow generate image "Anime visual novel background, the outdoor corridor walkway of an old Japanese apartment building at night, rows of green apartment doors with room number plates (201, 202), industrial electrical conduit pipes, communal smart electric meter boxes with blinking red and green status lights, handrail overlooking quiet Tokyo residential city night lights, cool fluorescent light overhead casting moody shadows, cinematic anime background, realistic urban textures, high resolution" --model nano2 --output "box/assets/backgrounds/bg_corridor.jpg"
+$env:PYTHONIOENCODING="utf-8"; gflow image t2i "Official anime character model sheet of Nagisa Kei, 27-year-old male Japanese cybersecurity engineer, thin square rimmed glasses, sharp intelligent dark eyes, short messy jet black hair, wearing black turtleneck and dark slate technical jacket, smartwatch, full body front view, three-quarter view, multiple facial expressions (analyzing, calm, shocked), costume sketches, color swatches, clean background, consistent anime concept art, no text" --model nano2 --aspect 16:9 -o "ghost/assets/characters/sheets/sheet_kei.jpg"
 ```
 
-#### ③ 玄関口・立証対決
+#### ② タカミヤ レン (高宮 蓮) / 27歳男性・CSIRT現場リーダー
 ```powershell
-gflow generate image "Anime visual novel background, dramatic confrontation view inside an apartment entrance genkan doorway facing the open door, sharp dramatic backlighting from hallway, cyber investigative atmosphere, tense thriller composition, cinematic anime background art, high resolution, dark moody tones with red and cyan accent highlights" --model nano2 --output "box/assets/backgrounds/bg_debate.jpg"
+$env:PYTHONIOENCODING="utf-8"; gflow image t2i "Official anime character model sheet of Takamiya Ren, 27-year-old male Japanese CSIRT emergency leader, dark brown medium hair with subtle ash green highlights, warm amber eyes, passionate expression, wearing rolled-up white dress shirt, navy blue operator tactical vest, lanyard ID badge necklace, full body front view, three-quarter view, multiple facial expressions (passionate, determined, panicked), costume sketches, color swatches, clean background, consistent anime concept art, no text" --model nano2 --aspect 16:9 -o "ghost/assets/characters/sheets/sheet_takamiya.jpg"
 ```
 
-#### ④ タイトル画面（15台メッシュ電脳アート）
+#### ③ アリア (ARIA) / 自律型電脳鑑識AI・少女型ホログラム
 ```powershell
-gflow generate image "Cinematic title visual novel illustration, 15 small black IoT TV boxes connected by glowing cyan neural network data threads forming an emergent digital mind in the shape of a subtle digital ghost silhouette, dark cybernetic room, 0.39 tokens per second telemetry graphs, glowing cables, Ghost in the Shell inspired digital life emergence, high resolution 8k anime art, breathtaking cinematic masterpiece" --model nano2 --output "box/assets/backgrounds/bg_title.jpg"
+$env:PYTHONIOENCODING="utf-8"; gflow image t2i "Official anime character model sheet of ARIA, autonomous cyber forensic AI agent girl holographic avatar, glowing cyan blue twintails hair with digital particles, glowing blue digital eye irises, translucent cyber visor, wearing futuristic white and navy bodysuit with glowing cyan data circuits, full body front view, three-quarter view, multiple expressions (analytical, alert, gentle smile), cyber visor sketches, color swatches, clean background, consistent anime concept art, no text" --model nano2 --aspect 16:9 -o "ghost/assets/characters/sheets/sheet_aria.jpg"
 ```
 
 ---
 
-### 5.3 アイテムスプライト
+## 6. キャラクターシートを参照した表情差分立ち絵の生成手順
 
-#### 55ドル TVボックス
+### 6.1 フロー概要
+1. 先に生成した `ghost/assets/characters/sheets/sheet_{charId}.jpg` を `--ref` 引数に指定する。
+2. 背景を単一グリーンバック（`#00FF00`）に指定する。
+3. `gflow image i2i` を実行してRAW画像（JPEG）を出力する。
+4. クロマキー透過スクリプト（`chromakey.py`）を実行して透過PNG（`{charId}_{emotion}.png`）を生成する。
+
+### 6.2 実行例：タカミヤの焦燥・パニック表情（`panic`）立ち絵
 ```powershell
-gflow generate image "A small sleek generic matte black IoT TV streaming box device, front angled 3/4 perspective, subtle blue status power LED dot glowing, ventilation slits on side, HDMI port visible on rear edge, clean modern industrial hardware design, studio product photo, isolated on a solid uniform pure bright chroma key green background (#00FF00), crisp sharp edges, no green reflection on black plastic" --model nano2 --output "box/assets/items/raw_tv_box.png"
+# 1. シートを参照してグリーンバック画像を生成
+$env:PYTHONIOENCODING="utf-8"; gflow image i2i "Waist-up anime character portrait of Takamiya Ren, severe panicking expression, sweating, wide open eyes, open mouth shouting in distress, wearing rolled-up white dress shirt and navy tactical vest with lanyard badge, isolated on a solid uniform pure bright chroma key green background (#00FF00), completely flat background, no shadows on background, no green spill on hair or clothes" --ref "ghost/assets/characters/sheets/sheet_takamiya.jpg" --model nano2 --aspect 1:1 -o "scratch/raw_takamiya_panic.jpg"
+
+# 2. 自動クロマキー透過
+python box/scripts/chromakey.py "scratch/raw_takamiya_panic.jpg" "ghost/assets/characters/takamiya_panic.png"
 ```
+
+### 6.3 感情（Emotion）の命名規則
+| 表情キー (`emotion`) | 想定シーン・感情 | プロンプト指示キーワード |
+| :--- | :--- | :--- |
+| `normal` | 通常・冷静な説明・待機 | `calm confident expression, composed look, slight smile` |
+| `serious` | 真剣・作戦決断・睨み | `serious intense gaze, sharp focused eyes, tight lips` |
+| `panic` / `shock` | 危機・想定外の事態・焦燥 | `panicked expression, sweating, wide shocked eyes, shouting` |
+| `smile` / `relieved` | 安堵・事件解決・信頼 | `warm relieved smile, gentle happy expression, soft eyes` |
 
 ---
 
-## 6. クロマキー透過ツール (`box/tools/chromakey.py`) の使い方
+## 7. ゲームコード（JS/CSS）との統合仕様
 
-グリーンバック画像から緑色背景を高精度に検出し、キャラクターのフチを滑らかに保ちながら透過PNGへ変換するPythonスクリプト。
-
-### 6.1 実行方法
-```powershell
-# 基本実行: 単一ファイルの透過処理
-python box/tools/chromakey.py box/assets/characters/raw_yuta.png box/assets/characters/yuta.png
-
-# パラメータ調整を伴う実行（緑色の許容範囲・スムーズネス指定）
-python box/tools/chromakey.py box/assets/items/raw_tv_box.png box/assets/items/tv_box.png --hue-low 35 --hue-high 85 --smoothness 15
-```
-
-### 6.2 主なオプション
-* `--hue-low`: 検出する緑色色相の下限（デフォルト: `35`）
-* `--hue-high`: 検出する緑色色相の上限（デフォルト: `85`）
-* `--sat-min`: 検出する彩度の最小値（デフォルト: `60`）
-* `--val-min`: 検出する明度の最小値（デフォルト: `50`）
-* `--smoothness`: フチのアルファフェザー幅（デフォルト: `12`）
-
----
-
-## 7. ゲームへの組み込み手順
-
-生成した画像は、ゲームの各コンポーネントに以下のように配備・登録する。
-
-### 7.1 ディレクトリ配置
-```
-box/assets/
-├── characters/
-│   ├── yuta.png       # ユウタ立ち絵 (透過PNG)
-│   ├── shibata.png    # シバタ捜査官 (透過PNG)
-│   ├── aoi.png        # 隣人アオイ (透過PNG)
-│   ├── yaegashi.png   # 大家ヤエガシ (透過PNG)
-│   └── mimi.png       # MIMI (透過PNG)
-├── backgrounds/
-│   ├── bg_title.jpg    # タイトル画面背景
-│   ├── bg_room.jpg     # 201号室 (自室)
-│   ├── bg_corridor.jpg # 外廊下・共用部
-│   └── bg_debate.jpg   # 玄関口・立証対決
-└── items/
-    └── tv_box.png     # 55ドルTVボックス (透過PNG)
-```
-
-### 7.2 キャラクターコントローラーへの登録 (`box/js/character.js`)
+### 7.1 `character.js` の表情差分データ定義
 ```javascript
-renderCharacterHtml(charId) {
-  const assetMap = {
-    yuta: 'assets/characters/yuta.png',
-    shibata: 'assets/characters/shibata.png',
-    aoi: 'assets/characters/aoi.png',
-    yaegashi: 'assets/characters/yaegashi.png',
-    mimi: 'assets/characters/mimi.png'
-  };
-
-  const imgSrc = assetMap[charId];
-  if (!imgSrc) return '';
-
-  return `
-    <div class="char-avatar char-wrapper-${charId} emotion-normal">
-      <img class="char-sprite-img char-img-${charId}" src="${imgSrc}" alt="${charId}" />
-    </div>
-  `;
-}
+window.CHARACTER_DATA = {
+  takamiya: {
+    id: 'takamiya',
+    name: 'タカミヤ レン (高宮 蓮)',
+    color: '#4ade80',
+    sprite: 'assets/characters/takamiya.png', // デフォルト立ち絵
+    sheet: 'assets/characters/sheets/sheet_takamiya.jpg', // 設定資料シート
+    sprites: {
+      normal: 'assets/characters/takamiya_normal.png',
+      panic: 'assets/characters/takamiya_panic.png',
+      serious: 'assets/characters/takamiya_serious.png',
+      smile: 'assets/characters/takamiya_smile.png',
+    },
+  },
+  // ...
+};
 ```
 
-### 7.3 探索スポット・NPC・証拠品への登録 (`box/js/scenario.js`)
+### 7.2 `scenario.js` でのセリフ指定
 ```javascript
-// スポット
 {
-  id: 'spot_tvbox',
-  name: 'テレビ横の黒い小箱（TVボックス）',
-  coords: { x: 91, y: 62 },
-  icon: '📺',
-  image: 'assets/items/tv_box.png', // ピン表示用サムネイル
-  evidenceId: 'tv_box_thermal',
-  ...
-}
-
-// NPC
-{
-  id: 'npc_aoi',
-  name: '隣室の住人アオイ',
-  coords: { x: 56, y: 56 },
-  icon: '👧',
-  image: 'assets/characters/aoi.png', // ピン表示用顔アイコン
-  ...
-}
-
-// 証拠手帳
-tv_box_thermal: {
-  id: 'tv_box_thermal',
-  name: '触れないほど異常発熱したTVボックス',
-  icon: '🔥',
-  image: 'assets/items/tv_box.png', // 証拠カードサムネイル
-  ...
+  speaker: 'takamiya',
+  sprite: 'takamiya',
+  emotion: 'panic', // 表情差分キーを指定
+  text: 'ケイ、問い合わせ窓口が完全にパンクしている……！ 1時間で数千件の口座破綻報告だ。一体どこから手を付ければいいんだ！？',
+  sfx: 'alert',
 }
 ```
 
-### 7.4 キャッシュ対策（`box/index.html`）
-ブラウザ（特に Chrome や Edge）が以前のCSSやJSファイルをキャッシュして新画像が表示されない現象を防ぐため、アセット更新時はリビジョンパラメータを付与する。
-
-```html
-<link rel="stylesheet" href="css/style.css?v=20261014_rev3">
-<script src="js/character.js?v=20261014_rev3"></script>
-<script src="js/scenario.js?v=20261014_rev3"></script>
-<script src="js/app.js?v=20261014_rev3"></script>
-```
-
----
-
-## 8. まとめ
-
-* **Nano Banana 2.1**（`--model nano2`）は、繊細なアニメテイストのキャラクター表現やサイバーパンク調のシネマティックライティングにおいて極めて高い描画品質を発揮する。
-* **グリーンバック指定** と **自動クロマキースクリプト** の連携により、余白透過PNGの制作を1コマンドで完結できる。
-* 今後新しいキャラクターやアイテムを追加する際も、本ガイドのプロンプト構文とスクリプトを再利用することで、同一の世界観・画風を維持したまま素材を量産可能である。
+### 7.3 `app.js` での表情動的切り替え
+`updateCharacterSprite(spriteId, emotion)` において、`this.characters[spriteId]?.sprites?.[emotion] || this.characters[spriteId]?.sprite` を選択して `img.src` をスムーズに切り替える。同一キャラで表情のみ変化した場合は、立ち絵DOMを破棄せずフェードトランジションで表情を滑らかに更新する。

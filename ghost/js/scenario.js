@@ -97,6 +97,7 @@ window.SCENARIO_DATA = {
       },
       {
         speaker: 'aria',
+        emotion: 'alert',
         sprite: 'aria',
         text: 'マスター、緊急事態です！ 接続先の金融VPSクラウド基盤……国内最大手『ネオドットコム デスクトップクラウド』の全インスタンスで、一斉に内部RPCエラーが検知されました！',
         bgm: 'crisis',
@@ -120,6 +121,7 @@ window.SCENARIO_DATA = {
       },
       {
         speaker: 'takamiya',
+        emotion: 'panic',
         sprite: 'takamiya',
         text: '『ケイ……！ 頼む、助けてくれ！ 現場のAD（Active Directory）管理プレーンが……全部乗っ取られた！』',
         effect: 'shake',
@@ -131,11 +133,13 @@ window.SCENARIO_DATA = {
       },
       {
         speaker: 'takamiya',
+        emotion: 'panic',
         sprite: 'takamiya',
         text: '『深夜、管理基盤の深部に侵入された……！ 2万6千台のWindows VPSのマスターパスワードが吸い出され、顧客の口座情報が……裏コマンドから次々と書き換えられている！』',
       },
       {
         speaker: 'takamiya',
+        emotion: 'panic',
         sprite: 'takamiya',
         text: '『このまま夜が明ければ、数万人の顧客資産が全滅する……！ 我々は午前4時をもって、26,739台すべての【全回線切断・強制シャットダウン】を決断する！』',
         sfx: 'impact',
@@ -572,6 +576,7 @@ window.SCENARIO_DATA = {
         },
         {
           speaker: 'takamiya',
+        emotion: 'panic',
           sprite: 'takamiya',
           text: 'くそっ……！ 21日午前4時に全26,739台のVPSを完全停止させているんだぞ！？ VPSが動いていないのに、なぜ外部の取引所に注文が通るんだ……！？ パスワード変更が反映されていないのか！？',
           sfx: 'alert',
@@ -672,6 +677,7 @@ window.SCENARIO_DATA = {
             },
             {
               speaker: 'takamiya',
+        emotion: 'panic',
               sprite: 'takamiya',
               text: 'くそっ……！ 被害の45%は金融庁無登録の海外FX業者（ApexTrading、IS8FX等）だ。被害者の怒りが会社へ集中し、集団訴訟の呼びかけがSNSで大拡散されている！ どうやってこの信用を突き崩すんだ！？',
             },
@@ -769,6 +775,7 @@ window.SCENARIO_DATA = {
         },
         {
           speaker: 'takamiya',
+        emotion: 'panic',
           sprite: 'takamiya',
           text: '了解だ！ 偽旗工作の解析結果を公式リリースした。敵の煽動に乗せられていた被害者たちも冷静さを取り戻し、集団訴訟パニックは一気に沈静化したぞ！',
           sfx: 'correct',
@@ -1033,6 +1040,7 @@ window.SCENARIO_DATA = {
                 },
                 {
                   speaker: 'aria',
+        emotion: 'alert',
                   sprite: 'aria',
                   text: 'カナリアトークン混入完了！ 攻撃者が自前の攻撃サーバーでこのファイルを解凍した瞬間、偽装プロキシの背後にある真のC2サーバー座標が逆探知されます！',
                   telop: '【CANARY DEPLOYED: 逆探知ビーコン潜伏完了】',
@@ -1111,6 +1119,7 @@ window.SCENARIO_DATA = {
         },
         {
           speaker: 'takamiya',
+        emotion: 'panic',
           sprite: 'takamiya',
           text: 'ケイ、実は犯人は10月21日の最初期に、社長室宛ての極秘メールで暗号資産【5,000万ドル（約80億円）】を要求していたんだ！ 経営陣は公表すらできず抱え込んでいたが、昨日の四重脅迫状で社内とマスコミに暴露されて役員会は完全にパニックだ！ 80億円なんて払えるはずもない！',
           sfx: 'alert',
@@ -1399,6 +1408,7 @@ window.SCENARIO_DATA = {
         },
         {
           speaker: 'takamiya',
+        emotion: 'panic',
           sprite: 'takamiya',
           text: 'ケイ、全国から物理回収した顧客PCの鑑識結果が出た……！ 潜伏ランサムウェアは【検出ゼロ】だ！ 犯人が言っていた「シャットダウン前に時限マルウェアを送り込んだ」というのは、パニックを煽るための完全なブラフ（ハッタリ）だったんだ！！',
           sfx: 'evidence',
@@ -1410,6 +1420,7 @@ window.SCENARIO_DATA = {
         },
         {
           speaker: 'takamiya',
+        emotion: 'panic',
           sprite: 'takamiya',
           text: '了解だ！ 午前9時58分の第8報で「12時前に念のためPCの電源コードを抜くよう」呼びかけていたが、今11時59分の【第9報】で「潜伏マルウェア検出ゼロ、万一被害が出ても新品PCを無償提供する」と電撃リリースした！ これで世間のパニックは完全に食い止めたぞ！',
           telop: '【第9報リリース: 潜伏マルウェア検出ゼロ＆新品PC無償保証】',
@@ -1495,6 +1506,7 @@ window.SCENARIO_DATA = {
         },
         {
           speaker: 'aria',
+        emotion: 'alert',
           sprite: 'aria',
           text: 'マスター！！ 敵が「被害者 第1号」を公開するために自前のアジトでデータを復号・加工した瞬間、あのダミーLogin Dataに仕込んだ【逆探知用カナリアトークン】が発火しました！！ DNS/HTTP逆探知コールバックが着弾しました！！',
           sfx: 'beacon',
@@ -1627,6 +1639,7 @@ window.SCENARIO_DATA = {
                 },
                 {
                   speaker: 'aria',
+        emotion: 'alert',
                   sprite: 'aria',
                   text: 'いいえマスター！ そこは [SOCKS5 Bridge] とある通り、2段目の踏み台プロキシです！ 実際にSQLite復号フックを発火させた実行元は別にあります！',
                 },
@@ -1753,6 +1766,7 @@ window.SCENARIO_DATA = {
               },
               {
                 speaker: 'aria',
+        emotion: 'alert',
                 sprite: 'aria',
                 illustration: 'assets/evidence/c2_origin.png',
                 text: '攻撃者が正午に第1号を晒すためデータを解凍した瞬間、カナリア逆探知ビーコンが発火！ 真のC2サーバーIPアドレス【91.240.118.174】および、リークサイトと全盗難データ保管庫をピンポイントで捕捉しました！！',
@@ -1791,11 +1805,13 @@ window.SCENARIO_DATA = {
       },
       {
         speaker: 'takamiya',
+        emotion: 'serious',
         sprite: 'takamiya',
         text: '……終わったのか。身代金を1円も払わず、自宅PCの破壊も防ぎ、個人情報の拡散も完全に食い止めたんだな。',
       },
       {
         speaker: 'kuroda',
+        emotion: 'sharp',
         sprite: 'kuroda',
         text: 'うむ。政府は『手の内を明かさない』原則に基づき、今回の能動的サイバー防御の発動を公表することはない。だが君たちが守ったのは、26,739人の日常と、この国の電脳空間の尊厳だ。',
       },

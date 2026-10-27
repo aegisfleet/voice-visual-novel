@@ -21,10 +21,16 @@ window.CHARACTER_DATA = {
     ttsModel: 'Puck',
     ttsRate: 1.05,
     ttsPitch: 1.0,
-    sprite: 'assets/characters/kei.png', // 主人公（透過立ち絵アセット配備済み）
+    sprite: 'assets/characters/kei.png',
     sheet: 'assets/characters/sheets/sheet_kei.jpg',
     profile:
-      '主人公。金融取引プロトコルとリバースエンジニアリングの達人。黒髪スクエア眼鏡、ダークスレートジャケット。',
+      '主人公。金融取引プロトコルとリバースエンジニアリングの達人。黒髪スクエア眼鏡、ダークスレートのミリタリーテックジャケットと黒タートルネック。',
+    sprites: {
+      normal: 'assets/characters/kei.png',
+    },
+    spritesList: [
+      { emotion: 'normal', label: '通常・沈着', src: 'assets/characters/kei.png' },
+    ],
   },
   aria: {
     id: 'aria',
@@ -38,7 +44,15 @@ window.CHARACTER_DATA = {
     sprite: 'assets/characters/aria.png',
     sheet: 'assets/characters/sheets/sheet_aria.jpg',
     profile:
-      '自律型電脳鑑識＆防衛AI。発光するアクアブルーツインテール、サイバーバイザー、未来型スーツを纏う少女型ホログラム。',
+      '自律型電脳鑑識＆防衛AI。発光するアクアブルーツインテール、サイバーバイザー、未来型サイバースーツを纏う。',
+    sprites: {
+      normal: 'assets/characters/aria_normal.png',
+      alert: 'assets/characters/aria_alert.png',
+    },
+    spritesList: [
+      { emotion: 'normal', label: '通常・解析', src: 'assets/characters/aria_normal.png' },
+      { emotion: 'alert', label: '警戒・警告', src: 'assets/characters/aria_alert.png' },
+    ],
   },
   kuroda: {
     id: 'kuroda',
@@ -52,7 +66,15 @@ window.CHARACTER_DATA = {
     sprite: 'assets/characters/kuroda.png',
     sheet: 'assets/characters/sheets/sheet_kuroda.jpg',
     profile:
-      '国家サイバー統括室の最高責任者。白髪混じりのオールバックに重厚なスーツ。能動的サイバー防御第1号の法理突破を決断する。',
+      '国家サイバー統括室の最高責任者。白髪混じりのオールバックにダークチャコールスーツとゴールドピン。能動的サイバー防御第1号の法理突破を決断する。',
+    sprites: {
+      normal: 'assets/characters/kuroda_normal.png',
+      sharp: 'assets/characters/kuroda_sharp.png',
+    },
+    spritesList: [
+      { emotion: 'normal', label: '通常・威厳', src: 'assets/characters/kuroda_normal.png' },
+      { emotion: 'sharp', label: '鋭視・決断', src: 'assets/characters/kuroda_sharp.png' },
+    ],
   },
   mio: {
     id: 'mio',
@@ -66,7 +88,15 @@ window.CHARACTER_DATA = {
     sprite: 'assets/characters/mio.png',
     sheet: 'assets/characters/sheets/sheet_mio.jpg',
     profile:
-      '国家サイバー統括室の若き天才通信分析官。ラベンダーショートボブに丸眼鏡、首掛けヘッドセットとゆったりカーディガン。',
+      '国家サイバー統括室の若き天才通信分析官。ラベンダーパープルのボブカットに丸眼鏡、首掛けヘッドホンとオーバーサイズカーディガン。',
+    sprites: {
+      normal: 'assets/characters/mio_normal.png',
+      focused: 'assets/characters/mio_focused.png',
+    },
+    spritesList: [
+      { emotion: 'normal', label: '通常・微笑', src: 'assets/characters/mio_normal.png' },
+      { emotion: 'focused', label: '思案・解析', src: 'assets/characters/mio_focused.png' },
+    ],
   },
   takamiya: {
     id: 'takamiya',
@@ -80,6 +110,18 @@ window.CHARACTER_DATA = {
     sprite: 'assets/characters/takamiya.png',
     sheet: 'assets/characters/sheets/sheet_takamiya.jpg',
     profile:
-      'クラウドVPS侵害の最前線で闘うCSIRT現場リーダー。ケイの無二の親友。アッシュブラウン髪にネイビーのタクティカルベスト。',
+      'クラウドVPS侵害の最前線で闘うCSIRT現場リーダー。ケイの無二の親友。アッシュブラウン髪にネイビーのタクティカルベスト、腕まくり白シャツ。',
+    sprites: {
+      normal: 'assets/characters/takamiya_normal.png',
+      panic: 'assets/characters/takamiya_panic.png',
+      serious: 'assets/characters/takamiya_serious.png',
+      smile: 'assets/characters/takamiya_smile.png',
+    },
+    spritesList: [
+      { emotion: 'normal', label: '通常・笑顔', src: 'assets/characters/takamiya_normal.png' },
+      { emotion: 'panic', label: '焦燥・混乱', src: 'assets/characters/takamiya_panic.png' },
+      { emotion: 'serious', label: '真剣・決意', src: 'assets/characters/takamiya_serious.png' },
+      { emotion: 'smile', label: '安堵・信頼', src: 'assets/characters/takamiya_smile.png' },
+    ],
   },
 };

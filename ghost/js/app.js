@@ -569,7 +569,10 @@ class NovelApp {
     this.state.saveSessionProgress();
 
     this.updateSpeaker(item.speaker);
-    this.updateCharacterSprite(item.sprite || (item.speaker !== 'narrator' ? item.speaker : null));
+    this.updateCharacterSprite(
+      item.sprite || (item.speaker !== 'narrator' ? item.speaker : null),
+      item.emotion || 'normal',
+    );
     this.handleLineIllustration(item.illustration);
     this.applyDialogueDirectives(item);
     this.startTyping(item.text, item.speaker);
@@ -761,27 +764,46 @@ class NovelApp {
     }
   }
 
-  updateCharacterSprite(spriteId) {
+  updateCharacterSprite(spriteId, emotion = 'normal') {
     if (!this.dom.characterSpriteBox) return;
     if (!spriteId || spriteId === 'narrator' || spriteId === 'kei') {
       this.currentSpriteId = null;
+      this.currentEmotion = null;
       this.dom.characterSpriteBox.innerHTML = '';
       return;
     }
     const char = this.characters[spriteId];
-    if (!char?.sprite) return;
+    if (!char) return;
 
-    // 同じキャラクターが続けて喋る場合はDOMを再生成せず、軽い発話バウンスのみ行う
-    if (this.currentSpriteId === spriteId && this.dom.characterSpriteBox.querySelector('img')) {
-      const img = this.dom.characterSpriteBox.querySelector('img');
-      img.classList.remove('sprite-talk-bounce');
-      void img.offsetWidth;
-      img.classList.add('sprite-talk-bounce');
+    const targetSrc =
+      (char.sprites && char.sprites[emotion]) ||
+      (char.sprites && char.sprites.normal) ||
+      char.sprite;
+
+    if (!targetSrc) return;
+
+    const currentImg = this.dom.characterSpriteBox.querySelector('img');
+    const isSameChar = this.currentSpriteId === spriteId;
+    const isSameSrc = currentImg && currentImg.getAttribute('src')?.includes(targetSrc);
+
+    if (isSameChar && isSameSrc) {
+      currentImg.classList.remove('sprite-talk-bounce');
+      void currentImg.offsetWidth;
+      currentImg.classList.add('sprite-talk-bounce');
       return;
     }
 
     this.currentSpriteId = spriteId;
-    this.dom.characterSpriteBox.innerHTML = `<img src="${char.sprite}" alt="${char.name}" class="sprite-enter">`;
+    this.currentEmotion = emotion;
+
+    if (isSameChar && currentImg) {
+      currentImg.src = targetSrc;
+      currentImg.classList.remove('sprite-talk-bounce');
+      void currentImg.offsetWidth;
+      currentImg.classList.add('sprite-talk-bounce');
+    } else {
+      this.dom.characterSpriteBox.innerHTML = `<img src="${targetSrc}" alt="${char.name}" class="sprite-enter">`;
+    }
   }
 
   handleLineIllustration(imgSrc) {
@@ -1545,6 +1567,27 @@ class NovelApp {
     `;
 
     chars.forEach((c) => {
+      let spritesHtml = '';
+      if (c.spritesList && c.spritesList.length > 0) {
+        spritesHtml = `
+          <div class="sheet-sprites-section">
+            <div class="sheet-sprites-title">🎭 表情差分アセット</div>
+            <div class="sheet-sprites-grid">
+              ${c.spritesList
+                .map(
+                  (s) => `
+                <a href="${s.src}" target="_blank" rel="noopener" class="sheet-sprite-card" title="${c.name} [${s.label}] 原寸表示">
+                  <img src="${s.src}" alt="${s.label}" class="sheet-sprite-thumb" loading="lazy">
+                  <span class="sheet-sprite-label">${s.label}</span>
+                </a>
+              `,
+                )
+                .join('')}
+            </div>
+          </div>
+        `;
+      }
+
       html += `
         <div class="gallery-card character-sheet-card">
           <div class="sheet-card-header">
@@ -1557,6 +1600,7 @@ class NovelApp {
             <span class="sheet-zoom-hint">🔍 クリックで原寸拡大</span>
           </a>
           <p class="gallery-text sheet-desc">${c.profile || ''}</p>
+          ${spritesHtml}
         </div>
       `;
     });
