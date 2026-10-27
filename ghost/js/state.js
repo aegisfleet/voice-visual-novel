@@ -34,6 +34,9 @@ class GameState {
     this.voiceEnabled = true;
     this.seEnabled = true;
     this.bgmEnabled = true;
+    this.voiceVolume = 1.0;
+    this.seVolume = 0.7;
+    this.bgmVolume = 0.35;
   }
 
   // 防衛率の減算（ペナルティ適用）
@@ -151,6 +154,15 @@ class GameState {
       if (typeof parsed.voiceEnabled === 'boolean') this.voiceEnabled = parsed.voiceEnabled;
       if (typeof parsed.seEnabled === 'boolean') this.seEnabled = parsed.seEnabled;
       if (typeof parsed.bgmEnabled === 'boolean') this.bgmEnabled = parsed.bgmEnabled;
+      if (typeof parsed.voiceVolume === 'number') {
+        this.voiceVolume = Math.max(0, Math.min(1, parsed.voiceVolume));
+      }
+      if (typeof parsed.seVolume === 'number') {
+        this.seVolume = Math.max(0, Math.min(1, parsed.seVolume));
+      }
+      if (typeof parsed.bgmVolume === 'number') {
+        this.bgmVolume = Math.max(0, Math.min(1, parsed.bgmVolume));
+      }
     } catch (e) {
       console.warn('Failed to load save data:', e);
       this.setDefaultPersistentFlags();
@@ -172,6 +184,9 @@ class GameState {
         voiceEnabled: this.voiceEnabled,
         seEnabled: this.seEnabled,
         bgmEnabled: this.bgmEnabled,
+        voiceVolume: this.voiceVolume,
+        seVolume: this.seVolume,
+        bgmVolume: this.bgmVolume,
         updatedAt: Date.now(),
       };
       localStorage.setItem(this.storageKey, JSON.stringify(data));

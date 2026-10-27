@@ -6,6 +6,8 @@ class AudioManager {
     this.voiceEnabled = true;
     this.seEnabled = true;
     this.bgmEnabled = true;
+    this.voiceVolume = 1.0;
+    this.seVolume = 0.7;
     this.bgmVolume = 0.35;
     this.currentBgmMode = 'title'; // title | investigate | crisis | truth
     this.currentBgmTrack = null;
@@ -371,6 +373,24 @@ class AudioManager {
     }
   }
 
+  setSeVolume(volume) {
+    this.seVolume = Math.max(0, Math.min(1, volume));
+    if (this.seMasterGain?.gain && this.ctx) {
+      try {
+        this.seMasterGain.gain.setValueAtTime(this.seVolume, this.ctx.currentTime);
+      } catch (_e) {
+        this.seMasterGain.gain.value = this.seVolume;
+      }
+    }
+  }
+
+  setVoiceVolume(volume) {
+    this.voiceVolume = Math.max(0, Math.min(1, volume));
+    if (this.voiceAudio) {
+      this.voiceAudio.volume = this.voiceVolume;
+    }
+  }
+
   cleanSpeechText(text) {
     if (!text) return '';
     return text
@@ -387,7 +407,7 @@ class AudioManager {
     }
     utterance.rate = charData?.ttsRate || 1.0;
     utterance.pitch = charData?.ttsPitch || 1.0;
-    utterance.volume = 1.0;
+    utterance.volume = this.voiceVolume;
     utterance.onend = () => {
       if (onEndCallback) onEndCallback();
     };
@@ -447,7 +467,7 @@ class AudioManager {
     if (trackUrl) {
       try {
         const audio = new Audio(trackUrl);
-        audio.volume = 0.7;
+        audio.volume = Math.max(0, Math.min(1, this.seVolume * 0.7));
         const playPromise = audio.play();
         if (playPromise !== undefined) {
           playPromise.catch((_err) => {

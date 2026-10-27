@@ -54,6 +54,7 @@ class NovelApp {
 
     this.bindDomElements();
     this.initEventListeners();
+    this.applyInitialAudioSettings();
     this.checkSavedSession();
   }
 
@@ -74,6 +75,7 @@ class NovelApp {
       btnToggleVoice: get('btn-toggle-voice'),
       btnToggleSe: get('btn-toggle-se'),
       btnToggleBgm: get('btn-toggle-bgm'),
+      btnHudSettings: get('btn-hud-settings'),
       btnHudReturnTitle: get('btn-hud-return-title'),
 
       // タイトル画面
@@ -82,6 +84,7 @@ class NovelApp {
       btnContinueGame: get('btn-continue-game'),
       btnOpenNovel: get('btn-open-novel'),
       btnOpenGallery: get('btn-open-gallery'),
+      btnTitleSettings: get('btn-title-settings'),
       btnResetSave: get('btn-reset-save'),
       titleLoopInfo: get('title-loop-info'),
       titleClearBadge: get('title-clear-badge'),
@@ -166,6 +169,26 @@ class NovelApp {
       modalGallery: get('modal-gallery'),
       modalGalleryBody: get('modal-gallery-body'),
       btnCloseGallery: get('btn-close-gallery'),
+
+      // 音響設定モーダル
+      modalSettings: get('modal-settings'),
+      btnCloseSettings: get('btn-close-settings'),
+      btnConfirmSettings: get('btn-confirm-settings'),
+      btnResetAudio: get('btn-reset-audio'),
+      sliderBgmVolume: get('slider-bgm-volume'),
+      sliderSeVolume: get('slider-se-volume'),
+      sliderVoiceVolume: get('slider-voice-volume'),
+      valBgmVolume: get('val-bgm-volume'),
+      valSeVolume: get('val-se-volume'),
+      valVoiceVolume: get('val-voice-volume'),
+      btnSettingsToggleBgm: get('btn-settings-toggle-bgm'),
+      btnSettingsToggleSe: get('btn-settings-toggle-se'),
+      btnSettingsToggleVoice: get('btn-settings-toggle-voice'),
+      settingsBgmStatus: get('settings-bgm-status'),
+      settingsSeStatus: get('settings-se-status'),
+      settingsVoiceStatus: get('settings-voice-status'),
+      btnTestSe: get('btn-test-se'),
+      btnTestVoice: get('btn-test-voice'),
     };
   }
 
@@ -283,20 +306,84 @@ class NovelApp {
       this.closeModal(this.dom.modalGallery),
     );
 
+    this.dom.btnHudSettings?.addEventListener('click', () => this.openSettingsModal());
+    this.dom.btnTitleSettings?.addEventListener('click', () => this.openSettingsModal());
+    this.dom.btnCloseSettings?.addEventListener('click', () => this.closeSettingsModal());
+    this.dom.btnConfirmSettings?.addEventListener('click', () => this.closeSettingsModal());
+
     // モーダルの背景（backdrop）タップで閉じる
-    [this.dom.modalLog, this.dom.modalEvidence, this.dom.modalNovel, this.dom.modalGallery].forEach(
-      (m) => {
-        m?.addEventListener('click', (e) => {
-          if (e.target === m) this.closeModal(m);
-        });
-      },
-    );
+    [
+      this.dom.modalLog,
+      this.dom.modalEvidence,
+      this.dom.modalNovel,
+      this.dom.modalGallery,
+      this.dom.modalSettings,
+    ].forEach((m) => {
+      m?.addEventListener('click', (e) => {
+        if (e.target === m) this.closeModal(m);
+      });
+    });
   }
 
   initAudioEventListeners() {
     this.dom.btnToggleVoice?.addEventListener('click', () => this.toggleVoice());
     this.dom.btnToggleSe?.addEventListener('click', () => this.toggleSe());
     this.dom.btnToggleBgm?.addEventListener('click', () => this.toggleBgm());
+
+    this.initVolumeSliderListeners();
+    this.initSettingsControlListeners();
+  }
+
+  initVolumeSliderListeners() {
+    this.dom.sliderBgmVolume?.addEventListener('input', (e) => {
+      const val = Number.parseInt(e.target.value, 10) / 100;
+      this.audio.setBgmVolume(val);
+      this.state.bgmVolume = this.audio.bgmVolume;
+      if (this.dom.valBgmVolume) {
+        this.dom.valBgmVolume.textContent = `${Math.round(val * 100)}%`;
+      }
+      this.state.savePersistentState();
+    });
+
+    this.dom.sliderSeVolume?.addEventListener('input', (e) => {
+      const val = Number.parseInt(e.target.value, 10) / 100;
+      this.audio.setSeVolume(val);
+      this.state.seVolume = this.audio.seVolume;
+      if (this.dom.valSeVolume) {
+        this.dom.valSeVolume.textContent = `${Math.round(val * 100)}%`;
+      }
+      this.state.savePersistentState();
+    });
+    this.dom.sliderSeVolume?.addEventListener('change', () => {
+      this.audio.playSe('click');
+    });
+
+    this.dom.sliderVoiceVolume?.addEventListener('input', (e) => {
+      const val = Number.parseInt(e.target.value, 10) / 100;
+      this.audio.setVoiceVolume(val);
+      this.state.voiceVolume = this.audio.voiceVolume;
+      if (this.dom.valVoiceVolume) {
+        this.dom.valVoiceVolume.textContent = `${Math.round(val * 100)}%`;
+      }
+      this.state.savePersistentState();
+    });
+  }
+
+  initSettingsControlListeners() {
+    this.dom.btnSettingsToggleBgm?.addEventListener('click', () => this.toggleBgm());
+    this.dom.btnSettingsToggleSe?.addEventListener('click', () => this.toggleSe());
+    this.dom.btnSettingsToggleVoice?.addEventListener('click', () => this.toggleVoice());
+
+    this.dom.btnTestSe?.addEventListener('click', () => {
+      this.audio.playSe('click');
+    });
+    this.dom.btnTestVoice?.addEventListener('click', () => {
+      this.audio.speak('音響出力テスト完了。感度良好です。');
+    });
+
+    this.dom.btnResetAudio?.addEventListener('click', () => {
+      this.resetAudioSettings();
+    });
   }
 
   setupKeyboardShortcuts() {
@@ -327,6 +414,10 @@ class NovelApp {
         case 'e':
         case 'E':
           this.openEvidenceModal();
+          break;
+        case 'c':
+        case 'C':
+          this.toggleSettingsModal();
           break;
         case 'Escape':
           this.closeAllModals();
@@ -1697,22 +1788,119 @@ class NovelApp {
     this.closeModal(this.dom.modalEvidence);
     this.closeModal(this.dom.modalNovel);
     this.closeModal(this.dom.modalGallery);
+    this.closeModal(this.dom.modalSettings);
     this.hideIllustration();
   }
 
-  // 9. オーディオトグル
+  // 9. オーディオ設定＆トグル
+  applyInitialAudioSettings() {
+    this.audio.voiceEnabled = this.state.voiceEnabled;
+    this.audio.seEnabled = this.state.seEnabled;
+    this.audio.bgmEnabled = this.state.bgmEnabled;
+    this.audio.setVoiceVolume(this.state.voiceVolume ?? 1.0);
+    this.audio.setSeVolume(this.state.seVolume ?? 0.7);
+    this.audio.setBgmVolume(this.state.bgmVolume ?? 0.35);
+    this.syncAudioSettingsUI();
+  }
+
+  openSettingsModal() {
+    this.syncAudioSettingsUI();
+    this.openModal(this.dom.modalSettings);
+    this.audio.playSe('click');
+  }
+
+  closeSettingsModal() {
+    this.closeModal(this.dom.modalSettings);
+    this.audio.playSe('click');
+  }
+
+  toggleSettingsModal() {
+    if (this.dom.modalSettings?.classList.contains('hidden')) {
+      this.openSettingsModal();
+    } else {
+      this.closeSettingsModal();
+    }
+  }
+
+  syncSingleAudioSlider(sliderEl, badgeEl, volume) {
+    const percent = Math.round((volume ?? 0) * 100);
+    if (sliderEl) sliderEl.value = percent;
+    if (badgeEl) badgeEl.textContent = `${percent}%`;
+  }
+
+  syncSingleMuteBtn(btnEl, statusEl, enabled) {
+    if (!btnEl) return;
+    btnEl.classList.toggle('muted', !enabled);
+    btnEl.title = enabled ? 'クリックしてミュート' : 'クリックして解除';
+    if (statusEl) {
+      statusEl.textContent = enabled ? 'ON' : 'OFF';
+    }
+  }
+
+  syncAudioSettingsUI() {
+    this.syncSingleAudioSlider(
+      this.dom.sliderBgmVolume,
+      this.dom.valBgmVolume,
+      this.audio.bgmVolume,
+    );
+    this.syncSingleAudioSlider(this.dom.sliderSeVolume, this.dom.valSeVolume, this.audio.seVolume);
+    this.syncSingleAudioSlider(
+      this.dom.sliderVoiceVolume,
+      this.dom.valVoiceVolume,
+      this.audio.voiceVolume,
+    );
+
+    this.syncSingleMuteBtn(
+      this.dom.btnSettingsToggleBgm,
+      this.dom.settingsBgmStatus,
+      this.audio.bgmEnabled,
+    );
+    this.syncSingleMuteBtn(
+      this.dom.btnSettingsToggleSe,
+      this.dom.settingsSeStatus,
+      this.audio.seEnabled,
+    );
+    this.syncSingleMuteBtn(
+      this.dom.btnSettingsToggleVoice,
+      this.dom.settingsVoiceStatus,
+      this.audio.voiceEnabled,
+    );
+
+    this.updateAudioButtons();
+  }
+
+  resetAudioSettings() {
+    this.audio.setBgmVolume(0.35);
+    this.audio.setSeVolume(0.7);
+    this.audio.setVoiceVolume(1.0);
+    this.audio.bgmEnabled = true;
+    this.audio.seEnabled = true;
+    this.audio.voiceEnabled = true;
+
+    this.state.bgmVolume = 0.35;
+    this.state.seVolume = 0.7;
+    this.state.voiceVolume = 1.0;
+    this.state.bgmEnabled = true;
+    this.state.seEnabled = true;
+    this.state.voiceEnabled = true;
+    this.state.savePersistentState();
+
+    this.syncAudioSettingsUI();
+    this.audio.playSe('correct');
+  }
+
   toggleVoice() {
     this.audio.voiceEnabled = !this.audio.voiceEnabled;
     this.state.voiceEnabled = this.audio.voiceEnabled;
     this.state.savePersistentState();
-    this.updateAudioButtons();
+    this.syncAudioSettingsUI();
   }
 
   toggleSe() {
     this.audio.seEnabled = !this.audio.seEnabled;
     this.state.seEnabled = this.audio.seEnabled;
     this.state.savePersistentState();
-    this.updateAudioButtons();
+    this.syncAudioSettingsUI();
   }
 
   toggleBgm() {
@@ -1726,7 +1914,7 @@ class NovelApp {
         this.dom.screenNovel?.classList.contains('active') ? 'investigate' : 'title',
       );
     }
-    this.updateAudioButtons();
+    this.syncAudioSettingsUI();
   }
 
   updateSingleAudioBtn(btn, enabled, iconOn, iconOff, labelText) {

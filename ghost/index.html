@@ -70,6 +70,9 @@
         <button type="button" id="btn-toggle-bgm" class="hud-btn hud-audio-btn active" title="BGM音楽: ON">
           <span class="hud-btn-icon">🎵</span><span class="hud-audio-label"> BGM: ON</span>
         </button>
+        <button type="button" id="btn-hud-settings" class="hud-btn" title="音量設定 [C]">
+          <span class="hud-btn-icon">⚙️</span><span class="hud-btn-label"> 設定</span>
+        </button>
         <button type="button" id="btn-hud-return-title" class="hud-btn" title="タイトル画面へ戻る">
           <span class="hud-btn-icon">🏠</span><span class="hud-btn-label"> タイトル</span>
         </button>
@@ -112,6 +115,10 @@
           <button type="button" id="btn-open-gallery" class="btn-cyber-plate" title="機密鑑識ファイル一覧を閲覧">
             <span class="btn-text">◆ FORENSIC ARCHIVE</span>
             <span class="btn-subtext">獲得した核心鑑識ファイル・証拠資料集</span>
+          </button>
+          <button type="button" id="btn-title-settings" class="btn-cyber-plate" title="音量・オーディオ環境設定">
+            <span class="btn-text">⚙️ AUDIO CONFIG</span>
+            <span class="btn-subtext">音声・SE・BGM音量バランス設定</span>
           </button>
           <button type="button" id="btn-reset-save" class="btn-subtle">
             セーブデータを初期化
@@ -307,13 +314,89 @@
         <div id="modal-gallery-body" class="modal-body gallery-body"></div>
       </div>
     </div>
+
+    <!-- モーダル：音響設定 (AUDIO CONFIG) -->
+    <div id="modal-settings" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modal-settings-title">
+      <div class="modal-card modal-card-settings">
+        <div class="modal-header">
+          <h2 id="modal-settings-title" class="modal-title">⚙️ AUDIO CONFIG / 音響設定</h2>
+          <button type="button" id="btn-close-settings" class="modal-close-btn" title="設定を閉じる">✕</button>
+        </div>
+        <div class="modal-body settings-body">
+          <p class="settings-desc">BGM（楽曲）・SE（効果音）・音声（TTS）の音量を個別に調整できます。設定値はブラウザへ自動保存されます。</p>
+
+          <!-- BGM 音量 -->
+          <div class="settings-group">
+            <div class="settings-group-header">
+              <div class="settings-group-label">
+                <span class="settings-icon">🎵</span>
+                <span class="settings-name">BGM (楽曲・背景音楽)</span>
+              </div>
+              <button type="button" id="btn-settings-toggle-bgm" class="settings-mute-btn" title="BGMのON/OFF切り替え">
+                <span id="settings-bgm-status" class="settings-status-badge">ON</span>
+              </button>
+            </div>
+            <div class="settings-slider-row">
+              <input type="range" id="slider-bgm-volume" class="cyber-slider" min="0" max="100" step="1" value="35" aria-label="BGM音量スライダー">
+              <span id="val-bgm-volume" class="settings-val-badge">35%</span>
+            </div>
+          </div>
+
+          <!-- SE 音量 -->
+          <div class="settings-group">
+            <div class="settings-group-header">
+              <div class="settings-group-label">
+                <span class="settings-icon">⚡</span>
+                <span class="settings-name">SE (効果音・サイバー演出)</span>
+              </div>
+              <button type="button" id="btn-settings-toggle-se" class="settings-mute-btn" title="SEのON/OFF切り替え">
+                <span id="settings-se-status" class="settings-status-badge">ON</span>
+              </button>
+            </div>
+            <div class="settings-slider-row">
+              <input type="range" id="slider-se-volume" class="cyber-slider" min="0" max="100" step="1" value="70" aria-label="SE音量スライダー">
+              <span id="val-se-volume" class="settings-val-badge">70%</span>
+              <button type="button" id="btn-test-se" class="btn-settings-test" title="効果音のテスト再生">試聴</button>
+            </div>
+          </div>
+
+          <!-- 音声 音量 -->
+          <div class="settings-group">
+            <div class="settings-group-header">
+              <div class="settings-group-label">
+                <span class="settings-icon">🔊</span>
+                <span class="settings-name">VOICE (セリフ音声合成)</span>
+              </div>
+              <button type="button" id="btn-settings-toggle-voice" class="settings-mute-btn" title="音声合成のON/OFF切り替え">
+                <span id="settings-voice-status" class="settings-status-badge">ON</span>
+              </button>
+            </div>
+            <div class="settings-slider-row">
+              <input type="range" id="slider-voice-volume" class="cyber-slider" min="0" max="100" step="1" value="100" aria-label="音声音量スライダー">
+              <span id="val-voice-volume" class="settings-val-badge">100%</span>
+              <button type="button" id="btn-test-voice" class="btn-settings-test" title="音声のテスト発話">試聴</button>
+            </div>
+          </div>
+
+          <!-- 操作フッター -->
+          <div class="settings-footer">
+            <button type="button" id="btn-reset-audio" class="btn-settings-reset" title="音量を標準値へ戻す">
+              ↺ 既定値に戻す
+            </button>
+            <button type="button" id="btn-confirm-settings" class="btn-settings-confirm">
+              完了
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- スクリプト読み込み -->
-  <script src="js/audio.js?v=20261027_v14"></script>
-  <script src="js/character.js?v=20261027_v14"></script>
-  <script src="js/scenario.js?v=20261027_v14"></script>
-  <script src="js/state.js?v=20261027_v14"></script>
-  <script src="js/app.js?v=20261027_v14"></script>
+  <script src="js/audio.js?v=20261027_v15"></script>
+  <script src="js/character.js?v=20261027_v15"></script>
+  <script src="js/scenario.js?v=20261027_v15"></script>
+  <script src="js/state.js?v=20261027_v15"></script>
+  <script src="js/app.js?v=20261027_v15"></script>
 </body>
 </html>
