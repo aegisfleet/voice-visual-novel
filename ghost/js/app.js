@@ -213,6 +213,23 @@ class NovelApp {
       this.stopAuto();
       this.stopSkip();
       this.stopVoicePlayback();
+      this.closeCutSequence();
+      this.hideIllustration();
+      this.dom.choiceStage?.classList.add('hidden');
+      this.dom.novelWindow?.classList.remove('choice-mode-hidden');
+
+      // 該当チャプターの選択済みフラグをリセットして選択肢を再体験できるようにする
+      const chData = this.scenario.chapters.find((c) => c.id === chapterId);
+      if (chData?.choiceSteps) {
+        chData.choiceSteps.forEach((step) => {
+          delete this.state.selectedChoices[step.id];
+        });
+      }
+      if (chapterId === 5) {
+        this.deductionStepIndex = 0;
+        this.isFinalDeductionComplete = false;
+      }
+
       this.audio.playSe('click');
       this.loadChapter(chapterId);
     }
@@ -387,7 +404,7 @@ class NovelApp {
       // エピローグ
       this.currentDialogueQueue = [...this.scenario.epilogue.dialogue];
       this.queueIndex = isResuming ? this.state.currentLineIndex : 0;
-      this.updateHudBadge('EPILOGUE', '静寂の反撃と夜明け');
+      this.updateHudBadge('EPILOGUE', '白昼の反撃と完全なる鎮火');
       this.renderCurrentLine();
     }
   }
@@ -479,7 +496,7 @@ class NovelApp {
 
     // 5. インラインカットイン
     if (item.cutin) {
-      this.showCutin(item.cutin.text, item.cutin.sub);
+      this.triggerCutin(item.cutin.text, item.cutin.sub);
     }
 
     // 6. マルチカット・アニメーションシークエンス（パラパラ漫画演出）
@@ -674,6 +691,7 @@ class NovelApp {
       this.finishTyping();
       return;
     }
+    this.closeCutSequence();
     this.stopVoicePlayback();
     this.queueIndex += 1;
     this.renderCurrentLine();
@@ -687,6 +705,10 @@ class NovelApp {
   }
 
   speakText(text, speakerId) {
+    if (!this.audio.voiceEnabled) {
+      this.dom.voiceWaveIndicator?.classList.add('hidden');
+      return;
+    }
     const char = this.characters[speakerId] || this.characters.narrator;
     this.dom.voiceWaveIndicator?.classList.remove('hidden');
     this.audio.speak(text, char, () => {
@@ -774,14 +796,18 @@ class NovelApp {
     this.stopAuto();
     this.stopSkip();
     this.stopVoicePlayback();
+    this.closeCutSequence();
+    this.hideIllustration();
 
     if (!this.dom.choiceStage) return;
+    this.dom.novelWindow?.classList.add('choice-mode-hidden');
     this.setupChoiceHeader(choiceData, type);
     this.setupChoiceLogBox(choiceData);
     this.setupChoiceRetryBanner(retryMessage);
     this.renderChoiceOptions(choiceData, type);
 
     this.dom.choiceStage.classList.remove('hidden');
+    this.dom.choiceStage.scrollTop = 0;
   }
 
   setupChoiceHeader(choiceData, type) {
@@ -839,6 +865,7 @@ class NovelApp {
 
   handleOptionSelected(choiceData, option, type = 'forensic') {
     this.dom.choiceStage?.classList.add('hidden');
+    this.dom.novelWindow?.classList.remove('choice-mode-hidden');
 
     if (option.isCorrect === false) {
       this.handleIncorrectOption(choiceData, option, type);
@@ -982,7 +1009,9 @@ class NovelApp {
     actionDiv.appendChild(submitBtn);
     this.dom.choiceOptions.appendChild(actionDiv);
 
+    this.dom.novelWindow?.classList.add('choice-mode-hidden');
     this.dom.choiceStage.classList.remove('hidden');
+    this.dom.choiceStage.scrollTop = 0;
   }
 
   handleDeductionEvidenceSelect(grid, card, evId) {
@@ -1008,22 +1037,31 @@ class NovelApp {
 
   handleDeductionSuccess(step) {
     this.dom.choiceStage?.classList.add('hidden');
-    this.triggerCutin(
-      '全証拠連結完了！ 能動的サイバー防御発動承認！',
-      '⚡ ACTIVE CYBER DEFENSE AUTHORIZED / 発動第1号要請',
-      'gold',
-    );
-    this.audio.playCutin();
+    this.dom.novelWindow?.classList.remove('choice-mode-hidden');
 
     this.deductionStepIndex += 1;
-    this.currentDialogueQueue = [...step.reaction];
-    this.queueIndex = 0;
+    const totalSteps = this.finalDeductionData.steps.length;
+    const isLastStep = this.deductionStepIndex >= totalSteps;
 
-    const isLastStep = this.deductionStepIndex >= this.finalDeductionData.steps.length;
     if (isLastStep) {
+      this.triggerCutin(
+        '全証拠連結完了！ 能動的サイバー防御発動承認！',
+        '⚡ ACTIVE CYBER DEFENSE AUTHORIZED / 発動第1号承認',
+        'gold',
+      );
       this.state.addEvidence('canary_c2_origin');
       this.isFinalDeductionComplete = true;
+    } else {
+      this.triggerCutin(
+        `証拠連結 STEP ${step.stepNumber} 立証完了！`,
+        `⚡ DEDUCTION PHASE ${step.stepNumber}/${totalSteps} CLEARED`,
+        'forensic',
+      );
     }
+    this.audio.playCutin();
+
+    this.currentDialogueQueue = [...step.reaction];
+    this.queueIndex = 0;
 
     setTimeout(() => {
       this.renderCurrentLine();
@@ -1094,14 +1132,14 @@ class NovelApp {
     }
 
     if (this.dom.endingTitle) {
-      this.dom.endingTitle.textContent = `TRUE END: 静寂の反撃と夜明け [${rankInfo.rank} RANK]`;
+      this.dom.endingTitle.textContent = `TRUE END: 白昼の反撃と完全なる鎮火 [${rankInfo.rank} RANK]`;
     }
     if (this.dom.endingSub) {
       this.dom.endingSub.textContent =
-        '能動的サイバー防御「公表なき発動第1号」達成・26,739台の救出';
+        '能動的サイバー防御「公表なき発動第1号」達成・26,739人の尊厳と資産の救出';
     }
     if (this.dom.endingDesc) {
-      this.dom.endingDesc.textContent = `${rankInfo.desc} 四重恐喝の無力化、リバースRDPの看破、そしてカナリアトークンによる真C2の特定と非公然無害化措置の完遂。26,739人の日常と資産は守り抜かれた。`;
+      this.dom.endingDesc.textContent = `${rankInfo.desc} 5,000万ドル要求の黙殺と100%直接補償による価格崩壊、潜伏ランサムのブラフ看破、そして10月27日正午の『被害者 第1号』公開と同時に発火したカナリア逆探知と非公然無害化措置の完遂。第2号以降の晒しは永久に封殺され、26,739人の日常は守り抜かれた。`;
     }
     this.dom.endingUnlockedBanner?.classList.remove('hidden');
     if (this.dom.endingUnlockedBanner) {
@@ -1245,12 +1283,19 @@ class NovelApp {
   formatMarkdown(mdText) {
     if (!mdText) return '';
     return mdText
-      .replace(/^### (.*$)/gim, '<h3>$1</h3>')
-      .replace(/^## (.*$)/gim, '<h2>$1</h2>')
-      .replace(/^# (.*$)/gim, '<h1>$1</h1>')
-      .replace(/^---$/gim, '<hr>')
-      .replace(/\n\n/g, '</p><p>')
-      .replace(/\n/g, '<br>');
+      .trim()
+      .split('\n')
+      .map((line) => {
+        const trimmed = line.trim();
+        if (!trimmed) return '';
+        if (/^### (.*$)/.test(trimmed)) return `<h3>${trimmed.replace(/^### /, '')}</h3>`;
+        if (/^## (.*$)/.test(trimmed)) return `<h2>${trimmed.replace(/^## /, '')}</h2>`;
+        if (/^# (.*$)/.test(trimmed)) return `<h1>${trimmed.replace(/^# /, '')}</h1>`;
+        if (/^---+$/.test(trimmed)) return '<hr>';
+        return `<p>${trimmed}</p>`;
+      })
+      .filter(Boolean)
+      .join('\n');
   }
 
   openModal(modalEl) {

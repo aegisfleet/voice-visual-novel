@@ -30,7 +30,9 @@ class AudioManager {
       cutin: 'assets/audio/sfx_cutin.mp3',
       evidence: 'assets/audio/sfx_evidence.mp3',
       correct: 'assets/audio/sfx_evidence_a.mp3',
+      evidence_a: 'assets/audio/sfx_evidence_a.mp3',
       victory: 'assets/audio/sfx_evidence_b.mp3',
+      evidence_b: 'assets/audio/sfx_evidence_b.mp3',
     };
 
     this.initSpeech();
@@ -349,36 +351,60 @@ class AudioManager {
     }
   }
 
-  // Web Speech API によるセリフ発話
-  speak(text, charData = null) {
-    if (!this.voiceEnabled) return;
-    if (window.gameApp?.isSkipActive) return;
+  cleanSpeechText(text) {
+    if (!text) return '';
+    return text
+      .replace(/\[.*?\]/g, '')
+      .replace(/[（(].*?[）)]/g, '')
+      .trim();
+  }
+
+  createSpeechUtterance(cleanText, charData, onEndCallback) {
+    const utterance = new SpeechSynthesisUtterance(cleanText);
+    utterance.lang = 'ja-JP';
+    if (this.selectedVoice) {
+      utterance.voice = this.selectedVoice;
+    }
+    utterance.rate = charData?.ttsRate || 1.0;
+    utterance.pitch = charData?.ttsPitch || 1.0;
+    utterance.volume = 1.0;
+    utterance.onend = () => {
+      if (onEndCallback) onEndCallback();
+    };
+    utterance.onerror = () => {
+      if (onEndCallback) onEndCallback();
+    };
+    return utterance;
+  }
+
+  // Web Speech API によるセリフ発話 (終了コールバック対応)
+  speak(text, charData = null, onEndCallback = null) {
+    const isSpeechAvailable =
+      this.voiceEnabled &&
+      !window.gameApp?.isSkipActive &&
+      typeof window !== 'undefined' &&
+      'speechSynthesis' in window;
+
+    if (!isSpeechAvailable) {
+      if (onEndCallback) onEndCallback();
+      return;
+    }
+
     this.stopVoice();
 
-    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
+    const cleanText = this.cleanSpeechText(text);
+    if (!cleanText) {
+      if (onEndCallback) onEndCallback();
+      return;
+    }
 
     try {
-      const cleanText = text
-        .replace(/\[.*?\]/g, '')
-        .replace(/[（(].*?[）)]/g, '')
-        .trim();
-      if (!cleanText) return;
-
-      const utterance = new SpeechSynthesisUtterance(cleanText);
-      utterance.lang = 'ja-JP';
-
-      if (this.selectedVoice) {
-        utterance.voice = this.selectedVoice;
-      }
-
-      utterance.rate = charData?.ttsRate || 1.0;
-      utterance.pitch = charData?.ttsPitch || 1.0;
-      utterance.volume = 1.0;
-
+      const utterance = this.createSpeechUtterance(cleanText, charData, onEndCallback);
       this.currentUtterance = utterance;
       window.speechSynthesis.speak(utterance);
     } catch (e) {
       console.warn('Speech synthesis error:', e);
+      if (onEndCallback) onEndCallback();
     }
   }
 
