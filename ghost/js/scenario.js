@@ -749,7 +749,7 @@ window.SCENARIO_DATA = {
           telop: '【WARNING: 被害者自宅PCから4,352ファイル流出確認】',
           cutSequence: {
             id: 'seq_ch3_reverse_rdp',
-            title: 'リバースRDP（\\tsclientC）自動マウントシークエンス（パラパラ漫画演出）',
+            title: 'リバースRDP（\\\\tsclient\\\\C）自動マウントシークエンス（パラパラ漫画演出）',
             description: '自宅PCからVPSに接続した瞬間、Cドライブが全自動共有される連続カット',
             intervalMs: 1600,
             cuts: [
@@ -760,7 +760,8 @@ window.SCENARIO_DATA = {
               },
               {
                 frame: 2,
-                caption: 'クラウドVPS内部に自宅PCのCドライブが \\tsclientC として自動マウント',
+                caption:
+                  'クラウドVPS内部に自宅PCのCドライブが \\\\tsclient\\\\C として自動マウント',
                 visualDesc: 'VPS側のエクスプローラーにクライアントのCドライブが出現',
               },
               {

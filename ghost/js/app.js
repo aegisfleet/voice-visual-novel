@@ -427,6 +427,12 @@ class NovelApp {
       html += `<span class="${cls}" data-chapter-id="${ch.id}" title="${ch.number} ${ch.title} (クリックで移動)">${ch.number}: ${ch.date}</span>`;
     });
     this.dom.chapterTimelineBar.innerHTML = html;
+
+    // アクティブなチャプターをタイムラインバーの中央へスムーズにスクロール
+    requestAnimationFrame(() => {
+      const activeEl = this.dom.chapterTimelineBar?.querySelector('.timeline-step.active');
+      activeEl?.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    });
   }
 
   updateEvidenceHud() {
@@ -563,23 +569,28 @@ class NovelApp {
       const placeholder = document.getElementById('sequence-frame-placeholder');
       placeholder?.classList.remove('hidden');
       if (this.dom.sequenceFrameVisualDesc) {
-        this.dom.sequenceFrameVisualDesc.textContent = `[CUT ${cut.frame}/${total}] ${cut.visualDesc || cut.caption || ''}`;
+        this.dom.sequenceFrameVisualDesc.textContent = `[CUT ${cut.frame}/${total}] ${cut.visualDesc || ''}`;
       }
     }
 
     // キャプション更新
     if (this.dom.sequenceCaption) {
-      this.dom.sequenceCaption.textContent = cut.caption || cut.visualDesc || '';
+      this.dom.sequenceCaption.textContent = cut.caption || '';
     }
 
     // 自動進行タイマー
     clearTimeout(this.cutSequenceTimer);
-    const interval = cut.durationMs || seq.intervalMs || 1800;
+    const interval = cut.durationMs || seq.intervalMs || 1600;
     if (this.currentCutIndex + 1 < total) {
       this.cutSequenceTimer = setTimeout(() => {
         this.currentCutIndex++;
         this.renderCutFrame();
       }, interval);
+    } else {
+      // 全コマ再生完了後、余韻を残して自動的にステージを閉じ、画面の圧迫を防ぐ
+      this.cutSequenceTimer = setTimeout(() => {
+        this.closeCutSequence();
+      }, 2800);
     }
   }
 
@@ -807,7 +818,8 @@ class NovelApp {
     this.renderChoiceOptions(choiceData, type);
 
     this.dom.choiceStage.classList.remove('hidden');
-    this.dom.choiceStage.scrollTop = 0;
+    const cardEl = this.dom.choiceStage.querySelector('.choice-modal-card');
+    if (cardEl) cardEl.scrollTop = 0;
   }
 
   setupChoiceHeader(choiceData, type) {
@@ -1011,7 +1023,8 @@ class NovelApp {
 
     this.dom.novelWindow?.classList.add('choice-mode-hidden');
     this.dom.choiceStage.classList.remove('hidden');
-    this.dom.choiceStage.scrollTop = 0;
+    const cardEl = this.dom.choiceStage.querySelector('.choice-modal-card');
+    if (cardEl) cardEl.scrollTop = 0;
   }
 
   handleDeductionEvidenceSelect(grid, card, evId) {
@@ -1232,7 +1245,13 @@ class NovelApp {
         </div>
       `;
       if (isUnlocked) {
-        card.addEventListener('click', () => this.showEvidenceDetail(ev));
+        card.addEventListener('click', () => {
+          this.dom.modalEvidenceList?.querySelectorAll('.evidence-card').forEach((c) => {
+            c.classList.remove('selected');
+          });
+          card.classList.add('selected');
+          this.showEvidenceDetail(ev);
+        });
       }
       this.dom.modalEvidenceList.appendChild(card);
     });
@@ -1245,6 +1264,10 @@ class NovelApp {
     this.dom.detailEvImg.src = ev.image;
     this.dom.detailEvDesc.textContent = `${ev.summary}\n\n【詳細フォレンジック鑑識】\n${ev.detail}`;
     this.dom.modalEvidenceDetail.classList.remove('hidden');
+    // スマホでも詳細パネルが開いたことが即座に分かるよう自動スクロール
+    requestAnimationFrame(() => {
+      this.dom.modalEvidenceDetail?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    });
   }
 
   openNovelModal() {
@@ -1343,10 +1366,21 @@ class NovelApp {
     this.updateAudioButtons();
   }
 
+  updateSingleAudioBtn(btn, enabled, iconOn, iconOff, labelText) {
+    if (!btn) return;
+    btn.classList.toggle('active', enabled);
+    btn.style.opacity = enabled ? '1' : '0.55';
+    btn.title = `${labelText}: ${enabled ? 'ON' : 'OFF'}`;
+    const iconEl = btn.querySelector('.hud-btn-icon');
+    const labelEl = btn.querySelector('.hud-audio-label');
+    if (iconEl) iconEl.textContent = enabled ? iconOn : iconOff;
+    if (labelEl) labelEl.textContent = ` ${labelText}: ${enabled ? 'ON' : 'OFF'}`;
+  }
+
   updateAudioButtons() {
-    this.dom.btnToggleVoice?.classList.toggle('active', this.audio.voiceEnabled);
-    this.dom.btnToggleSe?.classList.toggle('active', this.audio.seEnabled);
-    this.dom.btnToggleBgm?.classList.toggle('active', this.audio.bgmEnabled);
+    this.updateSingleAudioBtn(this.dom.btnToggleVoice, this.audio.voiceEnabled, '🔊', '🔇', '音声');
+    this.updateSingleAudioBtn(this.dom.btnToggleSe, this.audio.seEnabled, '⚡', '🔕', 'SE');
+    this.updateSingleAudioBtn(this.dom.btnToggleBgm, this.audio.bgmEnabled, '🎵', '🔇', 'BGM');
   }
 }
 
