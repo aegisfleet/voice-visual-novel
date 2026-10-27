@@ -26,13 +26,8 @@ class AudioManager {
     this.wasBgmPlayingBeforeHide = false;
     this.playSessionId = 0;
 
-    this.seTracks = {
-      cutin: 'assets/audio/sfx_cutin.mp3',
-      evidence: 'assets/audio/sfx_evidence.mp3',
-      correct: 'assets/audio/sfx_evidence_a.mp3',
-      evidence_a: 'assets/audio/sfx_evidence_a.mp3',
-      victory: 'assets/audio/sfx_evidence_b.mp3',
-    };
+    // GHOST PROTOCOL 専用サイバーSE: box流用を廃止し、超高音質・ゼロ遅延のサイバーシンセエンジンへ完全移行
+    this.seTracks = {};
 
     this.initSpeech();
     this.setupLifecycleListeners();
@@ -102,7 +97,33 @@ class AudioManager {
     const AudioCtx = window.AudioContext || window.webkitAudioContext;
     if (AudioCtx) {
       this.ctx = new AudioCtx();
+      this.setupMasterNodes();
     }
+  }
+
+  setupMasterNodes() {
+    if (!this.ctx) return;
+    try {
+      this.seCompressor = this.ctx.createDynamicsCompressor();
+      this.seCompressor.threshold.setValueAtTime(-12, this.ctx.currentTime);
+      this.seCompressor.knee.setValueAtTime(8, this.ctx.currentTime);
+      this.seCompressor.ratio.setValueAtTime(12, this.ctx.currentTime);
+      this.seCompressor.attack.setValueAtTime(0.003, this.ctx.currentTime);
+      this.seCompressor.release.setValueAtTime(0.15, this.ctx.currentTime);
+
+      this.seMasterGain = this.ctx.createGain();
+      this.seMasterGain.gain.setValueAtTime(this.seVolume, this.ctx.currentTime);
+
+      this.seCompressor.connect(this.seMasterGain);
+      this.seMasterGain.connect(this.ctx.destination);
+    } catch (_e) {
+      this.seCompressor = null;
+      this.seMasterGain = null;
+    }
+  }
+
+  getSeDestination() {
+    return this.seCompressor || this.ctx.destination;
   }
 
   unlockAudio() {
@@ -503,208 +524,153 @@ class AudioManager {
     }
   }
 
-  synthesizeAlert() {
-    const now = this.ctx.currentTime;
-    [0, 0.12].forEach((offset) => {
-      const osc = this.ctx.createOscillator();
-      const gain = this.ctx.createGain();
-      const t = now + offset;
-      osc.type = 'sawtooth';
-      osc.frequency.setValueAtTime(880, t);
-      osc.frequency.setValueAtTime(1760, t + 0.05);
-      gain.gain.setValueAtTime(0.2, t);
-      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.1);
-      osc.connect(gain);
-      gain.connect(this.ctx.destination);
-      osc.start(t);
-      osc.stop(t + 0.1);
-    });
-  }
+  // -------------------------------------------------------------
+  // サイバーサスペンス専用 Web Audio 合成エンジン（GHOST PROTOCOL 音響設計）
+  // -------------------------------------------------------------
 
-  synthesizeGlitch() {
-    const now = this.ctx.currentTime;
+  playTone(options) {
+    if (!this.ctx || !this.seEnabled) return;
+    const {
+      type = 'sine',
+      freq = 440,
+      targetFreq = null,
+      rampTime = 0.1,
+      gain = 0.15,
+      decay = 0.15,
+      delay = 0,
+    } = options;
+
+    const t = this.ctx.currentTime + delay;
     const osc = this.ctx.createOscillator();
-    const gain = this.ctx.createGain();
-    osc.type = 'square';
-    osc.frequency.setValueAtTime(150, now);
-    osc.frequency.setValueAtTime(1200, now + 0.03);
-    osc.frequency.setValueAtTime(320, now + 0.06);
-    osc.frequency.setValueAtTime(90, now + 0.09);
-    gain.gain.setValueAtTime(0.25, now);
-    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.14);
-    osc.connect(gain);
-    gain.connect(this.ctx.destination);
-    osc.start(now);
-    osc.stop(now + 0.14);
+    const g = this.ctx.createGain();
+
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, t);
+    if (targetFreq !== null) {
+      osc.frequency.exponentialRampToValueAtTime(Math.max(20, targetFreq), t + rampTime);
+    }
+
+    g.gain.setValueAtTime(gain, t);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + decay);
+
+    osc.connect(g);
+    g.connect(this.getSeDestination());
+
+    osc.start(t);
+    osc.stop(t + decay);
   }
 
-  synthesizeImpact() {
-    const now = this.ctx.currentTime;
-    const osc = this.ctx.createOscillator();
-    const gain = this.ctx.createGain();
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(160, now);
-    osc.frequency.exponentialRampToValueAtTime(35, now + 0.35);
-    gain.gain.setValueAtTime(0.4, now);
-    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
-    osc.connect(gain);
-    gain.connect(this.ctx.destination);
-    osc.start(now);
-    osc.stop(now + 0.35);
-  }
-
-  synthesizeRing() {
-    const now = this.ctx.currentTime;
-    [400, 450].forEach((freq) => {
-      const osc = this.ctx.createOscillator();
-      const gain = this.ctx.createGain();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(freq, now);
-      gain.gain.setValueAtTime(0.12, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
-      osc.connect(gain);
-      gain.connect(this.ctx.destination);
-      osc.start(now);
-      osc.stop(now + 0.3);
-    });
-  }
-
-  synthesizeBeacon() {
-    const now = this.ctx.currentTime;
-    const osc = this.ctx.createOscillator();
-    const gain = this.ctx.createGain();
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(2400, now);
-    osc.frequency.exponentialRampToValueAtTime(1200, now + 0.25);
-    gain.gain.setValueAtTime(0.2, now);
-    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
-    osc.connect(gain);
-    gain.connect(this.ctx.destination);
-    osc.start(now);
-    osc.stop(now + 0.25);
-  }
-
+  // UIタップ音: 耳に刺さらない超短尺サイバークリック（12ms）
   synthesizeClick() {
-    const osc = this.ctx.createOscillator();
-    const gain = this.ctx.createGain();
-    const now = this.ctx.currentTime;
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(800, now);
-    osc.frequency.exponentialRampToValueAtTime(1200, now + 0.04);
-    gain.gain.setValueAtTime(0.12, now);
-    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
-    osc.connect(gain);
-    gain.connect(this.ctx.destination);
-    osc.start(now);
-    osc.stop(now + 0.04);
+    this.playTone({ type: 'sine', freq: 1400, targetFreq: 700, rampTime: 0.012, gain: 0.08, decay: 0.015 });
+    this.playTone({ type: 'sine', freq: 2800, gain: 0.03, decay: 0.005 });
   }
 
+  // コマ送り・スライド音: ソフトな電子スワイプ
+  synthesizeFrameStep() {
+    this.playTone({ type: 'triangle', freq: 450, targetFreq: 180, rampTime: 0.04, gain: 0.1, decay: 0.05 });
+    this.playTone({ type: 'sine', freq: 900, targetFreq: 400, rampTime: 0.03, gain: 0.04, decay: 0.04 });
+  }
+
+  // 文字送り音: ターミナルの心地よい微小パルス
+  synthesizeTypeBlip(pitch = 1.0) {
+    const baseFreq = 2000 * pitch;
+    this.playTone({ type: 'sine', freq: baseFreq, gain: 0.02, decay: 0.014 });
+  }
+
+  // 緊急アラート: AD侵入・RPC全面異常の緊迫パルス（映画の軍事サイバー警報）
+  synthesizeAlert() {
+    [0, 0.11].forEach((delay) => {
+      this.playTone({ type: 'sawtooth', freq: 980, targetFreq: 1960, rampTime: 0.06, gain: 0.12, decay: 0.09, delay });
+      this.playTone({ type: 'sine', freq: 1960, gain: 0.08, decay: 0.09, delay });
+    });
+  }
+
+  // 通信妨害・グリッチ: 歯切れのよいスタイリッシュなスタッター
+  synthesizeGlitch() {
+    [
+      { freq: 120, delay: 0.0 },
+      { freq: 740, delay: 0.03 },
+      { freq: 310, delay: 0.06 },
+    ].forEach((p) => {
+      this.playTone({ type: 'square', freq: p.freq, gain: 0.09, decay: 0.025, delay: p.delay });
+    });
+  }
+
+  // 画面激震・急展開: 深いサブベース・シネマティックブーム
+  synthesizeImpact() {
+    this.playTone({ type: 'sine', freq: 110, targetFreq: 30, rampTime: 0.35, gain: 0.35, decay: 0.38 });
+    this.playTone({ type: 'triangle', freq: 180, targetFreq: 45, rampTime: 0.15, gain: 0.15, decay: 0.2 });
+  }
+
+  // 緊急電話・ホットライン着信: セキュア通信コール
+  synthesizeRing() {
+    [0, 0.18].forEach((delay) => {
+      this.playTone({ type: 'sine', freq: 750, gain: 0.1, decay: 0.12, delay });
+      this.playTone({ type: 'sine', freq: 850, gain: 0.1, decay: 0.12, delay });
+    });
+  }
+
+  // カナリア逆探知ビーコン: 鋭い高周波ソナーピン＋エコー（真性C2特定）
+  synthesizeBeacon() {
+    this.playTone({ type: 'sine', freq: 2400, targetFreq: 2600, rampTime: 0.08, gain: 0.18, decay: 0.22 });
+    this.playTone({ type: 'sine', freq: 1800, gain: 0.08, decay: 0.25, delay: 0.08 });
+  }
+
+  // 決定的証拠入手: ホログラムUI展開・クリスタルデータ取得アルペジオ
   synthesizeEvidence() {
-    const now = this.ctx.currentTime;
-    const notes = [523.25, 659.25, 783.99, 1046.5]; // C5, E5, G5, C6
+    const notes = [659.25, 987.77, 1318.51, 1661.22]; // E5, B5, E6, G#6
     notes.forEach((freq, idx) => {
-      const osc = this.ctx.createOscillator();
-      const gain = this.ctx.createGain();
-      const start = now + idx * 0.07;
-      osc.type = 'triangle';
-      osc.frequency.setValueAtTime(freq, start);
-      gain.gain.setValueAtTime(0.15, start);
-      gain.gain.exponentialRampToValueAtTime(0.001, start + 0.18);
-      osc.connect(gain);
-      gain.connect(this.ctx.destination);
-      osc.start(start);
-      osc.stop(start + 0.18);
+      this.playTone({ type: 'sine', freq, gain: 0.14, decay: 0.32, delay: idx * 0.06 });
+      this.playTone({ type: 'triangle', freq: freq * 2, gain: 0.04, decay: 0.18, delay: idx * 0.06 });
     });
   }
 
+  // 真実暴きカットイン: サブベース＋急上昇サイバーライザー＋頂点打撃スタブ
   synthesizeCutin() {
-    const now = this.ctx.currentTime;
-    // 重厚なインパクト＋サイバーホーン
-    const osc = this.ctx.createOscillator();
-    const gain = this.ctx.createGain();
-    osc.type = 'sawtooth';
-    osc.frequency.setValueAtTime(160, now);
-    osc.frequency.exponentialRampToValueAtTime(640, now + 0.12);
-    gain.gain.setValueAtTime(0.28, now);
-    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
-    osc.connect(gain);
-    gain.connect(this.ctx.destination);
-    osc.start(now);
-    osc.stop(now + 0.35);
+    // 1. サブベースドロップ
+    this.playTone({ type: 'sine', freq: 140, targetFreq: 38, rampTime: 0.35, gain: 0.32, decay: 0.4 });
+    // 2. サイバー急上昇ライザー
+    this.playTone({ type: 'sawtooth', freq: 220, targetFreq: 1400, rampTime: 0.13, gain: 0.15, decay: 0.16 });
+    // 3. 頂点インパクトスタブ
+    this.playTone({ type: 'triangle', freq: 880, gain: 0.22, decay: 0.25, delay: 0.12 });
   }
 
+  // 立証成功・矛盾打破: 煌めくサイバー承認チャイム
   synthesizeCorrect() {
-    const now = this.ctx.currentTime;
-    const chords = [587.33, 739.99, 880.0, 1174.66]; // D5, F#5, A5, D6
-    chords.forEach((freq, i) => {
-      const osc = this.ctx.createOscillator();
-      const gain = this.ctx.createGain();
-      const start = now + i * 0.05;
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(freq, start);
-      gain.gain.setValueAtTime(0.18, start);
-      gain.gain.exponentialRampToValueAtTime(0.001, start + 0.4);
-      osc.connect(gain);
-      gain.connect(this.ctx.destination);
-      osc.start(start);
-      osc.stop(start + 0.4);
+    const chord = [880.0, 1108.73, 1318.51, 1760.0]; // A5, C#6, E6, A6
+    chord.forEach((freq, idx) => {
+      this.playTone({ type: 'sine', freq, gain: 0.12, decay: 0.45, delay: idx * 0.04 });
     });
+    this.playTone({ type: 'sine', freq: 220, targetFreq: 110, rampTime: 0.2, gain: 0.15, decay: 0.3 });
   }
 
+  // 立証失敗・アクセス拒絶: 不協和音低音バズ＋拒絶音
   synthesizeDamage() {
-    const now = this.ctx.currentTime;
-    const osc = this.ctx.createOscillator();
-    const gain = this.ctx.createGain();
-    osc.type = 'square';
-    osc.frequency.setValueAtTime(140, now);
-    osc.frequency.linearRampToValueAtTime(60, now + 0.25);
-    gain.gain.setValueAtTime(0.25, now);
-    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
-    osc.connect(gain);
-    gain.connect(this.ctx.destination);
-    osc.start(now);
-    osc.stop(now + 0.25);
+    this.playTone({ type: 'sawtooth', freq: 90, targetFreq: 50, rampTime: 0.25, gain: 0.25, decay: 0.28 });
+    this.playTone({ type: 'square', freq: 135, targetFreq: 60, rampTime: 0.2, gain: 0.15, decay: 0.25 });
   }
 
-  synthesizeGameover() {
-    const now = this.ctx.currentTime;
-    const notes = [329.63, 293.66, 261.63, 196.0]; // E4, D4, C4, G3
-    notes.forEach((freq, i) => {
-      const osc = this.ctx.createOscillator();
-      const gain = this.ctx.createGain();
-      const start = now + i * 0.18;
-      osc.type = 'sawtooth';
-      osc.frequency.setValueAtTime(freq, start);
-      gain.gain.setValueAtTime(0.2, start);
-      gain.gain.exponentialRampToValueAtTime(0.001, start + 0.3);
-      osc.connect(gain);
-      gain.connect(this.ctx.destination);
-      osc.start(start);
-      osc.stop(start + 0.3);
+  // 能動的防衛完遂・解決: 壮大なシネマティック・サイバーレゾナンス
+  synthesizeVictory() {
+    const progression = [
+      { notes: [293.66, 440.0, 587.33], delay: 0.0 }, // D4, A4, D5
+      { notes: [369.99, 554.37, 739.99], delay: 0.14 }, // F#4, C#5, F#5
+      { notes: [440.0, 659.25, 880.0, 1174.66], delay: 0.28 }, // A4, E5, A5, D6
+    ];
+    progression.forEach((step) => {
+      step.notes.forEach((freq) => {
+        this.playTone({ type: 'sine', freq, gain: 0.13, decay: 0.65, delay: step.delay });
+        this.playTone({ type: 'triangle', freq: freq * 0.5, gain: 0.08, decay: 0.5, delay: step.delay });
+      });
     });
   }
 
-  synthesizeVictory() {
-    const now = this.ctx.currentTime;
-    const fanfare = [
-      { f: 523.25, d: 0.12 },
-      { f: 659.25, d: 0.12 },
-      { f: 783.99, d: 0.12 },
-      { f: 1046.5, d: 0.4 },
-    ];
-    let time = now;
-    fanfare.forEach((n) => {
-      const osc = this.ctx.createOscillator();
-      const gain = this.ctx.createGain();
-      osc.type = 'triangle';
-      osc.frequency.setValueAtTime(n.f, time);
-      gain.gain.setValueAtTime(0.22, time);
-      gain.gain.exponentialRampToValueAtTime(0.001, time + n.d);
-      osc.connect(gain);
-      gain.connect(this.ctx.destination);
-      osc.start(time);
-      osc.stop(time + n.d);
-      time += n.d * 0.85;
+  // ゲームオーバー: 降下するダークサイバーハーモニー
+  synthesizeGameover() {
+    const notes = [329.63, 277.18, 220.0, 164.81]; // E4, C#4, A3, E3
+    notes.forEach((freq, idx) => {
+      this.playTone({ type: 'sawtooth', freq, gain: 0.14, decay: 0.35, delay: idx * 0.16 });
     });
   }
 
