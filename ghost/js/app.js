@@ -1551,6 +1551,7 @@ class NovelApp {
     return `
       <div class="gallery-archive-container">
         ${this.renderCharacterSheetsSection()}
+        ${this.renderKeyItemsSection()}
         ${this.renderEvidenceArchiveSection()}
       </div>
     `;
@@ -1601,6 +1602,40 @@ class NovelApp {
           </a>
           <p class="gallery-text sheet-desc">${c.profile || ''}</p>
           ${spritesHtml}
+        </div>
+      `;
+    });
+
+    html += `</div>`;
+    return html;
+  }
+
+  renderKeyItemsSection() {
+    const items = Object.values(this.scenario.items || {});
+    if (items.length === 0) return '';
+
+    let html = `
+      <div class="gallery-section-header" style="margin-top: 36px;">
+        <h3 class="gallery-section-title">🗝️ 重要押収・執行アイテム（KEY ASSETS）</h3>
+        <p class="gallery-section-desc">作中で反撃の起点となった物理デバイス・電子執行令書・暗号監査キー</p>
+      </div>
+      <div class="gallery-grid key-items-grid">
+    `;
+
+    items.forEach((item) => {
+      html += `
+        <div class="gallery-card item-card">
+          <div class="sheet-card-header">
+            <span class="sheet-badge item-badge">KEY ITEM</span>
+            <h4 class="sheet-name">${item.icon} ${item.name}</h4>
+          </div>
+          <p class="sheet-role item-type-label">${item.type}</p>
+          <a href="${item.image}" target="_blank" rel="noopener" class="sheet-img-wrap item-img-wrap" title="${item.name} を原寸表示">
+            <img src="${item.image}" alt="${item.name}" class="gallery-img item-img" loading="lazy">
+            <span class="sheet-zoom-hint">🔍 クリックで原寸拡大</span>
+          </a>
+          <p class="gallery-text item-summary" style="font-weight: 600; color: #a5f3fc; margin: 8px 0 4px 0;">${item.summary}</p>
+          <p class="gallery-text item-detail">${item.detail}</p>
         </div>
       `;
     });

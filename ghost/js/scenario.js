@@ -12,7 +12,7 @@ window.SCENARIO_DATA = {
       id: 'ad_demofastloss_log',
       name: 'AD侵入痕跡・取引プロトコル生ログ',
       icon: '🔥',
-      image: 'assets/evidence/sinkhole.jpg',
+      image: 'assets/evidence/ad_demofastloss.png',
       type: '【通信プロトコル鑑識】AD基盤侵害・ミリ秒注文パラメータ',
       summary:
         '出金制限を逆手に取り、高スプレッド通貨の即時往復売買で口座残高を蒸発させた恐喝注文テレメトリ。',
@@ -23,7 +23,7 @@ window.SCENARIO_DATA = {
       id: 'persistent_session_trap',
       name: '取引通信ソケット監査票＆脅迫添付Excel',
       icon: '🌐',
-      image: 'assets/evidence/cdn_network.png',
+      image: 'assets/evidence/persistent_session.png',
       type: '【セッション・偽旗鑑識】永続ソケット監査・脅迫メールメタデータ',
       summary:
         'パスワード変更後も維持されるTCP接続仕様と、内部XMLに偽旗工作の痕跡を残した脅迫ファイル。',
@@ -34,7 +34,7 @@ window.SCENARIO_DATA = {
       id: 'reverse_rdp_tsclient',
       name: 'クライアント接続構成ファイル＆共有API証跡',
       icon: '💻',
-      image: 'assets/evidence/honeypot.jpg',
+      image: 'assets/evidence/reverse_rdp.png',
       type: '【エンドポイント構成鑑識】RDPリダイレクト設定・ローカル共有監査',
       summary:
         '接続用.rdpファイルの自動共有設定により、クラウドVPS側へ自宅PCの全ドライブが露出した痕跡。',
@@ -45,7 +45,7 @@ window.SCENARIO_DATA = {
       id: 'direct_compensation_matrix',
       name: '顧客実損算定マトリクス＆API照会監査票',
       icon: '⚖️',
-      image: 'assets/evidence/active_memory.jpg',
+      image: 'assets/evidence/compensation_matrix.png',
       type: '【法理・制度監査証跡】ゲーム理論的反撃・Investor Password監査',
       summary:
         '約款免責を超えた100%直接補償方針と、閲覧専用パスワードによる客観的損害算定スキーム。',
@@ -73,6 +73,38 @@ window.SCENARIO_DATA = {
         'ハニーポット端末の重要ファイル内に潜伏させたカナリアが発火し、偽装プロキシの背後を捉えた追跡記録。',
       detail:
         'ハニーポット端末への \\\\tsclient\\C 逆流潜入調査時、ダミーLogin Data内に仕込まれた特殊なカナリアトークン（Canary Token）。10月27日正午、攻撃者が『被害者 第1号』の個人情報を晒すため自前の攻撃インフラでデータを復号・加工した瞬間、逆探知ビーコンが発火。多段プロキシの奥に隠されていた真のC2サーバー（91.240.118.174）と、公開サイト・データ加工拠点をピンポイントで特定した決定打。',
+    },
+  },
+  items: {
+    item_canary_usb: {
+      id: 'item_canary_usb',
+      name: '特殊鑑識USB・カナリアトークン仕込みデバイス',
+      icon: '🔑',
+      image: 'assets/items/item_canary_usb.png',
+      type: '【追跡トラップ型鑑識デバイス】',
+      summary: 'ハニーポット端末から \\\\tsclient\\C 逆流潜入させ、攻撃者を釣る囮データ格納USB。',
+      detail:
+        '金融機関へのRDP不正接続を逆利用し、攻撃者が「被害者 第1号」の個人情報を加工・公開しようとした瞬間にDNS/HTTP逆探知ビーコンを送信。多段偽装プロキシの背後にある真性C2（91.240.118.174）を暴き出すトリガーとなった決定打デバイス。',
+    },
+    item_investor_key: {
+      id: 'item_investor_key',
+      name: 'Investor Password 監査キーカード',
+      icon: '💳',
+      image: 'assets/items/item_investor_key.png',
+      type: '【客観的損害算定・暗号監査カード】',
+      summary: '取引権限を持たず、ミリ秒単位の取引履歴のみを改ざん不可能に抽出する閲覧専用キー。',
+      detail:
+        '攻撃者による「80億円要求」に対し、企業側が約款免責を超えた直接補償を実施するにあたり、ユーザー申告とVPS侵入ログを突合してモラルハザードを防いだ救世主。この客観的算定により身代金要求は1.6億円へと98%暴落した。',
+    },
+    item_nco_directive: {
+      id: 'item_nco_directive',
+      name: '能動的サイバー防御・電子発動命令書（第001号）',
+      icon: '📜',
+      image: 'assets/items/item_nco_directive.png',
+      type: '【国家サイバー防御執行権限】',
+      summary: '警察官職務執行法第6条の2に基づく、史上初のアクセス・消去等措置を認可する電子執行令書。',
+      detail:
+        '内閣官房国家サイバー統括室（NCO）および警察庁サイバー特別捜査隊による合同令書。民間直接申請の壁、通信の秘密の壁、外国主権と偽旗工作の壁を突破し、国境を越えたC2攻撃インフラへの緊急無害化措置執行権限をケイ・アリアに委ねる最高機密アセット。',
     },
   },
   prologue: {
@@ -473,7 +505,7 @@ window.SCENARIO_DATA = {
         {
           speaker: 'aria',
           sprite: 'aria',
-          illustration: 'assets/evidence/sinkhole.jpg',
+          illustration: 'assets/evidence/ad_demofastloss.png',
           text: '核心鑑識データ『AD侵入痕跡・取引プロトコル生ログ』を取得しました。口座焼却の真相が完全に立証されました！',
           bgm: 'truth',
           sfx: 'evidence',
@@ -783,7 +815,7 @@ window.SCENARIO_DATA = {
         {
           speaker: 'aria',
           sprite: 'aria',
-          illustration: 'assets/evidence/cdn_network.png',
+          illustration: 'assets/evidence/persistent_session.png',
           text: '核心鑑識データ『取引通信ソケット監査票＆脅迫添付Excel』を取得しました。永続ソケットと偽旗工作の真相が立証されました！',
           sfx: 'evidence',
           telop: '【FORENSIC PROOF: 永続ソケット死角＆KPS偽旗工作を立証】',
@@ -1040,8 +1072,9 @@ window.SCENARIO_DATA = {
                 },
                 {
                   speaker: 'aria',
-        emotion: 'alert',
+                  emotion: 'alert',
                   sprite: 'aria',
+                  illustration: 'assets/items/item_canary_usb.png',
                   text: 'カナリアトークン混入完了！ 攻撃者が自前の攻撃サーバーでこのファイルを解凍した瞬間、偽装プロキシの背後にある真のC2サーバー座標が逆探知されます！',
                   telop: '【CANARY DEPLOYED: 逆探知ビーコン潜伏完了】',
                 },
@@ -1059,7 +1092,7 @@ window.SCENARIO_DATA = {
         {
           speaker: 'aria',
           sprite: 'aria',
-          illustration: 'assets/evidence/honeypot.jpg',
+          illustration: 'assets/evidence/reverse_rdp.png',
           text: '核心鑑識データ『クライアント接続構成ファイル＆共有API証跡』を取得しました。リバースRDPの真相が立証されました！',
           bgm: 'truth',
           sfx: 'evidence',
@@ -1294,6 +1327,7 @@ window.SCENARIO_DATA = {
                 {
                   speaker: 'aria',
                   sprite: 'aria',
+                  illustration: 'assets/items/item_investor_key.png',
                   text: '素晴らしい着眼点です！ Investor Passwordなら出金権限なしでサーバー側のミリ秒取引生ログのみを客観監査できます！ VPSの侵入時刻と突合すれば、1円の狂いもなく不正取引だけを特定可能です！',
                 },
                 {
@@ -1322,7 +1356,7 @@ window.SCENARIO_DATA = {
         {
           speaker: 'aria',
           sprite: 'aria',
-          illustration: 'assets/evidence/active_memory.jpg',
+          illustration: 'assets/evidence/compensation_matrix.png',
           text: '核心鑑識データ『顧客実損算定マトリクス＆API照会監査票』を取得しました。四重脅迫無力化の論拠が立証されました！',
           sfx: 'evidence',
         },
@@ -1774,6 +1808,7 @@ window.SCENARIO_DATA = {
               {
                 speaker: 'kuroda',
                 sprite: 'kuroda',
+                illustration: 'assets/items/item_nco_directive.png',
                 text: '全証拠の連結を確認！ 外務大臣協議・サイバー通信情報監理委員会の緊急承認を受理！ これより警察庁サイバー特捜隊およびNCOによる『特定妨害工作通信のアクセス・消去等措置（無害化措置）』を正式執行せよ！！',
               },
               {
