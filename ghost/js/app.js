@@ -107,6 +107,8 @@ class NovelApp {
       sequenceTitle: get('sequence-title'),
       btnCloseSequence: get('btn-close-sequence'),
       sequenceFrameImg: get('sequence-frame-img'),
+      sequenceFrameBadge: get('sequence-frame-badge'),
+      sequenceFrameStep: get('sequence-frame-step'),
       sequenceFrameVisualDesc: get('sequence-frame-visual-desc'),
       sequenceProgressFill: get('sequence-progress-fill'),
       sequenceCaption: get('sequence-caption'),
@@ -798,18 +800,24 @@ class NovelApp {
       ? this.scenario.evidence[this.currentChapterData.requiredEvidence]?.image
       : null;
     const imgSrc = cut.image || fallbackImg;
+    const placeholder = document.getElementById('sequence-frame-placeholder');
 
     if (imgSrc && this.dom.sequenceFrameImg) {
       this.dom.sequenceFrameImg.src = imgSrc;
       this.dom.sequenceFrameImg.classList.remove('hidden');
+      placeholder?.classList.add('hidden');
+      this.dom.sequenceFrameBadge?.classList.remove('hidden');
     } else {
       this.dom.sequenceFrameImg?.classList.add('hidden');
+      placeholder?.classList.remove('hidden');
+      this.dom.sequenceFrameBadge?.classList.add('hidden');
     }
   }
 
   renderCutFrameHud(cut, total) {
-    const placeholder = document.getElementById('sequence-frame-placeholder');
-    placeholder?.classList.remove('hidden');
+    if (this.dom.sequenceFrameStep) {
+      this.dom.sequenceFrameStep.textContent = `FRAME 0${cut.frame} / 0${total}`;
+    }
     if (this.dom.sequenceFrameVisualDesc) {
       this.dom.sequenceFrameVisualDesc.innerHTML = `
         <div class="cut-hud-step">FRAME 0${cut.frame} / 0${total} <span class="cut-tap-hint">[TAP TO NEXT ▶]</span></div>

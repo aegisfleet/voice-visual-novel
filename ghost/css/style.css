@@ -2004,6 +2004,41 @@ body {
   transition: opacity 0.15s ease;
 }
 
+/* 画像表示時に右上にさりげなく添える半透明サイバーミニバッジ（画像全景を遮らない） */
+.sequence-frame-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  background: rgba(2, 6, 16, 0.78);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid rgba(0, 240, 255, 0.45);
+  border-radius: 4px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+}
+
+.sequence-frame-step {
+  font-family: var(--font-hud);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--nco-cyan);
+  letter-spacing: 0.06em;
+}
+
+.cut-tap-hint {
+  font-family: var(--font-hud);
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--nco-amber);
+  letter-spacing: 0.04em;
+}
+
 .sequence-frame-placeholder {
   display: flex;
   flex-direction: column;
