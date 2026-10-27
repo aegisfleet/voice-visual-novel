@@ -301,14 +301,17 @@ async function runE2ETest() {
     });
 
     // 誤答リアクション（セリフ進行）を最後まで進めて選択肢再表示を待つ
-    for (let i = 0; i < 5; i++) {
-      await new Promise((r) => setTimeout(r, 300));
+    const startTime = Date.now();
+    while (Date.now() - startTime < 8000) {
       const isOpen = await page.evaluate(() => {
         const stage = document.getElementById('choice-stage');
         return stage && !stage.classList.contains('hidden');
       });
       if (isOpen) break;
-      await page.click('#novel-window');
+      await page.evaluate(() => {
+        window.ghostApp?.advanceDialogue();
+      });
+      await new Promise((r) => setTimeout(r, 250));
     }
 
     await page.waitForFunction(() => {
