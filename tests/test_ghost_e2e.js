@@ -153,7 +153,12 @@ async function runE2ETest() {
       return modal && !modal.classList.contains('hidden');
     });
 
-    // スライダー存在確認
+    // スライダー存在およびBGM初期値(20%)確認
+    const bgmVolumeVal = await page.$eval('#slider-bgm-volume', (el) => Number.parseInt(el.value, 10));
+    if (bgmVolumeVal !== 20) {
+      throw new Error(`BGMデフォルト音量が 20 ではありません (現在値: ${bgmVolumeVal})`);
+    }
+
     const sliderCount = await page.$$eval('.cyber-slider', (els) => els.length);
     if (sliderCount < 3) {
       throw new Error(`音響スライダーが不足しています (検出数: ${sliderCount})`);

@@ -36,7 +36,7 @@ class GameState {
     this.bgmEnabled = true;
     this.voiceVolume = 1.0;
     this.seVolume = 0.7;
-    this.bgmVolume = 0.35;
+    this.bgmVolume = 0.2;
   }
 
   // 防衛率の減算（ペナルティ適用）

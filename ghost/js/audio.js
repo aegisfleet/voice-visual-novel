@@ -8,7 +8,7 @@ class AudioManager {
     this.bgmEnabled = true;
     this.voiceVolume = 1.0;
     this.seVolume = 0.7;
-    this.bgmVolume = 0.35;
+    this.bgmVolume = 0.2;
     this.currentBgmMode = 'title'; // title | investigate | crisis | truth
     this.currentBgmTrack = null;
     this.bgmBuffers = new Map();

@@ -1799,7 +1799,7 @@ class NovelApp {
     this.audio.bgmEnabled = this.state.bgmEnabled;
     this.audio.setVoiceVolume(this.state.voiceVolume ?? 1.0);
     this.audio.setSeVolume(this.state.seVolume ?? 0.7);
-    this.audio.setBgmVolume(this.state.bgmVolume ?? 0.35);
+    this.audio.setBgmVolume(this.state.bgmVolume ?? 0.2);
     this.syncAudioSettingsUI();
   }
 
@@ -1870,14 +1870,14 @@ class NovelApp {
   }
 
   resetAudioSettings() {
-    this.audio.setBgmVolume(0.35);
+    this.audio.setBgmVolume(0.2);
     this.audio.setSeVolume(0.7);
     this.audio.setVoiceVolume(1.0);
     this.audio.bgmEnabled = true;
     this.audio.seEnabled = true;
     this.audio.voiceEnabled = true;
 
-    this.state.bgmVolume = 0.35;
+    this.state.bgmVolume = 0.2;
     this.state.seVolume = 0.7;
     this.state.voiceVolume = 1.0;
     this.state.bgmEnabled = true;
