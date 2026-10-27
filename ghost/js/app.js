@@ -511,6 +511,7 @@ class NovelApp {
 
   updateHudBadge(title, desc) {
     if (!this.dom.hudLoopBadge) return;
+    this.dom.hudLoopBadge.title = desc ? `${title}: ${desc}` : title;
     this.dom.hudLoopBadge.innerHTML = `<span class="phase-title">${title}</span><span class="phase-desc-text">: ${desc}</span>`;
   }
 
