@@ -205,24 +205,33 @@ window.SCENARIO_DATA = {
           telop: '【WARNING: 全国数千件の口座残高蒸発被害報告】',
           cutSequence: {
             id: 'seq_ch1_balance_drain',
-            title: '口座残高超高速蒸発シークエンス（パラパラ漫画演出）',
+            title: '口座残高超高速蒸発シークエンス',
             description: 'TRY/ZAR 850pps超高スプレッド即時往復注文による残高焼却の連続カット',
-            intervalMs: 1600,
+            intervalMs: 1800,
             cuts: [
               {
                 frame: 1,
+                image: 'assets/evidence/sinkhole.jpg',
+                sfx: 'alert',
+                visualType: 'meter-high',
                 caption: 'FT4注文端末: TRY/ZAR 850pps往復注文乱発 [残高: 4,000,000円]',
-                visualDesc: '取引画面に残高400万円の表示と赤い注文矢印',
+                visualDesc: 'BALANCE: ¥4,000,000 >> TRY/ZAR 50.0 LOTS BUY/SELL',
               },
               {
                 frame: 2,
+                image: 'assets/evidence/sinkhole.jpg',
+                sfx: 'glitch',
+                visualType: 'meter-mid',
                 caption: '残高激減: スプレッド手数料で残高が猛烈に市場へ蒸発 [残高: 1,420,000円]',
-                visualDesc: '高速点滅するチャートと急落する口座残高メーター',
+                visualDesc: 'BALANCE: ¥1,420,000 (-¥2,580,000 SPREAD DRAIN)',
               },
               {
                 frame: 3,
+                image: 'assets/evidence/sinkhole.jpg',
+                sfx: 'impact',
+                visualType: 'meter-zero',
                 caption: '口座完全焼却: DEMOFASTLOSS刻印 [残高: 0円 / 強制ロスカット]',
-                visualDesc: '残高0円と赤文字のロスカット警告ダイアログ',
+                visualDesc: 'BALANCE: ¥0 [MARGIN CALL / COMMENT: DEMOFASTLOSS]',
               },
             ],
           },
@@ -456,6 +465,9 @@ window.SCENARIO_DATA = {
           sprite: 'aria',
           illustration: 'assets/evidence/sinkhole.jpg',
           text: '核心鑑識データ『AD侵入痕跡・取引プロトコル生ログ』を取得しました。口座焼却の真相が完全に立証されました！',
+          bgm: 'truth',
+          sfx: 'evidence',
+          telop: '【FORENSIC PROOF: DEMOFASTLOSS 口座焼却手口を立証】',
         },
         {
           speaker: 'takamiya',
@@ -465,11 +477,18 @@ window.SCENARIO_DATA = {
         {
           speaker: 'narrator',
           text: '安堵の息を漏らした瞬間、対策本部のホットラインがけたたましい警報音を鳴り響かせた。',
+          bgm: 'silence',
+          sfx: 'ring',
+          effect: 'alert-flash',
         },
         {
           speaker: 'takamiya',
           sprite: 'takamiya',
           text: '……な、なんだ！？ 攻撃者から対策室の直通シークレットチャットに、直筆の暗号化メッセージが届いた……！？',
+          bgm: 'crisis',
+          sfx: 'glitch',
+          effect: 'glitch',
+          telop: '【WARNING: 攻撃者から対策室へ暗号化チャット着信】',
         },
         {
           speaker: 'kei',
@@ -479,6 +498,8 @@ window.SCENARIO_DATA = {
           speaker: 'takamiya',
           sprite: 'takamiya',
           text: '『無様な抵抗だ。第2報を出してユーザーにパスワード変更を呼びかけてみろ。貴様らの無力さを全国に晒してやる』……だと！？ なぜ我々がパスワード変更を呼びかけたことを知っているんだ！？',
+          sfx: 'impact',
+          effect: 'shake',
         },
         {
           speaker: 'kei',
@@ -497,10 +518,51 @@ window.SCENARIO_DATA = {
         {
           speaker: 'narrator',
           text: '第2報の緊急発表から一日が経過した10月22日夜。ユーザーによるパスワード変更が進み、「これで口座破壊は食い止められるはずだ」と対策室に安堵の空気が漂っていた。',
+          bgm: 'investigate',
+          telop: '【10.22 19:30 第2報発表から24時間経過】',
         },
         {
           speaker: 'narrator',
           text: 'だがそのわずか数時間後、SNSは前日を遥かに超える地獄絵図と化していた。「ふざけるな！ 公式の指示通りパスワードを変えたのに、今夜も勝手に取引されて口座が全滅した！」「会社が嘘をついている！ パスワード変更なんて意味がない！」',
+          bgm: 'crisis',
+          sfx: 'impact',
+          effect: 'shake',
+          telop: '【CRITICAL: パスワード変更済みの口座で不正取引が再発】',
+          cutSequence: {
+            id: 'seq_ch2_socket_trap',
+            title: '永続TCPソケット・認証バイパスシークエンス',
+            description: 'Webパスワード変更後も既存ソケットが維持され注文が素通りする連続カット',
+            intervalMs: 1800,
+            cuts: [
+              {
+                frame: 1,
+                image: 'assets/evidence/cdn_network.png',
+                sfx: 'click',
+                visualType: 'socket-step1',
+                caption:
+                  '【STEP 1】ユーザーがWebポータル画面からパスワード変更を実行（DB更新完了）',
+                visualDesc: 'WEB PORTAL: Password Updated [OK] -> Auth DB Synced',
+              },
+              {
+                frame: 2,
+                image: 'assets/evidence/cdn_network.png',
+                sfx: 'alert',
+                visualType: 'socket-step2',
+                caption:
+                  '【STEP 2】しかしFT4サーバーと攻撃者間の既存TCPソケット（Port 443）は切断されず維持！',
+                visualDesc: 'TCP SOCKET (Port 443): ESTABLISHED [NO SESSION KILL]',
+              },
+              {
+                frame: 3,
+                image: 'assets/evidence/cdn_network.png',
+                sfx: 'glitch',
+                visualType: 'socket-step3',
+                caption:
+                  '【STEP 3】攻撃者が繋ぎっぱなしの既存ソケットからDEMOFASTLOSS注文が素通り！',
+                visualDesc: 'BYPASS AUTH >> ORDER: DEMOFASTLOSS EXECUTED!',
+              },
+            ],
+          },
         },
         {
           speaker: 'takamiya',
@@ -691,35 +753,47 @@ window.SCENARIO_DATA = {
         {
           speaker: 'kei',
           text: 'レン、偽旗工作の決定打が掴めた。集団訴訟を煽るExcelの正体は中国語版オフィスの『工作表』だ。直ちにこの物証を公表し、敵の分断工作を無力化しろ！',
+          bgm: 'truth',
         },
         {
           speaker: 'takamiya',
           sprite: 'takamiya',
           text: '了解だ！ 偽旗工作の解析結果を公式リリースした。敵の煽動に乗せられていた被害者たちも冷静さを取り戻し、集団訴訟パニックは一気に沈静化したぞ！',
+          sfx: 'correct',
         },
         {
           speaker: 'aria',
           sprite: 'aria',
           illustration: 'assets/evidence/cdn_network.png',
           text: '核心鑑識データ『取引通信ソケット監査票＆脅迫添付Excel』を取得しました。永続ソケットと偽旗工作の真相が立証されました！',
+          sfx: 'evidence',
+          telop: '【FORENSIC PROOF: 永続ソケット死角＆KPS偽旗工作を立証】',
         },
         {
           speaker: 'narrator',
           text: 'その時、対策本部の巨大メインモニターが突如激しい砂嵐を走らせ、ある画面を映し出した。',
+          bgm: 'silence',
+          sfx: 'glitch',
+          effect: 'glitch',
         },
         {
           speaker: 'takamiya',
           sprite: 'takamiya',
           text: '……！？ な、なんだこれは……！？ 画面が勝手に切り替わった……？',
+          bgm: 'crisis',
         },
         {
           speaker: 'kei',
           text: 'おい、待て……！ これはVPSの画面じゃないぞ！ ある被害者の【自宅PCのデスクトップ画面】だ……確定申告書、家族の写真、そしてChromeブラウザの個人情報フォルダーが……丸ごと映し出されている！？',
+          sfx: 'impact',
+          effect: 'alert-flash',
+          telop: '【SHOCKING: モニターに被害者「自宅PC」の内部ファイルが露出】',
         },
         {
           speaker: 'takamiya',
           sprite: 'takamiya',
           text: 'な、なぜだ……！？ 被害者は自宅PCからVPSにリモート接続していただけのはずだ！ なぜクラウドの外にある【自宅PCの中身】が奪われているんだ……！？',
+          effect: 'shake',
         },
         {
           speaker: 'kei',
@@ -755,17 +829,23 @@ window.SCENARIO_DATA = {
             cuts: [
               {
                 frame: 1,
+                image: 'assets/evidence/honeypot.jpg',
+                sfx: 'click',
                 caption: '自宅PCからリモートデスクトップ接続開始 [drivestoredirect:s:*]',
                 visualDesc: 'Windowsの接続ダイアログと全ドライブ共有フラグ',
               },
               {
                 frame: 2,
+                image: 'assets/evidence/honeypot.jpg',
+                sfx: 'alert',
                 caption:
                   'クラウドVPS内部に自宅PCのCドライブが \\\\tsclient\\\\C として自動マウント',
                 visualDesc: 'VPS側のエクスプローラーにクライアントのCドライブが出現',
               },
               {
                 frame: 3,
+                image: 'assets/evidence/honeypot.jpg',
+                sfx: 'glitch',
                 caption: 'アンチウイルスを完全素通りして確定申告書とLogin Dataが自動吸出',
                 visualDesc: '正規RDPパイプラインを悪用して4,352ファイルが吸い出されるアニメ',
               },
@@ -1237,16 +1317,22 @@ window.SCENARIO_DATA = {
             cuts: [
               {
                 frame: 1,
+                image: 'assets/evidence/active_memory.jpg',
+                sfx: 'victory',
                 caption: '【第4報発表】身代金支払ゼロ＆不正取引実損100%直接補償を公式宣言',
                 visualDesc: 'ニュース速報テロップと称賛に沸くSNSのタイムライン',
               },
               {
                 frame: 2,
+                image: 'assets/evidence/active_memory.jpg',
+                sfx: 'alert',
                 caption: '【レバレッジ消滅】顧客と企業が結束し、犯人が握っていた人質が完全消滅',
                 visualDesc: '崩れ落ちる犯人の恐喝レバレッジ概念図',
               },
               {
                 frame: 3,
+                image: 'assets/evidence/active_memory.jpg',
+                sfx: 'glitch',
                 caption:
                   '【5,000万ドル→100万ドル】焦った犯人が要求額を98%大幅値下げし27日正午へ再設定',
                 visualDesc: '犯行サイト上の要求額が80億円から1.6億円へ書き換わる様子',
@@ -1358,21 +1444,29 @@ window.SCENARIO_DATA = {
             cuts: [
               {
                 frame: 1,
+                image: 'assets/evidence/c2_origin.png',
+                sfx: 'alert',
                 caption: '【12:00:00】ランサム不発に逆上した犯人が「被害者 第1号」公開作業を開始',
                 visualDesc: '犯行サイト coronamng.store にアップロードされる確定申告書',
               },
               {
                 frame: 2,
+                image: 'assets/evidence/c2_origin.png',
+                sfx: 'glitch',
                 caption: '【復号フック作動】犯人のアジトでダミーLogin DataのSQLite復号フックが作動',
                 visualDesc: '攻撃者PC端末で実行されるデータ加工プロセス画面',
               },
               {
                 frame: 3,
+                image: 'assets/evidence/c2_origin.png',
+                sfx: 'beacon',
                 caption: '【カナリア発火】Tor/SOCKS5多段プロキシをバイパスして逆探知ビーコンが飛翔',
                 visualDesc: 'オランダ・ルーマニアの踏み台を突き破り放たれる追跡パケットの光',
               },
               {
                 frame: 4,
+                image: 'assets/evidence/c2_origin.png',
+                sfx: 'impact',
                 caption: '【真C2ロックオン】フランクフルト真C2【91.240.118.174】と保管庫を特定',
                 visualDesc: '世界地図上のドイツデータセンターDC-4が赤くロックオンされるレーダー',
               },

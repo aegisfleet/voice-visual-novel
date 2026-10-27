@@ -32,7 +32,6 @@ class AudioManager {
       correct: 'assets/audio/sfx_evidence_a.mp3',
       evidence_a: 'assets/audio/sfx_evidence_a.mp3',
       victory: 'assets/audio/sfx_evidence_b.mp3',
-      evidence_b: 'assets/audio/sfx_evidence_b.mp3',
     };
 
     this.initSpeech();
@@ -455,6 +454,12 @@ class AudioManager {
         case 'click':
           this.synthesizeClick();
           break;
+        case 'type':
+          this.synthesizeTypeBlip();
+          break;
+        case 'frame':
+          this.synthesizeFrameStep();
+          break;
         case 'evidence':
           this.synthesizeEvidence();
           break;
@@ -462,9 +467,11 @@ class AudioManager {
           this.synthesizeCutin();
           break;
         case 'correct':
+        case 'evidence_a':
           this.synthesizeCorrect();
           break;
         case 'damage':
+        case 'evidence_b':
           this.synthesizeDamage();
           break;
         case 'gameover':
@@ -720,6 +727,39 @@ class AudioManager {
 
   playWrong() {
     this.playSe('damage');
+  }
+
+  // 文字送りデジタルブリップ音（控えめで心地よいコンソール音）
+  synthesizeTypeBlip(pitch = 1.0) {
+    if (!this.seEnabled || !this.ctx) return;
+    const now = this.ctx.currentTime;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(920 * pitch, now);
+    gain.gain.setValueAtTime(0.025, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.022);
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.022);
+  }
+
+  // パラパラ漫画（マルチカット）のコマ切り替えシャッター・スキャン音
+  synthesizeFrameStep() {
+    if (!this.seEnabled || !this.ctx) return;
+    const now = this.ctx.currentTime;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(520, now);
+    osc.frequency.exponentialRampToValueAtTime(1480, now + 0.06);
+    gain.gain.setValueAtTime(0.14, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.07);
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.07);
   }
 }
 

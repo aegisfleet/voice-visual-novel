@@ -374,39 +374,97 @@ class NovelApp {
   // 4. チャプター進行とエピソード制御
   loadChapter(chapterNum, isResuming = false) {
     this.state.currentChapter = chapterNum;
+    this.currentSpriteId = null; // 章切替時に立ち絵キャッシュをリセット
     this.updateTimelineBar();
     this.updateEvidenceHud();
     this.updateDefenseHud();
+    this.updateChapterBackground(chapterNum);
 
     if (chapterNum === 0) {
-      // プロローグ
-      this.currentDialogueQueue = [...this.scenario.prologue.dialogue];
-      this.queueIndex = isResuming ? this.state.currentLineIndex : 0;
-      this.updateHudBadge('PROLOGUE', '予兆なき暗転');
-      this.renderCurrentLine();
-      return;
+      this.loadPrologue(isResuming);
+    } else if (chapterNum >= 1 && chapterNum <= 5) {
+      this.loadStandardChapter(chapterNum, isResuming);
+    } else if (chapterNum === 6) {
+      this.loadEpilogue(isResuming);
     }
+  }
 
-    if (chapterNum >= 1 && chapterNum <= 5) {
-      const chapterData = this.scenario.chapters.find((c) => c.id === chapterNum);
-      if (!chapterData) return;
-      this.currentChapterData = chapterData;
-      this.updateHudBadge(chapterData.number, chapterData.title);
-
-      // チャプターの導入ダイアログ
-      this.currentDialogueQueue = [...chapterData.introDialogue];
-      this.queueIndex = isResuming ? this.state.currentLineIndex : 0;
-      this.renderCurrentLine();
-      return;
-    }
-
-    if (chapterNum === 6) {
-      // エピローグ
-      this.currentDialogueQueue = [...this.scenario.epilogue.dialogue];
-      this.queueIndex = isResuming ? this.state.currentLineIndex : 0;
-      this.updateHudBadge('EPILOGUE', '白昼の反撃と完全なる鎮火');
+  loadPrologue(isResuming) {
+    this.currentDialogueQueue = [...this.scenario.prologue.dialogue];
+    this.queueIndex = isResuming ? this.state.currentLineIndex : 0;
+    this.updateHudBadge('PROLOGUE', '予兆なき暗転');
+    if (!isResuming) {
+      this.showChapterTitleCard(
+        'PROLOGUE',
+        '2026.10.20 23:45',
+        '予兆なき暗転と2万6千台の亡霊',
+        () => this.renderCurrentLine(),
+      );
+    } else {
       this.renderCurrentLine();
     }
+  }
+
+  loadStandardChapter(chapterNum, isResuming) {
+    const chapterData = this.scenario.chapters.find((c) => c.id === chapterNum);
+    if (!chapterData) return;
+    this.currentChapterData = chapterData;
+    this.updateHudBadge(chapterData.number, chapterData.title);
+
+    this.currentDialogueQueue = [...chapterData.introDialogue];
+    this.queueIndex = isResuming ? this.state.currentLineIndex : 0;
+    if (!isResuming) {
+      this.showChapterTitleCard(
+        chapterData.number,
+        chapterData.date,
+        chapterData.title,
+        () => this.renderCurrentLine(),
+        chapterData.subtitle,
+      );
+    } else {
+      this.renderCurrentLine();
+    }
+  }
+
+  loadEpilogue(isResuming) {
+    this.currentDialogueQueue = [...this.scenario.epilogue.dialogue];
+    this.queueIndex = isResuming ? this.state.currentLineIndex : 0;
+    this.updateHudBadge('EPILOGUE', '白昼の反撃と完全なる鎮火');
+    if (!isResuming) {
+      this.showChapterTitleCard('EPILOGUE', '2026.10.27 13:30', '白昼の反撃と完全なる鎮火', () =>
+        this.renderCurrentLine(),
+      );
+    } else {
+      this.renderCurrentLine();
+    }
+  }
+
+  // チャプターに応じた背景とライティングの自動切り替え
+  updateChapterBackground(chapterNum) {
+    if (!this.dom.novelBg) return;
+    this.dom.novelBg.className = 'novel-bg';
+    if (chapterNum === 5) {
+      this.dom.novelBg.classList.add('bg-nco');
+    } else if (chapterNum === 6) {
+      this.dom.novelBg.classList.add('bg-nco', 'bg-daylight');
+    } else if (chapterNum === 4) {
+      this.dom.novelBg.classList.add('bg-terminal', 'bg-boardroom');
+    } else {
+      this.dom.novelBg.classList.add('bg-terminal');
+    }
+  }
+
+  // 章開始時のシネマティック・アイキャッチ（幕間タイトル演出）
+  showChapterTitleCard(numberText, dateText, titleText, onComplete, subText = '') {
+    this.audio.playSe('impact');
+    this.triggerCutin(
+      `${titleText}${subText ? `\n— ${subText} —` : ''}`,
+      `⚡ ${numberText} // ${dateText}`,
+      numberText === 'EPILOGUE' ? 'gold' : 'forensic',
+    );
+    setTimeout(() => {
+      if (onComplete) onComplete();
+    }, 1400);
   }
 
   updateHudBadge(title, desc) {
@@ -541,6 +599,25 @@ class NovelApp {
       this.dom.sequenceTitle.textContent = sequence.title || 'MULTI-CUT SEQUENCE';
     }
     this.dom.cutSequenceStage.classList.remove('hidden');
+
+    // カード本体をタップすると手動でも次のコマへ進められるようにする
+    const frameBox = document.getElementById('sequence-frame-box');
+    if (frameBox && !frameBox.dataset.boundClick) {
+      frameBox.dataset.boundClick = 'true';
+      frameBox.style.cursor = 'pointer';
+      frameBox.title = 'タップで次のコマへ進む';
+      frameBox.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (!this.currentCutSequence) return;
+        if (this.currentCutIndex + 1 < this.currentCutSequence.cuts.length) {
+          this.currentCutIndex += 1;
+          this.renderCutFrame();
+        } else {
+          this.closeCutSequence();
+        }
+      });
+    }
+
     this.renderCutFrame();
   }
 
@@ -552,45 +629,70 @@ class NovelApp {
     const cut = seq.cuts[this.currentCutIndex];
     const total = seq.cuts.length;
 
-    // プログレスバー更新
+    this.audio.playSe(cut.sfx || 'frame');
+    this.updateCutFrameProgress(this.currentCutIndex, total);
+    this.triggerCutFrameTransition();
+    this.renderCutFrameImage(cut);
+    this.renderCutFrameHud(cut, total);
+    this.scheduleCutFrameTimer(cut, seq, total);
+  }
+
+  updateCutFrameProgress(currentIndex, total) {
     if (this.dom.sequenceProgressFill) {
-      const pct = Math.round(((this.currentCutIndex + 1) / total) * 100);
+      const pct = Math.round(((currentIndex + 1) / total) * 100);
       this.dom.sequenceProgressFill.style.width = `${pct}%`;
     }
+  }
 
-    // 画像またはプレースホルダー表示
-    if (cut.image && this.dom.sequenceFrameImg) {
-      this.dom.sequenceFrameImg.src = cut.image;
+  triggerCutFrameTransition() {
+    const frameBox = document.getElementById('sequence-frame-box');
+    if (frameBox) {
+      frameBox.classList.remove('cut-frame-transition');
+      void frameBox.offsetWidth;
+      frameBox.classList.add('cut-frame-transition');
+    }
+  }
+
+  renderCutFrameImage(cut) {
+    const fallbackImg = this.currentChapterData?.requiredEvidence
+      ? this.scenario.evidence[this.currentChapterData.requiredEvidence]?.image
+      : null;
+    const imgSrc = cut.image || fallbackImg;
+
+    if (imgSrc && this.dom.sequenceFrameImg) {
+      this.dom.sequenceFrameImg.src = imgSrc;
       this.dom.sequenceFrameImg.classList.remove('hidden');
-      const placeholder = document.getElementById('sequence-frame-placeholder');
-      placeholder?.classList.add('hidden');
     } else {
       this.dom.sequenceFrameImg?.classList.add('hidden');
-      const placeholder = document.getElementById('sequence-frame-placeholder');
-      placeholder?.classList.remove('hidden');
-      if (this.dom.sequenceFrameVisualDesc) {
-        this.dom.sequenceFrameVisualDesc.textContent = `[CUT ${cut.frame}/${total}] ${cut.visualDesc || ''}`;
-      }
     }
+  }
 
-    // キャプション更新
+  renderCutFrameHud(cut, total) {
+    const placeholder = document.getElementById('sequence-frame-placeholder');
+    placeholder?.classList.remove('hidden');
+    if (this.dom.sequenceFrameVisualDesc) {
+      this.dom.sequenceFrameVisualDesc.innerHTML = `
+        <div class="cut-hud-step">FRAME 0${cut.frame} / 0${total} <span class="cut-tap-hint">[TAP TO NEXT ▶]</span></div>
+        <div class="cut-hud-main">${cut.visualDesc || ''}</div>
+      `;
+    }
     if (this.dom.sequenceCaption) {
       this.dom.sequenceCaption.textContent = cut.caption || '';
     }
+  }
 
-    // 自動進行タイマー
+  scheduleCutFrameTimer(cut, seq, total) {
     clearTimeout(this.cutSequenceTimer);
-    const interval = cut.durationMs || seq.intervalMs || 1600;
+    const interval = cut.durationMs || seq.intervalMs || 1800;
     if (this.currentCutIndex + 1 < total) {
       this.cutSequenceTimer = setTimeout(() => {
         this.currentCutIndex++;
         this.renderCutFrame();
       }, interval);
     } else {
-      // 全コマ再生完了後、余韻を残して自動的にステージを閉じ、画面の圧迫を防ぐ
       this.cutSequenceTimer = setTimeout(() => {
         this.closeCutSequence();
-      }, 2800);
+      }, 3200);
     }
   }
 
@@ -613,13 +715,24 @@ class NovelApp {
   updateCharacterSprite(spriteId) {
     if (!this.dom.characterSpriteBox) return;
     if (!spriteId || spriteId === 'narrator' || spriteId === 'kei') {
+      this.currentSpriteId = null;
       this.dom.characterSpriteBox.innerHTML = '';
       return;
     }
     const char = this.characters[spriteId];
-    if (char?.sprite) {
-      this.dom.characterSpriteBox.innerHTML = `<img src="${char.sprite}" alt="${char.name}">`;
+    if (!char?.sprite) return;
+
+    // 同じキャラクターが続けて喋る場合はDOMを再生成せず、軽い発話バウンスのみ行う
+    if (this.currentSpriteId === spriteId && this.dom.characterSpriteBox.querySelector('img')) {
+      const img = this.dom.characterSpriteBox.querySelector('img');
+      img.classList.remove('sprite-talk-bounce');
+      void img.offsetWidth;
+      img.classList.add('sprite-talk-bounce');
+      return;
     }
+
+    this.currentSpriteId = spriteId;
+    this.dom.characterSpriteBox.innerHTML = `<img src="${char.sprite}" alt="${char.name}" class="sprite-enter">`;
   }
 
   handleLineIllustration(imgSrc) {
@@ -664,10 +777,15 @@ class NovelApp {
       return;
     }
 
+    const charPitch = this.characters[speakerId]?.ttsPitch || 1.0;
     const typeStep = () => {
       if (this.charIndex < this.fullText.length) {
         if (this.dom.dialogueText) {
           this.dom.dialogueText.textContent += this.fullText[this.charIndex];
+        }
+        // 3文字に1回、心地よい極小のデジタルタイプ音を鳴らす（ボイスOFF時またはナレーション時）
+        if (this.charIndex % 3 === 0 && !this.audio.voiceEnabled) {
+          this.audio.synthesizeTypeBlip?.(charPitch);
         }
         this.charIndex += 1;
         this.typingTimer = setTimeout(typeStep, 20);

@@ -2438,3 +2438,129 @@ body {
   width: 100%;
   max-width: 360px;
 }
+
+/* ==========================================================================
+   13. パラパラ漫画（マルチカット）アニメーション＆立ち絵モーション強化
+   ========================================================================== */
+
+/* パラパラ漫画：画像とサイバーHUDテキストの重ね合わせ＆Ken Burnsズーム演出 */
+.sequence-frame-box {
+  position: relative;
+  overflow: hidden;
+  background: #020617;
+}
+
+.sequence-frame-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.45) contrast(1.2) saturate(1.15);
+  transform: scale(1.02);
+}
+
+.cut-frame-transition .sequence-frame-img {
+  animation: kenBurnsZoom 2.2s ease-out forwards;
+}
+
+.cut-frame-transition {
+  animation: cutFlashIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes kenBurnsZoom {
+  0% {
+    transform: scale(1.14) translate(-1%, 1%);
+    filter: brightness(0.85) contrast(1.35) hue-rotate(15deg);
+  }
+  100% {
+    transform: scale(1.02) translate(0, 0);
+    filter: brightness(0.42) contrast(1.2);
+  }
+}
+
+@keyframes cutFlashIn {
+  0% {
+    opacity: 0.3;
+    box-shadow: inset 0 0 60px rgba(0, 240, 255, 0.9);
+  }
+  100% {
+    opacity: 1;
+    box-shadow: inset 0 0 20px rgba(0, 240, 255, 0.2);
+  }
+}
+
+.sequence-frame-placeholder {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at center, rgba(3, 7, 18, 0.35) 0%, rgba(3, 7, 18, 0.82) 100%);
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.cut-hud-step {
+  font-family: var(--font-hud);
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--nco-amber);
+  letter-spacing: 0.12em;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cut-tap-hint {
+  font-size: 0.65rem;
+  color: var(--nco-cyan);
+  opacity: 0.85;
+  animation: promptBlink 1.2s infinite;
+}
+
+.cut-hud-main {
+  font-family: var(--font-hud);
+  font-size: clamp(0.85rem, 2.6vw, 1.05rem);
+  font-weight: 800;
+  color: #ffffff;
+  text-shadow: 0 0 14px rgba(0, 240, 255, 0.85);
+  background: rgba(6, 14, 32, 0.78);
+  border: 1px solid rgba(0, 240, 255, 0.45);
+  border-left: 4px solid var(--nco-cyan);
+  padding: 8px 14px;
+  border-radius: 4px;
+  max-width: 95%;
+}
+
+/* 立ち絵：同キャラ連続発話時の自然なバウンス（チラつき防止） */
+.character-sprite-box img.sprite-talk-bounce {
+  animation: spriteTalkBounce 0.24s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes spriteTalkBounce {
+  0% {
+    transform: translateY(0) scale(1);
+  }
+  45% {
+    transform: translateY(-6px) scale(1.012);
+  }
+  100% {
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* チャプター別の背景ライティング変化 */
+.novel-bg.bg-boardroom {
+  filter: brightness(0.6) contrast(1.15) sepia(0.25) hue-rotate(-15deg);
+}
+
+.novel-bg.bg-daylight {
+  background-image:
+    linear-gradient(180deg, rgba(14, 116, 144, 0.45) 0%, rgba(15, 23, 42, 0.88) 75%),
+    url("../assets/backgrounds/nco.jpg");
+  filter: brightness(0.92) contrast(1.05);
+}
