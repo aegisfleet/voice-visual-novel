@@ -2156,17 +2156,12 @@ body {
   gap: 4px;
 }
 
-#hud-location-badge {
-  flex: 0 1 auto;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
+#hud-location-badge,
 #hud-loop-badge,
 #hud-defense-meter {
   flex: 0 0 auto;
   white-space: nowrap;
+  width: max-content;
 }
 
 /* サブタイトル（: 予兆なき暗転 等）はHUDバッジ内では非表示にし、章番号のみシャープに1行表示（見切れを根絶） */
@@ -2174,9 +2169,28 @@ body {
   display: none;
 }
 
-/* タブレット・スマホでは固定飾りラベルを隠して1行維持 */
-@media (max-width: 900px) {
+/* オーディオボタン（音声・SE・BGM）はアイコンでスッキリ表示し、HUD左側のバッジ領域を確実に確保 */
+.hud-audio-btn {
+  padding: 6px 10px;
+  min-width: 38px;
+  justify-content: center;
+}
+.hud-audio-label {
+  display: none;
+}
+
+@media (min-width: 1200px) {
+  .hud-audio-label {
+    display: inline;
+  }
+}
+
+/* 画面幅 768px 以下のタブレット・スマホでは固定飾りラベル（SECURE）を隠し、防衛率を簡潔表示して1行維持 */
+@media (max-width: 768px) {
   #hud-location-badge {
+    display: none;
+  }
+  .defense-badge .defense-label {
     display: none;
   }
 }
@@ -2192,16 +2206,12 @@ body {
     padding: 3px 6px;
     gap: 4px;
   }
-  .defense-badge .defense-label {
-    display: none;
-  }
   .hud-btn {
     min-height: 36px;
     padding: 4px 7px;
     font-size: 0.75rem;
   }
-  .hud-btn .hud-btn-label,
-  .hud-audio-label {
+  .hud-btn .hud-btn-label {
     display: none;
   }
 }
