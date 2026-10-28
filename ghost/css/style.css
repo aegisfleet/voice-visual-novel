@@ -764,17 +764,32 @@ body {
 
 .illustration-img-container {
   width: 100%;
-  max-height: 290px;
+  height: clamp(170px, 34dvh, 310px);
+  max-height: clamp(170px, 34dvh, 310px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   overflow: hidden;
-  border-radius: 4px;
-  border: 1px solid var(--border-subtle);
-  background: #000000;
+  border-radius: 6px;
+  border: 1px solid rgba(0, 240, 255, 0.3);
+  background: radial-gradient(
+    circle at center,
+    rgba(12, 24, 48, 0.95) 0%,
+    rgba(4, 8, 18, 0.98) 100%
+  );
+  padding: 6px;
 }
 
 .dialogue-illustration-img {
-  width: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
   height: auto;
+  object-fit: contain;
   display: block;
+  margin: 0 auto;
+  border-radius: 3px;
+  filter: drop-shadow(0 0 16px rgba(0, 240, 255, 0.15));
 }
 
 .illustration-caption {
@@ -2343,12 +2358,29 @@ body {
 }
 
 .sequence-frame-box {
+  width: 100%;
   aspect-ratio: 16 / 9;
-  max-height: clamp(120px, 24dvh, 210px);
+  max-height: clamp(140px, 28dvh, 260px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #000000;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.sequence-frame-img {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  display: block;
 }
 
 .illustration-img-container {
-  max-height: clamp(130px, 26dvh, 220px);
+  height: clamp(170px, 34dvh, 310px);
+  max-height: clamp(170px, 34dvh, 310px);
 }
 
 /* --- E. 会話ノベルウィンドウ：高さを最適化し、通常時はスクロールバーを出さない --- */
@@ -2672,19 +2704,44 @@ body {
   left: 50% !important;
   transform: translateX(-50%) !important;
   width: min(94vw, 560px);
-  max-height: calc(100% - 265px);
+  max-height: calc(100% - 245px);
   overflow: hidden;
   z-index: 30;
   padding: 12px;
+  transition: all 0.38s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* ポップアップ表示中は背後の立ち絵を減光・ぼかして画面の見づらさを解消 */
-#screen-novel.popup-open .character-stage {
-  opacity: 0.22;
-  filter: blur(3px);
-  transition:
-    opacity 0.25s ease,
-    filter 0.25s ease;
+/* ポップアップ表示時：キャラクターを縮小・退避させ、鑑識モニターと被らず横並びにするアニメーション演出（box準拠） */
+@media (min-width: 769px) {
+  #screen-novel.popup-open .character-stage {
+    transform: translateX(-22vw) scale(0.75) !important;
+    transform-origin: bottom center !important;
+    opacity: 0.95 !important;
+    filter: drop-shadow(0 0 16px rgba(0, 0, 0, 0.8)) !important;
+  }
+
+  #screen-novel.popup-open #cut-sequence-stage,
+  #screen-novel.popup-open #dialogue-illustration-stage {
+    left: calc(50% + 14vw) !important;
+    transform: translateX(-50%) !important;
+    width: min(52vw, 540px) !important;
+  }
+}
+
+@media (max-width: 768px) {
+  #screen-novel.popup-open .character-stage {
+    transform: translateY(12px) scale(0.68) !important;
+    transform-origin: bottom center !important;
+    opacity: 0.3 !important;
+    filter: blur(2px) !important;
+  }
+
+  #screen-novel.popup-open #cut-sequence-stage,
+  #screen-novel.popup-open #dialogue-illustration-stage {
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: min(94vw, 440px) !important;
+  }
 }
 
 /* 3. 一般ユーザー向け「アリアの噛み砕きヒント枠」とインライン用語解説 */
@@ -3432,6 +3489,11 @@ body {
   justify-content: center;
   z-index: 5;
   pointer-events: none;
+  transition:
+    transform 0.38s cubic-bezier(0.16, 1, 0.3, 1),
+    left 0.38s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.3s ease,
+    filter 0.3s ease;
 }
 
 /* キャラクター背後のアンビエント・スポットライト（背景との馴染み・立体感向上） */
