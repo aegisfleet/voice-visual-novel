@@ -2695,53 +2695,34 @@ body {
   pointer-events: none;
 }
 
-/* パラパラ漫画・図解ステージはトーストの下（top: 86px）に配置して被りを根絶 */
+/* パラパラ漫画・図解ステージ（常に画面中央に安定配置し、横はみ出しを完全根絶） */
 #cut-sequence-stage,
 #dialogue-illustration-stage {
   position: absolute !important;
-  top: 86px !important;
+  top: 80px !important;
   bottom: auto !important;
   left: 50% !important;
   transform: translateX(-50%) !important;
-  width: min(94vw, 560px);
-  max-height: calc(100% - 245px);
+  width: min(92vw, 580px) !important;
+  max-width: calc(100vw - 24px) !important;
+  max-height: calc(100% - 240px);
+  box-sizing: border-box !important;
   overflow: hidden;
-  z-index: 30;
+  z-index: 40;
   padding: 12px;
-  transition: all 0.38s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.25s ease;
 }
 
-/* ポップアップ表示時：キャラクターを縮小・退避させ、鑑識モニターと被らず横並びにするアニメーション演出（box準拠） */
-@media (min-width: 769px) {
-  #screen-novel.popup-open .character-stage {
-    transform: translateX(-22vw) scale(0.75) !important;
-    transform-origin: bottom center !important;
-    opacity: 0.95 !important;
-    filter: drop-shadow(0 0 16px rgba(0, 0, 0, 0.8)) !important;
-  }
-
-  #screen-novel.popup-open #cut-sequence-stage,
-  #screen-novel.popup-open #dialogue-illustration-stage {
-    left: calc(50% + 14vw) !important;
-    transform: translateX(-50%) !important;
-    width: min(52vw, 540px) !important;
-  }
-}
-
-@media (max-width: 768px) {
-  #screen-novel.popup-open .character-stage {
-    transform: translateY(12px) scale(0.68) !important;
-    transform-origin: bottom center !important;
-    opacity: 0.3 !important;
-    filter: blur(2px) !important;
-  }
-
-  #screen-novel.popup-open #cut-sequence-stage,
-  #screen-novel.popup-open #dialogue-illustration-stage {
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-    width: min(94vw, 440px) !important;
-  }
+/* ポップアップ表示時：背後の立ち絵キャラクターを自然に縮小・減光し、前面の画像を強調（はみ出しゼロ） */
+#screen-novel.popup-open .character-stage {
+  transform: scale(0.85) !important;
+  transform-origin: bottom center !important;
+  opacity: 0.22 !important;
+  filter: blur(2.5px) !important;
+  transition:
+    transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.3s ease,
+    filter 0.3s ease;
 }
 
 /* 3. 一般ユーザー向け「アリアの噛み砕きヒント枠」とインライン用語解説 */
@@ -3490,8 +3471,7 @@ body {
   z-index: 5;
   pointer-events: none;
   transition:
-    transform 0.38s cubic-bezier(0.16, 1, 0.3, 1),
-    left 0.38s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
     opacity 0.3s ease,
     filter 0.3s ease;
 }
