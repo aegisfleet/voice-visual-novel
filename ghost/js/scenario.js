@@ -107,6 +107,16 @@ window.SCENARIO_DATA = {
       detail:
         '内閣官房国家サイバー統括室（NCO）および警察庁サイバー特別捜査隊による合同令書。民間直接申請の壁、通信の秘密の壁、外国主権と偽旗工作の壁を突破し、国境を越えたC2攻撃インフラへの緊急無害化措置執行権限をケイ・アリアに委ねる最高機密アセット。',
     },
+    item_cyber_bounty_portal: {
+      id: 'item_cyber_bounty_portal',
+      name: '100万米ドル懸賞金＆特別救済ポータル端末',
+      icon: '🌐',
+      image: 'assets/items/item_cyber_bounty_portal.png',
+      type: '【3言語特設報奨金・特別救済キーアセット】',
+      summary: '日・英・中3言語で100万ドル懸賞金と上限300万円特別お見舞金を布告した専用端末。',
+      detail:
+        '攻撃組織内部に囚人のジレンマを引き起こし、開始6時間で113件の有力密告を回収して組織を内部自壊に追い込んだ決定打アセット。10月28日午前4時の全脅迫サイト完全テイクダウン（第13報）の布石となった。',
+    },
   },
   prologue: {
     title: 'PROLOGUE: 2026年10月20日 23:45 — 予兆なき暗転',
@@ -1858,6 +1868,41 @@ window.SCENARIO_DATA = {
                   sprite: 'aria',
                   text: 'はい！ しかも懸賞金窓口は、Chapter 2で暴いた『中国語オフィス（工作表1）』の多国籍グループに合わせて【日本語・英語・中国語の3言語】で開設します！ 『仲間を売れば1.5億円が手に入り、黙っていれば他の仲間に売られて逮捕される』……犯罪組織を内部から自壊させる究極の【囚人のジレンマ】です！',
                   telop: '【第12報発表: 特別お見舞金上限300万円＆懸賞金100万米ドル創設】',
+                  cutSequence: {
+                    id: 'seq_ch5_bounty_dilemma',
+                    title: '100万米ドル懸賞金・囚人のジレンマ自壊シークエンス',
+                    description:
+                      '3言語ポータル公開、午前4時全脅迫サイトテイクダウン、113件密告殺到の連続カット',
+                    intervalMs: 1800,
+                    cuts: [
+                      {
+                        frame: 1,
+                        image: 'assets/sequences/ch5_bounty_cut1.jpg',
+                        sfx: 'alert',
+                        caption:
+                          '【第12報布告】日・英・中3言語での100万ドル懸賞金ポータル公開とネット世論の激震',
+                        visualDesc: '1,000,000 USD BOUNTY画面とSNS賛否の激しいセンチメントグラフ',
+                      },
+                      {
+                        frame: 2,
+                        image: 'assets/sequences/ch5_bounty_cut2.jpg',
+                        sfx: 'impact',
+                        caption:
+                          '【10/28 04:00 第13報】全脅迫サイト完全テイクダウンとドメイン強制停止',
+                        visualDesc:
+                          '404 DOMAIN SUSPENDED / SERVER TERMINATED の赤いテイクダウン宣告画面',
+                      },
+                      {
+                        frame: 3,
+                        image: 'assets/sequences/ch5_bounty_cut3.jpg',
+                        sfx: 'beacon',
+                        caption:
+                          '【囚人のジレンマ炸裂】開始わずか6時間で113件の有力密告が殺到し多国籍組織が自壊',
+                        visualDesc:
+                          '世界中から集約される113件の情報提供ログと連鎖自壊する暗号ネットワーク',
+                      },
+                    ],
+                  },
                 },
               ],
             },

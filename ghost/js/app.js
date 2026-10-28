@@ -1934,6 +1934,7 @@ class NovelApp {
       item_investor_key:
         this.state.hasEvidence('direct_compensation_matrix') || this.state.isGameCleared(),
       item_nco_directive: this.state.isGameCleared(),
+      item_cyber_bounty_portal: this.state.isGameCleared(),
     };
 
     let html = `
