@@ -98,7 +98,9 @@
   - 会話ステージは必ずビューポートに対して `position: fixed; top: 0; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 960px; height: 100dvh; z-index: 45;` で配置し、画面下部に常時固定すること。
 - **セーフエリア（Safe Area Insets）と `viewport-fit=cover`**:
   - HTMLヘッダーに必ず `<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">` を指定。
-  - ノベルウィンドウ下部には、iOSホームインジケータやAndroidジェスチャーバーと重ならないよう、`margin-bottom: calc(8px + env(safe-area-inset-bottom, 0px));` および `padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px));` を設定する。
+  - ノベルウィンドウ下部には、iOSホームインジケータやAndroidジェスチャーバーと重ならないよう、`margin-bottom: calc(8px + env(safe-area-inset-bottom, 0px));`（または `max(14px, calc(env(safe-area-inset-bottom, 0px) + 8px))`）を設定する。
+  - **セーフエリアの二重加算禁止**: ウィンドウが画面下端から浮いている（margin で持ち上げている）場合、`padding-bottom` にまで `env(safe-area-inset-bottom)` を加算してはならない。Android Chrome（edge-to-edge）ではインセットが大きく報告されるため、ウィンドウ内部の本文下に大きな無駄余白が生じる（GHOST PROTOCOL で実際に発生）。セーフエリアは外側 margin でのみ吸収すること。
+  - 送りプロンプト（▼ / NEXT）は本文フローに置かず、ウィンドウ下辺に `position: absolute` で配置する。本文との距離を確保しつつ、表示/非表示でウィンドウ高さが跳ねるのを防ぐ。
 - **文字サイズ・行高・ボックスのレスポンシブ制限**:
   - 会話文（`.dialogue-body`）は `font-size: clamp(0.82rem, 3.8vw, 0.92rem); line-height: 1.5; overflow-wrap: break-word;` で制御し、2行〜4行のセリフでも突き破らないようにする（非推奨の `word-break: break-word;` は SonarQube S1874 違反のため使用禁止）。
   - ノベルウィンドウ（`.novel-window`）には `max-height: 38dvh;` を設定し、画面の4割以上を占有してキャラクター立ち絵を覆い隠さないようにする。

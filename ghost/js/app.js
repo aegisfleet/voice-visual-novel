@@ -1128,6 +1128,8 @@ class NovelApp {
       if (this.charIndex < this.fullText.length) {
         if (this.dom.dialogueText) {
           this.dom.dialogueText.textContent += this.fullText[this.charIndex];
+          // 長文セリフ（最大高さ超過時）はタイピング位置へ追従スクロールし、行末の見切れを防ぐ
+          this.dom.dialogueText.scrollTop = this.dom.dialogueText.scrollHeight;
         }
         // 3文字に1回、心地よい極小のデジタルタイプ音を鳴らす（ボイスOFF時またはナレーション時）
         if (this.charIndex % 3 === 0 && !this.audio.voiceEnabled) {
