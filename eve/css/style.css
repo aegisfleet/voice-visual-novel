@@ -515,10 +515,11 @@ body {
   z-index: 2;
 }
 
+.char-diff-layer.char-mouth-layer,
 .char-mouth-layer {
   z-index: 3;
   /* 口パクはフレーム切り替え時の半透明クロスフェードを排除し即時切り替え */
-  transition: none !important;
+  transition: none;
 }
 
 /* イブ: 半透明ホログラムスクリーン合成（レイヤーラッパー全体に適用） */
@@ -609,10 +610,10 @@ body {
 
 /* リップシンク (口パク) */
 .is-talking #mouthClosed {
-  display: none !important;
+  display: none;
 }
 .is-talking #mouthOpen {
-  display: block !important;
+  display: block;
   transform-origin: 250px 300px;
   animation: lipSync 0.16s ease-in-out infinite alternate;
 }
@@ -626,8 +627,9 @@ body {
 }
 
 /* モーション各種 */
+.character-sprite.motion-nod,
 .motion-nod {
-  animation: motionNod 0.55s ease-in-out !important;
+  animation: motionNod 0.55s ease-in-out;
 }
 @keyframes motionNod {
   0%,
@@ -642,8 +644,9 @@ body {
   }
 }
 
+.character-sprite.motion-hop,
 .motion-hop {
-  animation: motionHop 0.45s ease-out !important;
+  animation: motionHop 0.45s ease-out;
 }
 @keyframes motionHop {
   0%,
@@ -655,8 +658,9 @@ body {
   }
 }
 
+.character-sprite.motion-tilt,
 .motion-tilt {
-  animation: motionTilt 0.75s ease-in-out !important;
+  animation: motionTilt 0.75s ease-in-out;
 }
 @keyframes motionTilt {
   0%,
@@ -668,8 +672,9 @@ body {
   }
 }
 
+.character-sprite.motion-shake,
 .motion-shake {
-  animation: motionShake 0.55s ease-in-out !important;
+  animation: motionShake 0.55s ease-in-out;
 }
 @keyframes motionShake {
   0%,
@@ -684,8 +689,9 @@ body {
   }
 }
 
+.character-sprite.motion-desk-slam,
 .motion-desk-slam {
-  animation: motionDeskSlam 0.5s ease-in-out !important;
+  animation: motionDeskSlam 0.5s ease-in-out;
 }
 @keyframes motionDeskSlam {
   0%,

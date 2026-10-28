@@ -1307,6 +1307,80 @@ class GameApp {
     this.state.saveSessionProgress('explore');
   }
 
+  createSpotPinElement(spot) {
+    const isInspected = this.state.isSpotInspected(spot.id);
+    const el = document.createElement('div');
+    el.className = isInspected ? 'explore-pin spot-pin inspected' : 'explore-pin spot-pin';
+    el.style.left = `${spot.coords.x}%`;
+    el.style.top = `${spot.coords.y}%`;
+
+    const badgeHtml = isInspected
+      ? '<span class="pin-status-badge inspected">✔ 済</span>'
+      : '<span class="pin-status-badge new">NEW</span>';
+
+    const iconContent = spot.image
+      ? `<img src="${spot.image}?v=20261017_rev50" alt="${spot.name}" class="pin-icon-img" />`
+      : spot.icon;
+
+    el.innerHTML = `
+      <div class="pin-icon-wrap">
+        <div class="pin-icon">${iconContent}</div>
+        ${badgeHtml}
+      </div>
+      <div class="pin-label">${spot.name}</div>
+    `;
+    el.addEventListener('click', () => {
+      document.activeElement?.blur?.();
+      this.handleInspectSpot(spot);
+    });
+    return el;
+  }
+
+  createNpcPinElement(npc) {
+    const isTalked = this.state.isNpcTalked(npc.id);
+    const el = document.createElement('div');
+    el.className = isTalked ? 'explore-pin npc-pin talked' : 'explore-pin npc-pin';
+    el.style.left = `${npc.coords.x}%`;
+    el.style.top = `${npc.coords.y}%`;
+
+    const badgeHtml = isTalked
+      ? '<span class="pin-status-badge inspected">✔ 済</span>'
+      : '<span class="pin-status-badge new">TALK</span>';
+
+    const iconContent = npc.image
+      ? `<img src="${npc.image}?v=20261017_rev50" alt="${npc.name}" class="pin-icon-img" />`
+      : npc.icon;
+
+    el.innerHTML = `
+      <div class="pin-icon-wrap">
+        <div class="pin-icon">${iconContent}</div>
+        ${badgeHtml}
+      </div>
+      <div class="pin-label">${npc.name}</div>
+    `;
+    el.addEventListener('click', () => {
+      document.activeElement?.blur?.();
+      this.handleTalkNpc(npc);
+    });
+    return el;
+  }
+
+  renderExploreAreaItems(container, area) {
+    if (!container) return;
+    container.innerHTML = '';
+
+    const spots = this.scenario.spots.filter((s) => s.area === area);
+    spots.forEach((spot) => {
+      if (spot.isSecretLoop2 && !this.state.isClearedFirstLoop()) return;
+      container.appendChild(this.createSpotPinElement(spot));
+    });
+
+    const npcs = this.scenario.npcs.filter((n) => n.area === area);
+    npcs.forEach((npc) => {
+      container.appendChild(this.createNpcPinElement(npc));
+    });
+  }
+
   renderExploreMap() {
     // 背景画像を確実にインラインスタイルでも適用
     if (this.dom.areaRoom) {
@@ -1316,84 +1390,8 @@ class GameApp {
       this.dom.areaCorridor.style.backgroundImage = "url('assets/backgrounds/bg_corridor.jpg')";
     }
 
-    // スポットとNPCのDOM要素を動的生成
-    const renderItems = (container, area) => {
-      container.innerHTML = '';
-
-      // スポット
-      const spots = this.scenario.spots.filter((s) => s.area === area);
-      spots.forEach((spot) => {
-        // 2周目限定スポットの判定
-        if (spot.isSecretLoop2 && !this.state.isClearedFirstLoop()) {
-          return;
-        }
-
-        const isInspected = this.state.isSpotInspected(spot.id);
-        const el = document.createElement('div');
-        el.className = `explore-pin spot-pin ${isInspected ? 'inspected' : ''}`;
-        el.style.left = `${spot.coords.x}%`;
-        el.style.top = `${spot.coords.y}%`;
-
-        const badgeHtml = isInspected
-          ? '<span class="pin-status-badge inspected">✔ 済</span>'
-          : '<span class="pin-status-badge new">NEW</span>';
-
-        const iconContent = spot.image
-          ? `<img src="${spot.image}?v=20261017_rev50" alt="${spot.name}" class="pin-icon-img" />`
-          : spot.icon;
-
-        el.innerHTML = `
-          <div class="pin-icon-wrap">
-            <div class="pin-icon">${iconContent}</div>
-            ${badgeHtml}
-          </div>
-          <div class="pin-label">${spot.name}</div>
-        `;
-        el.addEventListener('click', () => {
-          if (document.activeElement?.blur) {
-            document.activeElement.blur();
-          }
-          this.handleInspectSpot(spot);
-        });
-        container.appendChild(el);
-      });
-
-      // NPC
-      const npcs = this.scenario.npcs.filter((n) => n.area === area);
-      npcs.forEach((npc) => {
-        const isTalked = this.state.isNpcTalked(npc.id);
-        const el = document.createElement('div');
-        el.className = `explore-pin npc-pin ${isTalked ? 'talked' : ''}`;
-        el.style.left = `${npc.coords.x}%`;
-        el.style.top = `${npc.coords.y}%`;
-
-        const badgeHtml = isTalked
-          ? '<span class="pin-status-badge inspected">✔ 済</span>'
-          : '<span class="pin-status-badge new">TALK</span>';
-
-        const iconContent = npc.image
-          ? `<img src="${npc.image}?v=20261017_rev50" alt="${npc.name}" class="pin-icon-img" />`
-          : npc.icon;
-
-        el.innerHTML = `
-          <div class="pin-icon-wrap">
-            <div class="pin-icon">${iconContent}</div>
-            ${badgeHtml}
-          </div>
-          <div class="pin-label">${npc.name}</div>
-        `;
-        el.addEventListener('click', () => {
-          if (document.activeElement?.blur) {
-            document.activeElement.blur();
-          }
-          this.handleTalkNpc(npc);
-        });
-        container.appendChild(el);
-      });
-    };
-
-    renderItems(this.dom.areaRoom, 'room');
-    renderItems(this.dom.areaCorridor, 'corridor');
+    this.renderExploreAreaItems(this.dom.areaRoom, 'room');
+    this.renderExploreAreaItems(this.dom.areaCorridor, 'corridor');
     this.updateAreaTabBadges();
   }
 
@@ -1782,6 +1780,21 @@ class GameApp {
     this.renderDialogueItem(currentItem);
   }
 
+  isStrugglingSpeakerVoice(text, speaker) {
+    if (!speaker) return false;
+    if (speaker.includes('電子の声') || speaker.includes('知性')) return true;
+    const isMimi =
+      speaker.includes('MIMI') || speaker.includes('電子の少女') || speaker.includes('TVボックス');
+    const isStrugglingText =
+      text.includes('タイヘン') || text.includes('消サナイデ') || text.includes('オ……ハ……ナ……シ');
+    return isMimi && isStrugglingText;
+  }
+
+  getTypewriterSpeed(text, speaker) {
+    if (this.isSkipMode) return 5;
+    return this.isStrugglingSpeakerVoice(text, speaker) ? 85 : 15;
+  }
+
   startTypewriter(text, speaker) {
     clearInterval(this.typewriterTimer);
     clearTimeout(this.autoTimer);
@@ -1793,17 +1806,7 @@ class GameApp {
     this.dom.dialoguePrompt.textContent = '▼ 画面をクリックして進む';
 
     let charIdx = 0;
-    // 0.39トークンの遅さをMIMIが苦しんでいる時や電子の声の時に演出（アップグレード後は高速・流暢に）
-    const isStrugglingVoice =
-      (speaker && (speaker.includes('電子の声') || speaker.includes('知性'))) ||
-      (speaker &&
-        (speaker.includes('MIMI') ||
-          speaker.includes('電子の少女') ||
-          speaker.includes('TVボックス')) &&
-        (text.includes('タイヘン') ||
-          text.includes('消サナイデ') ||
-          text.includes('オ……ハ……ナ……シ')));
-    const speed = this.isSkipMode ? 5 : isStrugglingVoice ? 85 : 15;
+    const speed = this.getTypewriterSpeed(text, speaker);
 
     this.typewriterTimer = setInterval(() => {
       if (charIdx < text.length) {
@@ -3052,6 +3055,14 @@ class GameApp {
   }
 }
 
+function resolveExternalBrowserUrl(href) {
+  if (window.CyberShare?.buildExternalBrowserUrl) {
+    return window.CyberShare.buildExternalBrowserUrl(href);
+  }
+  const sep = href.includes('?') ? '&' : '?';
+  return `${href}${sep}openExternalBrowser=1`;
+}
+
 function setupLineBrowserNotice() {
   const isLineBrowser = typeof navigator !== 'undefined' && /Line\//i.test(navigator.userAgent);
   if (!isLineBrowser) return;
@@ -3061,12 +3072,7 @@ function setupLineBrowserNotice() {
     lineNotice.classList.remove('hidden');
     const openBtn = document.getElementById('btn-line-external-open');
     if (openBtn) {
-      if (window.CyberShare?.buildExternalBrowserUrl) {
-        openBtn.href = window.CyberShare.buildExternalBrowserUrl(window.location.href);
-      } else {
-        const sep = window.location.href.includes('?') ? '&' : '?';
-        openBtn.href = `${window.location.href}${sep}openExternalBrowser=1`;
-      }
+      openBtn.href = resolveExternalBrowserUrl(window.location.href);
     }
   }
 
@@ -3077,12 +3083,10 @@ function setupLineBrowserNotice() {
   }
 
   setTimeout(() => {
-    if (window.app?.showToast) {
-      window.app.showToast(
-        'LINEをご利用中: 声が聞こえない場合は端末の消音スイッチ解除、または「Safari / 外部ブラウザで開く」をお試しください',
-        7000,
-      );
-    }
+    window.app?.showToast?.(
+      'LINEをご利用中: 声が聞こえない場合は端末の消音スイッチ解除、または「Safari / 外部ブラウザで開く」をお試しください',
+      7000,
+    );
   }, 1200);
 }
 

@@ -78,22 +78,25 @@ class GameState {
     this.bgmEnabled = true;
   }
 
+  applyParsedPersistentState(parsed) {
+    this.hasClearedLoop1 = Boolean(parsed.hasClearedLoop1);
+    this.hasClearedTrueEnd = Boolean(parsed.hasClearedTrueEnd);
+    this.currentLoop = this.hasClearedLoop1 ? 2 : 1;
+    if (typeof parsed.voiceEnabled === 'boolean') this.voiceEnabled = parsed.voiceEnabled;
+    if (typeof parsed.seEnabled === 'boolean') this.seEnabled = parsed.seEnabled;
+    if (typeof parsed.bgmEnabled === 'boolean') this.bgmEnabled = parsed.bgmEnabled;
+  }
+
   // ローカルストレージからの永続セーブデータ読み込み
   loadPersistentState() {
     try {
       const data = localStorage.getItem(this.storageKey);
-      if (data) {
-        const parsed = JSON.parse(data);
-        this.hasClearedLoop1 = parsed.hasClearedLoop1 || false;
-        this.hasClearedTrueEnd = parsed.hasClearedTrueEnd || false;
-        this.currentLoop = this.hasClearedLoop1 ? 2 : 1;
-        if (typeof parsed.voiceEnabled === 'boolean') this.voiceEnabled = parsed.voiceEnabled;
-        if (typeof parsed.seEnabled === 'boolean') this.seEnabled = parsed.seEnabled;
-        if (typeof parsed.bgmEnabled === 'boolean') this.bgmEnabled = parsed.bgmEnabled;
-      } else {
+      if (!data) {
         this.hasClearedLoop1 = false;
         this.hasClearedTrueEnd = false;
+        return;
       }
+      this.applyParsedPersistentState(JSON.parse(data));
     } catch (e) {
       console.warn('Failed to load save data:', e);
       this.hasClearedLoop1 = false;

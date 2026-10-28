@@ -90,9 +90,9 @@
 ### 3-2. 会話ノベルウィンドウの画面下端見切れ防止（Mobile Viewport & Safe Area）
 ノベルゲームの根幹である「会話テキスト」と「ノベルウィンドウ」が、スマートフォンの動的アドレスバーや画面下部システムジェスチャーバーで見切れる問題を防ぐため、以下の規約を徹底する。
 
-- **動的ビューポート高（`100dvh`）の併記と `100vh` 単独指定の禁止**:
+- **動的ビューポート高（`100dvh`）の使用と `100vh` 重複指定の禁止**:
   - モバイルブラウザ（Chrome/Safari）ではURLバーやツールバーの開閉により、CSSの `100vh` は常に実際の可視領域より約50px〜70px大きくなり、画面下端が見切れる原因となる。
-  - `body`、`#game-container`、`.dialogue-stage`、`.modal` には必ず `min-height: 100vh; min-height: 100dvh;` を併記すること。
+  - `body`、`#game-container`、`.dialogue-stage`、`.modal` には `min-height: 100dvh;`（および `height: 100dvh;`）を指定すること。なお、同一ルールブロック内に `min-height: 100vh; min-height: 100dvh;` を重複記述すると静的解析（SonarQube S4656 / Biome `noDuplicateProperties`）違反となるため、`100dvh` に一本化すること。
 - **会話ステージ（`.dialogue-stage`）の `position: fixed` 必須化**:
   - 会話レイヤーを背景コンテンツ（探索画面や立証画面）の内部に `position: absolute` で配置すると、背景コンテンツの高さやスクロール位置によって会話ウィンドウが画面外へ押し出される。
   - 会話ステージは必ずビューポートに対して `position: fixed; top: 0; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 960px; height: 100dvh; z-index: 45;` で配置し、画面下部に常時固定すること。
@@ -100,7 +100,7 @@
   - HTMLヘッダーに必ず `<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">` を指定。
   - ノベルウィンドウ下部には、iOSホームインジケータやAndroidジェスチャーバーと重ならないよう、`margin-bottom: calc(8px + env(safe-area-inset-bottom, 0px));` および `padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px));` を設定する。
 - **文字サイズ・行高・ボックスのレスポンシブ制限**:
-  - 会話文（`.dialogue-body`）は `font-size: clamp(0.82rem, 3.8vw, 0.92rem); line-height: 1.5; word-break: break-word; overflow-wrap: break-word;` で制御し、2行〜4行のセリフでも突き破らないようにする。
+  - 会話文（`.dialogue-body`）は `font-size: clamp(0.82rem, 3.8vw, 0.92rem); line-height: 1.5; overflow-wrap: break-word;` で制御し、2行〜4行のセリフでも突き破らないようにする（非推奨の `word-break: break-word;` は SonarQube S1874 違反のため使用禁止）。
   - ノベルウィンドウ（`.novel-window`）には `max-height: 38dvh;` を設定し、画面の4割以上を占有してキャラクター立ち絵を覆い隠さないようにする。
 - **探索ステージ（`.explore-stage`）の縦幅適正化**:
   - デスクトップ用の固定高（例: `height: 520px`）がモバイルで残っていると背後コンテナが肥大化するため、モバイル時は `height: auto; max-height: 50dvh; aspect-ratio: 4 / 3;` で適正サイズに制御する。
@@ -180,15 +180,21 @@ Webノベルゲームとしてプレイヤーがストレスなく読み進め�
 
 ## 5. CSSとフロントエンド実装の規約
 
-### 5-1. グローバル `.hidden` ルールの最優先定義
-CSSセレクタの詳細度による非表示漏れを防ぐため、スタイルシートの最上部付近に必ず以下のグローバルルールを配置すること。
+### 5-1. グローバル `.hidden` ルールと CSS 詳細度（Specificity）設計（`!important` 禁止）
+SonarQube 品質基準（S9423）に基づき、CSS における `!important` の使用は全面禁止である。IDセレクタやコンポーネントクラスに対して `.hidden` を確実に効かせるため、以下の2原則を徹底すること：
+1. レイアウトの `display: flex` 等は可能な限りクラスセレクタ（`.hud`、`.choice-stage` 等）に定義し、IDセレクタ（`#hud`）への直接 `display` 指定を避ける。
+2. スタイルシートの最上部で、主要なID・クラスと組み合わせた複合 `.hidden` セレクタを一括定義する。
 ```css
-/* 汎用非表示クラス（すべての要素で最優先） */
-.hidden {
-  display: none !important;
+/* 汎用非表示クラス（詳細度制御により !important なしで確実に非表示） */
+.hidden,
+#hud.hidden,
+.hud.hidden,
+#choice-stage.hidden,
+.modal-overlay.hidden {
+  display: none;
 }
 ```
-個別セレクタ（例: `.my-button.hidden`）だけに依存して `display: none` を書くことは禁止する。
+また、スタイル改修時はファイル末尾に上書きパッチセクションを追加するのではなく、既存の正規ルールブロックを直接更新して単一定義（Single Source of Truth）を維持すること。
 
 ### 5-2. アニメーションのリフロー再トリガー
 カットインや点滅などのCSSアニメーションをJavaScriptから複数回呼び出す場合は、クラスの付け替えだけでなく、必ずリフロー（再描画）を発生させてアニメーションの再発火を保証すること。

@@ -36,18 +36,18 @@
       "preset": "recommended",
       "complexity": {
         "noExcessiveCognitiveComplexity": {
-          "level": "warn",
+          "level": "error",
           "options": {
             "maxAllowedComplexity": 15
           }
         },
-        "noImportantStyles": "off",
+        "noImportantStyles": "error",
         "useArrowFunction": "off",
         "noUselessSwitchCase": "off",
         "noArguments": "off"
       },
       "suspicious": {
-        "noDuplicateProperties": "warn",
+        "noDuplicateProperties": "error",
         "noRedundantUseStrict": "off"
       },
       "a11y": {
