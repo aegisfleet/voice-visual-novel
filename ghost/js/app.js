@@ -21,6 +21,14 @@ const TERM_GLOSSARY = {
     '2026年10月施行の新法。重大なサイバー攻撃に対し、国の機関が犯人のサーバーへ侵入してデータを無害化（消去）できる制度。',
   警職法6条の2:
     '国民の生命や財産に差し迫った重大な危険があるとき、警察が緊急で実力行使できる法律。',
+  特別お見舞金:
+    '犯人にネット上で個人情報を公開された被害者に対し、会社が1公開につき上限300万円を追加支給する特別救済制度。',
+  'サイバー犯罪撲滅・懸賞金':
+    '犯人が要求した身代金と同額の「総額100万米ドル（約1.5億円）」を、犯人逮捕につながる情報提供者に支払う報奨金制度。',
+  囚人のジレンマ:
+    '共犯者同士が「先に仲間を売れば1.5億円をもらえ、黙っていれば仲間に売られて自分だけ逮捕される」と疑心暗鬼になり自滅する心理状態。',
+  テイクダウン:
+    '警察や通信事業者が連携し、犯罪グループが悪用している脅迫サイトやサーバーを強制的に停止・閉鎖させること。',
 };
 
 // 用語を文字数の長い順にソートして単一パス正規表現を事前コンパイル（FT4/FT5 と FT4 等の多重置換タグ破壊を完全防止）
@@ -631,10 +639,13 @@ class NovelApp {
   loadEpilogue(isResuming) {
     this.currentDialogueQueue = [...this.scenario.epilogue.dialogue];
     this.queueIndex = isResuming ? this.state.currentLineIndex : 0;
-    this.updateHudBadge('EPILOGUE', '白昼の反撃と完全なる鎮火');
+    this.updateHudBadge('EPILOGUE', '午前4時の完全沈黙と100万ドルの包囲網');
     if (!isResuming) {
-      this.showChapterTitleCard('EPILOGUE', '2026.10.27 13:30', '白昼の反撃と完全なる鎮火', () =>
-        this.renderCurrentLine(),
+      this.showChapterTitleCard(
+        'EPILOGUE',
+        '2026.10.28 18:20',
+        '午前4時の完全沈黙と100万ドルの包囲網',
+        () => this.renderCurrentLine(),
       );
     } else {
       this.renderCurrentLine();
@@ -685,7 +696,7 @@ class NovelApp {
       { id: 2, label: 'CH.2', sub: '10/22 19:30', title: '永続ソケットの死角' },
       { id: 3, label: 'CH.3', sub: '10/23 15:00', title: 'リバースRDPの逆流' },
       { id: 4, label: 'CH.4', sub: '10/24 11:50', title: '100%直接補償の決断' },
-      { id: 5, label: 'CH.5', sub: '10/27 12:00', title: '能動的サイバー防御' },
+      { id: 5, label: 'CH.5', sub: '10/27 12:00', title: '能動的サイバー防御と100万ドル懸賞金' },
     ];
 
     let html = '';
@@ -1486,8 +1497,14 @@ class NovelApp {
       choiceData.cutinSub || '⚡ NCO TACTICAL DIRECTIVE / 作戦指示承認',
       'tactic',
     );
+    if (choiceData.isFinalStep) {
+      this.state.currentPhase = 'resolution';
+    }
     const reaction = option.reaction || [];
-    const nextDialogue = choiceData.nextDialogue || this.currentChapterData?.midDialogue || [];
+    const defaultNext = choiceData.isFinalStep
+      ? this.currentChapterData?.resolution
+      : this.currentChapterData?.midDialogue;
+    const nextDialogue = choiceData.nextDialogue || defaultNext || [];
     this.currentDialogueQueue = [...reaction, ...nextDialogue];
     this.queueIndex = 0;
     setTimeout(() => this.renderCurrentLine(), 800);
@@ -1704,14 +1721,14 @@ class NovelApp {
     }
 
     if (this.dom.endingTitle) {
-      this.dom.endingTitle.textContent = `TRUE END: 白昼の反撃と完全なる鎮火 [${rankInfo.rank} RANK]`;
+      this.dom.endingTitle.textContent = `TRUE END: 午前4時の完全沈黙と100万ドルの包囲網 [${rankInfo.rank} RANK]`;
     }
     if (this.dom.endingSub) {
       this.dom.endingSub.textContent =
-        '能動的サイバー防御「公表なき発動第1号」達成・26,739人の尊厳と資産の救出';
+        '能動的サイバー防御「発動第1号」＆100万米ドル逆転懸賞金による完全勝利';
     }
     if (this.dom.endingDesc) {
-      this.dom.endingDesc.textContent = `${rankInfo.desc} 5,000万ドル要求の黙殺と100%直接補償による価格崩壊、潜伏ランサムのブラフ看破、そして10月27日正午の『被害者 第1号』公開と同時に発火したカナリア逆探知と非公然無害化措置の完遂。第2号以降の晒しは永久に封殺され、26,739人の日常は守り抜かれた。`;
+      this.dom.endingDesc.textContent = `${rankInfo.desc} 5,000万ドル要求の黙殺と100%直接補償による価格崩壊、潜伏ランサムのブラフ看破、10月27日正午のカナリア逆探知とNCO非公然無害化措置、そして公開被害者への上限300万円特別お見舞金と『100万米ドル逆転懸賞金（開始6時間で113件の情報殺到）』による敵組織の内部崩壊。10月28日午前4時、全脅迫サイトは完全テイクダウンされ、26,739人の尊厳は守り抜かれた。`;
     }
     this.dom.endingUnlockedBanner?.classList.remove('hidden');
     if (this.dom.endingUnlockedBanner) {

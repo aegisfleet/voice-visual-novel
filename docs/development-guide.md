@@ -119,7 +119,7 @@ def chroma_green(src_path, dest_path):
   3. 最大音量持続時は音節フラップ変調（秒間約3.3拍）とデバウンス（90ms）で有機的なリズムを付与する。
 
 > 📖 **詳細な仕様・再現手順・完全なコード**:
-> [`docs/avatar-lip-sync-animation-guide.md`](file:///d:/Work/voice-visual-novel/docs/avatar-lip-sync-animation-guide.md) を参照のこと。
+> [`docs/avatar-lip-sync-animation-guide.md`](docs/avatar-lip-sync-animation-guide.md) を参照のこと。
 
 ---
 

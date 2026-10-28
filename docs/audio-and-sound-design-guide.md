@@ -163,11 +163,11 @@ ADVゲームにおいて、プレイヤーが現場で証拠品を発見・取�
 | **パターンC** | `sfx_evidence_c.mp3` | **C#6 (1109Hz) $\to$ F#6 (1480Hz)**<br>完全4度上行（2音） | 非整数倍音（3.1次、4.5次）を含むハイテクメタル構造 | **電脳サイバー・ピロン♪**。電子基板やARホログラムUIとシンクロする先鋭的かつソリッドなSFX。 |
 | **パターンD** | `sfx_evidence_d.mp3` | **A5 (880Hz) $\to$ E6 (1319Hz)**<br>完全5度上行（2音） | 奇数倍音を抑えた温かいフェルト・ベル構造 | **優しいソフト・ピロン♪**。高域の金属的刺激を排除し、長時間の探索でも聴き疲れしない親和性。 |
 
-* **生成ツール**: [`scripts/generate_piron_sfx.py`](file:///d:/Work/voice-visual-novel/scripts/generate_piron_sfx.py)
+* **生成ツール**: [`scripts/generate_piron_sfx.py`](scripts/generate_piron_sfx.py)
 * **マスタリングと音量最適化**:
   * 証拠品SE: EBU R128（-19.0 LUFS, TP -0.5dB）により、BGM（-18.0 LUFS）やセリフ読み上げに対して出しゃばりすぎず、耳に優しく上品な音圧に設定。ゲーム内再生ボリュームも `0.45` に調整。
   * カットイン激突音: サブベースとメタリッククラッシュの音圧を -4.5dB 減衰し、ゲーム内再生ボリュームを `0.45`（旧 0.8）に抑制。劇的な衝撃感を保ちながら耳への刺激を大幅に緩和。
-* **試聴・切り替え**: [`box/samples.html`](file:///d:/Work/voice-visual-novel/box/samples.html) の「シネマティック効果音 (SFX)」セクションにて全4パターンの比較試聴が可能。
+* **試聴・切り替え**: [`box/samples.html`](box/samples.html) の「シネマティック効果音 (SFX)」セクションにて全4パターンの比較試聴が可能。
 
 ---
 
@@ -301,12 +301,12 @@ class AudioManager {
 
 ## 7. 関連ファイル一覧
 
-* **BGM・効果音生成スクリプト**: [`scripts/generate_box_bgm.py`](file:///d:/Work/voice-visual-novel/scripts/generate_box_bgm.py)
-* **ピロン効果音（SFX）物理合成スクリプト**: [`scripts/generate_piron_sfx.py`](file:///d:/Work/voice-visual-novel/scripts/generate_piron_sfx.py)
-* **ゲームオーディオ制御エンジン**: [`box/js/audio.js`](file:///d:/Work/voice-visual-novel/box/js/audio.js)
-* **ゲーム内メイン制御**: [`box/js/app.js`](file:///d:/Work/voice-visual-novel/box/js/app.js)
-* **試聴・音響アーカイブ室**: [`box/samples.html`](file:///d:/Work/voice-visual-novel/box/samples.html)
-* **作品仕様書**: [`box/README.md`](file:///d:/Work/voice-visual-novel/box/README.md)
-* **AIエージェント開発プロトコル**: [`docs/agent-novel-game-dev-protocol.md`](file:///d:/Work/voice-visual-novel/docs/agent-novel-game-dev-protocol.md)
-* **BGM制作ガイドライン（全タイトル共通の標準方針）**: [`docs/bgm-production-guide.md`](file:///d:/Work/voice-visual-novel/docs/bgm-production-guide.md)
+* **BGM・効果音生成スクリプト**: [`scripts/generate_box_bgm.py`](scripts/generate_box_bgm.py)
+* **ピロン効果音（SFX）物理合成スクリプト**: [`scripts/generate_piron_sfx.py`](scripts/generate_piron_sfx.py)
+* **ゲームオーディオ制御エンジン**: [`box/js/audio.js`](box/js/audio.js)
+* **ゲーム内メイン制御**: [`box/js/app.js`](box/js/app.js)
+* **試聴・音響アーカイブ室**: [`box/samples.html`](box/samples.html)
+* **作品仕様書**: [`box/README.md`](box/README.md)
+* **AIエージェント開発プロトコル**: [`docs/agent-novel-game-dev-protocol.md`](docs/agent-novel-game-dev-protocol.md)
+* **BGM制作ガイドライン（全タイトル共通の標準方針）**: [`docs/bgm-production-guide.md`](docs/bgm-production-guide.md)
 

@@ -363,6 +363,44 @@ async function runE2ETest() {
     });
     console.log('   ✅ 未解禁アーカイブ画像のネタバレ防止（ブラー＆暗転マスク）正常確認');
 
+    // Test 8: Chapter 5 Step 3 (100万ドル懸賞金・特別お見舞金) とスマホ画面 (375x750) レスポンシブ検証
+    console.log('9️⃣ Chapter 5 第12報（100万ドル懸賞金）選択肢＆スマホ画面(375x750)検証...');
+    await page.setViewport({ width: 375, height: 750, isMobile: true, hasTouch: true });
+    await page.click('#btn-start-game');
+    await page.waitForFunction(() => {
+      const novel = document.getElementById('screen-novel');
+      return novel && novel.classList.contains('active');
+    });
+
+    const bountyStepCheck = await page.evaluate(() => {
+      window.ghostApp?.stopAuto();
+      window.ghostApp?.stopSkip();
+      clearTimeout(window.ghostApp?.chapterCardTimer);
+      clearTimeout(window.ghostApp?.typingTimer);
+      const ch5 = window.ghostApp?.scenario?.chapters?.find((c) => c.id === 5);
+      const step3 = ch5?.choiceSteps?.find((s) => s.id === 'ch5_step3_cyber_bounty');
+      if (!ch5 || !step3) return { exists: false };
+      window.ghostApp.currentChapterData = ch5;
+      window.ghostApp.showChoice(step3, step3.type || 'tactic');
+      const stage = document.getElementById('choice-stage');
+      const rect = stage ? stage.getBoundingClientRect() : null;
+      return {
+        exists: true,
+        isFinalStep: Boolean(step3.isFinalStep),
+        optionCount: step3.options?.length || 0,
+        stageVisible: stage && !stage.classList.contains('hidden'),
+        fitsViewportWidth: rect ? rect.right <= window.innerWidth + 1 && rect.left >= -1 : false,
+      };
+    });
+
+    if (!bountyStepCheck.exists || !bountyStepCheck.isFinalStep || bountyStepCheck.optionCount !== 3) {
+      throw new Error(`Chapter 5 Step 3 (ch5_step3_cyber_bounty) の定義が不正です: ${JSON.stringify(bountyStepCheck)}`);
+    }
+    if (!bountyStepCheck.stageVisible || !bountyStepCheck.fitsViewportWidth) {
+      throw new Error(`スマホ画面(375x750)で選択肢ステージが正しく表示されていないか横見切れしています: ${JSON.stringify(bountyStepCheck)}`);
+    }
+    console.log('   ✅ Chapter 5 Step 3 (100万ドル懸賞金・特別お見舞金) ＆スマホ画面(375x750)正常確認');
+
     if (pageErrors.length > 0) {
       throw new Error(`ブラウザ実行時エラーが検出されました: ${pageErrors.join(', ')}`);
     }

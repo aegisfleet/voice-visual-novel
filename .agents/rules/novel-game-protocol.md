@@ -3,9 +3,10 @@
 本リポジトリで作業するすべてのAIエージェントは、以下のルールを厳格に遵守すること。
 
 ## 1. 必読ドキュメント
-開発や改修の着手前に、必ず以下の2つのドキュメントを参照せよ：
-- [docs/novel-game-implementation-guidelines.md](file:///d:/Work/voice-visual-novel/docs/novel-game-implementation-guidelines.md)
-- [docs/agent-novel-game-dev-protocol.md](file:///d:/Work/voice-visual-novel/docs/agent-novel-game-dev-protocol.md)
+開発や改修の着手前に、必ず以下のドキュメントを参照せよ：
+- [docs/novel-game-implementation-guidelines.md](docs/novel-game-implementation-guidelines.md)
+- [docs/agent-novel-game-dev-protocol.md](docs/agent-novel-game-dev-protocol.md)
+- [docs/scenario-consistency-framework.md](docs/scenario-consistency-framework.md)
 
 ## 2. 厳格遵守事項
 1. **ステートの可逆性と詰み防止**:

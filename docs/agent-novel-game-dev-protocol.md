@@ -44,7 +44,7 @@
 - **防止策**: 
   - 全てのセリフ・独白に対し、「なぜこの人物はこのタイミングでこのセリフを言えるのか？」という**なぜなぜ分析（5 Whys）**を実施する。
   - セリフに含まれる前提事実（「〇〇が疑っている」「あいつが言っていた」）は、必ず直前のプロローグや対話で**読者と主人公が直接見聞きする客観的描写（行動・計器・セリフ）として事前に提示する**こと。
-  - 詳細は [scenario-consistency-framework.md](file:///d:/Work/voice-visual-novel/docs/scenario-consistency-framework.md) を参照。
+  - 詳細は [docs/scenario-consistency-framework.md](docs/scenario-consistency-framework.md) を参照。
 
 ### ❌ 過誤 7: 「100vh・非fixed・セーフエリア未考慮」による会話ウィンドウの画面下端見切れ
 - **現象**: 会話ステージを `position: absolute` で背後コンテンツ内に配置したり、`100vh` に依存してスタイルを定義したため、モバイルブラウザの動的URLバーや下部ジェスチャーバーによって、会話テキストの行末や送りプロンプト（▼）が画面外へ突き抜けて見えなくなる。
@@ -94,7 +94,7 @@ flowchart TD
 4. **周回・セーブの整合性**: 1周目クリア状態と2周目クリア状態のフラグが破綻していないか？
 
 ### ステップ 2: ガイドライン準拠の実装
-[novel-game-implementation-guidelines.md](file:///d:/Work/voice-visual-novel/docs/novel-game-implementation-guidelines.md) に沿って実装する：
+[docs/novel-game-implementation-guidelines.md](docs/novel-game-implementation-guidelines.md) に沿って実装する：
 - CSS: グローバル `.hidden`、`clamp()`、`box-sizing: border-box`、`touch-action: manipulation`。
 - アニメーション: リフロー強制（`void el.offsetWidth;`）による再発火保証。
 - スポット座標: 重なりゼロの分散配置。

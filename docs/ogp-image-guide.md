@@ -60,7 +60,7 @@ Done!
 
 ## 4. OGPデザイン改変・カスタマイズ手順
 
-デザインや文言を変更する場合は、[`scripts/generate_site_assets.py`](file:///d:/Work/voice-visual-novel/scripts/generate_site_assets.py) 内の該当箇所を編集する。
+デザインや文言を変更する場合は、[`scripts/generate_site_assets.py`](scripts/generate_site_assets.py) 内の該当箇所を編集する。
 
 ### 4.1 テキスト・キャッチコピーの変更
 スクリプト内の各関数（`render_portal_ogp` / `render_eve_ogp`）にあるテキスト変数を書き換える。

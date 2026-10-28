@@ -3,11 +3,13 @@
 本リポジトリ（voice-visual-novel）で作業するすべてのAIエージェントは、以下のガイドラインおよびプロトコルを無条件で遵守してください。
 
 ## 必須参照ドキュメント
-- [docs/novel-game-implementation-guidelines.md](file:///d:/Work/voice-visual-novel/docs/novel-game-implementation-guidelines.md)
+- [docs/novel-game-implementation-guidelines.md](docs/novel-game-implementation-guidelines.md)
   - Webノベルゲーム・ADVのUX、ゲームループ、ステート設計の必須要件定義書。
-- [docs/agent-novel-game-dev-protocol.md](file:///d:/Work/voice-visual-novel/docs/agent-novel-game-dev-protocol.md)
-  - AIエージェントが過去に引き起こした5大過誤の防止策と、2画面実機検証プロトコル。
-- [docs/bgm-production-guide.md](file:///d:/Work/voice-visual-novel/docs/bgm-production-guide.md)
+- [docs/agent-novel-game-dev-protocol.md](docs/agent-novel-game-dev-protocol.md)
+  - AIエージェントが過去に引き起こした9大過誤の防止策と、2画面実機検証プロトコル。
+- [docs/scenario-consistency-framework.md](docs/scenario-consistency-framework.md)
+  - 「なぜなぜ分析」と「情報非対称性・ゲーム理論」に基づくシナリオの矛盾排除・専門用語比喩化・ステップ分散提示の汎用設計フレームワーク。シナリオ作成・改修時は必読。
+- [docs/bgm-production-guide.md](docs/bgm-production-guide.md)
   - BGM の生成・差し替えを行う場合の標準手順（生成方針、記号解析によるループ継ぎ目の検証、Web Audio ギャップレス再生、受け入れチェックリスト）。BGM 作業時は必読。
 
 ## 最重要ルール

@@ -7,8 +7,8 @@
 ## 1. ナギサ ケイ (渚 慧) / NAGISA KEI
 
 * **役割**: 主人公・独立系セキュリティ＆金融取引基盤エンジニア (27歳)
-* **キャラクターシート**: [ghost/assets/characters/sheets/sheet_kei.jpg](file:///d:/Work/voice-visual-novel/ghost/assets/characters/sheets/sheet_kei.jpg)
-* **立ち絵スプライト**: [ghost/assets/characters/kei.png](file:///d:/Work/voice-visual-novel/ghost/assets/characters/kei.png)
+* **キャラクターシート**: [ghost/assets/characters/sheets/sheet_kei.jpg](ghost/assets/characters/sheets/sheet_kei.jpg)
+* **立ち絵スプライト**: [ghost/assets/characters/kei.png](ghost/assets/characters/kei.png)
 * **固定ビジュアル仕様**:
   * **体格・年齢**: 27歳日本人男性、176cm、スレンダーだが引き締まった体躯
   * **髪型・髪色**: 漆黒のショートヘア、わずかに無造作な前髪 (`short messy jet black hair`)
@@ -22,8 +22,8 @@
 ## 2. タカミヤ レン (高宮 蓮) / TAKAMIYA REN
 
 * **役割**: クラウドVPS緊急対策室 (CSIRT) 現場リーダー・ケイの親友 (27歳)
-* **キャラクターシート**: [ghost/assets/characters/sheets/sheet_takamiya.jpg](file:///d:/Work/voice-visual-novel/ghost/assets/characters/sheets/sheet_takamiya.jpg)
-* **立ち絵スプライト**: [ghost/assets/characters/takamiya.png](file:///d:/Work/voice-visual-novel/ghost/assets/characters/takamiya.png)
+* **キャラクターシート**: [ghost/assets/characters/sheets/sheet_takamiya.jpg](ghost/assets/characters/sheets/sheet_takamiya.jpg)
+* **立ち絵スプライト**: [ghost/assets/characters/takamiya.png](ghost/assets/characters/takamiya.png)
 * **固定ビジュアル仕様**:
   * **体格・年齢**: 27歳日本人男性、178cm、活動的で温かみのある体躯
   * **髪型・髪色**: ダークブラウンのミディアムヘア、アッシュグリーンのメッシュ (`dark brown medium hair with subtle ash green highlights`)
@@ -37,8 +37,8 @@
 ## 3. アリア / ARIA
 
 * **役割**: 自律型電脳鑑識＆防衛AIエージェント (Secure VM稼働・少女型ホログラムアバター)
-* **キャラクターシート**: [ghost/assets/characters/sheets/sheet_aria.jpg](file:///d:/Work/voice-visual-novel/ghost/assets/characters/sheets/sheet_aria.jpg)
-* **立ち絵スプライト**: [ghost/assets/characters/aria.png](file:///d:/Work/voice-visual-novel/ghost/assets/characters/aria.png)
+* **キャラクターシート**: [ghost/assets/characters/sheets/sheet_aria.jpg](ghost/assets/characters/sheets/sheet_aria.jpg)
+* **立ち絵スプライト**: [ghost/assets/characters/aria.png](ghost/assets/characters/aria.png)
 * **固定ビジュアル仕様**:
   * **体格・外見**: 10代後半少女型ホログラフィックアバター、155cm
   * **髪型・髪色**: 発光する淡いアクアブルーのロングツインテール、毛先がデジタル粒子として飛散 (`glowing cyan blue twintails hair with dispersing digital particles`)
@@ -52,8 +52,8 @@
 ## 4. クロダ統括官 / COMMANDER KURODA
 
 * **役割**: 国家サイバー統括室 (NCO) 審議官 兼 警察庁特別執行指揮官 (52歳)
-* **キャラクターシート**: [ghost/assets/characters/sheets/sheet_kuroda.jpg](file:///d:/Work/voice-visual-novel/ghost/assets/characters/sheets/sheet_kuroda.jpg)
-* **立ち絵スプライト**: [ghost/assets/characters/kuroda.png](file:///d:/Work/voice-visual-novel/ghost/assets/characters/kuroda.png)
+* **キャラクターシート**: [ghost/assets/characters/sheets/sheet_kuroda.jpg](ghost/assets/characters/sheets/sheet_kuroda.jpg)
+* **立ち絵スプライト**: [ghost/assets/characters/kuroda.png](ghost/assets/characters/kuroda.png)
 * **固定ビジュアル仕様**:
   * **体格・年齢**: 52歳日本人男性、183cm、重厚で威厳ある大柄な体躯
   * **髪型・髪色**: 白髪混じりのオールバック (`slicked-back grizzled graying hair`)
@@ -67,8 +67,8 @@
 ## 5. ミオ分析官 / ANALYST MIO
 
 * **役割**: 国家サイバー統括室 (NCO) 通信情報分析官 (24歳)
-* **キャラクターシート**: [ghost/assets/characters/sheets/sheet_mio.jpg](file:///d:/Work/voice-visual-novel/ghost/assets/characters/sheets/sheet_mio.jpg)
-* **立ち絵スプライト**: [ghost/assets/characters/mio.png](file:///d:/Work/voice-visual-novel/ghost/assets/characters/mio.png)
+* **キャラクターシート**: [ghost/assets/characters/sheets/sheet_mio.jpg](ghost/assets/characters/sheets/sheet_mio.jpg)
+* **立ち絵スプライト**: [ghost/assets/characters/mio.png](ghost/assets/characters/mio.png)
 * **固定ビジュアル仕様**:
   * **体格・年齢**: 24歳日本人女性、158cm、知性的で小柄な体型
   * **髪型・髪色**: 柔らかなラベンダーパープルのショートボブ (`soft lavender purple short bob hair`)
