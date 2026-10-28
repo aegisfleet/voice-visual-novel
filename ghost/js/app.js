@@ -699,34 +699,50 @@ class NovelApp {
       { id: 5, label: 'CH.5', sub: '10/27 12:00', title: '能動的サイバー防御と100万ドル懸賞金' },
     ];
 
-    let html = '';
-    items.forEach((item) => {
-      const isActive =
-        this.state.currentChapter === item.id || (this.state.currentChapter === 6 && item.id === 5);
-      const isCleared =
-        item.id === 0
-          ? this.state.currentChapter > 0 || this.state.isGameCleared()
-          : this.state.isChapterCleared(item.id);
-      const isUnlocked =
-        item.id === 0 ||
-        isCleared ||
-        item.id <= (this.state.maxUnlockedChapter || 1) ||
-        this.state.currentChapter >= item.id;
-
-      let cls = 'timeline-step';
-      if (isActive) cls += ' active';
-      if (isCleared) cls += ' cleared';
-      if (!isUnlocked) cls += ' locked';
-
-      const lockIcon = !isUnlocked ? '🔒 ' : '';
-      html += `<span class="${cls}" data-chapter-id="${item.id}" title="${item.label}: ${item.title}">${lockIcon}${item.label} <small style="opacity:0.8">(${item.sub})</small></span>`;
-    });
-    this.dom.chapterTimelineBar.innerHTML = html;
+    this.dom.chapterTimelineBar.innerHTML = items
+      .map((item) => this.renderTimelineStepHtml(item))
+      .join('');
 
     requestAnimationFrame(() => {
-      const activeEl = this.dom.chapterTimelineBar?.querySelector('.timeline-step.active');
-      activeEl?.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+      const bar = this.dom.chapterTimelineBar;
+      const activeEl = bar?.querySelector('.timeline-step.active');
+      if (bar && activeEl) {
+        const targetLeft = activeEl.offsetLeft - bar.clientWidth / 2 + activeEl.clientWidth / 2;
+        bar.scrollTo({ left: Math.max(0, targetLeft), behavior: 'smooth' });
+      }
     });
+  }
+
+  isTimelineStepCleared(chapterId) {
+    if (chapterId === 0) {
+      return this.state.currentChapter > 0 || this.state.isGameCleared();
+    }
+    return this.state.isChapterCleared(chapterId);
+  }
+
+  isTimelineStepUnlocked(chapterId, isCleared) {
+    const maxUnlocked = this.state.maxUnlockedChapter || 1;
+    return (
+      chapterId === 0 ||
+      isCleared ||
+      chapterId <= maxUnlocked ||
+      this.state.currentChapter >= chapterId
+    );
+  }
+
+  renderTimelineStepHtml(item) {
+    const isActive =
+      this.state.currentChapter === item.id || (this.state.currentChapter === 6 && item.id === 5);
+    const isCleared = this.isTimelineStepCleared(item.id);
+    const isUnlocked = this.isTimelineStepUnlocked(item.id, isCleared);
+
+    const classes = ['timeline-step'];
+    if (isActive) classes.push('active');
+    if (isCleared) classes.push('cleared');
+    if (!isUnlocked) classes.push('locked');
+
+    const lockIcon = isUnlocked ? '' : '🔒 ';
+    return `<span class="${classes.join(' ')}" data-chapter-id="${item.id}" title="${item.label}: ${item.title}">${lockIcon}${item.label} <small style="opacity:0.8">(${item.sub})</small></span>`;
   }
 
   updateEvidenceHud() {
@@ -1010,45 +1026,48 @@ class NovelApp {
     frameEl.classList.remove('hidden');
   }
 
+  isDimmedSpeaker(spriteId) {
+    return !spriteId || spriteId === 'narrator' || spriteId === 'kei';
+  }
+
+  bounceSpriteElement(imgEl, newSrc = null) {
+    if (newSrc) imgEl.src = newSrc;
+    imgEl.classList.remove('sprite-dimmed', 'sprite-talk-bounce');
+    void imgEl.offsetWidth;
+    imgEl.classList.add('sprite-talk-bounce');
+  }
+
+  resolveCharacterSpriteSrc(char, emotion) {
+    if (!char) return null;
+    return char.sprites?.[emotion] || char.sprites?.normal || char.sprite || null;
+  }
+
   updateCharacterSprite(spriteId, emotion = 'normal') {
     if (!this.dom.characterSpriteBox) return;
     const currentImg = this.dom.characterSpriteBox.querySelector('img');
 
     // 主人公（ケイ）またはナレーションの発話時は、現在の会話相手を消さずに少し暗くして残す
-    if (!spriteId || spriteId === 'narrator' || spriteId === 'kei') {
-      if (currentImg) {
-        currentImg.classList.remove('sprite-talk-bounce');
-        currentImg.classList.add('sprite-dimmed');
-      }
+    if (this.isDimmedSpeaker(spriteId)) {
+      currentImg?.classList.remove('sprite-talk-bounce');
+      currentImg?.classList.add('sprite-dimmed');
       return;
     }
 
     const char = this.characters[spriteId];
-    if (!char) return;
-    const targetSrc = char.sprites?.[emotion] || char.sprites?.normal || char.sprite;
+    const targetSrc = this.resolveCharacterSpriteSrc(char, emotion);
     if (!targetSrc) return;
 
     const isSameChar = this.currentSpriteId === spriteId;
-    const isSameSrc = currentImg?.getAttribute('src')?.includes(targetSrc);
-
-    if (isSameChar && isSameSrc && currentImg) {
-      currentImg.classList.remove('sprite-dimmed', 'sprite-talk-bounce');
-      void currentImg.offsetWidth;
-      currentImg.classList.add('sprite-talk-bounce');
-      return;
-    }
-
     this.currentSpriteId = spriteId;
     this.currentEmotion = emotion;
 
     if (isSameChar && currentImg) {
-      currentImg.src = targetSrc;
-      currentImg.classList.remove('sprite-dimmed', 'sprite-talk-bounce');
-      void currentImg.offsetWidth;
-      currentImg.classList.add('sprite-talk-bounce');
-    } else {
-      this.dom.characterSpriteBox.innerHTML = `<img src="${targetSrc}" alt="${char.name}" class="sprite-enter">`;
+      const isSameSrc = currentImg.getAttribute('src')?.includes(targetSrc);
+      this.bounceSpriteElement(currentImg, isSameSrc ? null : targetSrc);
+      return;
     }
+
+    this.dom.characterSpriteBox.innerHTML = `<img src="${targetSrc}" alt="${char.name}" class="sprite-enter">`;
   }
 
   handleLineIllustration(imgSrc) {
@@ -1554,6 +1573,17 @@ class NovelApp {
     this.dom.choiceQuestion.innerHTML = `<span class="deduction-step-badge">STEP ${step.stepNumber} / ${steps.length}</span> ${step.question}`;
     this.dom.choiceOptions.innerHTML = '';
 
+    const grid = this.buildDeductionEvidenceGrid();
+    this.dom.choiceOptions.appendChild(grid);
+    this.dom.choiceOptions.appendChild(this.buildDeductionActionSection(step));
+
+    this.dom.novelWindow?.classList.add('choice-mode-hidden');
+    this.dom.choiceStage.classList.remove('hidden');
+    const cardEl = this.dom.choiceStage.querySelector('.choice-modal-card');
+    if (cardEl) cardEl.scrollTop = 0;
+  }
+
+  buildDeductionEvidenceGrid() {
     const grid = document.createElement('div');
     grid.className = 'deduction-evidence-grid';
 
@@ -1561,28 +1591,33 @@ class NovelApp {
       .slice(0, this.deductionStepIndex)
       .map((s) => s.correctEvidenceId);
 
-    const evidenceList = Object.values(this.scenario.evidence);
-    evidenceList.forEach((ev) => {
+    Object.values(this.scenario.evidence).forEach((ev) => {
       const isUsed = usedIds.includes(ev.id);
-      const card = document.createElement('div');
-      card.className = `deduction-card ${isUsed ? 'already-linked' : ''}`;
-      card.dataset.evId = ev.id;
-      card.innerHTML = `
-        <div class="deduction-card-header">
-          <span class="deduction-card-icon">${ev.icon}</span>
-          <span class="deduction-card-title">${ev.name}</span>
-          ${isUsed ? '<span class="deduction-linked-badge">✓ 立証済</span>' : ''}
-        </div>
-        <div class="deduction-card-desc">${ev.summary}</div>
-      `;
-      if (!isUsed) {
-        card.addEventListener('click', () => this.handleDeductionEvidenceSelect(grid, card, ev.id));
-      }
-      grid.appendChild(card);
+      grid.appendChild(this.createDeductionCard(ev, isUsed, grid));
     });
+    return grid;
+  }
 
-    this.dom.choiceOptions.appendChild(grid);
+  createDeductionCard(ev, isUsed, grid) {
+    const card = document.createElement('div');
+    card.className = isUsed ? 'deduction-card already-linked' : 'deduction-card';
+    card.dataset.evId = ev.id;
+    const badgeHtml = isUsed ? '<span class="deduction-linked-badge">✓ 立証済</span>' : '';
+    card.innerHTML = `
+      <div class="deduction-card-header">
+        <span class="deduction-card-icon">${ev.icon}</span>
+        <span class="deduction-card-title">${ev.name}</span>
+        ${badgeHtml}
+      </div>
+      <div class="deduction-card-desc">${ev.summary}</div>
+    `;
+    if (!isUsed) {
+      card.addEventListener('click', () => this.handleDeductionEvidenceSelect(grid, card, ev.id));
+    }
+    return card;
+  }
 
+  buildDeductionActionSection(step) {
     const actionDiv = document.createElement('div');
     actionDiv.className = 'deduction-actions';
     const submitBtn = document.createElement('button');
@@ -1593,12 +1628,7 @@ class NovelApp {
     submitBtn.disabled = true;
     submitBtn.addEventListener('click', () => this.submitDeductionAnswer(step));
     actionDiv.appendChild(submitBtn);
-    this.dom.choiceOptions.appendChild(actionDiv);
-
-    this.dom.novelWindow?.classList.add('choice-mode-hidden');
-    this.dom.choiceStage.classList.remove('hidden');
-    const cardEl = this.dom.choiceStage.querySelector('.choice-modal-card');
-    if (cardEl) cardEl.scrollTop = 0;
+    return actionDiv;
   }
 
   handleDeductionEvidenceSelect(grid, card, evId) {
@@ -1709,17 +1739,22 @@ class NovelApp {
     this.switchScreen('ending');
 
     const rankInfo = this.state.getDefenseRank();
+    this.renderEndingRankBadge(rankInfo);
+    this.renderEndingTexts(rankInfo);
+  }
 
-    if (this.dom.endingRankBadge) {
-      this.dom.endingRankBadge.className = `ending-rank-badge rank-${rankInfo.rank.toLowerCase()}`;
-      this.dom.endingRankBadge.innerHTML = `
-        <div class="rank-char">${rankInfo.rank}</div>
-        <div class="rank-title">${rankInfo.title}</div>
-        <div class="rank-defense">残存資産防衛率: <strong>${this.state.defenseRate}%</strong></div>
-      `;
-      this.dom.endingRankBadge.classList.remove('hidden');
-    }
+  renderEndingRankBadge(rankInfo) {
+    if (!this.dom.endingRankBadge) return;
+    this.dom.endingRankBadge.className = `ending-rank-badge rank-${rankInfo.rank.toLowerCase()}`;
+    this.dom.endingRankBadge.innerHTML = [
+      `<div class="rank-char">${rankInfo.rank}</div>`,
+      `<div class="rank-title">${rankInfo.title}</div>`,
+      `<div class="rank-defense">残存資産防衛率: <strong>${this.state.defenseRate}%</strong></div>`,
+    ].join('');
+    this.dom.endingRankBadge.classList.remove('hidden');
+  }
 
+  renderEndingTexts(rankInfo) {
     if (this.dom.endingTitle) {
       this.dom.endingTitle.textContent = `TRUE END: 午前4時の完全沈黙と100万ドルの包囲網 [${rankInfo.rank} RANK]`;
     }
@@ -1730,8 +1765,8 @@ class NovelApp {
     if (this.dom.endingDesc) {
       this.dom.endingDesc.textContent = `${rankInfo.desc} 5,000万ドル要求の黙殺と100%直接補償による価格崩壊、10月27日正午のカナリア逆探知とNCO非公然無害化措置、そして上限300万円の特別お見舞金と『100万米ドル逆転懸賞金（開始6時間で113件の情報殺到）』により、10月28日午前4時に全脅迫サイトは完全テイクダウンされた。一方で、共通管理者アカウント設計・事前警告の先送り・後出し発表と個人SNS発信に対する厳しい批判と行政調査が待ち受けており、技術的真相の全面開示という真の償いが始まる。`;
     }
-    this.dom.endingUnlockedBanner?.classList.remove('hidden');
     if (this.dom.endingUnlockedBanner) {
+      this.dom.endingUnlockedBanner.classList.remove('hidden');
       this.dom.endingUnlockedBanner.textContent =
         '🏆 全5章・完全制覇達成！ 全編小説＆深層解説レポートが全解禁されました。';
     }
@@ -1994,20 +2029,22 @@ class NovelApp {
     return html;
   }
 
+  formatMarkdownLine(line) {
+    const trimmed = line.trim();
+    if (!trimmed) return '';
+    if (trimmed.startsWith('### ')) return `<h3>${trimmed.slice(4)}</h3>`;
+    if (trimmed.startsWith('## ')) return `<h2>${trimmed.slice(3)}</h2>`;
+    if (trimmed.startsWith('# ')) return `<h1>${trimmed.slice(2)}</h1>`;
+    if (/^---+$/.test(trimmed)) return '<hr>';
+    return `<p>${trimmed}</p>`;
+  }
+
   formatMarkdown(mdText) {
     if (!mdText) return '';
     return mdText
       .trim()
       .split('\n')
-      .map((line) => {
-        const trimmed = line.trim();
-        if (!trimmed) return '';
-        if (/^### (.*$)/.test(trimmed)) return `<h3>${trimmed.replace(/^### /, '')}</h3>`;
-        if (/^## (.*$)/.test(trimmed)) return `<h2>${trimmed.replace(/^## /, '')}</h2>`;
-        if (/^# (.*$)/.test(trimmed)) return `<h1>${trimmed.replace(/^# /, '')}</h1>`;
-        if (/^---+$/.test(trimmed)) return '<hr>';
-        return `<p>${trimmed}</p>`;
-      })
+      .map((line) => this.formatMarkdownLine(line))
       .filter(Boolean)
       .join('\n');
   }

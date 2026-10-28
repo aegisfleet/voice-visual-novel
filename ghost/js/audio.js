@@ -285,30 +285,16 @@ class AudioManager {
     }
   }
 
-  // BGMの再生（Web Audioでギャップレス再生 & 失敗時はHTMLAudioへ）
-  playBgm(mode = 'title') {
-    this.currentBgmMode = mode;
-    if (mode === 'silence' || mode === 'stop') {
-      this.stopBgm();
-      return;
+  resumeSameBgmTrack(current) {
+    if (current.audio?.paused) {
+      current.audio.play().catch(() => {});
+    } else if (current.kind === 'webaudio') {
+      this.resumeContext();
     }
-    if (!this.bgmEnabled) return;
+  }
 
-    const current = this.currentBgmTrack;
-    if (current?.mode === mode) {
-      if (current.audio?.paused) {
-        current.audio.play().catch(() => {});
-      } else if (current.kind === 'webaudio') {
-        this.resumeContext();
-      }
-      return;
-    }
-
-    this.stopBgm();
-    const url = this.bgmTracks[mode];
-    if (!url) return;
-
-    const track = {
+  createBgmTrackState(mode, url) {
+    return {
       audio: null,
       buffer: null,
       gainNode: null,
@@ -319,6 +305,27 @@ class AudioManager {
       source: null,
       url,
     };
+  }
+
+  // BGMの再生（Web Audioでギャップレス再生 & 失敗時はHTMLAudioへ）
+  playBgm(mode = 'title') {
+    this.currentBgmMode = mode;
+    if (mode === 'silence' || mode === 'stop') {
+      this.stopBgm();
+      return;
+    }
+    if (!this.bgmEnabled) return;
+
+    if (this.currentBgmTrack?.mode === mode) {
+      this.resumeSameBgmTrack(this.currentBgmTrack);
+      return;
+    }
+
+    this.stopBgm();
+    const url = this.bgmTracks[mode];
+    if (!url) return;
+
+    const track = this.createBgmTrackState(mode, url);
     this.currentBgmTrack = track;
 
     if (!this.resumeContext()) {

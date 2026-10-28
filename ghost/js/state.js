@@ -134,22 +134,35 @@ class GameState {
     }
   }
 
+  normalizeNumber(value, fallback) {
+    return typeof value === 'number' ? value : fallback;
+  }
+
+  clampVolume(value, fallback) {
+    if (typeof value !== 'number') return fallback;
+    return Math.max(0, Math.min(1, value));
+  }
+
+  applySessionProgressData(data) {
+    this.currentChapter = this.normalizeNumber(data.currentChapter, 0);
+    this.currentPhase = data.currentPhase || 'intro';
+    this.currentBgmMode = data.currentBgmMode || 'investigate';
+    this.currentLineIndex = this.normalizeNumber(data.currentLineIndex, 0);
+    this.maxUnlockedChapter = data.maxUnlockedChapter || 1;
+    this.selectedChoices = data.selectedChoices || {};
+    this.failedChoices = data.failedChoices || {};
+    this.collectedEvidence = new Set(data.collectedEvidence || []);
+    this.clearedChapters = new Set(data.clearedChapters || []);
+    this.defenseRate = this.normalizeNumber(data.defenseRate, 100);
+  }
+
   // セッション進行の復元
   loadSessionProgress() {
     try {
       const raw = localStorage.getItem(this.sessionKey);
       if (!raw) return null;
       const data = JSON.parse(raw);
-      this.currentChapter = typeof data.currentChapter === 'number' ? data.currentChapter : 0;
-      this.currentPhase = data.currentPhase || 'intro';
-      this.currentBgmMode = data.currentBgmMode || 'investigate';
-      this.currentLineIndex = typeof data.currentLineIndex === 'number' ? data.currentLineIndex : 0;
-      this.maxUnlockedChapter = data.maxUnlockedChapter || 1;
-      this.selectedChoices = data.selectedChoices || {};
-      this.failedChoices = data.failedChoices || {};
-      this.collectedEvidence = new Set(data.collectedEvidence || []);
-      this.clearedChapters = new Set(data.clearedChapters || []);
-      this.defenseRate = typeof data.defenseRate === 'number' ? data.defenseRate : 100;
+      this.applySessionProgressData(data);
       return data;
     } catch (e) {
       console.warn('Failed to load session progress:', e);
@@ -166,6 +179,15 @@ class GameState {
     }
   }
 
+  applyPersistentAudioState(parsed) {
+    if (typeof parsed.voiceEnabled === 'boolean') this.voiceEnabled = parsed.voiceEnabled;
+    if (typeof parsed.seEnabled === 'boolean') this.seEnabled = parsed.seEnabled;
+    if (typeof parsed.bgmEnabled === 'boolean') this.bgmEnabled = parsed.bgmEnabled;
+    this.voiceVolume = this.clampVolume(parsed.voiceVolume, this.voiceVolume);
+    this.seVolume = this.clampVolume(parsed.seVolume, this.seVolume);
+    this.bgmVolume = this.clampVolume(parsed.bgmVolume, this.bgmVolume);
+  }
+
   // ローカルストレージからの永続セーブデータ読み込み
   loadPersistentState() {
     try {
@@ -178,18 +200,7 @@ class GameState {
       this.hasClearedGame = Boolean(parsed.hasClearedGame || parsed.hasClearedTrueEnd);
       this.hasClearedTrueEnd = this.hasClearedGame;
       this.maxUnlockedChapter = parsed.maxUnlockedChapter || 1;
-      if (typeof parsed.voiceEnabled === 'boolean') this.voiceEnabled = parsed.voiceEnabled;
-      if (typeof parsed.seEnabled === 'boolean') this.seEnabled = parsed.seEnabled;
-      if (typeof parsed.bgmEnabled === 'boolean') this.bgmEnabled = parsed.bgmEnabled;
-      if (typeof parsed.voiceVolume === 'number') {
-        this.voiceVolume = Math.max(0, Math.min(1, parsed.voiceVolume));
-      }
-      if (typeof parsed.seVolume === 'number') {
-        this.seVolume = Math.max(0, Math.min(1, parsed.seVolume));
-      }
-      if (typeof parsed.bgmVolume === 'number') {
-        this.bgmVolume = Math.max(0, Math.min(1, parsed.bgmVolume));
-      }
+      this.applyPersistentAudioState(parsed);
     } catch (e) {
       console.warn('Failed to load save data:', e);
       this.setDefaultPersistentFlags();

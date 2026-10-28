@@ -1,42 +1,102 @@
 /* ==========================================================================
    style.css - GHOST PROTOCOL 〜26,739台の亡霊と能動的サイバー防御・発動第1号〜
-   NCO統合サイバー防衛コンソール & 体験型ビジュアルノベル デザインシステム
+   NCO統合サイバー防衛コンソール & 体験型ビジュアルノベル デザインシステム (v18)
+   SonarQube / SonarLint 準拠（!important 全廃・詳細度制御・WCAG AA 高コントラスト）
    ========================================================================== */
 
-/* 1. 汎用非表示クラス（すべての要素で最優先・ガイドライン規約） */
-.hidden {
-  display: none !important;
+/* 1. 汎用非表示クラス（詳細度制御により !important なしで確実に非表示） */
+.hidden,
+[hidden],
+#hud.hidden,
+.hud.hidden,
+#hud-location-badge.hidden,
+#hud-loop-badge.hidden,
+#hud-defense-meter.hidden,
+.badge.hidden,
+.hud-btn.hidden,
+.btn-cyber-plate.hidden,
+.title-clear-badge.hidden,
+.line-external-notice.hidden,
+#dialogue-illustration-stage.hidden,
+.dialogue-illustration-stage.hidden,
+.illustration-caption.hidden,
+#cinematic-telop.hidden,
+.cinematic-telop.hidden,
+#cut-sequence-stage.hidden,
+.cut-sequence-stage.hidden,
+.sequence-frame-img.hidden,
+.sequence-frame-badge.hidden,
+.sequence-frame-placeholder.hidden,
+#choice-stage.hidden,
+.choice-stage.hidden,
+.choice-aria-hint.hidden,
+.choice-log-container.hidden,
+.choice-retry-banner.hidden,
+.voice-wave-indicator.hidden,
+#dialogue-prompt.hidden,
+.dialogue-prompt.hidden,
+.speaker-avatar-frame.hidden,
+.ending-rank-badge.hidden,
+.ending-unlocked-banner.hidden,
+#overlay-cutin.hidden,
+.overlay-cutin.hidden,
+.modal.hidden,
+.evidence-detail-panel.hidden,
+#term-popover.hidden {
+  display: none;
 }
 
 :root {
-  /* NCO / SOC メインカラーパレット */
+  /* NCO / SOC メインカラーパレット（深海スレート＆高視認サイバーガラス） */
   --bg-dark: #030712;
   --bg-terminal: #050b18;
-  --bg-panel: rgba(8, 15, 30, 0.94);
-  --bg-card: rgba(12, 22, 44, 0.88);
-  --bg-card-hover: rgba(0, 240, 255, 0.12);
+  --bg-panel: rgba(7, 14, 28, 0.95);
+  --bg-card: rgba(11, 22, 44, 0.9);
+  --bg-card-hover: rgba(0, 240, 255, 0.14);
 
   /* ネオン・タクティカルカラー */
   --nco-cyan: #00f0ff;
-  --nco-cyan-glow: rgba(0, 240, 255, 0.4);
+  --nco-cyan-glow: rgba(0, 240, 255, 0.42);
   --nco-emerald: #10b981;
-  --nco-emerald-glow: rgba(16, 185, 129, 0.4);
+  --nco-emerald-glow: rgba(16, 185, 129, 0.42);
   --nco-amber: #f59e0b;
-  --nco-amber-glow: rgba(245, 158, 11, 0.4);
+  --nco-amber-glow: rgba(245, 158, 11, 0.42);
   --nco-crimson: #f43f5e;
-  --nco-crimson-glow: rgba(244, 63, 94, 0.5);
+  --nco-crimson-glow: rgba(244, 63, 94, 0.52);
   --nco-purple: #c084fc;
 
-  /* テキスト・コントラスト (WCAG AA 準拠: 7:1〜10:1 以上) */
+  /* テキスト・コントラスト (WCAG AA/AAA 準拠: 7:1〜12:1 以上) */
   --text-main: #f8fafc;
   --text-sub: #cbd5e1;
   --text-muted: #94a3b8;
   --text-dim: #64748b;
 
   /* ボーダー・ハイテクベゼル */
-  --border-nco: rgba(0, 240, 255, 0.32);
-  --border-subtle: rgba(255, 255, 255, 0.12);
-  --border-tactical: rgba(16, 185, 129, 0.35);
+  --border-nco: rgba(0, 240, 255, 0.36);
+  --border-subtle: rgba(255, 255, 255, 0.14);
+  --border-tactical: rgba(16, 185, 129, 0.4);
+
+  /* チャンファー（斜め角切り）クリップパス */
+  --chamfer-sm: polygon(
+    0 6px,
+    6px 0,
+    calc(100% - 6px) 0,
+    100% 6px,
+    100% calc(100% - 6px),
+    calc(100% - 6px) 100%,
+    6px 100%,
+    0 calc(100% - 6px)
+  );
+  --chamfer-md: polygon(
+    0 12px,
+    12px 0,
+    calc(100% - 12px) 0,
+    100% 12px,
+    100% calc(100% - 12px),
+    calc(100% - 12px) 100%,
+    12px 100%,
+    0 calc(100% - 12px)
+  );
 
   /* フォントスタック */
   --font-hud: "Chakra Petch", "Share Tech Mono", monospace, sans-serif;
@@ -49,7 +109,9 @@
   --accent-gold: var(--nco-amber);
 }
 
-* {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -62,8 +124,11 @@ body {
   color: var(--text-main);
   font-family: var(--font-body);
   line-height: 1.6;
+  height: 100dvh;
   min-height: 100dvh;
-  overflow-x: hidden;
+  max-height: 100dvh;
+  overflow: hidden;
+  overscroll-behavior: none;
   user-select: none;
   -webkit-user-select: none;
 }
@@ -71,7 +136,7 @@ body {
 /* カスタムタクティカルスクロールバー */
 * {
   scrollbar-width: thin;
-  scrollbar-color: rgba(0, 240, 255, 0.3) transparent;
+  scrollbar-color: rgba(0, 240, 255, 0.32) transparent;
 }
 
 ::-webkit-scrollbar {
@@ -100,12 +165,12 @@ body {
   position: fixed;
   inset: 0;
   background-size:
-    44px 44px,
-    44px 44px,
+    40px 40px,
+    40px 40px,
     100% 3px;
   background-image:
-    linear-gradient(to right, rgba(0, 240, 255, 0.05) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(0, 240, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(to right, rgba(0, 240, 255, 0.055) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 240, 255, 0.055) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(255, 255, 255, 0.015) 50%, transparent 50%);
   pointer-events: none;
   z-index: 0;
@@ -115,7 +180,7 @@ body {
   content: "";
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at 50% 40%, transparent 30%, rgba(3, 7, 18, 0.85) 90%);
+  background: radial-gradient(circle at 50% 38%, transparent 25%, rgba(2, 6, 17, 0.88) 92%);
   pointer-events: none;
 }
 
@@ -125,10 +190,16 @@ body {
   width: 100%;
   max-width: 1040px;
   margin: 0 auto;
+  height: 100dvh;
   min-height: 100dvh;
+  max-height: 100dvh;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   z-index: 1;
+  border-left: 1px solid rgba(0, 240, 255, 0.12);
+  border-right: 1px solid rgba(0, 240, 255, 0.12);
+  box-shadow: 0 0 60px rgba(0, 0, 0, 0.85);
 }
 
 /* ==========================================================================
@@ -137,24 +208,40 @@ body {
 .hud {
   position: sticky;
   top: 0;
+  flex: 0 0 auto;
   display: flex;
+  flex-wrap: nowrap;
   align-items: center;
   justify-content: space-between;
-  padding: 8px 16px;
-  background: rgba(4, 9, 20, 0.95);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  padding: 6px 12px;
+  height: 50px;
+  min-height: 50px;
+  background: linear-gradient(180deg, rgba(6, 13, 28, 0.98) 0%, rgba(3, 8, 18, 0.96) 100%);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--border-nco);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
-  z-index: 40;
+  box-shadow:
+    0 4px 24px rgba(0, 0, 0, 0.7),
+    inset 0 -1px 0 rgba(0, 240, 255, 0.18);
+  z-index: 50;
   gap: 8px;
 }
 
-.hud-left,
-.hud-right {
+.hud .hud-left {
+  flex: 1 1 0;
+  min-width: 0;
+  overflow: hidden;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
+}
+
+.hud .hud-right {
+  flex: 0 0 auto;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 5px;
 }
 
 /* タクティカルバッジ */
@@ -163,7 +250,7 @@ body {
   font-size: 0.74rem;
   font-weight: 700;
   padding: 4px 10px;
-  background: rgba(0, 240, 255, 0.08);
+  background: rgba(0, 240, 255, 0.09);
   border: 1px solid var(--border-nco);
   border-radius: 4px;
   color: var(--nco-cyan);
@@ -174,58 +261,60 @@ body {
   gap: 6px;
 }
 
-#hud-location-badge::before {
-  content: "";
-  display: inline-block;
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--nco-emerald);
-  box-shadow: 0 0 8px var(--nco-emerald);
-  animation: pulseLed 1.8s infinite ease-in-out;
+/* HUD上の固定飾りバッジ（SECURE）およびオーディオ文字ラベルは非表示にして1行を保護 */
+#hud-location-badge,
+.hud-audio-label {
+  display: none;
 }
 
-@keyframes pulseLed {
-  0%,
-  100% {
-    opacity: 0.4;
-    transform: scale(0.9);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.15);
-  }
-}
-
-.loop-badge {
-  background: rgba(16, 185, 129, 0.1);
-  border-color: rgba(16, 185, 129, 0.4);
+/* チャプターバッジのみ可変幅とし、長すぎる場合は「...」で省略 */
+#hud-loop-badge.loop-badge {
+  flex: 0 1 auto;
+  min-width: 0;
+  width: auto;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: block;
+  background: linear-gradient(90deg, rgba(16, 185, 129, 0.14) 0%, rgba(6, 20, 38, 0.85) 100%);
+  border-color: rgba(16, 185, 129, 0.45);
   color: var(--nco-emerald);
+  box-shadow: inset 2px 0 0 var(--nco-cyan);
 }
 
-.loop-badge .phase-title {
+#hud-loop-badge.loop-badge .phase-title {
   color: var(--nco-cyan);
   font-weight: 800;
 }
 
-/* 残存資産防衛率メーターバッジ */
-.defense-badge {
+#hud-loop-badge.loop-badge .phase-desc-text {
+  display: inline;
+  font-weight: 500;
+  color: var(--text-sub);
+}
+
+/* 残存資産防衛率メーターバッジ（固定幅で保護） */
+#hud-defense-meter.defense-badge {
+  flex: 0 0 auto;
+  flex-shrink: 0;
+  width: max-content;
   background: rgba(16, 185, 129, 0.14);
-  border-color: rgba(16, 185, 129, 0.5);
-  color: var(--nco-emerald);
+  border-color: rgba(16, 185, 129, 0.55);
+  color: #34d399;
   transition: all 0.3s ease;
 }
 
-.defense-badge.warning {
-  background: rgba(245, 158, 11, 0.16);
-  border-color: rgba(245, 158, 11, 0.55);
-  color: #f59e0b;
+#hud-defense-meter.defense-badge.warning {
+  background: rgba(245, 158, 11, 0.18);
+  border-color: rgba(245, 158, 11, 0.6);
+  color: #fbbf24;
 }
 
-.defense-badge.danger {
-  background: rgba(239, 68, 68, 0.22);
-  border-color: rgba(239, 68, 68, 0.65);
-  color: #ef4444;
+#hud-defense-meter.defense-badge.danger {
+  background: rgba(239, 68, 68, 0.24);
+  border-color: rgba(239, 68, 68, 0.7);
+  color: #f87171;
   animation: defenseDangerPulse 1s infinite alternate;
 }
 
@@ -242,15 +331,16 @@ body {
 .hud-btn {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  min-height: 44px;
-  padding: 6px 14px;
-  background: linear-gradient(180deg, rgba(16, 26, 48, 0.9) 0%, rgba(8, 14, 28, 0.95) 100%);
-  border: 1px solid var(--border-subtle);
+  justify-content: center;
+  gap: 5px;
+  min-height: 38px;
+  padding: 5px 11px;
+  background: linear-gradient(180deg, rgba(15, 25, 48, 0.92) 0%, rgba(7, 13, 26, 0.96) 100%);
+  border: 1px solid rgba(0, 240, 255, 0.22);
   border-radius: 4px;
-  color: var(--text-sub);
+  color: var(--text-main);
   font-family: var(--font-hud);
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 0.04em;
   cursor: pointer;
@@ -260,8 +350,13 @@ body {
   overflow: hidden;
 }
 
+.hud-btn.hud-audio-btn {
+  padding: 5px 9px;
+  min-width: 36px;
+}
+
 .hud-btn:hover {
-  background: linear-gradient(180deg, rgba(0, 240, 255, 0.18) 0%, rgba(16, 26, 48, 0.95) 100%);
+  background: linear-gradient(180deg, rgba(0, 240, 255, 0.2) 0%, rgba(14, 24, 46, 0.96) 100%);
   border-color: var(--nco-cyan);
   color: #ffffff;
   box-shadow: 0 0 14px var(--nco-cyan-glow);
@@ -270,7 +365,7 @@ body {
 .hud-btn.active {
   border-color: var(--nco-emerald);
   color: #ffffff;
-  background: linear-gradient(180deg, rgba(16, 185, 129, 0.18) 0%, rgba(8, 14, 28, 0.95) 100%);
+  background: linear-gradient(180deg, rgba(16, 185, 129, 0.2) 0%, rgba(8, 14, 28, 0.96) 100%);
 }
 
 .hud-btn.active::after {
@@ -285,7 +380,53 @@ body {
 }
 
 .hud-btn-icon {
-  font-size: 0.95rem;
+  font-size: 0.92rem;
+}
+
+@media (max-width: 860px) {
+  #hud-loop-badge.loop-badge .phase-desc-text {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  #hud-defense-meter.defense-badge .defense-label {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .hud {
+    padding: 4px 6px;
+    height: 44px;
+    min-height: 44px;
+    gap: 4px;
+  }
+  .hud .hud-left {
+    gap: 4px;
+  }
+  .hud .hud-right {
+    gap: 3px;
+  }
+  .badge {
+    font-size: 0.66rem;
+    padding: 2px 5px;
+    gap: 3px;
+  }
+  .hud-btn,
+  .hud-btn.hud-audio-btn {
+    min-width: 30px;
+    min-height: 32px;
+    padding: 3px 5px;
+    font-size: 0.7rem;
+    gap: 2px;
+  }
+  .hud-btn-icon {
+    font-size: 0.82rem;
+  }
+  .hud-btn .hud-btn-label {
+    display: none;
+  }
 }
 
 /* ==========================================================================
@@ -293,10 +434,12 @@ body {
    ========================================================================== */
 #viewport {
   position: relative;
-  flex: 1;
+  flex: 1 1 auto;
+  min-height: 0;
+  height: 100%;
   display: flex;
   flex-direction: column;
-  min-height: calc(100dvh - 58px);
+  overflow: hidden;
 }
 
 .screen {
@@ -329,24 +472,30 @@ body {
   align-items: center;
   justify-content: flex-start;
   text-align: center;
-  padding: clamp(16px, 3dvh, 32px) 16px;
-  gap: clamp(10px, 1.8dvh, 18px);
+  height: 100%;
   min-height: 100%;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 240, 255, 0.3) transparent;
+  padding: clamp(12px, 2.4dvh, 26px) 16px;
+  gap: clamp(8px, 1.5dvh, 14px);
 }
 
 .title-badge-top {
   font-family: var(--font-hud);
-  font-size: 0.8rem;
+  font-size: 0.78rem;
+  font-weight: 700;
   letter-spacing: 0.16em;
   color: var(--nco-cyan);
   background: linear-gradient(
     90deg,
-    rgba(0, 240, 255, 0.05),
-    rgba(0, 240, 255, 0.15),
-    rgba(0, 240, 255, 0.05)
+    rgba(0, 240, 255, 0.06),
+    rgba(0, 240, 255, 0.18),
+    rgba(0, 240, 255, 0.06)
   );
   border: 1px solid var(--border-nco);
-  padding: 6px 18px;
+  padding: 5px 18px;
   border-radius: 4px;
   animation: pulseGlow 2.4s infinite ease-in-out;
   position: relative;
@@ -364,34 +513,38 @@ body {
 
 .game-title {
   font-family: var(--font-hud);
-  font-size: clamp(2.1rem, 6.4vw, 3.5rem);
+  font-size: clamp(2rem, 6.2vw, 3.3rem);
   font-weight: 800;
   letter-spacing: 0.1em;
   color: #ffffff;
-  text-shadow: 0 0 28px rgba(0, 240, 255, 0.5);
+  text-shadow:
+    0 0 28px rgba(0, 240, 255, 0.55),
+    0 2px 10px rgba(0, 0, 0, 0.9);
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 .game-title .sub-title {
   font-family: var(--font-body);
-  font-size: clamp(0.92rem, 2.9vw, 1.25rem);
-  font-weight: 500;
+  font-size: clamp(0.9rem, 2.8vw, 1.2rem);
+  font-weight: 600;
   letter-spacing: 0.06em;
   color: var(--text-sub);
-  text-shadow: none;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
 }
 
 .title-hero-wrap {
   width: 100%;
-  max-width: min(92vw, 520px, 52dvh);
+  max-width: min(92vw, 430px, 46dvh);
   aspect-ratio: 1376 / 768;
   flex: 0 0 auto;
   border-radius: 8px;
   overflow: hidden;
-  border: 1px solid var(--border-nco);
-  box-shadow: 0 16px 44px rgba(0, 0, 0, 0.85);
+  border: 1px solid var(--nco-cyan);
+  box-shadow:
+    0 16px 44px rgba(0, 0, 0, 0.85),
+    0 0 24px rgba(0, 240, 255, 0.2);
   position: relative;
   display: flex;
   align-items: center;
@@ -403,7 +556,7 @@ body {
   content: "";
   position: absolute;
   inset: 0;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   pointer-events: none;
 }
 
@@ -416,11 +569,11 @@ body {
 
 .title-clear-badge {
   font-family: var(--font-hud);
-  font-size: 0.92rem;
+  font-size: 0.9rem;
   font-weight: 700;
-  color: var(--nco-amber);
-  background: rgba(245, 158, 11, 0.12);
-  border: 1px solid rgba(245, 158, 11, 0.5);
+  color: #fbbf24;
+  background: rgba(245, 158, 11, 0.14);
+  border: 1px solid rgba(245, 158, 11, 0.55);
   padding: 8px 20px;
   border-radius: 6px;
   box-shadow: 0 0 16px var(--nco-amber-glow);
@@ -429,28 +582,30 @@ body {
 .title-actions {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: clamp(6px, 1.2dvh, 10px);
   width: 100%;
   max-width: 460px;
 }
 
-/* メインアクションボタン：タクティカルプレート */
+/* メインアクションボタン：タクティカル・チャンファープレート */
 .btn-cyber-plate {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 54px;
-  padding: 10px 22px;
-  background: linear-gradient(135deg, rgba(14, 23, 44, 0.96) 0%, rgba(8, 14, 28, 0.98) 100%);
+  min-height: clamp(46px, 6.2dvh, 54px);
+  padding: 8px 20px;
+  background: linear-gradient(135deg, rgba(13, 24, 48, 0.96) 0%, rgba(6, 12, 26, 0.98) 100%);
   border: 1px solid var(--border-nco);
   border-radius: 6px;
+  clip-path: var(--chamfer-sm);
   color: #ffffff;
   cursor: pointer;
   transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
   text-decoration: none;
   position: relative;
   overflow: hidden;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 .btn-cyber-plate::before {
@@ -461,15 +616,30 @@ body {
   width: 4px;
   height: 100%;
   background: var(--nco-cyan);
-  opacity: 0.8;
+  opacity: 0.85;
   transition: width 0.2s ease;
 }
 
+.btn-cyber-plate::after {
+  content: "";
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 8px;
+  height: 8px;
+  border-top: 1.5px solid var(--nco-cyan);
+  border-right: 1.5px solid var(--nco-cyan);
+  opacity: 0.6;
+  pointer-events: none;
+}
+
 .btn-cyber-plate:hover {
-  background: linear-gradient(135deg, rgba(0, 240, 255, 0.16) 0%, rgba(14, 23, 44, 0.98) 100%);
+  background: linear-gradient(135deg, rgba(0, 240, 255, 0.18) 0%, rgba(14, 25, 50, 0.98) 100%);
   border-color: var(--nco-cyan);
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px var(--nco-cyan-glow);
+  box-shadow:
+    0 8px 24px var(--nco-cyan-glow),
+    inset 0 0 16px rgba(0, 240, 255, 0.12);
 }
 
 .btn-cyber-plate:hover::before {
@@ -479,14 +649,14 @@ body {
 
 .btn-cyber-plate .btn-text {
   font-family: var(--font-hud);
-  font-size: 1.05rem;
+  font-size: 1.02rem;
   font-weight: 800;
   letter-spacing: 0.08em;
 }
 
 .btn-cyber-plate .btn-subtext {
   font-size: 0.76rem;
-  color: var(--text-muted);
+  color: var(--text-sub);
   margin-top: 2px;
 }
 
@@ -504,8 +674,12 @@ body {
   background: var(--nco-emerald);
 }
 
+.btn-continue::after {
+  border-color: var(--nco-emerald);
+}
+
 .btn-continue:hover {
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(14, 23, 44, 0.98) 100%);
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.22) 0%, rgba(14, 23, 44, 0.98) 100%);
   border-color: var(--nco-emerald);
   box-shadow: 0 8px 24px var(--nco-emerald-glow);
 }
@@ -513,7 +687,7 @@ body {
 .btn-subtle {
   background: transparent;
   border: none;
-  color: var(--text-muted);
+  color: var(--text-sub);
   font-size: 0.8rem;
   cursor: pointer;
   padding: 6px;
@@ -527,15 +701,15 @@ body {
 
 /* 外部ブラウザ誘導 */
 .line-external-notice {
-  background: rgba(14, 23, 44, 0.85);
-  border: 1px dashed rgba(0, 240, 255, 0.35);
+  background: rgba(14, 23, 44, 0.9);
+  border: 1px dashed rgba(0, 240, 255, 0.4);
   border-radius: 6px;
   padding: 10px 14px;
   margin: 6px 0;
 }
 
 .line-notice-text {
-  font-size: 0.74rem;
+  font-size: 0.75rem;
   color: var(--text-sub);
   margin-bottom: 8px;
 }
@@ -545,7 +719,7 @@ body {
   min-height: 44px;
   line-height: 44px;
   padding: 0 16px;
-  background: rgba(0, 240, 255, 0.12);
+  background: rgba(0, 240, 255, 0.14);
   border: 1px solid var(--border-nco);
   border-radius: 4px;
   color: var(--nco-cyan);
@@ -557,9 +731,58 @@ body {
 }
 
 .btn-external-browser:hover {
-  background: rgba(0, 240, 255, 0.22);
+  background: rgba(0, 240, 255, 0.24);
   border-color: var(--nco-cyan);
   box-shadow: 0 0 14px var(--nco-cyan-glow);
+}
+
+@media (max-width: 768px) {
+  #screen-title {
+    padding: 8px 12px 12px;
+    gap: 6px;
+  }
+
+  .title-badge-top {
+    font-size: 0.68rem;
+    padding: 4px 10px;
+    letter-spacing: 0.1em;
+  }
+
+  .game-title {
+    font-size: clamp(1.65rem, 6.2vw, 2.2rem);
+    gap: 2px;
+  }
+
+  .game-title .sub-title {
+    font-size: 0.78rem;
+  }
+
+  .title-hero-wrap {
+    max-width: min(86vw, 260px, 24dvh);
+  }
+
+  .title-actions {
+    gap: 5px;
+  }
+
+  .btn-cyber-plate {
+    min-height: 42px;
+    padding: 5px 14px;
+  }
+
+  .btn-cyber-plate .btn-text {
+    font-size: 0.9rem;
+  }
+
+  .btn-cyber-plate .btn-subtext {
+    font-size: 0.68rem;
+    margin-top: 1px;
+  }
+
+  .btn-subtle {
+    padding: 4px;
+    font-size: 0.75rem;
+  }
 }
 
 /* ==========================================================================
@@ -567,40 +790,54 @@ body {
    ========================================================================== */
 #screen-novel {
   position: relative;
-  flex: 1;
+  flex: 1 1 auto;
+  min-height: 0;
+  height: 100%;
   flex-direction: column;
   overflow: hidden;
-  min-height: calc(100dvh - 58px);
 }
 
-#screen-novel:not(.active) .novel-window {
-  display: none !important;
+#screen-novel:not(.active) #novel-window {
+  display: none;
 }
 
 /* タイムライン作戦マップ（INCIDENT TIMELINE BUS） */
-.chapter-timeline-bar {
+#chapter-timeline-bar.chapter-timeline-bar {
+  flex: 0 0 auto;
   display: flex;
+  flex-wrap: nowrap;
   align-items: center;
-  justify-content: space-between;
-  padding: 8px 14px;
-  background: rgba(3, 8, 18, 0.92);
-  border-bottom: 1px solid rgba(0, 240, 255, 0.18);
+  justify-content: flex-start;
+  padding: 6px 12px;
+  background: linear-gradient(90deg, rgba(3, 8, 18, 0.96) 0%, rgba(6, 14, 30, 0.94) 100%);
+  border-bottom: 1px solid rgba(0, 240, 255, 0.24);
   overflow-x: auto;
-  gap: 8px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  -webkit-overflow-scrolling: touch;
+  gap: 6px;
   z-index: 15;
 }
 
+#chapter-timeline-bar.chapter-timeline-bar::-webkit-scrollbar {
+  display: none;
+}
+
 .timeline-step {
+  flex: 1 1 0;
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 4px 12px;
+  justify-content: center;
+  text-align: center;
+  min-width: max-content;
+  gap: 5px;
+  padding: 4px 10px;
   border-radius: 4px;
-  background: rgba(12, 22, 44, 0.65);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  color: var(--text-muted);
+  background: rgba(12, 22, 44, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--text-sub);
   font-family: var(--font-hud);
-  font-size: 0.74rem;
+  font-size: clamp(0.68rem, 1.2vw, 0.78rem);
   font-weight: 700;
   white-space: nowrap;
   letter-spacing: 0.04em;
@@ -612,14 +849,16 @@ body {
 .timeline-step:hover {
   border-color: var(--nco-cyan);
   color: #ffffff;
-  background: rgba(0, 240, 255, 0.12);
+  background: rgba(0, 240, 255, 0.15);
 }
 
 .timeline-step.active {
   border-color: var(--nco-cyan);
   color: #ffffff;
-  background: linear-gradient(90deg, rgba(0, 240, 255, 0.2), rgba(12, 22, 44, 0.8));
-  box-shadow: 0 0 14px var(--nco-cyan-glow);
+  background: linear-gradient(90deg, rgba(0, 240, 255, 0.24), rgba(12, 24, 48, 0.9));
+  box-shadow:
+    0 0 14px var(--nco-cyan-glow),
+    inset 0 0 8px rgba(0, 240, 255, 0.2);
   animation: timelinePulse 2s infinite ease-in-out;
 }
 
@@ -634,14 +873,21 @@ body {
 }
 
 .timeline-step.cleared {
-  color: var(--nco-emerald);
-  border-color: rgba(16, 185, 129, 0.45);
-  background: rgba(16, 185, 129, 0.08);
+  color: #34d399;
+  border-color: rgba(16, 185, 129, 0.5);
+  background: rgba(16, 185, 129, 0.1);
 }
 
 .timeline-step.cleared::before {
   content: "✓";
   font-weight: 900;
+}
+
+.timeline-step.locked {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
+  border-color: transparent;
 }
 
 /* ノベル背景 */
@@ -650,28 +896,41 @@ body {
   inset: 0;
   background-size: cover;
   background-position: center;
-  transition: opacity 0.5s ease;
+  transition:
+    opacity 0.5s ease,
+    filter 0.5s ease;
   z-index: 1;
   filter: brightness(0.68) contrast(1.08);
 }
 
 .bg-terminal {
   background-image:
-    radial-gradient(circle at 50% 50%, rgba(12, 22, 44, 0.75), rgba(3, 7, 18, 0.98)),
+    radial-gradient(circle at 50% 50%, rgba(12, 22, 44, 0.72), rgba(3, 7, 18, 0.98)),
     url("../assets/backgrounds/vm.jpg");
 }
 
 .bg-nco {
   background-image:
-    radial-gradient(circle at 50% 50%, rgba(12, 22, 44, 0.75), rgba(3, 7, 18, 0.98)),
+    radial-gradient(circle at 50% 50%, rgba(12, 22, 44, 0.72), rgba(3, 7, 18, 0.98)),
     url("../assets/backgrounds/nco.jpg");
 }
 
-/* 立ち絵キャラクターレイヤー */
-.character-stage {
+.novel-bg.bg-boardroom {
+  filter: brightness(0.6) contrast(1.15) sepia(0.25) hue-rotate(-15deg);
+}
+
+.novel-bg.bg-daylight {
+  background-image:
+    linear-gradient(180deg, rgba(14, 116, 144, 0.45) 0%, rgba(15, 23, 42, 0.88) 75%),
+    url("../assets/backgrounds/nco.jpg");
+  filter: brightness(0.92) contrast(1.05);
+}
+
+/* 立ち絵キャラクターレイヤー（下端を会話ウィンドウ背後へオーバーラップさせ宙浮きを完全解消） */
+#character-stage.character-stage {
   position: absolute;
-  top: 40px;
-  bottom: 220px;
+  top: 38px;
+  bottom: 105px;
   left: 0;
   right: 0;
   display: flex;
@@ -679,24 +938,61 @@ body {
   justify-content: center;
   z-index: 5;
   pointer-events: none;
+  transition:
+    transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.3s ease,
+    filter 0.3s ease;
 }
 
-.character-sprite-box {
+/* キャラクター背後のアンビエント・スポットライト */
+#character-stage.character-stage::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(80vw, 520px);
+  height: 75%;
+  background: radial-gradient(
+    ellipse at 50% 65%,
+    rgba(0, 240, 255, 0.15) 0%,
+    rgba(16, 185, 129, 0.05) 45%,
+    transparent 75%
+  );
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* ポップアップ（図解・マルチカット）表示時は背後の立ち絵を減光・縮小 */
+#screen-novel.popup-open #character-stage.character-stage {
+  transform: scale(0.85);
+  transform-origin: bottom center;
+  opacity: 0.22;
+  filter: blur(2.5px);
+}
+
+#character-sprite-box.character-sprite-box {
   position: relative;
   height: 100%;
-  max-height: 490px;
+  max-height: min(64dvh, 580px);
   display: flex;
   align-items: flex-end;
   justify-content: center;
   transition: all 0.3s ease;
 }
 
-.character-sprite-box img {
+#character-sprite-box.character-sprite-box img {
   max-height: 100%;
   width: auto;
   object-fit: contain;
-  filter: drop-shadow(0 0 24px rgba(0, 0, 0, 0.9));
+  object-position: bottom center;
+  filter: drop-shadow(0 8px 28px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 12px rgba(0, 240, 255, 0.18));
+  -webkit-mask-image: linear-gradient(to bottom, #000000 88%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000000 88%, transparent 100%);
   animation: spriteEnter 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transition:
+    filter 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @keyframes spriteEnter {
@@ -710,29 +1006,92 @@ body {
   }
 }
 
-/* 電脳鑑識・図解ポップアップステージ */
+/* 同キャラ連続発話時の自然なバウンス */
+#character-sprite-box.character-sprite-box img.sprite-talk-bounce {
+  animation: spriteTalkBounce 0.24s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes spriteTalkBounce {
+  0% {
+    transform: translateY(0) scale(1);
+  }
+  45% {
+    transform: translateY(-6px) scale(1.012);
+  }
+  100% {
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ケイやナレーション発話中は会話相手の立ち絵を少し引き・減光して残す */
+#character-sprite-box.character-sprite-box img.sprite-dimmed {
+  filter: brightness(0.55) contrast(0.95) saturate(0.85) drop-shadow(0 8px 24px rgba(0, 0, 0, 0.95));
+  transform: translateY(8px) scale(0.965);
+}
+
+@media (max-width: 640px) {
+  #character-stage.character-stage {
+    bottom: 115px;
+  }
+  #character-sprite-box.character-sprite-box {
+    max-height: 56dvh;
+  }
+}
+
+/* ==========================================================================
+   5.1 電脳鑑識モニター ＆ マルチカット・アニメーションステージ
+   ========================================================================== */
+.cut-sequence-stage,
 .dialogue-illustration-stage {
   position: absolute;
-  top: 50%;
+  top: 46px;
+  bottom: auto;
   left: 50%;
-  transform: translate(-50%, -50%);
-  width: 90%;
-  max-width: 560px;
-  background: rgba(8, 15, 30, 0.98);
+  transform: translateX(-50%);
+  width: min(92vw, 580px);
+  max-width: calc(100vw - 24px);
+  max-height: calc(64dvh - 54px);
+  overflow: hidden;
+  z-index: 38;
+  padding: 14px;
+  transition: all 0.25s ease;
+}
+
+.dialogue-illustration-stage {
+  background: linear-gradient(180deg, rgba(8, 17, 34, 0.98) 0%, rgba(4, 9, 20, 0.99) 100%);
   border: 1px solid var(--nco-cyan);
-  box-shadow: 0 0 40px var(--nco-cyan-glow);
-  border-radius: 8px;
-  padding: 16px;
-  z-index: 25;
+  clip-path: var(--chamfer-md);
+  box-shadow:
+    0 12px 44px rgba(0, 0, 0, 0.9),
+    0 0 32px var(--nco-cyan-glow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
   animation: terminalFadeIn 0.3s ease;
 }
 
-.illustration-header {
+.cut-sequence-stage {
+  pointer-events: auto;
+  animation: sequence-pop 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes sequence-pop {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 6px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+}
+
+.illustration-header,
+.sequence-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 8px;
   margin-bottom: 10px;
-  border-bottom: 1px solid rgba(0, 240, 255, 0.2);
+  border-bottom: 1px solid rgba(0, 240, 255, 0.22);
   padding-bottom: 6px;
 }
 
@@ -744,38 +1103,44 @@ body {
   letter-spacing: 0.06em;
 }
 
-.illustration-close-btn {
-  background: transparent;
-  border: none;
-  color: var(--text-muted);
-  font-size: 1.2rem;
+.illustration-close-btn,
+.sequence-close-btn {
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+  color: var(--text-sub);
+  font-size: 1.05rem;
   cursor: pointer;
-  padding: 4px 8px;
-  min-height: 44px;
-  min-width: 44px;
+  padding: 2px 8px;
+  min-height: 36px;
+  min-width: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: all 0.2s ease;
 }
 
-.illustration-close-btn:hover {
+.illustration-close-btn:hover,
+.sequence-close-btn:hover {
   color: #ffffff;
+  border-color: var(--nco-crimson);
+  background: rgba(244, 63, 94, 0.25);
 }
 
 .illustration-img-container {
   width: 100%;
-  height: clamp(170px, 34dvh, 310px);
-  max-height: clamp(170px, 34dvh, 310px);
+  height: clamp(160px, 32dvh, 290px);
+  max-height: clamp(160px, 32dvh, 290px);
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
   border-radius: 6px;
-  border: 1px solid rgba(0, 240, 255, 0.3);
+  border: 1px solid rgba(0, 240, 255, 0.35);
   background: radial-gradient(
     circle at center,
     rgba(12, 24, 48, 0.95) 0%,
-    rgba(4, 8, 18, 0.98) 100%
+    rgba(3, 7, 16, 0.99) 100%
   );
   padding: 6px;
 }
@@ -789,53 +1154,290 @@ body {
   display: block;
   margin: 0 auto;
   border-radius: 3px;
-  filter: drop-shadow(0 0 16px rgba(0, 240, 255, 0.15));
+  filter: drop-shadow(0 0 16px rgba(0, 240, 255, 0.18));
 }
 
 .illustration-caption {
   font-size: 0.84rem;
-  color: var(--text-sub);
-  margin-top: 10px;
-  line-height: 1.55;
+  color: var(--text-main);
+  margin-top: 8px;
+  line-height: 1.5;
+  text-align: center;
+  font-weight: 600;
+}
+
+/* マルチカットカード */
+.sequence-card {
+  background: linear-gradient(180deg, rgba(7, 15, 32, 0.98) 0%, rgba(3, 8, 18, 0.99) 100%);
+  border: 1px solid var(--nco-cyan);
+  clip-path: var(--chamfer-md);
+  padding: 14px;
+  box-shadow:
+    0 14px 44px rgba(0, 0, 0, 0.9),
+    0 0 28px rgba(0, 240, 255, 0.25);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sequence-badge {
+  font-family: var(--font-hud);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #fbbf24;
+  background: rgba(245, 158, 11, 0.16);
+  border: 1px solid rgba(245, 158, 11, 0.45);
+  padding: 2px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.sequence-title {
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-main);
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sequence-frame-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sequence-frame-box {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  max-height: clamp(140px, 28dvh, 250px);
+  background: #020617;
+  border: 1px solid rgba(0, 240, 255, 0.35);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+}
+
+.sequence-frame-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(1) contrast(1.04);
+  transform: scale(1.02);
+  transition: opacity 0.15s ease;
+}
+
+.cut-frame-transition .sequence-frame-img {
+  animation: kenBurnsZoom 2.2s ease-out forwards;
+}
+
+.cut-frame-transition {
+  animation: cutFlashIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes kenBurnsZoom {
+  0% {
+    transform: scale(1.08) translate(-1%, 1%);
+    filter: brightness(1.1) contrast(1.08);
+  }
+  100% {
+    transform: scale(1) translate(0, 0);
+    filter: brightness(1) contrast(1.04);
+  }
+}
+
+@keyframes cutFlashIn {
+  0% {
+    opacity: 0.3;
+    box-shadow: inset 0 0 60px rgba(0, 240, 255, 0.9);
+  }
+  100% {
+    opacity: 1;
+    box-shadow: inset 0 0 20px rgba(0, 240, 255, 0.2);
+  }
+}
+
+.sequence-frame-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  background: rgba(2, 6, 16, 0.85);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid rgba(0, 240, 255, 0.5);
+  border-radius: 4px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);
+  pointer-events: none;
+}
+
+.sequence-frame-step {
+  font-family: var(--font-hud);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--nco-cyan);
+  letter-spacing: 0.06em;
+}
+
+.cut-tap-hint {
+  font-family: var(--font-hud);
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #fbbf24;
+  letter-spacing: 0.04em;
+  animation: promptBlink 1.2s infinite;
+}
+
+.sequence-frame-placeholder {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at center, rgba(3, 7, 18, 0.4) 0%, rgba(3, 7, 18, 0.86) 100%);
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+}
+
+.placeholder-icon {
+  font-size: 2.2rem;
+  animation: pulse-scale 1.2s infinite ease-in-out;
+}
+
+@keyframes pulse-scale {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.08);
+  }
+}
+
+.placeholder-desc {
+  font-family: var(--font-hud);
+  font-size: 0.82rem;
+  color: var(--nco-cyan);
+  line-height: 1.4;
+  overflow-wrap: break-word;
+}
+
+.cut-hud-step {
+  font-family: var(--font-hud);
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #fbbf24;
+  letter-spacing: 0.12em;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cut-hud-main {
+  font-family: var(--font-hud);
+  font-size: clamp(0.85rem, 2.6vw, 1.05rem);
+  font-weight: 800;
+  color: #ffffff;
+  text-shadow: 0 0 14px rgba(0, 240, 255, 0.85);
+  background: rgba(6, 14, 32, 0.82);
+  border: 1px solid rgba(0, 240, 255, 0.45);
+  border-left: 4px solid var(--nco-cyan);
+  padding: 8px 14px;
+  border-radius: 4px;
+  max-width: 95%;
+}
+
+.sequence-progress-bar {
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.sequence-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--nco-cyan), var(--nco-emerald));
+  transition: width 0.25s linear;
+}
+
+.sequence-caption {
+  font-family: var(--font-body);
+  font-size: clamp(0.78rem, 2.8vw, 0.88rem);
+  color: var(--text-main);
+  background: rgba(12, 22, 44, 0.82);
+  border: 1px solid rgba(0, 240, 255, 0.25);
+  border-radius: 6px;
+  padding: 8px 12px;
+  line-height: 1.5;
+  overflow-wrap: break-word;
 }
 
 /* ==========================================================================
-   5.1 鑑識意思決定・選択肢パネル (Choice Stage)
+   5.2 鑑識意思決定・選択肢パネル (#choice-stage)
    ========================================================================== */
 .choice-stage {
   position: absolute;
   inset: 0;
-  background: rgba(3, 7, 18, 0.88);
+  width: 100%;
+  background: rgba(2, 6, 16, 0.88);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 16px;
-  z-index: 30;
+  padding: 12px;
+  overflow: hidden;
+  z-index: 40;
   animation: terminalFadeIn 0.28s ease;
 }
 
+/* 内側のカードのみを単一のスクロールコンテナにする */
 .choice-modal-card {
-  width: 100%;
-  max-width: 640px;
-  background: linear-gradient(180deg, rgba(14, 24, 46, 0.98) 0%, rgba(8, 14, 28, 0.99) 100%);
+  width: min(96vw, 760px);
+  max-height: calc(100dvh - 74px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: linear-gradient(180deg, rgba(11, 22, 44, 0.98) 0%, rgba(5, 11, 24, 0.99) 100%);
   border: 1px solid var(--nco-cyan);
-  box-shadow: 0 0 44px var(--nco-cyan-glow);
+  border-top: 2px solid var(--nco-cyan);
   border-radius: 8px;
-  padding: 24px;
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.92),
+    0 0 36px rgba(0, 240, 255, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14);
+  padding: clamp(14px, 3vw, 22px);
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
+  margin: auto;
   position: relative;
 }
 
 .choice-header {
+  flex-shrink: 0;
   display: flex;
   flex-direction: column;
   gap: 6px;
-  border-bottom: 1px solid rgba(0, 240, 255, 0.2);
-  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(0, 240, 255, 0.22);
+  padding-bottom: 10px;
 }
 
 .choice-badge {
@@ -846,19 +1448,34 @@ body {
   letter-spacing: 0.1em;
 }
 
-.choice-question {
-  font-size: clamp(1.02rem, 3.2vw, 1.25rem);
+#choice-question.choice-question {
+  font-size: clamp(0.94rem, 3.2vw, 1.14rem);
   font-weight: 700;
   color: #ffffff;
-  line-height: 1.45;
+  line-height: 1.5;
+  margin-bottom: 2px;
+}
+
+/* 一般ユーザー向け「アリアの噛み砕きヒント枠」 */
+.choice-aria-hint {
+  margin-top: 4px;
+  padding: 8px 12px;
+  background: linear-gradient(90deg, rgba(0, 240, 255, 0.12) 0%, rgba(12, 24, 48, 0.7) 100%);
+  border: 1px solid rgba(0, 240, 255, 0.28);
+  border-left: 3px solid var(--nco-cyan);
+  border-radius: 4px;
+  font-size: clamp(0.78rem, 2.5vw, 0.88rem);
+  color: #e0f2fe;
+  line-height: 1.5;
 }
 
 .choice-log-container {
+  flex-shrink: 0;
   background: #020617;
-  border: 1px solid rgba(0, 240, 255, 0.35);
+  border: 1px solid rgba(0, 240, 255, 0.4);
   border-radius: 6px;
   overflow: hidden;
-  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8);
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.85);
 }
 
 .log-terminal-header {
@@ -866,8 +1483,8 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: 6px 12px;
-  background: rgba(15, 23, 42, 0.95);
-  border-bottom: 1px solid rgba(0, 240, 255, 0.2);
+  background: rgba(15, 23, 42, 0.96);
+  border-bottom: 1px solid rgba(0, 240, 255, 0.22);
 }
 
 .log-terminal-dots {
@@ -902,24 +1519,35 @@ body {
   font-weight: 700;
 }
 
-.choice-log-content {
+#choice-log-content.choice-log-content {
   margin: 0;
-  padding: 12px 14px;
+  padding: 8px 12px;
   font-family: "Courier New", Consolas, monospace;
-  font-size: clamp(0.74rem, 2.4vw, 0.84rem);
-  line-height: 1.5;
-  color: #38bdf8;
+  font-size: clamp(0.7rem, 2.1vw, 0.84rem);
+  line-height: 1.42;
+  max-height: 185px;
+  overflow-y: auto;
+  color: #7dd3fc;
   background: transparent;
   white-space: pre-wrap;
   overflow-x: auto;
 }
 
+.log-highlight-key {
+  color: #fde047;
+  background: rgba(245, 158, 11, 0.24);
+  border: 1px solid rgba(245, 158, 11, 0.6);
+  padding: 0 5px;
+  border-radius: 3px;
+  font-weight: 700;
+}
+
 .choice-retry-banner {
   padding: 10px 14px;
-  background: rgba(239, 68, 68, 0.16);
-  border: 1px solid rgba(239, 68, 68, 0.65);
+  background: rgba(239, 68, 68, 0.18);
+  border: 1px solid rgba(239, 68, 68, 0.7);
   border-radius: 6px;
-  color: #fca5a5;
+  color: #fecaca;
   font-size: 0.88rem;
   font-weight: 700;
   line-height: 1.45;
@@ -942,24 +1570,27 @@ body {
 }
 
 .choice-options {
+  flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 9px;
 }
 
-/* 選択肢ボタン：コマンドセレクター */
+/* 選択肢ボタン：タクティカル・コマンドセレクター */
 .choice-btn {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding: 14px 18px;
-  background: rgba(15, 26, 48, 0.88);
+  width: 100%;
+  min-height: 54px;
+  padding: 12px 16px;
+  background: linear-gradient(135deg, rgba(14, 26, 50, 0.92) 0%, rgba(8, 16, 34, 0.95) 100%);
   border: 1px solid var(--border-nco);
   border-radius: 6px;
+  clip-path: var(--chamfer-sm);
   cursor: pointer;
   text-align: left;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  min-height: 50px;
   position: relative;
   overflow: hidden;
 }
@@ -969,47 +1600,79 @@ body {
   position: absolute;
   top: 0;
   left: 0;
-  width: 3px;
+  width: 4px;
   height: 100%;
   background: var(--nco-cyan);
-  opacity: 0.7;
+  opacity: 0.8;
   transition: width 0.2s ease;
 }
 
-.choice-btn:hover {
-  background: rgba(0, 240, 255, 0.16);
+.choice-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, rgba(0, 240, 255, 0.18) 0%, rgba(14, 28, 54, 0.98) 100%);
   border-color: var(--nco-cyan);
   transform: translateX(4px);
   box-shadow: 0 4px 20px var(--nco-cyan-glow);
 }
 
-.choice-btn:hover::before {
+.choice-btn:hover:not(:disabled)::before {
   width: 6px;
   box-shadow: 0 0 10px var(--nco-cyan);
 }
 
 .choice-btn-label {
-  font-size: 0.98rem;
+  font-size: clamp(0.86rem, 2.8vw, 0.98rem);
   font-weight: 700;
   color: #ffffff;
   line-height: 1.4;
 }
 
 .choice-btn-desc {
-  font-size: 0.8rem;
+  font-size: clamp(0.74rem, 2.3vw, 0.82rem);
   color: var(--text-sub);
   margin-top: 4px;
-  line-height: 1.4;
+  line-height: 1.38;
+}
+
+/* 選択肢誤答時のグレーアウト＆無効化スタイル（詳細度制御により !important 不要） */
+.choice-options .choice-btn.disabled-choice {
+  opacity: 0.38;
+  filter: grayscale(0.85);
+  border-color: rgba(239, 68, 68, 0.35);
+  background: rgba(15, 23, 42, 0.65);
+  cursor: not-allowed;
+  pointer-events: none;
+  box-shadow: none;
+  transform: none;
+}
+
+.choice-options .choice-btn.disabled-choice .choice-btn-label {
+  color: var(--text-sub);
+  text-decoration: line-through;
+  text-decoration-color: rgba(239, 68, 68, 0.7);
+}
+
+.choice-options .choice-btn.disabled-choice .choice-failed-badge {
+  font-family: var(--font-hud);
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: #fca5a5;
+  border: 1px solid rgba(248, 113, 113, 0.45);
+  background: rgba(239, 68, 68, 0.16);
+  padding: 1px 6px;
+  border-radius: 3px;
+  margin-left: 8px;
+  text-decoration: none;
+  display: inline-block;
 }
 
 /* ==========================================================================
-   5.2 最終証拠連結 (Deduction Evidence Connect)
+   5.3 最終証拠連結 (FINAL DEDUCTION)
    ========================================================================== */
 .deduction-badge {
   font-family: var(--font-hud);
   font-size: 0.82rem;
   font-weight: 800;
-  color: var(--nco-amber);
+  color: #fbbf24;
   letter-spacing: 0.1em;
 }
 
@@ -1019,7 +1682,7 @@ body {
   background: rgba(245, 158, 11, 0.2);
   border: 1px solid var(--nco-amber);
   border-radius: 4px;
-  color: var(--nco-amber);
+  color: #fbbf24;
   font-family: var(--font-hud);
   font-size: 0.75rem;
   font-weight: 800;
@@ -1028,11 +1691,12 @@ body {
 
 .deduction-evidence-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 12px;
-  max-height: 52vh;
-  overflow-y: auto;
-  padding: 4px 6px 4px 0;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 8px;
+  max-height: none;
+  overflow: visible;
+  padding: 0;
+  margin-bottom: 8px;
 }
 
 .deduction-card {
@@ -1042,6 +1706,7 @@ body {
   background: rgba(14, 24, 46, 0.92);
   border: 1px solid var(--border-subtle);
   border-radius: 6px;
+  clip-path: var(--chamfer-sm);
   cursor: pointer;
   text-align: left;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
@@ -1049,7 +1714,7 @@ body {
 }
 
 .deduction-card:hover {
-  background: rgba(0, 240, 255, 0.14);
+  background: rgba(0, 240, 255, 0.16);
   border-color: var(--nco-cyan);
   box-shadow: 0 0 16px var(--nco-cyan-glow);
 }
@@ -1058,6 +1723,13 @@ body {
   background: rgba(245, 158, 11, 0.22);
   border-color: var(--nco-amber);
   box-shadow: 0 0 20px rgba(245, 158, 11, 0.5);
+}
+
+.deduction-card.already-linked {
+  opacity: 0.42;
+  border-color: var(--nco-emerald);
+  background: rgba(16, 185, 129, 0.08);
+  pointer-events: none;
 }
 
 .deduction-card-header {
@@ -1077,6 +1749,17 @@ body {
   line-height: 1.35;
 }
 
+.deduction-linked-badge {
+  margin-left: auto;
+  font-family: var(--font-hud);
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: #34d399;
+  border: 1px solid var(--nco-emerald);
+  padding: 1px 6px;
+  border-radius: 3px;
+}
+
 .deduction-card-desc {
   font-size: 0.75rem;
   color: var(--text-sub);
@@ -1085,15 +1768,22 @@ body {
 }
 
 .deduction-actions {
+  position: sticky;
+  bottom: -16px;
+  background: linear-gradient(180deg, rgba(8, 14, 28, 0.88) 0%, rgba(8, 14, 28, 0.99) 30%);
+  padding: 10px 0 4px;
+  margin-top: 4px;
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
   gap: 10px;
-  margin-top: 10px;
+  z-index: 5;
 }
 
 .btn-deduction-submit {
+  width: 100%;
+  max-width: 360px;
   padding: 12px 24px;
-  background: linear-gradient(135deg, rgba(245, 158, 11, 0.95), rgba(217, 119, 6, 0.95));
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.96), rgba(217, 119, 6, 0.96));
   color: #030712;
   font-family: var(--font-hud);
   font-size: 0.95rem;
@@ -1101,6 +1791,7 @@ body {
   letter-spacing: 0.05em;
   border: none;
   border-radius: 4px;
+  clip-path: var(--chamfer-sm);
   cursor: pointer;
   transition: all 0.2s ease;
   min-height: 48px;
@@ -1119,7 +1810,7 @@ body {
 
 .deduction-hint-banner {
   padding: 10px 14px;
-  background: rgba(244, 63, 94, 0.18);
+  background: rgba(244, 63, 94, 0.2);
   border: 1px solid var(--nco-crimson);
   border-radius: 6px;
   color: #fecdd3;
@@ -1128,34 +1819,71 @@ body {
   margin-bottom: 8px;
 }
 
+@media (max-width: 640px) {
+  .deduction-evidence-grid {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+  .deduction-card {
+    padding: 8px 10px;
+  }
+  .deduction-card-desc {
+    font-size: 0.72rem;
+    margin-top: 2px;
+  }
+}
+
 /* ==========================================================================
    6. 会話ノベルウィンドウ (#novel-window - FORENSIC COMM TERMINAL)
    ========================================================================== */
-.novel-window {
-  position: fixed;
+#novel-window.novel-window {
+  position: absolute;
   bottom: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 100%;
-  max-width: 980px;
-  min-height: 175px;
-  max-height: 38dvh;
-  margin-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
-  padding: 14px 20px calc(14px + env(safe-area-inset-bottom, 0px));
-  background: linear-gradient(180deg, rgba(6, 12, 24, 0.96) 0%, rgba(3, 7, 16, 0.98) 100%);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--border-nco);
+  width: min(96vw, 960px);
+  height: auto;
+  min-height: 152px;
+  max-height: 36dvh;
+  margin-bottom: calc(6px + env(safe-area-inset-bottom, 0px));
+  padding: 12px 18px calc(10px + env(safe-area-inset-bottom, 0px));
+  background: linear-gradient(180deg, rgba(7, 15, 32, 0.96) 0%, rgba(3, 7, 16, 0.99) 100%);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(0, 240, 255, 0.35);
+  border-top: 2px solid var(--nco-cyan);
   border-radius: 8px;
-  box-shadow: 0 -8px 36px rgba(0, 0, 0, 0.8);
+  box-shadow:
+    0 -12px 40px rgba(0, 0, 0, 0.9),
+    0 -2px 16px rgba(0, 240, 255, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  z-index: 20;
+  z-index: 35;
   cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  transition:
+    border-color 0.25s ease,
+    opacity 0.2s ease,
+    transform 0.2s ease;
 }
 
-.novel-window::before {
+#novel-window.novel-window,
+#novel-window.novel-window * {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+}
+
+#novel-window.novel-window.choice-mode-hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, 16px);
+}
+
+#novel-window.novel-window::before {
   content: "SECURE QUANTUM LINK // TERMINAL ACTIVE";
   position: absolute;
   top: -10px;
@@ -1165,10 +1893,25 @@ body {
   font-weight: 800;
   color: var(--nco-cyan);
   background: #030712;
-  padding: 1px 8px;
+  padding: 1px 10px;
   border: 1px solid var(--border-nco);
-  border-radius: 2px;
+  border-radius: 3px;
   letter-spacing: 0.08em;
+  pointer-events: none;
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
+}
+
+/* コーナーブラケット装飾 */
+#novel-window.novel-window::after {
+  content: "";
+  position: absolute;
+  bottom: 5px;
+  left: 5px;
+  width: 10px;
+  height: 10px;
+  border-bottom: 1.5px solid var(--nco-cyan);
+  border-left: 1.5px solid var(--nco-cyan);
+  opacity: 0.55;
   pointer-events: none;
 }
 
@@ -1176,9 +1919,9 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid rgba(0, 240, 255, 0.15);
+  border-bottom: 1px solid rgba(0, 240, 255, 0.16);
   padding-bottom: 6px;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .speaker-wrap {
@@ -1187,9 +1930,33 @@ body {
   gap: 10px;
 }
 
+/* 話者ポートレート小窓（顔周りにズームし鮮明表示） */
+.speaker-avatar-frame {
+  width: 38px;
+  height: 38px;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1.5px solid var(--nco-cyan);
+  background: radial-gradient(circle at 50% 30%, rgba(0, 240, 255, 0.28), rgba(2, 6, 23, 0.95));
+  box-shadow: 0 0 10px var(--nco-cyan-glow);
+  flex-shrink: 0;
+  position: relative;
+}
+
+.speaker-avatar-thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 12%;
+  transform: scale(1.75);
+  transform-origin: 50% 14%;
+  filter: brightness(1.12) contrast(1.06);
+  display: block;
+}
+
 .speaker-name {
   font-family: var(--font-hud);
-  font-size: 1.05rem;
+  font-size: 1.04rem;
   font-weight: 800;
   color: var(--nco-cyan);
   letter-spacing: 0.06em;
@@ -1236,69 +2003,224 @@ body {
 }
 
 .dialogue-ctrl-btn {
-  min-height: 44px;
+  min-height: 36px;
   min-width: 44px;
-  padding: 4px 12px;
-  background: rgba(14, 24, 46, 0.85);
-  border: 1px solid var(--border-subtle);
+  padding: 4px 11px;
+  background: rgba(14, 24, 46, 0.88);
+  border: 1px solid rgba(0, 240, 255, 0.24);
   border-radius: 4px;
   color: var(--text-sub);
   font-family: var(--font-hud);
-  font-size: 0.78rem;
+  font-size: 0.76rem;
   font-weight: 800;
   cursor: pointer;
   transition: all 0.2s ease;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
 }
 
 .dialogue-ctrl-btn:hover,
 .dialogue-ctrl-btn.active {
   border-color: var(--nco-cyan);
   color: #ffffff;
-  background: rgba(0, 240, 255, 0.2);
-  box-shadow: 0 0 10px var(--nco-cyan-glow);
+  background: rgba(0, 240, 255, 0.22);
+  box-shadow: 0 0 12px var(--nco-cyan-glow);
 }
 
-.dialogue-body {
-  flex: 1;
-  font-size: clamp(0.94rem, 3.6vw, 1.08rem);
-  line-height: 1.7;
+#dialogue-text.dialogue-body {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  scrollbar-width: none;
+  font-size: clamp(0.9rem, 3.4vw, 1.05rem);
+  line-height: 1.72;
+  letter-spacing: 0.02em;
   color: var(--text-main);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
   overflow-wrap: break-word;
   white-space: pre-wrap;
-  user-select: none;
-  -webkit-user-select: none;
+  margin-top: 2px;
 }
 
+#dialogue-text.dialogue-body::-webkit-scrollbar {
+  width: 3px;
+}
+
+/* 会話文中の専門用語ハイライト */
+.term-tip {
+  color: #38bdf8;
+  border-bottom: 1px dashed rgba(56, 189, 248, 0.8);
+  cursor: help;
+  padding: 0;
+  margin: 0;
+  display: inline;
+  border-radius: 2px;
+  transition: background 0.15s ease;
+}
+
+.term-tip:hover,
+.term-tip:active {
+  background: rgba(56, 189, 248, 0.22);
+}
+
+#term-popover {
+  position: fixed;
+  z-index: 80;
+  max-width: min(88vw, 340px);
+  background: rgba(4, 12, 28, 0.98);
+  border: 1px solid var(--nco-cyan);
+  box-shadow:
+    0 8px 28px rgba(0, 0, 0, 0.9),
+    0 0 14px var(--nco-cyan-glow);
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-size: 0.82rem;
+  color: var(--text-main);
+  line-height: 1.55;
+  pointer-events: none;
+}
+
+#term-popover .term-popover-title {
+  font-family: var(--font-hud);
+  font-weight: 800;
+  color: #fbbf24;
+  margin-bottom: 4px;
+  font-size: 0.85rem;
+}
+
+/* 会話ウィンドウ右下の「クリックして進む」プロンプトプレート */
 .dialogue-prompt {
   align-self: flex-end;
+  margin-top: 12px;
+  margin-bottom: 2px;
+  padding: 4px 12px;
+  background: rgba(0, 240, 255, 0.1);
+  border: 1px solid rgba(0, 240, 255, 0.36);
+  border-radius: 4px;
   font-family: var(--font-hud);
-  font-size: 0.78rem;
+  font-size: clamp(0.7rem, 2.2vw, 0.76rem);
   font-weight: 800;
   color: var(--nco-cyan);
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.14);
   animation: promptBlink 1.4s infinite ease-in-out;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
 }
 
 @keyframes promptBlink {
   0%,
   100% {
-    opacity: 0.35;
-    transform: translateX(0);
+    opacity: 0.45;
+    border-color: rgba(0, 240, 255, 0.22);
+    box-shadow: 0 0 6px rgba(0, 240, 255, 0.08);
+    transform: translateY(0);
   }
   50% {
     opacity: 1;
-    transform: translateX(4px);
+    border-color: rgba(0, 240, 255, 0.75);
+    box-shadow: 0 0 14px rgba(0, 240, 255, 0.38);
+    transform: translateY(-2px);
+  }
+}
+
+@media (max-width: 640px) {
+  #novel-window.novel-window {
+    min-height: 148px;
+    max-height: 40dvh;
+    padding: 10px 14px calc(8px + env(safe-area-inset-bottom, 0px));
+  }
+  #novel-window.novel-window::before {
+    display: none;
+  }
+  .novel-header {
+    margin-bottom: 4px;
+    padding-bottom: 4px;
+  }
+  #dialogue-text.dialogue-body {
+    font-size: clamp(0.86rem, 3.4vw, 0.96rem);
+    line-height: 1.54;
+  }
+  .dialogue-prompt {
+    margin-top: 6px;
+  }
+  .dialogue-ctrl-btn {
+    min-height: 32px;
+    min-width: 40px;
+    padding: 2px 8px;
+    font-size: 0.72rem;
   }
 }
 
 /* ==========================================================================
-   7. 異議あり・突破カットイン (FORENSIC BREAKTHROUGH)
+   7. シネマティック緊急テロップ ＆ 突破カットイン (FORENSIC BREAKTHROUGH)
    ========================================================================== */
+.cinematic-telop {
+  position: absolute;
+  top: auto;
+  bottom: calc(36dvh + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(94vw, 760px);
+  z-index: 36;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 16px;
+  background: linear-gradient(90deg, rgba(4, 12, 28, 0.96) 0%, rgba(12, 24, 48, 0.96) 100%);
+  border: 1px solid var(--nco-amber);
+  border-left: 4px solid var(--nco-amber);
+  border-radius: 6px;
+  box-shadow:
+    0 4px 20px rgba(0, 0, 0, 0.85),
+    0 0 14px var(--nco-amber-glow);
+  pointer-events: none;
+  animation: telop-slide 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes telop-slide {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -14px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+}
+
+.telop-icon {
+  font-size: 1.1rem;
+  color: #fbbf24;
+}
+
+#cinematic-telop-text.telop-text {
+  font-family: var(--font-hud);
+  font-size: clamp(0.78rem, 2.5vw, 0.98rem);
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 0.06em;
+  line-height: 1.35;
+  white-space: normal;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 768px) {
+  .cinematic-telop {
+    top: 44px;
+    bottom: auto;
+    width: calc(100% - 16px);
+    padding: 5px 12px;
+  }
+}
+
+/* カットインオーバーレイ */
 .overlay-cutin {
   position: fixed;
   inset: 0;
-  background: rgba(3, 7, 18, 0.8);
+  background: rgba(2, 6, 16, 0.82);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1325,14 +2247,13 @@ body {
   }
 }
 
-.cutin-box {
-  width: 94vw;
-  max-width: 620px;
-  background: linear-gradient(135deg, rgba(8, 20, 48, 0.97) 0%, rgba(2, 6, 16, 0.99) 100%);
+#overlay-cutin .cutin-box {
+  width: min(92vw, 720px);
+  background: linear-gradient(135deg, rgba(8, 22, 52, 0.98) 0%, rgba(2, 6, 16, 0.99) 100%);
   border: 2px solid var(--nco-cyan);
+  clip-path: var(--chamfer-md);
   box-shadow: 0 0 54px var(--nco-cyan-glow);
-  padding: 22px 30px;
-  border-radius: 6px;
+  padding: 20px 24px;
   text-align: center;
   box-sizing: border-box;
   position: relative;
@@ -1351,7 +2272,7 @@ body {
   }
 }
 
-.cutin-box::before {
+#overlay-cutin .cutin-box::before {
   content: "";
   position: absolute;
   top: 0;
@@ -1361,7 +2282,7 @@ body {
   background: linear-gradient(90deg, transparent, var(--nco-cyan), transparent);
 }
 
-.cutin-box::after {
+#overlay-cutin .cutin-box::after {
   content: "";
   position: absolute;
   bottom: 0;
@@ -1372,54 +2293,56 @@ body {
 }
 
 /* タクティカル作戦承認モード（Emerald） */
-.cutin-box.tactic {
+#overlay-cutin .cutin-box.tactic {
   border-color: var(--nco-emerald);
   box-shadow: 0 0 54px var(--nco-emerald-glow);
 }
 
-.cutin-box.tactic::before,
-.cutin-box.tactic::after {
+#overlay-cutin .cutin-box.tactic::before,
+#overlay-cutin .cutin-box.tactic::after {
   background: linear-gradient(90deg, transparent, var(--nco-emerald), transparent);
 }
 
-.cutin-box.tactic .cutin-sub {
-  color: var(--nco-emerald);
+#overlay-cutin .cutin-box.tactic .cutin-sub {
+  color: #34d399;
 }
 
 /* 能動的サイバー防御・真実連結モード（Gold/Amber） */
-.cutin-box.gold {
+#overlay-cutin .cutin-box.gold {
   border-color: var(--nco-amber);
   box-shadow: 0 0 54px var(--nco-amber-glow);
 }
 
-.cutin-box.gold::before,
-.cutin-box.gold::after {
+#overlay-cutin .cutin-box.gold::before,
+#overlay-cutin .cutin-box.gold::after {
   background: linear-gradient(90deg, transparent, var(--nco-amber), transparent);
 }
 
-.cutin-box.gold .cutin-sub {
-  color: var(--nco-amber);
+#overlay-cutin .cutin-box.gold .cutin-sub {
+  color: #fbbf24;
 }
 
-.cutin-sub {
+#cutin-sub.cutin-sub {
   font-family: var(--font-hud);
-  font-size: clamp(0.75rem, 2.8vw, 0.92rem);
+  font-size: clamp(0.7rem, 2.2vw, 0.88rem);
   font-weight: 800;
   letter-spacing: 0.16em;
   color: var(--nco-cyan);
   margin-bottom: 6px;
   text-transform: uppercase;
+  white-space: normal;
 }
 
-.cutin-text {
+#cutin-text.cutin-text {
   font-family: var(--font-hud);
-  font-size: clamp(1.2rem, 5vw, 2.1rem);
+  font-size: clamp(1.05rem, 4.2vw, 1.68rem);
   font-weight: 900;
   color: #ffffff;
-  white-space: nowrap;
-  letter-spacing: 0.06em;
-  text-shadow: 0 0 20px rgba(0, 240, 255, 0.6);
-  line-height: 1.3;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  letter-spacing: 0.05em;
+  text-shadow: 0 0 20px rgba(0, 240, 255, 0.65);
+  line-height: 1.35;
 }
 
 /* ==========================================================================
@@ -1427,14 +2350,19 @@ body {
    ========================================================================== */
 #screen-ending {
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   text-align: center;
-  padding: 32px 16px;
-  gap: 16px;
+  height: 100%;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 240, 255, 0.3) transparent;
+  padding: clamp(16px, 3dvh, 32px) 16px;
+  gap: clamp(10px, 1.8dvh, 16px);
 }
 
 .ending-icon {
-  font-size: 3.2rem;
+  font-size: 3rem;
   animation: pulseGlow 2s infinite ease-in-out;
 }
 
@@ -1445,36 +2373,37 @@ body {
   gap: 6px;
   padding: 12px 28px;
   border-radius: 8px;
+  clip-path: var(--chamfer-sm);
   font-family: var(--font-hud);
-  margin-bottom: 8px;
+  margin-bottom: 4px;
   transition: all 0.3s ease;
 }
 
 .ending-rank-badge.rank-s {
   background: rgba(16, 185, 129, 0.18);
   border: 2px solid #10b981;
-  color: #10b981;
+  color: #34d399;
   box-shadow: 0 0 28px rgba(16, 185, 129, 0.45);
 }
 
 .ending-rank-badge.rank-a {
   background: rgba(6, 182, 212, 0.18);
   border: 2px solid #06b6d4;
-  color: #06b6d4;
+  color: #22d3ee;
   box-shadow: 0 0 28px rgba(6, 182, 212, 0.45);
 }
 
 .ending-rank-badge.rank-b {
   background: rgba(245, 158, 11, 0.18);
   border: 2px solid #f59e0b;
-  color: #f59e0b;
+  color: #fbbf24;
   box-shadow: 0 0 28px rgba(245, 158, 11, 0.45);
 }
 
 .ending-rank-badge.rank-c {
   background: rgba(239, 68, 68, 0.18);
   border: 2px solid #ef4444;
-  color: #ef4444;
+  color: #f87171;
   box-shadow: 0 0 28px rgba(239, 68, 68, 0.45);
 }
 
@@ -1492,25 +2421,25 @@ body {
 
 .ending-title {
   font-family: var(--font-hud);
-  font-size: clamp(1.6rem, 5.2vw, 2.6rem);
+  font-size: clamp(1.5rem, 5vw, 2.4rem);
   font-weight: 800;
   letter-spacing: 0.08em;
   color: #ffffff;
-  text-shadow: 0 0 24px rgba(16, 185, 129, 0.5);
+  text-shadow: 0 0 24px rgba(16, 185, 129, 0.55);
 }
 
 .ending-sub {
-  font-size: 1.05rem;
-  color: var(--nco-emerald);
+  font-size: 1.02rem;
+  color: #34d399;
   font-weight: 700;
   letter-spacing: 0.04em;
 }
 
 .ending-unlocked-banner {
   font-family: var(--font-hud);
-  font-size: 0.92rem;
+  font-size: 0.9rem;
   font-weight: 800;
-  color: var(--nco-emerald);
+  color: #34d399;
   background: rgba(16, 185, 129, 0.14);
   border: 1px solid rgba(16, 185, 129, 0.5);
   padding: 10px 20px;
@@ -1519,8 +2448,8 @@ body {
 }
 
 .ending-desc {
-  max-width: 600px;
-  font-size: 0.94rem;
+  max-width: 620px;
+  font-size: 0.92rem;
   color: var(--text-sub);
   line-height: 1.75;
 }
@@ -1531,16 +2460,17 @@ body {
   gap: 10px;
   width: 100%;
   max-width: 420px;
-  margin-top: 12px;
+  margin-top: 8px;
 }
 
 /* ==========================================================================
-   9. モーダル群 (バックログ、鑑識手帳、小説リーダー、資料集)
+   9. モーダル群 (バックログ、鑑識手帳、小説リーダー、資料集、音響設定)
    ========================================================================== */
 .modal {
   position: fixed;
   inset: 0;
-  background: rgba(3, 7, 18, 0.88);
+  min-height: 100dvh;
+  background: rgba(2, 6, 16, 0.88);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   display: flex;
@@ -1554,9 +2484,12 @@ body {
   width: 100%;
   max-width: 620px;
   max-height: 85dvh;
-  background: linear-gradient(180deg, rgba(14, 24, 46, 0.98) 0%, rgba(8, 14, 28, 0.99) 100%);
+  background: linear-gradient(180deg, rgba(11, 22, 44, 0.98) 0%, rgba(5, 11, 24, 0.99) 100%);
   border: 1px solid var(--border-nco);
-  box-shadow: 0 20px 54px rgba(0, 0, 0, 0.85);
+  border-top: 2px solid var(--nco-cyan);
+  box-shadow:
+    0 20px 54px rgba(0, 0, 0, 0.9),
+    0 0 30px rgba(0, 240, 255, 0.18);
   border-radius: 8px;
   display: flex;
   flex-direction: column;
@@ -1574,8 +2507,8 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: 14px 20px;
-  background: rgba(4, 9, 20, 0.95);
-  border-bottom: 1px solid rgba(0, 240, 255, 0.2);
+  background: rgba(4, 9, 20, 0.96);
+  border-bottom: 1px solid rgba(0, 240, 255, 0.22);
 }
 
 .modal-title {
@@ -1588,9 +2521,10 @@ body {
 
 .modal-close-btn {
   background: transparent;
-  border: none;
-  color: var(--text-muted);
-  font-size: 1.3rem;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  color: var(--text-sub);
+  font-size: 1.25rem;
   cursor: pointer;
   padding: 4px 8px;
   min-height: 44px;
@@ -1598,11 +2532,13 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: color 0.2s ease;
+  transition: all 0.2s ease;
 }
 
 .modal-close-btn:hover {
   color: #ffffff;
+  border-color: rgba(244, 63, 94, 0.5);
+  background: rgba(244, 63, 94, 0.18);
 }
 
 .modal-body {
@@ -1621,7 +2557,8 @@ body {
 
 .log-item {
   padding: 12px 16px;
-  background: rgba(16, 28, 54, 0.6);
+  background: rgba(14, 26, 52, 0.72);
+  border: 1px solid rgba(0, 240, 255, 0.15);
   border-left: 3px solid var(--nco-cyan);
   border-radius: 4px;
 }
@@ -1654,9 +2591,10 @@ body {
   display: flex;
   gap: 12px;
   padding: 12px;
-  background: rgba(16, 28, 54, 0.65);
+  background: rgba(15, 27, 52, 0.75);
   border: 1px solid var(--border-subtle);
   border-radius: 6px;
+  clip-path: var(--chamfer-sm);
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -1664,7 +2602,7 @@ body {
 .evidence-card:hover,
 .evidence-card.selected {
   border-color: var(--nco-cyan);
-  background: rgba(0, 240, 255, 0.14);
+  background: rgba(0, 240, 255, 0.16);
   box-shadow: 0 0 16px var(--nco-cyan-glow);
 }
 
@@ -1693,7 +2631,7 @@ body {
 
 .evidence-detail-panel {
   padding: 16px;
-  background: rgba(4, 9, 20, 0.9);
+  background: rgba(4, 9, 20, 0.95);
   border: 1px solid var(--border-nco);
   border-radius: 6px;
   display: flex;
@@ -1728,7 +2666,7 @@ body {
 
 .novel-reader-body hr {
   border: none;
-  border-top: 1px dashed rgba(0, 240, 255, 0.25);
+  border-top: 1px dashed rgba(0, 240, 255, 0.28);
   margin: 24px 0;
 }
 
@@ -1736,1046 +2674,7 @@ body {
   margin-bottom: 16px;
 }
 
-/* ==========================================================================
-   10. レスポンシブ調整 (AGENTS.md: 幅360px〜380px および 動的URLバー最適化)
-   ========================================================================== */
-@media (max-width: 640px) {
-  .hud {
-    padding: 6px 10px;
-  }
-  .hud-btn .hud-btn-label,
-  .hud-audio-label {
-    display: none;
-  }
-  .novel-window {
-    min-height: 195px;
-    padding: 12px 14px calc(12px + env(safe-area-inset-bottom, 0px));
-  }
-  .character-stage {
-    bottom: 205px;
-  }
-  .character-sprite-box {
-    max-height: 370px;
-  }
-  .deduction-evidence-grid {
-    grid-template-columns: 1fr;
-    max-height: 48vh;
-  }
-  .choice-modal-card {
-    padding: 16px;
-  }
-}
-
-/* ==========================================================================
-   11. 電脳演出ディレクティブ（画面エフェクト・テロップ・マルチカットシークエンス）
-   ========================================================================== */
-
-/* 画面シェイク（衝撃） */
-.effect-shake {
-  animation: screen-shake 0.35s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
-}
-
-@keyframes screen-shake {
-  10%,
-  90% {
-    transform: translate3d(-2px, 0, 0);
-  }
-  20%,
-  80% {
-    transform: translate3d(4px, 0, 0);
-  }
-  30%,
-  50%,
-  70% {
-    transform: translate3d(-6px, 0, 0);
-  }
-  40%,
-  60% {
-    transform: translate3d(6px, 0, 0);
-  }
-}
-
-/* 画面グリッチ（電脳ノイズ・砂嵐） */
-.effect-glitch {
-  animation: screen-glitch 0.28s steps(2, start) both;
-}
-
-@keyframes screen-glitch {
-  0% {
-    transform: translate(0);
-    filter: hue-rotate(0deg);
-  }
-  20% {
-    transform: translate(-4px, 2px);
-    filter: hue-rotate(90deg) invert(0.2);
-  }
-  40% {
-    transform: translate(3px, -2px);
-    filter: hue-rotate(180deg);
-  }
-  60% {
-    transform: translate(-2px, -3px);
-    filter: hue-rotate(270deg);
-  }
-  80% {
-    transform: translate(3px, 1px);
-    filter: hue-rotate(0deg);
-  }
-  100% {
-    transform: translate(0);
-    filter: none;
-  }
-}
-
-/* 赤色アラートフラッシュ（緊急事態） */
-.effect-alert-flash {
-  animation: screen-alert-flash 0.4s ease-out both;
-}
-
-@keyframes screen-alert-flash {
-  0% {
-    box-shadow: inset 0 0 0 0 rgba(244, 63, 94, 0);
-  }
-  30% {
-    box-shadow: inset 0 0 80px 30px rgba(244, 63, 94, 0.7);
-  }
-  100% {
-    box-shadow: inset 0 0 0 0 rgba(244, 63, 94, 0);
-  }
-}
-
-/* 一瞬の暗転（ブラックアウト） */
-.effect-blackout {
-  animation: screen-blackout 0.5s ease-in-out both;
-}
-
-@keyframes screen-blackout {
-  0% {
-    opacity: 1;
-  }
-  30% {
-    opacity: 0;
-    filter: brightness(0);
-  }
-  70% {
-    opacity: 0;
-    filter: brightness(0);
-  }
-  100% {
-    opacity: 1;
-    filter: none;
-  }
-}
-
-/* シネマティック緊急テロップ帯 */
-.cinematic-telop {
-  position: fixed;
-  top: 96px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 55;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 8px 24px;
-  background: rgba(3, 7, 18, 0.94);
-  border: 1px solid var(--nco-cyan);
-  border-radius: 20px;
-  box-shadow: 0 4px 24px rgba(0, 240, 255, 0.35);
-  pointer-events: none;
-  animation: telop-slide 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  max-width: 90vw;
-}
-
-@keyframes telop-slide {
-  from {
-    opacity: 0;
-    transform: translate(-50%, -18px) scale(0.96);
-  }
-  to {
-    opacity: 1;
-    transform: translate(-50%, 0) scale(1);
-  }
-}
-
-.telop-icon {
-  font-size: 1.1rem;
-  color: var(--nco-amber);
-  animation: pulse-glow 1s infinite alternate;
-}
-
-.telop-text {
-  font-family: var(--font-hud);
-  font-size: clamp(0.82rem, 3.2vw, 1.05rem);
-  font-weight: 700;
-  color: #ffffff;
-  letter-spacing: 0.08em;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* マルチカット・アニメーションシークエンスステージ（パラパラ漫画演出） */
-.cut-sequence-stage {
-  position: fixed;
-  top: 48%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 60;
-  width: 92vw;
-  max-width: 580px;
-  pointer-events: auto;
-  animation: sequence-pop 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-@keyframes sequence-pop {
-  from {
-    opacity: 0;
-    transform: translate(-50%, -46%) scale(0.94);
-  }
-  to {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
-  }
-}
-
-.sequence-card {
-  background: rgba(5, 11, 24, 0.96);
-  border: 1px solid var(--nco-cyan);
-  border-radius: 12px;
-  padding: 16px;
-  box-shadow:
-    0 12px 40px rgba(0, 240, 255, 0.28),
-    0 0 0 1px rgba(0, 240, 255, 0.2);
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.sequence-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  border-bottom: 1px solid rgba(0, 240, 255, 0.2);
-  padding-bottom: 8px;
-}
-
-.sequence-badge {
-  font-family: var(--font-hud);
-  font-size: 0.72rem;
-  font-weight: 700;
-  color: var(--nco-amber);
-  background: rgba(245, 158, 11, 0.15);
-  border: 1px solid rgba(245, 158, 11, 0.4);
-  padding: 2px 8px;
-  border-radius: 4px;
-  white-space: nowrap;
-}
-
-.sequence-title {
-  font-family: var(--font-body);
-  font-size: 0.88rem;
-  font-weight: 700;
-  color: var(--text-main);
-  flex: 1;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.sequence-close-btn {
-  background: transparent;
-  border: none;
-  color: var(--text-muted);
-  font-size: 1.1rem;
-  cursor: pointer;
-  padding: 2px 6px;
-  transition: color 0.15s ease;
-}
-
-.sequence-close-btn:hover {
-  color: var(--nco-crimson);
-}
-
-.sequence-frame-container {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.sequence-frame-box {
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  max-height: 260px;
-  background: rgba(2, 6, 16, 0.95);
-  border: 1px solid rgba(0, 240, 255, 0.3);
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  position: relative;
-}
-
-.sequence-frame-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: opacity 0.15s ease;
-}
-
-/* 画像表示時に右上にさりげなく添える半透明サイバーミニバッジ（画像全景を遮らない） */
-.sequence-frame-badge {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  z-index: 5;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 10px;
-  background: rgba(2, 6, 16, 0.78);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  border: 1px solid rgba(0, 240, 255, 0.45);
-  border-radius: 4px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-  pointer-events: none;
-}
-
-.sequence-frame-step {
-  font-family: var(--font-hud);
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: var(--nco-cyan);
-  letter-spacing: 0.06em;
-}
-
-.cut-tap-hint {
-  font-family: var(--font-hud);
-  font-size: 0.7rem;
-  font-weight: 600;
-  color: var(--nco-amber);
-  letter-spacing: 0.04em;
-}
-
-.sequence-frame-placeholder {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 16px;
-  text-align: center;
-}
-
-.placeholder-icon {
-  font-size: 2.2rem;
-  animation: pulse-scale 1.2s infinite ease-in-out;
-}
-
-@keyframes pulse-scale {
-  0%,
-  100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.08);
-  }
-}
-
-.placeholder-desc {
-  font-family: var(--font-hud);
-  font-size: 0.82rem;
-  color: var(--nco-cyan);
-  line-height: 1.4;
-  overflow-wrap: break-word;
-}
-
-.sequence-progress-bar {
-  width: 100%;
-  height: 4px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 2px;
-  overflow: hidden;
-}
-
-.sequence-progress-fill {
-  height: 100%;
-  width: 0%;
-  background: linear-gradient(90deg, var(--nco-cyan), var(--nco-emerald));
-  transition: width 0.25s linear;
-}
-
-.sequence-caption {
-  font-family: var(--font-body);
-  font-size: clamp(0.78rem, 2.8vw, 0.88rem);
-  color: var(--text-main);
-  background: rgba(12, 22, 44, 0.7);
-  border: 1px solid rgba(0, 240, 255, 0.2);
-  border-radius: 6px;
-  padding: 8px 12px;
-  line-height: 1.5;
-  overflow-wrap: break-word;
-}
-
-/* ==========================================================================
-   12. コンシューマーゲーム品質 UI/UX 統合レイアウト（スマホ1画面ロック＆スクロール最適化）
-   ========================================================================== */
-
-/* --- A. 全体レイアウト：ゲーム画面を 100dvh に完全固定しブラウザの縦スクロールを根絶 --- */
-html,
-body {
-  height: 100dvh;
-  max-height: 100dvh;
-  overflow: hidden;
-  overscroll-behavior: none;
-}
-
-#game-container {
-  height: 100dvh;
-  max-height: 100dvh;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-}
-
-#viewport {
-  flex: 1 1 auto;
-  min-height: 0 !important; /* calc(100dvh - 58px) による超過バグを打ち消す */
-  height: 100%;
-  overflow: hidden;
-  position: relative;
-}
-
-/* タイトル画面とエンディング画面のみ、小画面端末で収まらない場合に内部スクロールを許可 */
-#screen-title,
-#screen-ending {
-  height: 100%;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(0, 240, 255, 0.3) transparent;
-  padding: clamp(12px, 2.2dvh, 24px) 16px;
-  gap: clamp(8px, 1.5dvh, 14px);
-}
-
-/* スマホでもタイトル画面が1画面（ファーストビュー）に収まるよう調整 */
-.title-hero-wrap {
-  width: 100%;
-  max-width: min(92vw, 420px, 46dvh);
-  aspect-ratio: 1376 / 768;
-  flex: 0 0 auto;
-}
-.title-hero-img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  display: block;
-}
-.title-actions {
-  gap: clamp(6px, 1.2dvh, 10px);
-}
-.btn-cyber-plate {
-  min-height: clamp(44px, 6.2dvh, 52px);
-  padding: 6px 18px;
-}
-
-/* --- B. 上部HUD：スマホでも折り返さず1行（高さ48px）に収める --- */
-#hud {
-  flex: 0 0 auto;
-  display: flex;
-  flex-wrap: nowrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  padding: 6px 12px;
-  height: 50px;
-  min-height: 50px;
-  z-index: 50;
-}
-
-.hud-left {
-  flex: 1 1 auto;
-  min-width: 0;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  overflow: hidden;
-}
-
-.hud-right {
-  flex: 0 0 auto;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-#hud-location-badge,
-#hud-loop-badge,
-#hud-defense-meter {
-  flex: 0 0 auto;
-  white-space: nowrap;
-  width: max-content;
-}
-
-/* サブタイトル（: 予兆なき暗転 等）はHUDバッジ内では非表示にし、章番号のみシャープに1行表示（見切れを根絶） */
-#hud-loop-badge .phase-desc-text {
-  display: none;
-}
-
-/* オーディオボタン（音声・SE・BGM）はアイコンでスッキリ表示し、HUD左側のバッジ領域を確実に確保 */
-.hud-audio-btn {
-  padding: 6px 10px;
-  min-width: 38px;
-  justify-content: center;
-}
-.hud-audio-label {
-  display: none;
-}
-
-@media (min-width: 1200px) {
-  .hud-audio-label {
-    display: inline;
-  }
-}
-
-/* 画面幅 768px 以下のタブレット・スマホでは固定飾りラベル（SECURE）を隠し、防衛率を簡潔表示して1行維持 */
-@media (max-width: 768px) {
-  #hud-location-badge {
-    display: none;
-  }
-  .defense-badge .defense-label {
-    display: none;
-  }
-}
-
-@media (max-width: 640px) {
-  #hud {
-    padding: 4px 8px;
-    height: 46px;
-    min-height: 46px;
-  }
-  .badge {
-    font-size: 0.7rem;
-    padding: 3px 6px;
-    gap: 4px;
-  }
-  .hud-btn {
-    min-height: 36px;
-    padding: 4px 7px;
-    font-size: 0.75rem;
-  }
-  .hud-btn .hud-btn-label {
-    display: none;
-  }
-}
-
-/* --- C. ノベル進行画面（#screen-novel）：スクロールバーのステルス化と領域分離 --- */
-#screen-novel {
-  flex: 1 1 auto;
-  min-height: 0 !important;
-  height: 100%;
-  overflow: hidden;
-  position: relative;
-}
-
-/* タイムラインバー：横スワイプ可能にしつつ、無粋なスクロールバーは完全に隠す */
-#chapter-timeline-bar {
-  flex: 0 0 auto;
-  display: flex;
-  flex-wrap: nowrap;
-  overflow-x: auto;
-  gap: 6px;
-  padding: 6px 12px;
-  scrollbar-width: none !important;
-  -ms-overflow-style: none;
-  -webkit-overflow-scrolling: touch;
-}
-#chapter-timeline-bar::-webkit-scrollbar {
-  display: none !important;
-}
-
-.timeline-step {
-  flex: 0 0 auto;
-  font-size: clamp(0.7rem, 1.8vw, 0.8rem);
-  padding: 4px 10px;
-}
-
-/* シネマティックテロップ＆カットイン：見切れ防止 */
-#cinematic-telop {
-  top: 48px;
-  width: min(94vw, 760px);
-  padding: 6px 14px;
-  border-radius: 8px;
-  z-index: 45;
-}
-
-#cinematic-telop-text {
-  white-space: normal;
-  word-break: keep-all;
-  overflow-wrap: anywhere;
-  font-size: clamp(0.78rem, 2.5vw, 0.98rem);
-  line-height: 1.35;
-}
-
-#overlay-cutin .cutin-box {
-  width: min(92vw, 720px);
-  padding: 18px 20px;
-}
-
-#cutin-text {
-  white-space: normal;
-  overflow-wrap: anywhere;
-  font-size: clamp(1.05rem, 4.2vw, 1.65rem);
-  line-height: 1.35;
-}
-
-#cutin-sub {
-  white-space: normal;
-  font-size: clamp(0.7rem, 2.2vw, 0.88rem);
-}
-
-/* --- D. マルチカット演出＆図解：会話ウィンドウと絶対に重ならない上〜中段ステージに配置 --- */
-#cut-sequence-stage,
-#dialogue-illustration-stage {
-  position: absolute;
-  top: 44px; /* タイムラインバーの直下 */
-  bottom: auto;
-  left: 50%;
-  transform: translateX(-50%);
-  width: min(94vw, 560px);
-  max-height: calc(100% - 235px); /* 下部の会話ウィンドウ領域を確実に避ける */
-  overflow: hidden;
-  z-index: 28;
-  padding: 12px;
-}
-
-.sequence-card {
-  padding: 12px;
-  gap: 8px;
-}
-
-.sequence-frame-box {
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  max-height: clamp(140px, 28dvh, 260px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #000000;
-  border-radius: 4px;
-  overflow: hidden;
-}
-
-.sequence-frame-img {
-  max-width: 100%;
-  max-height: 100%;
-  width: auto;
-  height: auto;
-  object-fit: contain;
-  display: block;
-}
-
-.illustration-img-container {
-  height: clamp(170px, 34dvh, 310px);
-  max-height: clamp(170px, 34dvh, 310px);
-}
-
-/* --- E. 会話ノベルウィンドウ：高さを最適化し、通常時はスクロールバーを出さない --- */
-#novel-window {
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: min(96vw, 960px);
-  height: auto;
-  min-height: 160px;
-  max-height: 36dvh;
-  margin-bottom: calc(6px + env(safe-area-inset-bottom, 0px));
-  padding: 12px 16px calc(10px + env(safe-area-inset-bottom, 0px));
-  z-index: 35;
-}
-
-#novel-window.choice-mode-hidden {
-  opacity: 0;
-  pointer-events: none;
-  transform: translate(-50%, 16px);
-  transition:
-    opacity 0.2s ease,
-    transform 0.2s ease;
-}
-
-#dialogue-text {
-  flex: 1 1 auto;
-  overflow-y: auto;
-  scrollbar-width: none; /* 通常時はスクロールバーを隠してコンシューマーゲーム感を保つ */
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-  font-size: clamp(0.88rem, 3.4vw, 1.04rem);
-  line-height: 1.65;
-  margin-top: 2px;
-}
-#dialogue-text::-webkit-scrollbar {
-  width: 3px;
-}
-
-@media (max-width: 640px) {
-  .novel-window::before {
-    display: none; /* スマホでは上部の英文飾りタグを消して高さを節約 */
-  }
-  .novel-header {
-    margin-bottom: 4px;
-    padding-bottom: 4px;
-  }
-  .dialogue-ctrl-btn {
-    min-height: 32px;
-    min-width: 40px;
-    padding: 2px 8px;
-    font-size: 0.72rem;
-  }
-}
-
-/* --- F. 選択肢ステージ（#choice-stage）：二重スクロールと上端見切れバグを完全解消 --- */
-#choice-stage {
-  position: absolute;
-  inset: 0; /* 全画面オーバーレイに戻す */
-  width: 100%;
-  max-height: none;
-  transform: none;
-  background: rgba(3, 7, 18, 0.88);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 12px;
-  overflow: hidden; /* 外側はスクロールさせない */
-  z-index: 40;
-}
-
-/* 内側のカードのみを単一のスクロールコンテナにする */
-.choice-modal-card {
-  width: min(96vw, 760px);
-  max-height: calc(100dvh - 74px);
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  padding: clamp(14px, 3vw, 22px);
-  gap: 12px;
-  margin: auto;
-}
-
-#choice-question {
-  font-size: clamp(0.92rem, 3.2vw, 1.12rem);
-  line-height: 1.5;
-  margin-bottom: 4px;
-}
-
-#choice-log-content {
-  font-size: clamp(0.72rem, 2.2vw, 0.84rem);
-  line-height: 1.4;
-  max-height: 125px;
-  overflow-y: auto;
-  padding: 8px 10px;
-}
-
-.choice-options {
-  gap: 8px;
-}
-
-.choice-btn {
-  width: 100%;
-  min-height: 52px;
-  padding: 10px 14px;
-  margin-bottom: 0;
-}
-
-.choice-btn-label {
-  font-size: clamp(0.86rem, 2.8vw, 0.98rem);
-  line-height: 1.4;
-}
-
-.choice-btn-desc {
-  font-size: clamp(0.74rem, 2.3vw, 0.82rem);
-  line-height: 1.35;
-  margin-top: 3px;
-}
-
-/* FINAL DEDUCTION（最終証拠連結）：内側グリッドの二重スクロールを廃止しカードと一体化 */
-.deduction-evidence-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 8px;
-  max-height: none !important; /* 二重スクロールの元凶を解除 */
-  overflow: visible !important;
-  padding: 0;
-  margin-bottom: 8px;
-}
-
-@media (max-width: 640px) {
-  .deduction-evidence-grid {
-    grid-template-columns: 1fr;
-    gap: 6px;
-  }
-  .deduction-card {
-    padding: 8px 10px;
-  }
-  .deduction-card-desc {
-    font-size: 0.72rem;
-    margin-top: 2px;
-  }
-}
-
-.deduction-actions {
-  position: sticky;
-  bottom: -16px;
-  background: linear-gradient(180deg, rgba(8, 14, 28, 0.85) 0%, rgba(8, 14, 28, 0.98) 30%);
-  padding: 10px 0 4px;
-  margin-top: 4px;
-  justify-content: center;
-  z-index: 5;
-}
-
-.btn-deduction-submit {
-  width: 100%;
-  max-width: 360px;
-}
-
-/* ==========================================================================
-   13. パラパラ漫画（マルチカット）アニメーション＆立ち絵モーション強化
-   ========================================================================== */
-
-/* パラパラ漫画：画像とサイバーHUDテキストの重ね合わせ＆Ken Burnsズーム演出 */
-.sequence-frame-box {
-  position: relative;
-  overflow: hidden;
-  background: #020617;
-}
-
-.sequence-frame-img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  filter: brightness(1) contrast(1.04);
-  transform: scale(1.02);
-}
-
-.cut-frame-transition .sequence-frame-img {
-  animation: kenBurnsZoom 2.2s ease-out forwards;
-}
-
-.cut-frame-transition {
-  animation: cutFlashIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-@keyframes kenBurnsZoom {
-  0% {
-    transform: scale(1.08) translate(-1%, 1%);
-    filter: brightness(1.1) contrast(1.08);
-  }
-  100% {
-    transform: scale(1) translate(0, 0);
-    filter: brightness(1) contrast(1.04);
-  }
-}
-
-@keyframes cutFlashIn {
-  0% {
-    opacity: 0.3;
-    box-shadow: inset 0 0 60px rgba(0, 240, 255, 0.9);
-  }
-  100% {
-    opacity: 1;
-    box-shadow: inset 0 0 20px rgba(0, 240, 255, 0.2);
-  }
-}
-
-.sequence-frame-placeholder {
-  position: relative;
-  z-index: 2;
-  width: 100%;
-  height: 100%;
-  background: radial-gradient(circle at center, rgba(3, 7, 18, 0.35) 0%, rgba(3, 7, 18, 0.82) 100%);
-  padding: 12px 16px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
-.cut-hud-step {
-  font-family: var(--font-hud);
-  font-size: 0.72rem;
-  font-weight: 800;
-  color: var(--nco-amber);
-  letter-spacing: 0.12em;
-  margin-bottom: 6px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.cut-tap-hint {
-  font-size: 0.65rem;
-  color: var(--nco-cyan);
-  opacity: 0.85;
-  animation: promptBlink 1.2s infinite;
-}
-
-.cut-hud-main {
-  font-family: var(--font-hud);
-  font-size: clamp(0.85rem, 2.6vw, 1.05rem);
-  font-weight: 800;
-  color: #ffffff;
-  text-shadow: 0 0 14px rgba(0, 240, 255, 0.85);
-  background: rgba(6, 14, 32, 0.78);
-  border: 1px solid rgba(0, 240, 255, 0.45);
-  border-left: 4px solid var(--nco-cyan);
-  padding: 8px 14px;
-  border-radius: 4px;
-  max-width: 95%;
-}
-
-/* 立ち絵：同キャラ連続発話時の自然なバウンス（チラつき防止） */
-.character-sprite-box img.sprite-talk-bounce {
-  animation: spriteTalkBounce 0.24s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-}
-
-@keyframes spriteTalkBounce {
-  0% {
-    transform: translateY(0) scale(1);
-  }
-  45% {
-    transform: translateY(-6px) scale(1.012);
-  }
-  100% {
-    transform: translateY(0) scale(1);
-  }
-}
-
-/* チャプター別の背景ライティング変化 */
-.novel-bg.bg-boardroom {
-  filter: brightness(0.6) contrast(1.15) sepia(0.25) hue-rotate(-15deg);
-}
-
-.novel-bg.bg-daylight {
-  background-image:
-    linear-gradient(180deg, rgba(14, 116, 144, 0.45) 0%, rgba(15, 23, 42, 0.88) 75%),
-    url("../assets/backgrounds/nco.jpg");
-  filter: brightness(0.92) contrast(1.05);
-}
-
-/* ==========================================================================
-   14. ポップアップ重なり解消・文字選択防止・用語ガイド・ギャラリー整形パッチ
-   ========================================================================== */
-
-/* 1. テキストウィンドウ連打時の文字選択（青反転）を完全に防止 */
-#novel-window,
-#novel-window *,
-.dialogue-body,
-#dialogue-text {
-  user-select: none !important;
-  -webkit-user-select: none !important;
-  -moz-user-select: none !important;
-}
-
-/* 2. トースト（#cinematic-telop）とポップアップ（パラパラ漫画・図解）の上下位置分離 */
-#cinematic-telop {
-  position: absolute !important;
-  top: 42px !important; /* タイムラインバー直下の最上段 */
-  left: 50%;
-  transform: translateX(-50%);
-  width: min(94vw, 720px);
-  padding: 5px 14px;
-  border-radius: 6px;
-  z-index: 45;
-  pointer-events: none;
-}
-
-/* パラパラ漫画・図解ステージ（常に画面中央に安定配置し、横はみ出しを完全根絶） */
-#cut-sequence-stage,
-#dialogue-illustration-stage {
-  position: absolute !important;
-  top: 80px !important;
-  bottom: auto !important;
-  left: 50% !important;
-  transform: translateX(-50%) !important;
-  width: min(92vw, 580px) !important;
-  max-width: calc(100vw - 24px) !important;
-  max-height: calc(100% - 240px);
-  box-sizing: border-box !important;
-  overflow: hidden;
-  z-index: 40;
-  padding: 12px;
-  transition: all 0.25s ease;
-}
-
-/* ポップアップ表示時：背後の立ち絵キャラクターを自然に縮小・減光し、前面の画像を強調（はみ出しゼロ） */
-#screen-novel.popup-open .character-stage {
-  transform: scale(0.85) !important;
-  transform-origin: bottom center !important;
-  opacity: 0.22 !important;
-  filter: blur(2.5px) !important;
-  transition:
-    transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
-    opacity 0.3s ease,
-    filter 0.3s ease;
-}
-
-/* 3. 一般ユーザー向け「アリアの噛み砕きヒント枠」とインライン用語解説 */
-.choice-aria-hint {
-  margin-top: 6px;
-  padding: 8px 12px;
-  background: rgba(0, 240, 255, 0.09);
-  border-left: 3px solid var(--nco-cyan);
-  border-radius: 4px;
-  font-size: clamp(0.78rem, 2.5vw, 0.88rem);
-  color: #e0f2fe;
-  line-height: 1.5;
-}
-
-/* 会話文中の専門用語ハイライト（タップ・ホバーで解説表示） */
-.term-tip {
-  color: #38bdf8;
-  border-bottom: 1px dashed rgba(56, 189, 248, 0.75);
-  cursor: help;
-  padding: 0 2px;
-  border-radius: 2px;
-  transition: background 0.15s ease;
-}
-.term-tip:hover,
-.term-tip:active {
-  background: rgba(56, 189, 248, 0.2);
-}
-
-#term-popover {
-  position: fixed;
-  z-index: 80;
-  max-width: min(88vw, 340px);
-  background: rgba(4, 12, 28, 0.98);
-  border: 1px solid var(--nco-cyan);
-  box-shadow:
-    0 8px 28px rgba(0, 0, 0, 0.85),
-    0 0 14px var(--nco-cyan-glow);
-  border-radius: 6px;
-  padding: 10px 14px;
-  font-size: 0.82rem;
-  color: var(--text-main);
-  line-height: 1.55;
-  pointer-events: none;
-}
-#term-popover .term-popover-title {
-  font-family: var(--font-hud);
-  font-weight: 800;
-  color: var(--nco-amber);
-  margin-bottom: 4px;
-  font-size: 0.85rem;
-}
-
-/* 4. 未定義だった設定資料集（FORENSIC ARCHIVE: .gallery-*）のレイアウト定義 */
+/* 設定資料集（FORENSIC ARCHIVE: .gallery-*） */
 .gallery-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -2784,7 +2683,7 @@ body {
 }
 
 .gallery-card {
-  background: rgba(12, 22, 44, 0.85);
+  background: rgba(12, 22, 44, 0.88);
   border: 1px solid var(--border-nco);
   border-radius: 8px;
   padding: 14px;
@@ -2808,13 +2707,17 @@ body {
   background: #020617;
 }
 
+.gallery-img.locked-mask {
+  filter: blur(14px) brightness(0.25) grayscale(0.8);
+  pointer-events: none;
+}
+
 .gallery-text {
   font-size: 0.82rem;
   color: var(--text-sub);
   line-height: 1.6;
 }
 
-/* キャラクター設定資料集（三面図シート）用スタイル */
 .gallery-section-header {
   margin-bottom: 8px;
 }
@@ -2842,7 +2745,7 @@ body {
 
 .character-sheet-card {
   background: rgba(8, 14, 28, 0.95);
-  border: 1px solid rgba(56, 189, 248, 0.3);
+  border: 1px solid rgba(56, 189, 248, 0.32);
   transition:
     transform 0.2s ease,
     border-color 0.2s ease;
@@ -2886,7 +2789,7 @@ body {
   display: block;
   border-radius: 6px;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   text-decoration: none;
 }
 
@@ -2907,14 +2810,14 @@ body {
   position: absolute;
   bottom: 6px;
   right: 6px;
-  background: rgba(0, 0, 0, 0.75);
+  background: rgba(0, 0, 0, 0.78);
   color: #ffffff;
   font-size: 0.68rem;
   padding: 2px 6px;
   border-radius: 4px;
   backdrop-filter: blur(4px);
   pointer-events: none;
-  opacity: 0.85;
+  opacity: 0.88;
 }
 
 .sheet-desc {
@@ -2923,11 +2826,10 @@ body {
   line-height: 1.5;
 }
 
-/* 表情差分サムネイルギャラリー */
 .sheet-sprites-section {
   margin-top: 10px;
   padding-top: 8px;
-  border-top: 1px dashed rgba(255, 255, 255, 0.12);
+  border-top: 1px dashed rgba(255, 255, 255, 0.14);
 }
 
 .sheet-sprites-title {
@@ -2950,8 +2852,8 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: rgba(15, 23, 42, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 4px;
   padding: 4px;
   text-decoration: none;
@@ -2984,9 +2886,7 @@ body {
   max-width: 100%;
 }
 
-/* ==========================================================================
-   15. 重要押収・執行アイテム（KEY ASSETS）アーカイブスタイル
-   ========================================================================== */
+/* 重要押収・執行アイテム（KEY ASSETS） */
 .key-items-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -2995,8 +2895,8 @@ body {
 }
 
 .item-card {
-  background: linear-gradient(145deg, rgba(15, 23, 42, 0.92) 0%, rgba(8, 14, 28, 0.98) 100%);
-  border: 1px solid rgba(56, 189, 248, 0.25);
+  background: linear-gradient(145deg, rgba(15, 23, 42, 0.94) 0%, rgba(8, 14, 28, 0.98) 100%);
+  border: 1px solid rgba(56, 189, 248, 0.28);
   box-shadow:
     0 4px 20px rgba(0, 0, 0, 0.5),
     inset 0 0 12px rgba(56, 189, 248, 0.05);
@@ -3010,12 +2910,12 @@ body {
   transform: translateY(-3px);
   border-color: var(--accent-cyan);
   box-shadow:
-    0 8px 24px rgba(6, 182, 212, 0.2),
+    0 8px 24px rgba(6, 182, 212, 0.22),
     inset 0 0 16px rgba(56, 189, 248, 0.1);
 }
 
 .item-badge {
-  background: rgba(6, 182, 212, 0.15);
+  background: rgba(6, 182, 212, 0.16);
   border: 1px solid var(--accent-cyan);
   color: var(--accent-cyan);
 }
@@ -3023,7 +2923,7 @@ body {
 .item-type-label {
   font-size: 0.74rem;
   font-weight: 700;
-  color: var(--accent-gold, #fbbf24);
+  color: #fbbf24;
   margin-bottom: 8px;
   letter-spacing: 0.04em;
 }
@@ -3033,7 +2933,7 @@ body {
   position: relative;
   border-radius: 6px;
   overflow: hidden;
-  border: 1px solid rgba(56, 189, 248, 0.2);
+  border: 1px solid rgba(56, 189, 248, 0.22);
   background: #020617;
   text-decoration: none;
 }
@@ -3092,8 +2992,8 @@ body {
 }
 
 .settings-group {
-  background: rgba(10, 20, 38, 0.75);
-  border: 1px solid rgba(0, 240, 255, 0.18);
+  background: rgba(10, 20, 38, 0.78);
+  border: 1px solid rgba(0, 240, 255, 0.2);
   border-radius: 8px;
   padding: 8px 12px;
   display: flex;
@@ -3106,8 +3006,8 @@ body {
 
 .settings-group:hover,
 .settings-group:focus-within {
-  border-color: rgba(0, 240, 255, 0.4);
-  box-shadow: 0 0 16px rgba(0, 240, 255, 0.08);
+  border-color: rgba(0, 240, 255, 0.45);
+  box-shadow: 0 0 16px rgba(0, 240, 255, 0.1);
 }
 
 .settings-group-header {
@@ -3136,8 +3036,8 @@ body {
 }
 
 .settings-mute-btn {
-  background: rgba(15, 23, 42, 0.85);
-  border: 1px solid rgba(0, 240, 255, 0.35);
+  background: rgba(15, 23, 42, 0.88);
+  border: 1px solid rgba(0, 240, 255, 0.38);
   border-radius: 4px;
   padding: 4px 12px;
   cursor: pointer;
@@ -3163,12 +3063,12 @@ body {
 }
 
 .settings-mute-btn.muted {
-  border-color: rgba(239, 68, 68, 0.5);
-  background: rgba(30, 10, 16, 0.8);
+  border-color: rgba(239, 68, 68, 0.55);
+  background: rgba(30, 10, 16, 0.85);
 }
 
 .settings-mute-btn.muted .settings-status-badge {
-  color: #ef4444;
+  color: #f87171;
 }
 
 .settings-slider-row {
@@ -3183,7 +3083,7 @@ body {
   appearance: none;
   height: 8px;
   background: rgba(2, 6, 23, 0.95);
-  border: 1px solid rgba(0, 240, 255, 0.3);
+  border: 1px solid rgba(0, 240, 255, 0.32);
   border-radius: 4px;
   outline: none;
   cursor: pointer;
@@ -3245,8 +3145,8 @@ body {
 
 .btn-settings-test {
   padding: 6px 14px;
-  background: rgba(0, 240, 255, 0.12);
-  border: 1px solid rgba(0, 240, 255, 0.4);
+  background: rgba(0, 240, 255, 0.14);
+  border: 1px solid rgba(0, 240, 255, 0.42);
   color: var(--nco-cyan);
   border-radius: 4px;
   font-family: var(--font-hud);
@@ -3262,7 +3162,7 @@ body {
 }
 
 .btn-settings-test:hover {
-  background: rgba(0, 240, 255, 0.26);
+  background: rgba(0, 240, 255, 0.28);
   box-shadow: 0 0 12px rgba(0, 240, 255, 0.5);
   color: #ffffff;
 }
@@ -3274,13 +3174,13 @@ body {
   gap: 12px;
   margin-top: 4px;
   padding-top: 8px;
-  border-top: 1px solid rgba(0, 240, 255, 0.15);
+  border-top: 1px solid rgba(0, 240, 255, 0.18);
 }
 
 .btn-settings-reset {
   background: transparent;
-  border: 1px solid rgba(148, 163, 184, 0.35);
-  color: var(--text-muted);
+  border: 1px solid rgba(148, 163, 184, 0.38);
+  color: var(--text-sub);
   font-size: 0.82rem;
   padding: 6px 14px;
   border-radius: 4px;
@@ -3291,12 +3191,12 @@ body {
 
 .btn-settings-reset:hover {
   color: #ffffff;
-  border-color: rgba(255, 255, 255, 0.6);
-  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.65);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .btn-settings-confirm {
-  background: linear-gradient(135deg, rgba(0, 240, 255, 0.9) 0%, rgba(2, 132, 199, 0.9) 100%);
+  background: linear-gradient(135deg, rgba(0, 240, 255, 0.92) 0%, rgba(2, 132, 199, 0.92) 100%);
   color: #030712;
   font-family: var(--font-hud);
   font-size: 0.92rem;
@@ -3321,16 +3221,13 @@ body {
     padding: 12px 14px 16px;
     gap: 10px;
   }
-
   .settings-slider-row {
     gap: 8px;
   }
-
   .settings-val-badge {
     min-width: 40px;
     font-size: 0.82rem;
   }
-
   .btn-settings-test {
     padding: 4px 10px;
     min-height: 36px;
@@ -3338,41 +3235,102 @@ body {
   }
 }
 
-/* --- ケイやナレーション発話中は、会話相手の立ち絵を消さずに少し減光して残す --- */
-.character-sprite-box img.sprite-dimmed {
-  filter: brightness(0.58) contrast(0.95) drop-shadow(0 0 24px rgba(0, 0, 0, 0.9));
-  transform: scale(0.985);
-  transition:
-    filter 0.25s ease,
-    transform 0.25s ease;
+/* ==========================================================================
+   11. 電脳画面エフェクト ＆ HUDパルスアニメーション
+   ========================================================================== */
+.effect-shake {
+  animation: screen-shake 0.35s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
 }
 
-/* --- FINAL DEDUCTION で既に立証に使用したカードの「LINKED」スタイル --- */
-.deduction-card.already-linked {
-  opacity: 0.42;
-  border-color: var(--nco-emerald);
-  background: rgba(16, 185, 129, 0.08);
-  pointer-events: none;
+@keyframes screen-shake {
+  10%,
+  90% {
+    transform: translate3d(-2px, 0, 0);
+  }
+  20%,
+  80% {
+    transform: translate3d(4px, 0, 0);
+  }
+  30%,
+  50%,
+  70% {
+    transform: translate3d(-6px, 0, 0);
+  }
+  40%,
+  60% {
+    transform: translate3d(6px, 0, 0);
+  }
 }
 
-.deduction-linked-badge {
-  margin-left: auto;
-  font-family: var(--font-hud);
-  font-size: 0.68rem;
-  font-weight: 800;
-  color: var(--nco-emerald);
-  border: 1px solid var(--nco-emerald);
-  padding: 1px 6px;
-  border-radius: 3px;
+.effect-glitch {
+  animation: screen-glitch 0.28s steps(2, start) both;
 }
 
-/* --- 未解禁アーカイブ画像のシークレットマスク --- */
-.gallery-img.locked-mask {
-  filter: blur(14px) brightness(0.25) grayscale(0.8);
-  pointer-events: none;
+@keyframes screen-glitch {
+  0% {
+    transform: translate(0);
+    filter: hue-rotate(0deg);
+  }
+  20% {
+    transform: translate(-4px, 2px);
+    filter: hue-rotate(90deg) invert(0.2);
+  }
+  40% {
+    transform: translate(3px, -2px);
+    filter: hue-rotate(180deg);
+  }
+  60% {
+    transform: translate(-2px, -3px);
+    filter: hue-rotate(270deg);
+  }
+  80% {
+    transform: translate(3px, 1px);
+    filter: hue-rotate(0deg);
+  }
+  100% {
+    transform: translate(0);
+    filter: none;
+  }
 }
 
-/* --- 証拠獲得時・防衛率減少時のHUDフィードバックアニメーション --- */
+.effect-alert-flash {
+  animation: screen-alert-flash 0.4s ease-out both;
+}
+
+@keyframes screen-alert-flash {
+  0% {
+    box-shadow: inset 0 0 0 0 rgba(244, 63, 94, 0);
+  }
+  30% {
+    box-shadow: inset 0 0 80px 30px rgba(244, 63, 94, 0.7);
+  }
+  100% {
+    box-shadow: inset 0 0 0 0 rgba(244, 63, 94, 0);
+  }
+}
+
+.effect-blackout {
+  animation: screen-blackout 0.5s ease-in-out both;
+}
+
+@keyframes screen-blackout {
+  0% {
+    opacity: 1;
+  }
+  30% {
+    opacity: 0;
+    filter: brightness(0);
+  }
+  70% {
+    opacity: 0;
+    filter: brightness(0);
+  }
+  100% {
+    opacity: 1;
+    filter: none;
+  }
+}
+
 @keyframes hudPulsePop {
   0% {
     transform: scale(1);
@@ -3389,331 +3347,4 @@ body {
 
 .hud-pop-anim {
   animation: hudPulsePop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-/* ==========================================================================
-   v17 HUD右端見切れ根絶・立ち絵の浮き解消（ウィンドウ背面オーバーラップ）＆演出強化
-   ========================================================================== */
-
-/* 1. 最上部HUD：右端の「🏠 タイトル」と「🛡️ 防衛率」が絶対に見切れないFlex配分 */
-#hud {
-  display: flex;
-  flex-wrap: nowrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  padding: 6px 12px;
-}
-
-.hud-left {
-  flex: 1 1 0 !important; /* 左側は残り幅に収め、右側のボタン群を絶対に押し出さない */
-  min-width: 0 !important;
-  overflow: hidden !important;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.hud-right {
-  flex: 0 0 auto !important;
-  flex-shrink: 0 !important; /* 右側ボタン群は1pxも縮小・見切れさせない */
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-/* チャプターバッジのみ可変幅とし、長すぎる場合は「...」で綺麗に省略 */
-#hud-loop-badge {
-  flex: 0 1 auto !important;
-  min-width: 0 !important;
-  width: auto !important;
-  max-width: 100%;
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
-  white-space: nowrap !important;
-  display: block !important;
-}
-
-#hud-loop-badge .phase-desc-text {
-  display: inline !important;
-  font-weight: 500;
-  color: var(--text-sub);
-}
-
-/* 防衛率バッジは固定幅で保護 */
-#hud-defense-meter {
-  flex: 0 0 auto !important;
-  flex-shrink: 0 !important;
-}
-
-/* HUD上のオーディオ3ボタンはアイコンのみに統一し、SECURE飾りバッジは非表示 */
-.hud-audio-label,
-#hud-location-badge {
-  display: none !important;
-}
-
-@media (max-width: 860px) {
-  #hud-loop-badge .phase-desc-text {
-    display: none !important;
-  }
-}
-
-/* 2. 立ち絵の「宙浮き」完全解消：下端を会話ウィンドウの背後へオーバーラップさせる */
-.character-stage {
-  position: absolute !important;
-  top: 38px !important;
-  bottom: 105px !important; /* 会話ウィンドウ(高さ155px〜)の背後に45px以上潜り込ませる */
-  left: 0;
-  right: 0;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  z-index: 5;
-  pointer-events: none;
-  transition:
-    transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
-    opacity 0.3s ease,
-    filter 0.3s ease;
-}
-
-/* キャラクター背後のアンビエント・スポットライト（背景との馴染み・立体感向上） */
-.character-stage::before {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: min(80vw, 520px);
-  height: 75%;
-  background: radial-gradient(
-    ellipse at 50% 65%,
-    rgba(0, 240, 255, 0.14) 0%,
-    rgba(16, 185, 129, 0.05) 45%,
-    transparent 75%
-  );
-  pointer-events: none;
-  z-index: -1;
-}
-
-.character-sprite-box {
-  height: 100%;
-  max-height: min(64dvh, 580px) !important;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-}
-
-.character-sprite-box img {
-  max-height: 100%;
-  width: auto;
-  object-fit: contain;
-  object-position: bottom center;
-  filter: drop-shadow(0 8px 28px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 12px rgba(0, 240, 255, 0.18));
-  /* 万一ウィンドウが透過しても下端の切り口が絶対に見えないようソフトグラデーションマスクを適用 */
-  -webkit-mask-image: linear-gradient(to bottom, #000000 88%, transparent 100%);
-  mask-image: linear-gradient(to bottom, #000000 88%, transparent 100%);
-  transition:
-    filter 0.28s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-/* 非発話時（ケイやナレーション発話中）は少し後ろへ引き、発話時に一歩前へ出る奥行き表現 */
-.character-sprite-box img.sprite-dimmed {
-  filter: brightness(0.55) contrast(0.95) saturate(0.85) drop-shadow(0 8px 24px rgba(0, 0, 0, 0.95));
-  transform: translateY(8px) scale(0.965);
-}
-
-@media (max-width: 640px) {
-  .character-stage {
-    bottom: 115px !important;
-  }
-  .character-sprite-box {
-    max-height: 56dvh !important;
-  }
-}
-
-/* 3. 会話ウィンドウ：上端の境界をリッチにし、話者ポートレートを顔アップで鮮明化 */
-#novel-window {
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: min(96vw, 960px);
-  height: auto;
-  min-height: 148px !important;
-  max-height: 35dvh;
-  margin-bottom: calc(6px + env(safe-area-inset-bottom, 0px));
-  padding: 12px 18px calc(10px + env(safe-area-inset-bottom, 0px));
-  background: linear-gradient(180deg, rgba(8, 16, 32, 0.95) 0%, rgba(3, 7, 16, 0.99) 100%);
-  border-top: 1.5px solid rgba(0, 240, 255, 0.55);
-  box-shadow:
-    0 -12px 36px rgba(0, 0, 0, 0.9),
-    0 -2px 14px rgba(0, 240, 255, 0.15);
-  z-index: 35;
-}
-
-/* 話者ポートレート小窓（ケイの顔が暗く小さく潰れる問題を解消し、顔周りにズーム） */
-.speaker-avatar-frame {
-  width: 38px;
-  height: 38px;
-  border-radius: 6px;
-  overflow: hidden;
-  border: 1.5px solid var(--nco-cyan);
-  background: radial-gradient(circle at 50% 30%, rgba(0, 240, 255, 0.28), rgba(2, 6, 23, 0.95));
-  box-shadow: 0 0 10px var(--nco-cyan-glow);
-  flex-shrink: 0;
-  position: relative;
-}
-
-.speaker-avatar-thumb {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: 50% 12%;
-  transform: scale(1.75); /* 全身・半身立ち絵から顔部分にしっかりズーム */
-  transform-origin: 50% 14%;
-  filter: brightness(1.12) contrast(1.06);
-  display: block;
-}
-
-#dialogue-text {
-  font-size: clamp(0.92rem, 3.4vw, 1.06rem);
-  line-height: 1.72;
-  letter-spacing: 0.02em;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
-}
-
-/* 4. 2段目タイムラインバー＆緊急テロップ＆図解の配置維持 */
-#chapter-timeline-bar {
-  justify-content: flex-start;
-  gap: 6px;
-  padding: 6px 12px;
-}
-
-.timeline-step {
-  flex: 1 1 0;
-  justify-content: center;
-  text-align: center;
-  min-width: max-content;
-  padding: 4px 8px !important;
-  font-size: clamp(0.68rem, 1.2vw, 0.78rem) !important;
-}
-
-.timeline-step.locked {
-  opacity: 0.38;
-  cursor: not-allowed;
-  pointer-events: none;
-  border-color: transparent;
-}
-
-#cinematic-telop {
-  top: auto !important;
-  bottom: calc(35dvh + 10px) !important;
-  left: 50%;
-  transform: translateX(-50%);
-  width: min(94vw, 760px);
-  padding: 6px 16px;
-  background: rgba(4, 12, 28, 0.96);
-  border: 1px solid var(--nco-amber);
-  box-shadow:
-    0 4px 20px rgba(0, 0, 0, 0.85),
-    0 0 14px var(--nco-amber-glow);
-  border-radius: 6px;
-  z-index: 36;
-}
-
-#cut-sequence-stage,
-#dialogue-illustration-stage {
-  top: 46px !important;
-  max-height: calc(64dvh - 54px) !important;
-  z-index: 38 !important;
-}
-
-.sequence-frame-img {
-  filter: brightness(1) contrast(1.04) !important;
-}
-
-.term-tip {
-  padding: 0 !important;
-  margin: 0 !important;
-  display: inline;
-}
-
-.log-highlight-key {
-  color: #fbbf24;
-  background: rgba(245, 158, 11, 0.2);
-  border: 1px solid rgba(245, 158, 11, 0.5);
-  padding: 0 4px;
-  border-radius: 3px;
-  font-weight: 700;
-}
-
-/* 5. 会話ウィンドウ右下の「クリックして進む」プロンプト：テキストとの余白確保＆プレート化 */
-.dialogue-prompt {
-  align-self: flex-end;
-  margin-top: 14px !important; /* テキスト本文との間に十分なクリアランスを確保 */
-  margin-bottom: 2px;
-  padding: 4px 12px;
-  background: rgba(0, 240, 255, 0.08);
-  border: 1px solid rgba(0, 240, 255, 0.32);
-  border-radius: 4px;
-  font-family: var(--font-hud);
-  font-size: clamp(0.7rem, 2.2vw, 0.76rem);
-  font-weight: 800;
-  color: var(--nco-cyan);
-  letter-spacing: 0.08em;
-  box-shadow: 0 0 10px rgba(0, 240, 255, 0.12);
-  animation: promptBlink 1.4s infinite ease-in-out;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  user-select: none;
-}
-
-@keyframes promptBlink {
-  0%,
-  100% {
-    opacity: 0.45;
-    border-color: rgba(0, 240, 255, 0.22);
-    box-shadow: 0 0 6px rgba(0, 240, 255, 0.08);
-    transform: translateY(0);
-  }
-  50% {
-    opacity: 1;
-    border-color: rgba(0, 240, 255, 0.7);
-    box-shadow: 0 0 14px rgba(0, 240, 255, 0.35);
-    transform: translateY(-2px);
-  }
-}
-
-/* 6. 選択肢誤答時のグレーアウト＆無効化スタイル */
-.choice-btn.disabled-choice {
-  opacity: 0.35 !important;
-  filter: grayscale(0.85);
-  border-color: rgba(239, 68, 68, 0.3) !important;
-  background: rgba(15, 23, 42, 0.6) !important;
-  cursor: not-allowed !important;
-  pointer-events: none !important;
-  box-shadow: none !important;
-  transform: none !important;
-}
-
-.choice-btn.disabled-choice .choice-btn-label {
-  color: var(--text-sub) !important;
-  text-decoration: line-through;
-  text-decoration-color: rgba(239, 68, 68, 0.7);
-}
-
-.choice-failed-badge {
-  font-family: var(--font-hud);
-  font-size: 0.7rem;
-  font-weight: 800;
-  color: #f87171;
-  border: 1px solid rgba(248, 113, 113, 0.4);
-  background: rgba(239, 68, 68, 0.12);
-  padding: 1px 6px;
-  border-radius: 3px;
-  margin-left: 8px;
-  text-decoration: none !important;
-  display: inline-block;
 }
