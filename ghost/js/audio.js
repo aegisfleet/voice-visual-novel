@@ -28,7 +28,7 @@ class AudioManager {
     this.wasBgmPlayingBeforeHide = false;
     this.playSessionId = 0;
 
-    // GHOST PROTOCOL 専用サイバーSE: box流用を廃止し、超高音質・ゼロ遅延のサイバーシンセエンジンへ完全移行
+    // GHOST PROTOCOL 専用サイバーSE: box流用を廃止し、超高音質・ゼロ遅延のサイバーシンセエンジンへ完全移行 (sfx_cutin.mp3 / sfx_evidence.mp3 等の旧トラックをWeb Audio合成へ統合)
     this.seTracks = {};
 
     this.initSpeech();
@@ -410,9 +410,14 @@ class AudioManager {
       .replace(/FT4/g, 'エフティーフォー')
       .replace(/DEMOFASTLOSS/g, 'デモ・ファスト・ロス')
       .replace(/coronamng\.store/g, 'コロナマネージ・ドット・ストア')
+      .replace(/GHOST PROTOCOL/gi, 'ゴースト・プロトコル')
+      .replace(/Session Kill/gi, 'セッション・キル')
+      .replace(/False Flag/gi, 'フォールス・フラッグ')
+      .replace(/Root Cause/gi, 'ルート・コーズ')
       .replace(/Login Data/g, 'ログインデータ')
       .replace(/Investor Password/g, 'インベスター・パスワード')
       .replace(/CSIRT/g, 'シーサート')
+      .replace(/KPS/g, 'ケーピーエス')
       .replace(/NCO/g, 'エヌシーオー')
       .replace(/C2/g, 'シーツー')
       .replace(/850\s*pps/gi, '850ピップス')
