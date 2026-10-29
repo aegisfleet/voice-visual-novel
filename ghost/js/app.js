@@ -29,6 +29,10 @@ const TERM_GLOSSARY = {
     '共犯者同士が「先に仲間を売れば1.5億円をもらえ、黙っていれば仲間に売られて自分だけ逮捕される」と疑心暗鬼になり自滅する心理状態。',
   テイクダウン:
     '警察や通信事業者が連携し、犯罪グループが悪用している脅迫サイトやサーバーを強制的に停止・閉鎖させること。',
+  幽霊ソケット:
+    'サーバー停止やWebパスワード変更後も切断されずに生き残り、死んだはずの口座から注文を通し続けた既存TCP通信セッション（第1のゴースト・プロトコル）。',
+  'GHOST PROTOCOL':
+    '敵が悪用した2つの「亡霊通信プロトコル（永続ソケット＆リバースRDP）」と、それを葬るため政府が公的記録に残さず執行した「公表なき能動的サイバー防御・発動第1号」の非公然コードネーム。',
 };
 
 // 用語を文字数の長い順にソートして単一パス正規表現を事前コンパイル（FT4/FT5 と FT4 等の多重置換タグ破壊を完全防止）
@@ -1664,8 +1668,8 @@ class NovelApp {
 
     if (isLastStep) {
       this.triggerCutin(
-        '全証拠連結完了！ 能動的サイバー防御発動承認！',
-        '⚡ ACTIVE CYBER DEFENSE AUTHORIZED / 発動第1号承認',
+        '非公然無害化措置『GHOST PROTOCOL』発動承認！',
+        '⚡ OPERATION: GHOST PROTOCOL AUTHORIZED / 能動的サイバー防御・発動第1号',
         'gold',
       );
       this.state.addEvidence('canary_c2_origin');
@@ -1762,10 +1766,10 @@ class NovelApp {
     }
     if (this.dom.endingSub) {
       this.dom.endingSub.textContent =
-        '能動的サイバー防御「発動第1号」＆100万米ドル逆転懸賞金による完全勝利';
+        '非公然無害化措置『GHOST PROTOCOL（能動的サイバー防御・発動第1号）』＆100万米ドル逆転懸賞金';
     }
     if (this.dom.endingDesc) {
-      this.dom.endingDesc.textContent = `${rankInfo.desc} 5,000万ドル要求の黙殺と100%直接補償による価格崩壊、10月27日正午のカナリア逆探知とNCO非公然無害化措置、そして上限300万円の特別お見舞金と『100万米ドル逆転懸賞金（開始6時間で113件の情報殺到）』により、10月28日午前4時に全脅迫サイトは完全テイクダウンされた。一方で、共通管理者アカウント設計・事前警告の先送り・後出し発表と個人SNS発信に対する厳しい批判と行政調査が待ち受けており、技術的真相の全面開示という真の償いが始まる。`;
+      this.dom.endingDesc.textContent = `${rankInfo.desc} 「幽霊ソケット」と「リバースRDP」という2つの通信プロトコルの亡霊（Ghost Protocol）で26,739人を脅迫した犯罪組織に対し、100%直接補償による価格崩壊、正午のカナリア逆探知、公的記録に残らない国家の非公然無害化措置『GHOST PROTOCOL』、そして『100万米ドル逆転懸賞金（開始6時間で113件の情報殺到）』で完全鎮圧を果たした。一方で、企業の設計過失とガバナンス不全まで亡霊（なかったこと）にはできず、技術的真相の全面開示という真の償いが始まる。`;
     }
     if (this.dom.endingUnlockedBanner) {
       this.dom.endingUnlockedBanner.classList.remove('hidden');
