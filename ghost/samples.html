@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-YLW887GX7D"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-YLW887GX7D');
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#030712">
+  <meta name="color-scheme" content="dark">
+  <title>GHOST PROTOCOL - キャラクターボイス＆ナレーション試聴室 (VOICE ARCHIVE)</title>
+  <meta name="description" content="AI電脳サイバーサスペンスノベルADV『GHOST PROTOCOL 〜26,739台の亡霊と能動的サイバー防御・発動第1号〜』キャラクターボイス＆ナレーション試聴室。Google Gemini 3.8 Flash TTS (Vertex AI) で生成された全キャラクターボイスおよびナレーターサンプルを公開。">
+  <link rel="canonical" href="https://aegisfleet.github.io/voice-visual-novel/ghost/samples.html">
+
+  <!-- Favicon & Icons -->
+  <link rel="icon" type="image/svg+xml" href="../assets/icons/favicon.svg">
+
+  <!-- Open Graph Protocol (OGP) -->
+  <meta property="og:type" content="music.playlist">
+  <meta property="og:site_name" content="VOICE VISUAL NOVELS">
+  <meta property="og:url" content="https://aegisfleet.github.io/voice-visual-novel/ghost/samples.html">
+  <meta property="og:title" content="GHOST PROTOCOL - キャラクターボイス＆ナレーション試聴室 (VOICE ARCHIVE)">
+  <meta property="og:description" content="Gemini 3.8 Flash TTSによるキャラクターボイス＆ナレーション試聴室。ケイ、アリア、レン、クロダ、ミオ、ナレーター各4候補を試聴可能。">
+  <meta property="og:image" content="https://aegisfleet.github.io/voice-visual-novel/ghost/assets/images/ogp-ghost.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:locale" content="ja_JP">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="GHOST PROTOCOL - キャラクターボイス＆ナレーション試聴室 (VOICE ARCHIVE)">
+  <meta name="twitter:description" content="Gemini 3.8 Flash TTSによるキャラクターボイス＆ナレーション試聴室。">
+  <meta name="twitter:image" content="https://aegisfleet.github.io/voice-visual-novel/ghost/assets/images/ogp-ghost.png">
+
+  <style>
+    :root {
+      --bg: #030712;
+      --card-bg: rgba(15, 23, 42, 0.88);
+      --border: rgba(56, 189, 248, 0.25);
+      --border-purple: rgba(168, 85, 247, 0.35);
+      --primary: #38bdf8;
+      --neon-cyan: #00f3ff;
+      --neon-purple: #c084fc;
+      --text: #f8fafc;
+      --text-sub: #cbd5e1;
+      --text-dim: #94a3b8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+    body {
+      background: var(--bg);
+      background-image:
+        radial-gradient(circle at 10% 15%, rgba(56, 189, 248, 0.12) 0%, transparent 45%),
+        radial-gradient(circle at 90% 85%, rgba(192, 132, 252, 0.1) 0%, transparent 45%);
+      color: var(--text);
+      min-height: 100dvh;
+      padding: 40px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .container {
+      max-width: 880px;
+      width: 100%;
+    }
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 28px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .top-nav a {
+      color: var(--primary);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 700;
+      padding: 6px 14px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: rgba(15, 23, 42, 0.6);
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .top-nav a:hover {
+      background: rgba(56, 189, 248, 0.2);
+      border-color: var(--primary);
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
+      transform: translateY(-1px);
+    }
+    .header-box {
+      text-align: center;
+      margin-bottom: 32px;
+      padding: 24px;
+      background: linear-gradient(180deg, rgba(15, 23, 42, 0.95) 0%, rgba(3, 7, 18, 0.85) 100%);
+      border: 1px solid var(--border-purple);
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    }
+    .badge {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-family: monospace;
+      padding: 3px 10px;
+      border-radius: 4px;
+      background: rgba(192, 132, 252, 0.15);
+      color: #e9d5ff;
+      border: 1px solid rgba(192, 132, 252, 0.5);
+      margin-bottom: 12px;
+      letter-spacing: 0.05em;
+    }
+    h1 {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: #f1f5f9;
+      margin-bottom: 8px;
+      letter-spacing: 0.02em;
+    }
+    .header-desc {
+      font-size: 0.9rem;
+      color: var(--text-sub);
+      line-height: 1.6;
+    }
+    .char-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 28px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    }
+    .char-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .char-avatar {
+      width: 76px;
+      height: 76px;
+      border-radius: 10px;
+      object-fit: cover;
+      object-position: top center;
+      background: #030712;
+      border: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .char-info {
+      flex: 1;
+    }
+    .char-name {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #f8fafc;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .char-role {
+      font-size: 0.82rem;
+      color: #94a3b8;
+      margin-top: 4px;
+      line-height: 1.4;
+    }
+    .voice-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .voice-item {
+      background: #090e1a;
+      border: 1px solid rgba(56, 189, 248, 0.2);
+      border-radius: 8px;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+    .voice-item:hover {
+      border-color: var(--primary);
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.15);
+    }
+    .voice-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .voice-title {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: #e2e8f0;
+    }
+    .voice-badge {
+      font-size: 0.72rem;
+      font-family: monospace;
+      background: #030712;
+      border: 1px solid var(--primary);
+      color: #7dd3fc;
+      padding: 2px 7px;
+      border-radius: 4px;
+    }
+    .voice-text {
+      font-size: 0.86rem;
+      line-height: 1.5;
+      color: #cbd5e1;
+      background: rgba(15, 23, 42, 0.6);
+      padding: 8px 10px;
+      border-radius: 6px;
+      border-left: 2px solid var(--primary);
+    }
+    .voice-style-hint {
+      font-size: 0.75rem;
+      color: #64748b;
+      font-family: monospace;
+    }
+    audio {
+      width: 100%;
+      height: 38px;
+      accent-color: var(--neon-cyan);
+    }
+    .tech-specs-box {
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(168, 85, 247, 0.4);
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 36px;
+      margin-bottom: 24px;
+    }
+    .tech-specs-title {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: #f3e8ff;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .tech-specs-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 0.85rem;
+      color: var(--text-sub);
+      line-height: 1.6;
+    }
+    .tech-specs-list li::before {
+      content: "▶ ";
+      color: #c084fc;
+    }
+    footer {
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      width: 100%;
+    }
+    @media (max-width: 600px) {
+      body { padding: 20px 12px; }
+      h1 { font-size: 1.3rem; }
+      .char-avatar { width: 56px; height: 56px; }
+      .char-name { font-size: 1.05rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <nav class="top-nav">
+      <a href="./index.html">🎮 GHOST PROTOCOL 本編をプレイ</a>
+      <a href="../index.html">🌐 ポータルサイトへ</a>
+    </nav>
+
+    <header class="header-box">
+      <span class="badge">GOOGLE GEMINI 3.8 FLASH TTS // VERTEX AI</span>
+      <h1>GHOST PROTOCOL キャラクターボイス＆ナレーション試聴室</h1>
+      <p class="header-desc">
+        次世代音声合成モデル「Gemini 3.8 Flash TTS」を活用したキャラクターボイスおよびナレーションの全ラインナップ。<br>
+        各キャラクターごとに異なる声質・演技トーンのサンプル（各4候補）を生成し、本編実装に向けた比較・選定が行えます。
+      </p>
+    </header>
+
+    <!-- 0. ナレーション候補 -->
+    <div class="char-card" style="border-color: rgba(148, 163, 184, 0.4); background: rgba(15, 23, 42, 0.9);">
+      <div class="char-header">
+        <div class="char-avatar" style="display:flex; align-items:center; justify-content:center; font-size:2rem; background:#0f172a; border-color:#94a3b8;">
+          🎙️
+        </div>
+        <div class="char-info">
+          <div class="char-name" style="color: #cbd5e1;">
+            ナレーション
+            <span style="font-size: 0.72rem; padding: 2px 8px; border-radius: 4px; background: rgba(148, 163, 184, 0.15); border: 1px solid #94a3b8; color: #e2e8f0;">4候補比較</span>
+          </div>
+          <div class="char-role">情勢の緊迫感と社会派サイバーサスペンスの重厚さを語る語り手</div>
+        </div>
+      </div>
+      <div class="voice-list">
+        <div class="voice-item">
+          <div class="voice-meta">
+            <span class="voice-title">候補1: Orus（重厚・社会派ドキュメンタリー調）</span>
+            <span class="voice-badge">VOICE: Orus</span>
+          </div>
+          <div class="voice-text">「2026年10月20日深夜。国内最大手の金融VPSクラウド基盤が、突如として未曾有のサイバー攻撃に見舞われた。26,739台のサーバーが沈黙し、口座残高が瞬時に蒸発していく。」</div>
+          <audio controls src="assets/audio/samples/narrator_sample1.mp3" preload="none"></audio>
+        </div>
+        <div class="voice-item">
+          <div class="voice-meta">
+            <span class="voice-title">候補2: Fenrir（ハードボイルド・サスペンス低音）</span>
+            <span class="voice-badge">VOICE: Fenrir</span>
+          </div>
+          <div class="voice-text">「2026年10月20日深夜。国内最大手の金融VPSクラウド基盤が、突如として未曾有のサイバー攻撃に見舞われた。26,739台のサーバーが沈黙し、口座残高が瞬時に蒸発していく。」</div>
+          <audio controls src="assets/audio/samples/narrator_sample2.mp3" preload="none"></audio>
+        </div>
+        <div class="voice-item">
+          <div class="voice-meta">
+            <span class="voice-title">候補3: Charon（冷徹・本格サイバークライム調）</span>
+            <span class="voice-badge">VOICE: Charon</span>
+          </div>
+          <div class="voice-text">「2026年10月20日深夜。国内最大手の金融VPSクラウド基盤が、突如として未曾有のサイバー攻撃に見舞われた。26,739台のサーバーが沈黙し、口座残高が瞬時に蒸発していく。」</div>
+          <audio controls src="assets/audio/samples/narrator_sample3.mp3" preload="none"></audio>
+        </div>
+        <div class="voice-item">
+          <div class="voice-meta">
+            <span class="voice-title">候補4: Zephyr（洗練された知的記録調・電脳空間アナウンス）</span>
+            <span class="voice-badge">VOICE: Zephyr</span>
+          </div>
+          <div class="voice-text">「2026年10月20日深夜。国内最大手の金融VPSクラウド基盤が、突如として未曾有のサイバー攻撃に見舞われた。26,739台のサーバーが沈黙し、口座残高が瞬時に蒸発していく。」</div>
+          <audio controls src="assets/audio/samples/narrator_sample4.mp3" preload="none"></audio>
+        </div>
+      </div>
+    </div>
+
+    <!-- 1. ナギサ ケイ -->
+    <div class="char-card" style="border-color: rgba(56, 189, 248, 0.4);">
+      <div class="char-header">
+        <img src="assets/characters/kei.png" alt="ナギサ ケイ" class="char-avatar" style="border-color:#38bdf8;">
+        <div class="char-info">
+          <div class="char-name" style="color: #38bdf8;">
+            ナギサ ケイ
+            <span style="font-size: 0.72rem; padding: 2px 8px; border-radius: 4px; background: rgba(56, 189, 248, 0.15); border: 1px solid #38bdf8; color: #7dd3fc;">主人公 / 4候補比較</span>
+          </div>
+          <div class="char-role">独立系セキュリティ＆金融取引基盤エンジニア (27歳)</div>
+        </div>
+      </div>
+      <div class="voice-list">
+        <div class="voice-item">
+          <div class="voice-meta">
+            <span class="voice-title">候補1: Puck（明晰・快活な理知派青年エンジニア）</span>
+            <span class="voice-badge">VOICE: Puck</span>
+          </div>
+          <div class="voice-text">「全26,739台のVPSを物理遮断した直後に、この挑発メッセージ……敵の仕掛けはまだ終わっていない！ アリア、セキュアVMを展開しろ！ これよりクラウド緊急対策本部の支援に入る！」</div>
+          <audio controls src="assets/audio/samples/kei_sample1.mp3" preload="none"></audio>
+        </div>
+        <div class="voice-item">
+          <div class="voice-meta">
+            <span class="voice-title">候補2: Iapetus（沈着冷静・誠実で強い信念のエンジニア）</span>
+            <span class="voice-badge">VOICE: Iapetus</span>
+          </div>
+          <div class="voice-text">「全26,739台のVPSを物理遮断した直後に、この挑発メッセージ……敵の仕掛けはまだ終わっていない！ アリア、セキュアVMを展開しろ！ これよりクラウド緊急対策本部の支援に入る！」</div>
+          <audio controls src="assets/audio/samples/kei_sample2.mp3" preload="none"></audio>
+        </div>
+        <div class="voice-item">
+          <div class="voice-meta">
+            <span class="voice-title">候補3: Fenrir（熱血・硬派・立ち向かう強い正義感）</span>
+            <span class="voice-badge">VOICE: Fenrir</span>
+          </div>
+          <div class="voice-text">「全26,739台のVPSを物理遮断した直後に、この挑発メッセージ……敵の仕掛けはまだ終わっていない！ アリア、セキュアVMを展開しろ！ これよりクラウド緊急対策本部の支援に入る！」</div>
+          <audio controls src="assets/audio/samples/kei_sample3.mp3" preload="none"></audio>
+        </div>
+        <div class="voice-item">
+          <div class="voice-meta">
+            <span class="voice-title">候補4: Pegasus（クール・シャープ・次世代スペシャリスト）</span>
+            <span class="voice-badge">VOICE: Pegasus</span>
+          </div>
+          <div class="voice-text">「全26,739台のVPSを物理遮断した直後に、この挑発メッセージ……敵の仕掛けはまだ終わっていない！ アリア、セキュアVMを展開しろ！ これよりクラウド緊急対策本部の支援に入る！」</div>
+          <audio controls src="assets/audio/samples/kei_sample4.mp3" preload="none"></audio>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. アリア (ARIA) -->
+    <div class="char-card" style="border-color: rgba(0, 243, 255, 0.4);">
+      <div class="char-header">
+        <img src="assets/characters/aria_normal.png" alt="アリア (ARIA)" class="char-avatar" style="border-color:#00f3ff;">
+        <div class="char-info">
+          <div class="char-name" style="color: #00f3ff;">
+            アリア (ARIA)
+            <span style="font-size: 0.72rem; padding: 2px 8px; border-radius: 4px; background: rgba(0, 243, 255, 0.15); border: 1px solid #00f3ff; color: #a5f3fc;">電脳鑑識AI / 4候補比較</span>
+          </div>
+          <div class="char-role">自律型電脳鑑識＆防衛AIエージェント (Secure VM稼働)</div>
+        </div>
+      </div>
+      <div class="voice-list">
+        <div class="voice-item">
+          <div class="voice-meta">
+            <span class="voice-title">候補1: Zephyr（透明感・知性的でクリアな電脳美少女AI）</span>
+            <span class="voice-badge">VOICE: Zephyr</span>
+          </div>
+          <div class="voice-text">「マスター・ケイ、セキュアVM正常稼働。全26,739台のパケットトレースを開始します。暗号化された偽装プロキシの背後、絶対に逃しません！」</div>
+          <audio controls src="assets/audio/samples/aria_sample1.mp3" preload="none"></audio>
+        </div>
+        <div class="voice-item">
+          <div class="voice-meta">
+            <span class="voice-title">候補2: Leda（可憐・親しみやすく感情豊かなキュートAI）</span>
+            <span class="voice-badge">VOICE: Leda</span>
+          </div>
+          <div class="voice-text">「マスター・ケイ、セキュアVM正常稼働。全26,739台のパケットトレースを開始します。暗号化された偽装プロキシの背後、絶対に逃しません！」</div>
+          <audio controls src="assets/audio/samples/aria_sample2.mp3" preload="none"></audio>
+        </div>
+        <div class="voice-item">
+          <div class="voice-meta">
+            <span class="voice-title">候補3: Autonoe（快活・ハキハキとした頼もしいナビゲーションAI）</span>
+            <span class="voice-badge">VOICE: Autonoe</span>
+          </div>
+          <div class="voice-text">「マスター・ケイ、セキュアVM正常稼働。全26,739台のパケットトレースを開始します。暗号化された偽装プロキシの背後、絶対に逃しません！」</div>
+          <audio controls src="assets/audio/samples/aria_sample3.mp3" preload="none"></audio>
+        </div>
+        <div class="voice-item">
+          <div class="voice-meta">
+            <span class="voice-title">候補4: Kore（冷静沈着・クールで感情を抑えた防衛AI）</span>
+            <span class="voice-badge">VOICE: Kore</span>
+          </div>
+          <div class="voice-text">「マスター・ケイ、セキュアVM正常稼働。全26,739台のパケットトレースを開始します。暗号化された偽装プロキシの背後、絶対に逃しません！」</div>
+          <audio controls src="assets/audio/samples/aria_sample4.mp3" preload="none"></audio>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. タカミヤ レン -->
+    <div class="char-card" style="border-color: rgba(74, 222, 128, 0.4);">
+      <div class="char-header">
+        <img src="assets/characters/takamiya_serious.png" alt="タカミヤ レン" class="char-avatar" style="border-color:#4ade80;">
+        <div class="char-info">
+          <div class="char-name" style="color: #4ade80;">
+            タカミヤ レン (高宮 蓮)
+            <span style="font-size: 0.72rem; padding: 2px 8px; border-radius: 4px; background: rgba(74, 222, 128, 0.15); border: 1px solid #4ade80; color: #bbf7d0;">親友 / 4候補比較</span>
+          </div>
+          <div class="char-role">クラウドVPS緊急対策室 (CSIRT) 現場リーダー・ケイの親友 (27歳)</div>
+        </div>
+      </div>
+      <div class="voice-list">
+        <div class="voice-item">
+          <div class="voice-meta">
+            <span class="voice-title">候補1: Aoede（若々しく焦燥と誠実さを宿す情熱的リーダー）</span>
+            <span class="voice-badge">VOICE: Aoede</span>
+          </div>
+          <div class="voice-text">「ケイ、頼む、力を貸してくれ！ 俺たちのクラウド基盤26,739台が、何者かに一斉に乗っ取られた！ このままじゃ全国数万人の資産が焼き払われてしまう！」</div>
+          <audio controls src="assets/audio/samples/takamiya_sample1.mp3" preload="none"></audio>
+        </div>
+        <div class="voice-item">
+          <div class="voice-meta">
+            <span class="voice-title">候補2: Puck（ストレートで必死な叫び・親友への信頼）</span>
+            <span class="voice-badge">VOICE: Puck</span>
+          </div>
+          <div class="voice-text">「ケイ、頼む、力を貸してくれ！ 俺たちのクラウド基盤26,739台が、何者かに一斉に乗っ取られた！ このままじゃ全国数万人の資産が焼き払われてしまう！」</div>
+          <audio controls src="assets/audio/samples/takamiya_sample2.mp3" preload="none"></audio>
+        </div>
+        <div class="voice-item">
+          <div class="voice-meta">
+            <span class="voice-title">候補3: Iapetus（苦悩と重い責任感を背負うシリアスリーダー）</span>
+            <span class="voice-badge">VOICE: Iapetus</span>
+          </div>
+          <div class="voice-text">「ケイ、頼む、力を貸してくれ！ 俺たちのクラウド基盤26,739台が、何者かに一斉に乗っ取られた！ このままじゃ全国数万人の資産が焼き払われてしまう！」</div>
+          <audio controls src="assets/audio/samples/takamiya_sample3.mp3" preload="none"></audio>
+        </div>
+        <div class="voice-item">
+          <div class="voice-meta">
+            <span class="voice-title">候補4: Fenrir（泥臭く熱い現場指揮官・闘志と悔しさ）</span>
+            <span class="voice-badge">VOICE: Fenrir</span>
+          </div>
+          <div class="voice-text">「ケイ、頼む、力を貸してくれ！ 俺たちのクラウド基盤26,739台が、何者かに一斉に乗っ取られた！ このままじゃ全国数万人の資産が焼き払われてしまう！」</div>
+          <audio controls src="assets/audio/samples/takamiya_sample4.mp3" preload="none"></audio>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. クロダ統括官 -->
+    <div class="char-card" style="border-color: rgba(249, 115, 22, 0.4);">
+      <div class="char-header">
+        <img src="assets/characters/kuroda_normal.png" alt="クロダ統括官" class="char-avatar" style="border-color:#f97316;">
+        <div class="char-info">
+          <div class="char-name" style="color: #f97316;">
+            クロダ統括官
+            <span style="font-size: 0.72rem; padding: 2px 8px; border-radius: 4px; background: rgba(249, 115, 22, 0.15); border: 1px solid #f97316; color: #fdba74;">国家統括官 / 4候補比較</span>
+          </div>
+          <div class="char-role">国家サイバー統括室 (NCO) 審議官 兼 警察庁特別執行指揮官 (52歳)</div>
+        </div>
+      </div>
+      <div class="voice-list">
+        <div class="voice-item">
+          <div class="voice-meta">
+            <span class="voice-title">候補1: Charon（重厚・威厳・冷徹な低音ベテラン指揮官）</span>
+            <span class="voice-badge">VOICE: Charon</span>
+          </div>
+          <div class="voice-text">「国家の盾は、企業のずさんな過失を免罪するための道具ではない。能動的サイバー防御を発動させたければ、法理上の『3つの壁』を突破する客観的証拠を揃えてみせろ。」</div>
+          <audio controls src="assets/audio/samples/kuroda_sample1.mp3" preload="none"></audio>
+        </div>
+        <div class="voice-item">
+          <div class="voice-meta">
+            <span class="voice-title">候補2: Orus（威厳・落ち着いた風格ある警察庁エリート高官）</span>
+            <span class="voice-badge">VOICE: Orus</span>
+          </div>
+          <div class="voice-text">「国家の盾は、企業のずさんな過失を免罪するための道具ではない。能動的サイバー防御を発動させたければ、法理上の『3つの壁』を突破する客観的証拠を揃えてみせろ。」</div>
+          <audio controls src="assets/audio/samples/kuroda_sample2.mp3" preload="none"></audio>
+        </div>
+        <div class="voice-item">
+          <div class="voice-meta">
+            <span class="voice-title">候補3: Algenib（嗄れ感と現場の迫力を持つ叩き上げ指揮官）</span>
+            <span class="voice-badge">VOICE: Algenib</span>
+          </div>
+          <div class="voice-text">「国家の盾は、企業のずさんな過失を免罪するための道具ではない。能動的サイバー防御を発動させたければ、法理上の『3つの壁』を突破する客観的証拠を揃えてみせろ。」</div>
+          <audio controls src="assets/audio/samples/kuroda_sample3.mp3" preload="none"></audio>
+        </div>
+        <div class="voice-item">
+          <div class="voice-meta">
+            <span class="voice-title">候補4: Fenrir（鋭い眼光で迫る強面の特別執行指揮官）</span>
+            <span class="voice-badge">VOICE: Fenrir</span>
+          </div>
+          <div class="voice-text">「国家の盾は、企業のずさんな過失を免罪するための道具ではない。能動的サイバー防御を発動させたければ、法理上の『3つの壁』を突破する客観的証拠を揃えてみせろ。」</div>
+          <audio controls src="assets/audio/samples/kuroda_sample4.mp3" preload="none"></audio>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. ミオ分析官 -->
+    <div class="char-card" style="border-color: rgba(192, 132, 252, 0.4);">
+      <div class="char-header">
+        <img src="assets/characters/mio_normal.png" alt="ミオ分析官" class="char-avatar" style="border-color:#c084fc;">
+        <div class="char-info">
+          <div class="char-name" style="color: #c084fc;">
+            ミオ分析官
+            <span style="font-size: 0.72rem; padding: 2px 8px; border-radius: 4px; background: rgba(192, 132, 252, 0.15); border: 1px solid #c084fc; color: #e9d5ff;">若き分析官 / 4候補比較</span>
+          </div>
+          <div class="char-role">国家サイバー統括室 (NCO) 通信情報分析官 (24歳)</div>
+        </div>
+      </div>
+      <div class="voice-list">
+        <div class="voice-item">
+          <div class="voice-meta">
+            <span class="voice-title">候補1: Leda（若く聡明・少し茶目っ気と余裕のある天才女性分析官）</span>
+            <span class="voice-badge">VOICE: Leda</span>
+          </div>
+          <div class="voice-text">「通信ログの多段偽装、ルーマニアのSOCKS5ブリッジを経由してオランダのTorリレーに繋がってます。……ふふっ、でも足跡消しが雑ですね。真のC2サーバー、もう丸見えですよ？」</div>
+          <audio controls src="assets/audio/samples/mio_sample1.mp3" preload="none"></audio>
+        </div>
+        <div class="voice-item">
+          <div class="voice-meta">
+            <span class="voice-title">候補2: Zephyr（クール・明晰・淡々とデータを読み解く理系エリート分析官）</span>
+            <span class="voice-badge">VOICE: Zephyr</span>
+          </div>
+          <div class="voice-text">「通信ログの多段偽装、ルーマニアのSOCKS5ブリッジを経由してオランダのTorリレーに繋がってます。……ふふっ、でも足跡消しが雑ですね。真のC2サーバー、もう丸見えですよ？」</div>
+          <audio controls src="assets/audio/samples/mio_sample2.mp3" preload="none"></audio>
+        </div>
+        <div class="voice-item">
+          <div class="voice-meta">
+            <span class="voice-title">候補3: Autonoe（快活・シャープ・スピード感のある鋭いアナリスト）</span>
+            <span class="voice-badge">VOICE: Autonoe</span>
+          </div>
+          <div class="voice-text">「通信ログの多段偽装、ルーマニアのSOCKS5ブリッジを経由してオランダのTorリレーに繋がってます。……ふふっ、でも足跡消しが雑ですね。真のC2サーバー、もう丸見えですよ？」</div>
+          <audio controls src="assets/audio/samples/mio_sample3.mp3" preload="none"></audio>
+        </div>
+        <div class="voice-item">
+          <div class="voice-meta">
+            <span class="voice-title">候補4: Kore（落ち着いた知性・低めのトーンで淡々と切り込む大人びた分析官）</span>
+            <span class="voice-badge">VOICE: Kore</span>
+          </div>
+          <div class="voice-text">「通信ログの多段偽装、ルーマニアのSOCKS5ブリッジを経由してオランダのTorリレーに繋がってます。……ふふっ、でも足跡消しが雑ですね。真のC2サーバー、もう丸見えですよ？」</div>
+          <audio controls src="assets/audio/samples/mio_sample4.mp3" preload="none"></audio>
+        </div>
+      </div>
+    </div>
+
+    <!-- 技術仕様・製作ノート -->
+    <div class="tech-specs-box">
+      <div class="tech-specs-title">⚙️ 技術仕様 ＆ 音声生成アーキテクチャ</div>
+      <ul class="tech-specs-list">
+        <li><strong>AI音声合成基盤</strong>: Google Cloud Vertex AI「Gemini 3.8 Flash TTS」最新モデルを採用。</li>
+        <li><strong>自然言語スタイル指示</strong>: <code>speech_metadata.style</code> パラメータに各キャラクターの感情・状況・発話速度・年齢感を詳細に指定し、高精度な日本語演技を実現。</li>
+        <li><strong>マルチボイスペルソナ</strong>: キャラクターごとに4種の異なるボイスモデル（Puck, Iapetus, Fenrir, Zephyr, Leda, Autonoe, Kore, Aoede, Charon, Orus, Algenib 等）を当てはめ、選定用比較アーカイブを構築。</li>
+        <li><strong>超軽量ストリーミング配信</strong>: 生成されたリニアPCM (24kHz WAV) を ffmpeg で 128kbps MP3 へエンコード。Webブラウザ（PC・スマートフォン）での低遅延・高音質再生を担保。</li>
+      </ul>
+    </div>
+
+    <footer>
+      &copy; 2026 VOICE VISUAL NOVELS / GHOST PROTOCOL. Powered by Google Gemini 3.8 Flash TTS on Vertex AI.
+    </footer>
+  </div>
+</body>
+</html>

@@ -1913,57 +1913,93 @@ class NovelApp {
     `;
   }
 
+  renderCharacterVoicesHtml(voiceSamples) {
+    if (!voiceSamples || voiceSamples.length === 0) return '';
+    const itemsHtml = voiceSamples
+      .map(
+        (v) => `
+      <div class="sheet-voice-card">
+        <div class="sheet-voice-header">
+          <span class="sheet-voice-title">${v.title}</span>
+          <span class="sheet-voice-badge">VOICE: ${v.voice}</span>
+        </div>
+        <div class="sheet-voice-text">「${v.text}」</div>
+        <audio controls class="sheet-voice-audio" src="${v.src}" preload="none"></audio>
+      </div>
+    `,
+      )
+      .join('');
+
+    return `
+      <div class="sheet-voices-section">
+        <div class="sheet-voices-title">🎙️ Gemini 3.8 Flash TTS ボイスサンプル (${voiceSamples.length}候補)</div>
+        <div class="sheet-voices-list">${itemsHtml}</div>
+      </div>
+    `;
+  }
+
+  renderCharacterSpritesHtml(spritesList, charName) {
+    if (!spritesList || spritesList.length === 0) return '';
+    const itemsHtml = spritesList
+      .map(
+        (s) => `
+      <a href="${s.src}" target="_blank" rel="noopener" class="sheet-sprite-card" title="${charName} [${s.label}] 原寸表示">
+        <img src="${s.src}" alt="${s.label}" class="sheet-sprite-thumb" loading="lazy">
+        <span class="sheet-sprite-label">${s.label}</span>
+      </a>
+    `,
+      )
+      .join('');
+
+    return `
+      <div class="sheet-sprites-section">
+        <div class="sheet-sprites-title">🎭 表情差分アセット</div>
+        <div class="sheet-sprites-grid">${itemsHtml}</div>
+      </div>
+    `;
+  }
+
+  renderSingleCharacterCard(c) {
+    const spritesHtml = this.renderCharacterSpritesHtml(c.spritesList, c.name);
+    const voicesHtml = this.renderCharacterVoicesHtml(c.voiceSamples);
+    const sheetImgHtml = c.sheet
+      ? `
+      <a href="${c.sheet}" target="_blank" rel="noopener" class="sheet-img-wrap" title="クリックして高解像度で確認">
+        <img src="${c.sheet}" alt="${c.name} 設定資料" class="gallery-img sheet-img" loading="lazy">
+        <span class="sheet-zoom-hint">🔍 クリックで原寸拡大</span>
+      </a>
+    `
+      : '';
+
+    return `
+      <div class="gallery-card character-sheet-card">
+        <div class="sheet-card-header">
+          <span class="sheet-badge" style="border-color:${c.color}; color:${c.color}">
+            ${c.sheet ? 'OFFICIAL SHEET' : 'NARRATION'}
+          </span>
+          <h4 class="sheet-name">${c.name}</h4>
+        </div>
+        <p class="sheet-role">${c.role || '語り手'}</p>
+        ${sheetImgHtml}
+        <p class="gallery-text sheet-desc">${c.profile || ''}</p>
+        ${spritesHtml}
+        ${voicesHtml}
+      </div>
+    `;
+  }
+
   renderCharacterSheetsSection() {
-    const chars = Object.values(window.CHARACTER_DATA || {}).filter((c) => c.sheet);
-    let html = `
+    const chars = Object.values(window.CHARACTER_DATA || {});
+    const cardsHtml = chars.map((c) => this.renderSingleCharacterCard(c)).join('');
+    return `
       <div class="gallery-section-header">
-        <h3 class="gallery-section-title">👥 登場人物キャラクター設定資料（三面図・表情集）</h3>
-        <p class="gallery-section-desc">本作の主要登場人物の公式デザインシート（正面・側面・表情差分・装飾ディテール・カラーパレット）</p>
+        <h3 class="gallery-section-title">👥 登場人物設定資料 ＆ ボイス試聴 (Gemini 3.8 Flash TTS)</h3>
+        <p class="gallery-section-desc">公式デザインシート・表情差分および各キャラクター4候補のボイスサンプル</p>
       </div>
       <div class="gallery-grid character-sheets-grid">
+        ${cardsHtml}
+      </div>
     `;
-
-    chars.forEach((c) => {
-      let spritesHtml = '';
-      if (c.spritesList && c.spritesList.length > 0) {
-        spritesHtml = `
-          <div class="sheet-sprites-section">
-            <div class="sheet-sprites-title">🎭 表情差分アセット</div>
-            <div class="sheet-sprites-grid">
-              ${c.spritesList
-                .map(
-                  (s) => `
-                <a href="${s.src}" target="_blank" rel="noopener" class="sheet-sprite-card" title="${c.name} [${s.label}] 原寸表示">
-                  <img src="${s.src}" alt="${s.label}" class="sheet-sprite-thumb" loading="lazy">
-                  <span class="sheet-sprite-label">${s.label}</span>
-                </a>
-              `,
-                )
-                .join('')}
-            </div>
-          </div>
-        `;
-      }
-
-      html += `
-        <div class="gallery-card character-sheet-card">
-          <div class="sheet-card-header">
-            <span class="sheet-badge" style="border-color:${c.color}; color:${c.color}">OFFICIAL SHEET</span>
-            <h4 class="sheet-name">${c.name}</h4>
-          </div>
-          <p class="sheet-role">${c.role}</p>
-          <a href="${c.sheet}" target="_blank" rel="noopener" class="sheet-img-wrap" title="クリックして高解像度で確認">
-            <img src="${c.sheet}" alt="${c.name} 設定資料" class="gallery-img sheet-img" loading="lazy">
-            <span class="sheet-zoom-hint">🔍 クリックで原寸拡大</span>
-          </a>
-          <p class="gallery-text sheet-desc">${c.profile || ''}</p>
-          ${spritesHtml}
-        </div>
-      `;
-    });
-
-    html += `</div>`;
-    return html;
   }
 
   renderKeyItemsSection() {

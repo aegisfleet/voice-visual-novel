@@ -49,12 +49,23 @@
 - 曲切替時の非同期ロード競合はセッション ID で防止し、画面が非表示になったら `AudioContext` を suspend、復帰時に resume する。音量は `GainNode` で制御。
 - セリフボイス（Web Speech API）とは独立した経路であり、BGM 側の都合でボイスを止めない。SE は `assets/audio/sfx_*.mp3` を使い、読み込めない場合はプロシージャル合成（`playSynthSe`）へフォールバックする。
 
+## キャラクターボイス試聴室（Gemini 3.8 Flash TTS / Vertex AI）
+
+Google Cloud Vertex AI の最新音声合成モデル「Gemini 3.8 Flash TTS」を活用し、全6キャラクター（ナレーション、ナギサ ケイ、アリア、タカミヤ レン、クロダ統括官、ミオ分析官）それぞれに4種類（計24サンプル）の異なる声質・演技トーンのボイスサンプルを生成・配備しています。
+
+- **独立試聴室ページ**: `ghost/samples.html`
+- **設定資料モーダル内**: 本編の「機密設定資料集（FORENSIC ARCHIVE）」内の各キャラクターシート直下でも直接試聴可能
+- **生成スクリプト**: `ghost/scripts/generate_ghost_samples.py`（Vertex AI Python SDK + ffmpeg による 128kbps 軽量 MP3 変換パイプライン）
+
 ## ディレクトリ構成
 
-- `ghost/index.html` - 5章タイムラインバー・小説リーダー・最終証拠連結UI搭載メイン画面
+- `ghost/index.html` - 5章タイムラインバー・小説リーダー・最終証拠連結UI・設定資料ボイス試聴搭載メイン画面
+- `ghost/samples.html` - Gemini 3.8 Flash TTS 公式キャラクターボイス＆ナレーション試聴室
+- `ghost/scripts/generate_ghost_samples.py` - Vertex AI Gemini 3.8 Flash TTS ボイスサンプル一括生成スクリプト
+- `ghost/assets/audio/samples/` - 生成された全24種類のキャラクターボイスMP3（128kbps）
 - `ghost/css/style.css` - サイバーサスペンスUI・証拠連結カード・小説リーダー用スタイルシート
 - `ghost/js/scenario.js` - 全5章シナリオ・6大フォレンジック証拠・最終推論立証＆小説全文マスターデータ
-- `ghost/js/character.js` - 登場人物（ナギサ ケイ・アリア・タカミヤ レン・クロダ統括官・ミオ分析官）定義
+- `ghost/js/character.js` - 登場人物（ナギサ ケイ・アリア・タカミヤ レン・クロダ統括官・ミオ分析官・ナレーション）定義＆ボイスサンプル設定
 - `ghost/js/state.js` - 章進行（Chapter 1〜5）・証拠収集・セーブ状態管理エンジン
 - `ghost/js/app.js` - 体験型ノベル再生・作戦選択・最終証拠連結立証制御コントローラー
 - `ghost/js/audio.js` - BGM の Web Audio ギャップレス再生・SE 再生（合成フォールバック付き）・Web Speech API 音声合成

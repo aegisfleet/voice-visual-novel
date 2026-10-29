@@ -11,6 +11,36 @@ window.CHARACTER_DATA = {
     ttsPitch: 0.9,
     sprite: null,
     sheet: null,
+    voiceSamples: [
+      {
+        id: 'narrator_sample1',
+        title: '候補1: Orus（重厚・社会派ドキュメンタリー調）',
+        voice: 'Orus',
+        text: '2026年10月20日深夜。国内最大手の金融VPSクラウド基盤が、突如として未曾有のサイバー攻撃に見舞われた。26,739台のサーバーが沈黙し、口座残高が瞬時に蒸発していく。',
+        src: 'assets/audio/samples/narrator_sample1.mp3',
+      },
+      {
+        id: 'narrator_sample2',
+        title: '候補2: Fenrir（ハードボイルド・サスペンス低音）',
+        voice: 'Fenrir',
+        text: '2026年10月20日深夜。国内最大手の金融VPSクラウド基盤が、突如として未曾有のサイバー攻撃に見舞われた。26,739台のサーバーが沈黙し、口座残高が瞬時に蒸発していく。',
+        src: 'assets/audio/samples/narrator_sample2.mp3',
+      },
+      {
+        id: 'narrator_sample3',
+        title: '候補3: Charon（冷徹・本格サイバークライム調）',
+        voice: 'Charon',
+        text: '2026年10月20日深夜。国内最大手の金融VPSクラウド基盤が、突如として未曾有のサイバー攻撃に見舞われた。26,739台のサーバーが沈黙し、口座残高が瞬時に蒸発していく。',
+        src: 'assets/audio/samples/narrator_sample3.mp3',
+      },
+      {
+        id: 'narrator_sample4',
+        title: '候補4: Zephyr（洗練された知的記録調・電脳空間アナウンス）',
+        voice: 'Zephyr',
+        text: '2026年10月20日深夜。国内最大手の金融VPSクラウド基盤が、突如として未曾有のサイバー攻撃に見舞われた。26,739台のサーバーが沈黙し、口座残高が瞬時に蒸発していく。',
+        src: 'assets/audio/samples/narrator_sample4.mp3',
+      },
+    ],
   },
   kei: {
     id: 'kei',
@@ -29,6 +59,36 @@ window.CHARACTER_DATA = {
       normal: 'assets/characters/kei.png',
     },
     spritesList: [{ emotion: 'normal', label: '通常・沈着', src: 'assets/characters/kei.png' }],
+    voiceSamples: [
+      {
+        id: 'kei_sample1',
+        title: '候補1: Puck（明晰・快活な理知派青年エンジニア）',
+        voice: 'Puck',
+        text: '全26,739台のVPSを物理遮断した直後に、この挑発メッセージ……敵の仕掛けはまだ終わっていない！ アリア、セキュアVMを展開しろ！ これよりクラウド緊急対策本部の支援に入る！',
+        src: 'assets/audio/samples/kei_sample1.mp3',
+      },
+      {
+        id: 'kei_sample2',
+        title: '候補2: Iapetus（沈着冷静・誠実で強い信念のエンジニア）',
+        voice: 'Iapetus',
+        text: '全26,739台のVPSを物理遮断した直後に、この挑発メッセージ……敵の仕掛けはまだ終わっていない！ アリア、セキュアVMを展開しろ！ これよりクラウド緊急対策本部の支援に入る！',
+        src: 'assets/audio/samples/kei_sample2.mp3',
+      },
+      {
+        id: 'kei_sample3',
+        title: '候補3: Fenrir（熱血・硬派・立ち向かう強い正義感）',
+        voice: 'Fenrir',
+        text: '全26,739台のVPSを物理遮断した直後に、この挑発メッセージ……敵の仕掛けはまだ終わっていない！ アリア、セキュアVMを展開しろ！ これよりクラウド緊急対策本部の支援に入る！',
+        src: 'assets/audio/samples/kei_sample3.mp3',
+      },
+      {
+        id: 'kei_sample4',
+        title: '候補4: Pegasus（クール・シャープ・次世代スペシャリスト）',
+        voice: 'Pegasus',
+        text: '全26,739台のVPSを物理遮断した直後に、この挑発メッセージ……敵の仕掛けはまだ終わっていない！ アリア、セキュアVMを展開しろ！ これよりクラウド緊急対策本部の支援に入る！',
+        src: 'assets/audio/samples/kei_sample4.mp3',
+      },
+    ],
   },
   aria: {
     id: 'aria',
@@ -50,6 +110,36 @@ window.CHARACTER_DATA = {
     spritesList: [
       { emotion: 'normal', label: '通常・解析', src: 'assets/characters/aria_normal.png' },
       { emotion: 'alert', label: '警戒・警告', src: 'assets/characters/aria_alert.png' },
+    ],
+    voiceSamples: [
+      {
+        id: 'aria_sample1',
+        title: '候補1: Zephyr（透明感・知性的でクリアな電脳美少女AI）',
+        voice: 'Zephyr',
+        text: 'マスター・ケイ、セキュアVM正常稼働。全26,739台のパケットトレースを開始します。暗号化された偽装プロキシの背後、絶対に逃しません！',
+        src: 'assets/audio/samples/aria_sample1.mp3',
+      },
+      {
+        id: 'aria_sample2',
+        title: '候補2: Leda（可憐・親しみやすく感情豊かなキュートAI）',
+        voice: 'Leda',
+        text: 'マスター・ケイ、セキュアVM正常稼働。全26,739台のパケットトレースを開始します。暗号化された偽装プロキシの背後、絶対に逃しません！',
+        src: 'assets/audio/samples/aria_sample2.mp3',
+      },
+      {
+        id: 'aria_sample3',
+        title: '候補3: Autonoe（快活・ハキハキとした頼もしいナビゲーションAI）',
+        voice: 'Autonoe',
+        text: 'マスター・ケイ、セキュアVM正常稼働。全26,739台のパケットトレースを開始します。暗号化された偽装プロキシの背後、絶対に逃しません！',
+        src: 'assets/audio/samples/aria_sample3.mp3',
+      },
+      {
+        id: 'aria_sample4',
+        title: '候補4: Kore（冷静沈着・クールで感情を抑えた防衛AI）',
+        voice: 'Kore',
+        text: 'マスター・ケイ、セキュアVM正常稼働。全26,739台のパケットトレースを開始します。暗号化された偽装プロキシの背後、絶対に逃しません！',
+        src: 'assets/audio/samples/aria_sample4.mp3',
+      },
     ],
   },
   kuroda: {
@@ -73,6 +163,36 @@ window.CHARACTER_DATA = {
       { emotion: 'normal', label: '通常・威厳', src: 'assets/characters/kuroda_normal.png' },
       { emotion: 'sharp', label: '鋭視・決断', src: 'assets/characters/kuroda_sharp.png' },
     ],
+    voiceSamples: [
+      {
+        id: 'kuroda_sample1',
+        title: '候補1: Charon（重厚・威厳・冷徹な低音ベテラン指揮官）',
+        voice: 'Charon',
+        text: '国家の盾は、企業のずさんな過失を免罪するための道具ではない。能動的サイバー防御を発動させたければ、法理上の『3つの壁』を突破する客観的証拠を揃えてみせろ。',
+        src: 'assets/audio/samples/kuroda_sample1.mp3',
+      },
+      {
+        id: 'kuroda_sample2',
+        title: '候補2: Orus（威厳・落ち着いた風格ある警察庁エリート高官）',
+        voice: 'Orus',
+        text: '国家の盾は、企業のずさんな過失を免罪するための道具ではない。能動的サイバー防御を発動させたければ、法理上の『3つの壁』を突破する客観的証拠を揃えてみせろ。',
+        src: 'assets/audio/samples/kuroda_sample2.mp3',
+      },
+      {
+        id: 'kuroda_sample3',
+        title: '候補3: Algenib（嗄れ感と現場の迫力を持つ叩き上げ指揮官）',
+        voice: 'Algenib',
+        text: '国家の盾は、企業のずさんな過失を免罪するための道具ではない。能動的サイバー防御を発動させたければ、法理上の『3つの壁』を突破する客観的証拠を揃えてみせろ。',
+        src: 'assets/audio/samples/kuroda_sample3.mp3',
+      },
+      {
+        id: 'kuroda_sample4',
+        title: '候補4: Fenrir（鋭い眼光で迫る強面の特別執行指揮官）',
+        voice: 'Fenrir',
+        text: '国家の盾は、企業のずさんな過失を免罪するための道具ではない。能動的サイバー防御を発動させたければ、法理上の『3つの壁』を突破する客観的証拠を揃えてみせろ。',
+        src: 'assets/audio/samples/kuroda_sample4.mp3',
+      },
+    ],
   },
   mio: {
     id: 'mio',
@@ -94,6 +214,36 @@ window.CHARACTER_DATA = {
     spritesList: [
       { emotion: 'normal', label: '通常・微笑', src: 'assets/characters/mio_normal.png' },
       { emotion: 'focused', label: '思案・解析', src: 'assets/characters/mio_focused.png' },
+    ],
+    voiceSamples: [
+      {
+        id: 'mio_sample1',
+        title: '候補1: Leda（若く聡明・少し茶目っ気と余裕のある天才女性分析官）',
+        voice: 'Leda',
+        text: '通信ログの多段偽装、ルーマニアのSOCKS5ブリッジを経由してオランダのTorリレーに繋がってます。……ふふっ、でも足跡消しが雑ですね。真のC2サーバー、もう丸見えですよ？',
+        src: 'assets/audio/samples/mio_sample1.mp3',
+      },
+      {
+        id: 'mio_sample2',
+        title: '候補2: Zephyr（クール・明晰・淡々とデータを読み解く理系エリート分析官）',
+        voice: 'Zephyr',
+        text: '通信ログの多段偽装、ルーマニアのSOCKS5ブリッジを経由してオランダのTorリレーに繋がってます。……ふふっ、でも足跡消しが雑ですね。真のC2サーバー、もう丸見えですよ？',
+        src: 'assets/audio/samples/mio_sample2.mp3',
+      },
+      {
+        id: 'mio_sample3',
+        title: '候補3: Autonoe（快活・シャープ・スピード感のある鋭いアナリスト）',
+        voice: 'Autonoe',
+        text: '通信ログの多段偽装、ルーマニアのSOCKS5ブリッジを経由してオランダのTorリレーに繋がってます。……ふふっ、でも足跡消しが雑ですね。真のC2サーバー、もう丸見えですよ？',
+        src: 'assets/audio/samples/mio_sample3.mp3',
+      },
+      {
+        id: 'mio_sample4',
+        title: '候補4: Kore（落ち着いた知性・低めのトーンで淡々と切り込む大人びた分析官）',
+        voice: 'Kore',
+        text: '通信ログの多段偽装、ルーマニアのSOCKS5ブリッジを経由してオランダのTorリレーに繋がってます。……ふふっ、でも足跡消しが雑ですね。真のC2サーバー、もう丸見えですよ？',
+        src: 'assets/audio/samples/mio_sample4.mp3',
+      },
     ],
   },
   takamiya: {
@@ -120,6 +270,36 @@ window.CHARACTER_DATA = {
       { emotion: 'panic', label: '焦燥・混乱', src: 'assets/characters/takamiya_panic.png' },
       { emotion: 'serious', label: '真剣・決意', src: 'assets/characters/takamiya_serious.png' },
       { emotion: 'smile', label: '安堵・信頼', src: 'assets/characters/takamiya_smile.png' },
+    ],
+    voiceSamples: [
+      {
+        id: 'takamiya_sample1',
+        title: '候補1: Aoede（若々しく焦燥と誠実さを宿す情熱的リーダー）',
+        voice: 'Aoede',
+        text: 'ケイ、頼む、力を貸してくれ！ 俺たちのクラウド基盤26,739台が、何者かに一斉に乗っ取られた！ このままじゃ全国数万人の資産が焼き払われてしまう！',
+        src: 'assets/audio/samples/takamiya_sample1.mp3',
+      },
+      {
+        id: 'takamiya_sample2',
+        title: '候補2: Puck（ストレートで必死な叫び・親友への信頼）',
+        voice: 'Puck',
+        text: 'ケイ、頼む、力を貸してくれ！ 俺たちのクラウド基盤26,739台が、何者かに一斉に乗っ取られた！ このままじゃ全国数万人の資産が焼き払われてしまう！',
+        src: 'assets/audio/samples/takamiya_sample2.mp3',
+      },
+      {
+        id: 'takamiya_sample3',
+        title: '候補3: Iapetus（苦悩と重い責任感を背負うシリアスリーダー）',
+        voice: 'Iapetus',
+        text: 'ケイ、頼む、力を貸してくれ！ 俺たちのクラウド基盤26,739台が、何者かに一斉に乗っ取られた！ このままじゃ全国数万人の資産が焼き払われてしまう！',
+        src: 'assets/audio/samples/takamiya_sample3.mp3',
+      },
+      {
+        id: 'takamiya_sample4',
+        title: '候補4: Fenrir（泥臭く熱い現場指揮官・闘志と悔しさ）',
+        voice: 'Fenrir',
+        text: 'ケイ、頼む、力を貸してくれ！ 俺たちのクラウド基盤26,739台が、何者かに一斉に乗っ取られた！ このままじゃ全国数万人の資産が焼き払われてしまう！',
+        src: 'assets/audio/samples/takamiya_sample4.mp3',
+      },
     ],
   },
 };
