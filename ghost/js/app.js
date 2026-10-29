@@ -795,7 +795,7 @@ class NovelApp {
     );
     this.handleLineIllustration(item.illustration);
     this.applyDialogueDirectives(item);
-    this.startTyping(item.text, item.speaker);
+    this.startTyping(item.text, item.speaker, item.voiceUrl);
     this.addToBacklog(item.speaker, item.text);
   }
 
@@ -1109,7 +1109,7 @@ class NovelApp {
     }
   }
 
-  startTyping(text, speakerId) {
+  startTyping(text, speakerId, voiceUrl = null) {
     this.clearTypingTimer();
     this.isTyping = true;
     this.fullText = text;
@@ -1118,7 +1118,7 @@ class NovelApp {
     this.dom.dialoguePrompt?.classList.add('hidden');
 
     if (!this.isSkipActive) {
-      this.speakText(text, speakerId);
+      this.speakText(text, speakerId, voiceUrl);
     }
 
     if (this.isSkipActive) {
@@ -1267,7 +1267,7 @@ class NovelApp {
     }, ms);
   }
 
-  speakText(text, speakerId) {
+  speakText(text, speakerId, voiceUrl = null) {
     clearTimeout(this.voiceWaveFallbackTimer);
     if (!this.audio.voiceEnabled) {
       this.dom.voiceWaveIndicator?.classList.add('hidden');
@@ -1276,16 +1276,21 @@ class NovelApp {
     const char = this.characters[speakerId] || this.characters.narrator;
     this.dom.voiceWaveIndicator?.classList.remove('hidden');
 
-    // Web Speech API の onend 未発火バグ対策：文字数に応じた最大時間で確実に波形を消す
-    const maxDuration = Math.min(12000, Math.max(2000, (text?.length || 10) * 150));
+    // Web Speech API / MP3再生のフォールバックタイマー：文字数に応じた最大時間で確実に波形を消す
+    const maxDuration = Math.min(15000, Math.max(2500, (text?.length || 10) * 160));
     this.voiceWaveFallbackTimer = setTimeout(() => {
       this.dom.voiceWaveIndicator?.classList.add('hidden');
     }, maxDuration);
 
-    this.audio.speak(text, char, () => {
-      clearTimeout(this.voiceWaveFallbackTimer);
-      this.dom.voiceWaveIndicator?.classList.add('hidden');
-    });
+    this.audio.speak(
+      text,
+      char,
+      () => {
+        clearTimeout(this.voiceWaveFallbackTimer);
+        this.dom.voiceWaveIndicator?.classList.add('hidden');
+      },
+      voiceUrl,
+    );
   }
 
   stopVoicePlayback() {

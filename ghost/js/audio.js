@@ -445,20 +445,80 @@ class AudioManager {
     return utterance;
   }
 
-  // Web Speech API によるセリフ発話 (終了コールバック対応)
-  speak(text, charData = null, onEndCallback = null) {
-    const isSpeechAvailable =
-      this.voiceEnabled &&
-      !window.gameApp?.isSkipActive &&
-      typeof window !== 'undefined' &&
-      'speechSynthesis' in window;
-
-    if (!isSpeechAvailable) {
+  // セリフ発話（録音MP3優先 ＆ Web Speech API 合成音声フォールバック）
+  speak(text, charData = null, onEndCallback = null, voiceUrl = null) {
+    if (!this.voiceEnabled || window.gameApp?.isSkipActive) {
       if (onEndCallback) onEndCallback();
       return;
     }
 
     this.stopVoice();
+
+    if (voiceUrl) {
+      this.playVoiceFile(voiceUrl, text, charData, onEndCallback);
+      return;
+    }
+
+    this.speakSpeechSynthesis(text, charData, onEndCallback);
+  }
+
+  ensureVoiceAudio() {
+    if (!this.voiceAudio && typeof Audio !== 'undefined') {
+      try {
+        this.voiceAudio = new Audio();
+        this.voiceAudio.preload = 'auto';
+      } catch (_e) {}
+    }
+    return this.voiceAudio || (typeof Audio !== 'undefined' ? new Audio() : null);
+  }
+
+  bindVoiceAudioEvents(audio, sessionId, voiceUrl, text, charData, onEndCallback) {
+    audio.onended = () => {
+      if (this.playSessionId === sessionId && onEndCallback) {
+        onEndCallback();
+      }
+    };
+
+    audio.onerror = (e) => {
+      if (this.playSessionId !== sessionId) return;
+      console.warn(`[Audio] Failed to load voice file: ${voiceUrl}`, e);
+      this.speakSpeechSynthesis(text, charData, onEndCallback);
+    };
+  }
+
+  // 録音ボイスMP3の直接同期再生（iOS/LINE内ブラウザ対応 単一Audio要素再利用）
+  playVoiceFile(voiceUrl, text, charData, onEndCallback) {
+    const audio = this.ensureVoiceAudio();
+    if (!audio) {
+      this.speakSpeechSynthesis(text, charData, onEndCallback);
+      return;
+    }
+
+    const sessionId = ++this.playSessionId;
+    this.bindVoiceAudioEvents(audio, sessionId, voiceUrl, text, charData, onEndCallback);
+
+    audio.src = voiceUrl;
+    audio.volume = Math.max(0, Math.min(1, this.voiceVolume * 0.95));
+    try {
+      audio.currentTime = 0;
+    } catch (_e) {}
+
+    const playPromise = audio.play();
+    if (!playPromise) return;
+
+    playPromise.catch((err) => {
+      if (this.playSessionId !== sessionId) return;
+      console.warn('[Audio] playVoiceFile play rejected:', err);
+      this.speakSpeechSynthesis(text, charData, onEndCallback);
+    });
+  }
+
+  // Web Speech API による合成音声フォールバック
+  speakSpeechSynthesis(text, charData, onEndCallback) {
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
+      if (onEndCallback) onEndCallback();
+      return;
+    }
 
     const cleanText = this.cleanSpeechText(text);
     if (!cleanText) {
@@ -477,6 +537,13 @@ class AudioManager {
   }
 
   stopVoice() {
+    this.playSessionId = (this.playSessionId || 0) + 1;
+    if (this.voiceAudio) {
+      try {
+        this.voiceAudio.pause();
+        this.voiceAudio.currentTime = 0;
+      } catch (_e) {}
+    }
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
       try {
         window.speechSynthesis.cancel();
