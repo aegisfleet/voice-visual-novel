@@ -53,7 +53,8 @@ class NovelApp {
     this.typingTimer = null;
     this.autoTimer = null;
     this.isTyping = false;
-    this.isAutoActive = false;
+    this.isAutoActive = true; // デフォルトでAUTO有効
+    this.isVoicePlaying = false;
     this.isSkipActive = false;
     this.currentDialogueQueue = [];
     this.queueIndex = 0;
@@ -142,6 +143,7 @@ class NovelApp {
       dialogueText: get('dialogue-text'),
       dialoguePrompt: get('dialogue-prompt'),
       btnDialogueAuto: get('btn-dialogue-auto'),
+      btnDialogueSpeed: get('btn-dialogue-speed'),
       btnDialogueSkip: get('btn-dialogue-skip'),
       btnDialogueLog: get('btn-dialogue-log'),
 
@@ -203,6 +205,8 @@ class NovelApp {
       settingsVoiceStatus: get('settings-voice-status'),
       btnTestSe: get('btn-test-se'),
       btnTestVoice: get('btn-test-voice'),
+      settingsSpeedVal: get('settings-speed-val'),
+      settingsSpeedOptions: get('settings-speed-options'),
     };
   }
 
@@ -233,6 +237,10 @@ class NovelApp {
     this.dom.btnDialogueAuto?.addEventListener('click', (e) => {
       e.stopPropagation();
       this.toggleAuto();
+    });
+    this.dom.btnDialogueSpeed?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.cycleVoiceSpeed();
     });
     this.dom.btnDialogueSkip?.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -410,6 +418,15 @@ class NovelApp {
     this.dom.btnResetAudio?.addEventListener('click', () => {
       this.resetAudioSettings();
     });
+
+    const speedBtns = this.dom.settingsSpeedOptions?.querySelectorAll('.btn-speed-option');
+    speedBtns?.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const speed = Number.parseFloat(btn.dataset.speed || '1.0');
+        this.setVoiceSpeed(speed);
+        this.audio.playSe('click');
+      });
+    });
   }
 
   setupKeyboardShortcuts() {
@@ -519,6 +536,8 @@ class NovelApp {
     this.isFinalDeductionComplete = false;
     this.state.resetTransientState();
     this.state.clearSessionProgress();
+    this.isAutoActive = true;
+    this.dom.btnDialogueAuto?.classList.add('active');
     this.audio.playBgm('investigate');
     this.switchScreen('novel');
     this.loadChapter(0);
@@ -530,6 +549,8 @@ class NovelApp {
       this.handleStartGame();
       return;
     }
+    this.isAutoActive = true;
+    this.dom.btnDialogueAuto?.classList.add('active');
     this.audio.playBgm(this.state.currentBgmMode || 'investigate');
     this.switchScreen('novel');
     this.loadChapter(this.state.currentChapter, true);
@@ -1128,6 +1149,9 @@ class NovelApp {
     }
 
     const charPitch = this.characters[speakerId]?.ttsPitch || 1.0;
+    const speedFactor = this.audio.voiceSpeed || 1.0;
+    const typeInterval = Math.max(10, Math.round(20 / speedFactor));
+
     const typeStep = () => {
       if (this.charIndex < this.fullText.length) {
         if (this.dom.dialogueText) {
@@ -1140,7 +1164,7 @@ class NovelApp {
           this.audio.synthesizeTypeBlip?.(charPitch);
         }
         this.charIndex += 1;
-        this.typingTimer = setTimeout(typeStep, 20);
+        this.typingTimer = setTimeout(typeStep, typeInterval);
       } else {
         this.finishTyping();
       }
@@ -1156,9 +1180,40 @@ class NovelApp {
     }
     this.dom.dialoguePrompt?.classList.remove('hidden');
 
-    if (this.isAutoActive && !this.isSkipActive) {
-      const delay = Math.max(1600, this.fullText.length * 65);
-      this.scheduleNextLine(delay);
+    this.checkAutoAdvance();
+  }
+
+  // AUTO自動進行の判定（音声再生中は終了ハンドラに委ね、音声終了済・音声なし時は余韻後に進行）
+  checkAutoAdvance() {
+    if (this.isSkipActive) {
+      this.scheduleNextLine(80);
+      return;
+    }
+    if (!this.isAutoActive) return;
+
+    // 音声が再生中の場合は、音声終了ハンドラ (handleVoicePlaybackEnd) に自動進行を委ねる
+    if (this.isVoicePlaying || this.audio.isVoicePlaying()) {
+      return;
+    }
+
+    // 音声がない場合、または既に再生完了している場合は余韻を置いて自動進行
+    const baseDelay = Math.max(1200, (this.fullText?.length || 10) * 55);
+    const speedFactor = this.audio.voiceSpeed || 1.0;
+    const waitTime = Math.max(400, Math.round(baseDelay / speedFactor));
+    this.scheduleNextLine(waitTime);
+  }
+
+  // 音声再生完了時のハンドラ（AUTOモード時、音声終了後に適度な余韻を置いて自動進行）
+  handleVoicePlaybackEnd() {
+    clearTimeout(this.voiceWaveFallbackTimer);
+    this.isVoicePlaying = false;
+    this.dom.voiceWaveIndicator?.classList.add('hidden');
+
+    // タイピングが既に終わっており、AUTOモードなら次のセリフへ自動進行
+    if (!this.isTyping && this.isAutoActive && !this.isSkipActive) {
+      const speedFactor = this.audio.voiceSpeed || 1.0;
+      const waitTime = Math.max(300, Math.round(500 / speedFactor));
+      this.scheduleNextLine(waitTime);
     }
   }
 
@@ -1269,25 +1324,31 @@ class NovelApp {
 
   speakText(text, speakerId, voiceUrl = null) {
     clearTimeout(this.voiceWaveFallbackTimer);
+    clearTimeout(this.autoTimer);
     if (!this.audio.voiceEnabled) {
+      this.isVoicePlaying = false;
       this.dom.voiceWaveIndicator?.classList.add('hidden');
       return;
     }
     const char = this.characters[speakerId] || this.characters.narrator;
     this.dom.voiceWaveIndicator?.classList.remove('hidden');
+    this.isVoicePlaying = true;
 
-    // Web Speech API / MP3再生のフォールバックタイマー：文字数に応じた最大時間で確実に波形を消す
-    const maxDuration = Math.min(15000, Math.max(2500, (text?.length || 10) * 160));
+    // Web Speech API / MP3再生のフォールバックタイマー：文字数に応じた最大時間で確実に波形を消し、AUTO進行を発火
+    const speedFactor = this.audio.voiceSpeed || 1.0;
+    const maxDuration = Math.min(
+      20000,
+      Math.max(3000, Math.round(((text?.length || 10) * 180) / speedFactor)),
+    );
     this.voiceWaveFallbackTimer = setTimeout(() => {
-      this.dom.voiceWaveIndicator?.classList.add('hidden');
+      this.handleVoicePlaybackEnd();
     }, maxDuration);
 
     this.audio.speak(
       text,
       char,
       () => {
-        clearTimeout(this.voiceWaveFallbackTimer);
-        this.dom.voiceWaveIndicator?.classList.add('hidden');
+        this.handleVoicePlaybackEnd();
       },
       voiceUrl,
     );
@@ -1295,6 +1356,7 @@ class NovelApp {
 
   stopVoicePlayback() {
     clearTimeout(this.voiceWaveFallbackTimer);
+    this.isVoicePlaying = false;
     this.audio.stopVoice();
     this.dom.voiceWaveIndicator?.classList.add('hidden');
   }
@@ -1790,7 +1852,7 @@ class NovelApp {
       this.isSkipActive = false;
       this.dom.btnDialogueAuto?.classList.add('active');
       this.dom.btnDialogueSkip?.classList.remove('active');
-      if (!this.isTyping) this.advanceDialogue();
+      if (!this.isTyping) this.checkAutoAdvance();
     } else {
       this.stopAuto();
     }
@@ -2158,6 +2220,32 @@ class NovelApp {
     }
   }
 
+  cycleVoiceSpeed() {
+    const newSpeed = this.audio.cycleVoiceSpeed();
+    this.updateVoiceSpeedUI(newSpeed);
+    this.audio.playSe('click');
+  }
+
+  setVoiceSpeed(speed) {
+    const newSpeed = this.audio.setVoiceSpeed(speed);
+    this.updateVoiceSpeedUI(newSpeed);
+  }
+
+  updateVoiceSpeedUI(speed) {
+    const speedStr = `${Number.isInteger(speed * 10) ? speed.toFixed(1) : speed.toFixed(2)}x`;
+    if (this.dom.btnDialogueSpeed) {
+      this.dom.btnDialogueSpeed.textContent = speedStr;
+    }
+    if (this.dom.settingsSpeedVal) {
+      this.dom.settingsSpeedVal.textContent = speedStr;
+    }
+    const speedBtns = this.dom.settingsSpeedOptions?.querySelectorAll('.btn-speed-option');
+    speedBtns?.forEach((btn) => {
+      const btnSpeed = Number.parseFloat(btn.dataset.speed || '1.0');
+      btn.classList.toggle('active', Math.abs(btnSpeed - speed) < 0.01);
+    });
+  }
+
   syncAudioSettingsUI() {
     this.syncSingleAudioSlider(
       this.dom.sliderBgmVolume,
@@ -2187,6 +2275,7 @@ class NovelApp {
       this.audio.voiceEnabled,
     );
 
+    this.updateVoiceSpeedUI(this.audio.voiceSpeed);
     this.updateAudioButtons();
   }
 
@@ -2194,6 +2283,7 @@ class NovelApp {
     this.audio.setBgmVolume(0.2);
     this.audio.setSeVolume(0.7);
     this.audio.setVoiceVolume(1.0);
+    this.setVoiceSpeed(1.0);
     this.audio.bgmEnabled = true;
     this.audio.seEnabled = true;
     this.audio.voiceEnabled = true;

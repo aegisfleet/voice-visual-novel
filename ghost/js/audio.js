@@ -27,6 +27,7 @@ class AudioManager {
     this.isAudioUnlocked = false;
     this.wasBgmPlayingBeforeHide = false;
     this.playSessionId = 0;
+    this.voiceSpeed = this.loadVoiceSpeed();
 
     // GHOST PROTOCOL 専用サイバーSE: box流用を廃止し、超高音質・ゼロ遅延のサイバーシンセエンジンへ完全移行 (sfx_cutin.mp3 / sfx_evidence.mp3 等の旧トラックをWeb Audio合成へ統合)
     this.seTracks = {};
@@ -433,7 +434,8 @@ class AudioManager {
     if (this.selectedVoice) {
       utterance.voice = this.selectedVoice;
     }
-    utterance.rate = charData?.ttsRate || 1.0;
+    const baseRate = charData?.ttsRate || 1.0;
+    utterance.rate = Math.min(2.0, baseRate * (this.voiceSpeed || 1.0));
     utterance.pitch = charData?.ttsPitch || 1.0;
     utterance.volume = this.voiceVolume;
     utterance.onend = () => {
@@ -498,6 +500,7 @@ class AudioManager {
     this.bindVoiceAudioEvents(audio, sessionId, voiceUrl, text, charData, onEndCallback);
 
     audio.src = voiceUrl;
+    audio.playbackRate = this.voiceSpeed || 1.0;
     audio.volume = Math.max(0, Math.min(1, this.voiceVolume * 0.95));
     try {
       audio.currentTime = 0;
@@ -511,6 +514,50 @@ class AudioManager {
       console.warn('[Audio] playVoiceFile play rejected:', err);
       this.speakSpeechSynthesis(text, charData, onEndCallback);
     });
+  }
+
+  loadVoiceSpeed() {
+    if (typeof localStorage === 'undefined') return 1.0;
+    try {
+      const saved = Number.parseFloat(localStorage.getItem('ghost_voice_speed') || '1.0');
+      return [1.0, 1.25, 1.5, 2.0].includes(saved) ? saved : 1.0;
+    } catch (_e) {
+      return 1.0;
+    }
+  }
+
+  setVoiceSpeed(speed) {
+    const validSpeeds = [1.0, 1.25, 1.5, 2.0];
+    const newSpeed = validSpeeds.includes(Number(speed)) ? Number(speed) : 1.0;
+    this.voiceSpeed = newSpeed;
+    if (typeof localStorage !== 'undefined') {
+      try {
+        localStorage.setItem('ghost_voice_speed', String(newSpeed));
+      } catch (_e) {}
+    }
+    if (this.voiceAudio) {
+      try {
+        this.voiceAudio.playbackRate = this.voiceSpeed;
+      } catch (_e) {}
+    }
+    return this.voiceSpeed;
+  }
+
+  cycleVoiceSpeed() {
+    const speeds = [1.0, 1.25, 1.5, 2.0];
+    const currentIndex = speeds.indexOf(this.voiceSpeed);
+    const nextIndex = (currentIndex + 1) % speeds.length;
+    return this.setVoiceSpeed(speeds[nextIndex]);
+  }
+
+  isVoicePlaying() {
+    if (this.voiceAudio && !this.voiceAudio.paused && !this.voiceAudio.ended) {
+      return true;
+    }
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      return window.speechSynthesis.speaking;
+    }
+    return false;
   }
 
   // Web Speech API による合成音声フォールバック

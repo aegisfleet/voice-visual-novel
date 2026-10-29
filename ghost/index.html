@@ -228,9 +228,10 @@
               <span id="voice-wave-indicator" class="voice-wave-indicator hidden"></span>
             </div>
             <div class="dialogue-ctrls">
-              <button type="button" id="btn-dialogue-auto" class="dialogue-ctrl-btn">AUTO</button>
-              <button type="button" id="btn-dialogue-skip" class="dialogue-ctrl-btn">SKIP</button>
-              <button type="button" id="btn-dialogue-log" class="dialogue-ctrl-btn">LOG</button>
+              <button type="button" id="btn-dialogue-auto" class="dialogue-ctrl-btn active" title="自動送り切替 (現在: ON)">AUTO</button>
+              <button type="button" id="btn-dialogue-speed" class="dialogue-ctrl-btn" title="音声再生速度切替 (1.0x / 1.25x / 1.5x / 2.0x)">1.0x</button>
+              <button type="button" id="btn-dialogue-skip" class="dialogue-ctrl-btn" title="スキップ切替">SKIP</button>
+              <button type="button" id="btn-dialogue-log" class="dialogue-ctrl-btn" title="バックログ表示">LOG</button>
             </div>
           </div>
           <div id="dialogue-text" class="dialogue-body"></div>
@@ -390,6 +391,23 @@
               <input type="range" id="slider-voice-volume" class="cyber-slider" min="0" max="100" step="1" value="100" aria-label="音声音量スライダー">
               <span id="val-voice-volume" class="settings-val-badge">100%</span>
               <button type="button" id="btn-test-voice" class="btn-settings-test" title="音声のテスト発話">試聴</button>
+            </div>
+          </div>
+
+          <!-- 音声再生速度 -->
+          <div class="settings-group">
+            <div class="settings-group-header">
+              <div class="settings-group-label">
+                <span class="settings-icon">⏩</span>
+                <span class="settings-name">SPEED (音声再生速度)</span>
+              </div>
+              <span id="settings-speed-val" class="settings-status-badge">1.0x</span>
+            </div>
+            <div class="settings-speed-options" id="settings-speed-options">
+              <button type="button" class="btn-speed-option active" data-speed="1.0">1.0x (標準)</button>
+              <button type="button" class="btn-speed-option" data-speed="1.25">1.25x (軽快)</button>
+              <button type="button" class="btn-speed-option" data-speed="1.5">1.5x (高速)</button>
+              <button type="button" class="btn-speed-option" data-speed="2.0">2.0x (倍速)</button>
             </div>
           </div>
 

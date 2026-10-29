@@ -3414,6 +3414,39 @@ body {
   color: #ffffff;
 }
 
+.settings-speed-options {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  width: 100%;
+}
+
+.btn-speed-option {
+  padding: 8px 4px;
+  background: rgba(14, 24, 46, 0.88);
+  border: 1px solid rgba(0, 240, 255, 0.28);
+  border-radius: 4px;
+  color: var(--text-sub);
+  font-family: var(--font-hud);
+  font-size: 0.76rem;
+  font-weight: 700;
+  cursor: pointer;
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.btn-speed-option:hover,
+.btn-speed-option.active {
+  background: rgba(0, 240, 255, 0.24);
+  border-color: var(--nco-cyan);
+  color: #ffffff;
+  box-shadow: 0 0 10px var(--nco-cyan-glow);
+}
+
 .settings-footer {
   display: flex;
   align-items: center;
@@ -3479,6 +3512,14 @@ body {
     padding: 4px 10px;
     min-height: 36px;
     min-width: 44px;
+  }
+  .settings-speed-options {
+    gap: 6px;
+  }
+  .btn-speed-option {
+    padding: 6px 2px;
+    font-size: 0.7rem;
+    min-height: 36px;
   }
 }
 
