@@ -114,6 +114,23 @@ class TestGhostHtmlStructure(unittest.TestCase):
         self.assertIn('href="../index.html" class="portal-link-btn"', box_html)
         self.assertIn('href="../index.html" class="btn-subtle btn-link-plate"', box_html)
 
+    def test_title_and_ending_have_social_share_and_copy_actions(self):
+        """タイトルとエンディングの共有・URLコピー操作が共通スクリプトへ接続されていること"""
+        title_start = self.html_content.index('id="screen-title"')
+        title_end = self.html_content.index('id="screen-novel"')
+        ending_start = self.html_content.index('id="screen-ending"')
+        ending_end = self.html_content.index('id="overlay-cutin"')
+        title = self.html_content[title_start:title_end]
+        ending = self.html_content[ending_start:ending_end]
+
+        self.assertIn('class="title-nav-bar"', title)
+        self.assertIn('data-share-action="x"', title)
+        self.assertIn('data-share-action="copy"', title)
+        self.assertIn('class="ending-share-bar"', ending)
+        self.assertIn('data-share-action="x"', ending)
+        self.assertIn('data-share-action="copy"', ending)
+        self.assertIn('../assets/js/share.js', self.html_content)
+
 
 class TestGhostPublishingMetadata(unittest.TestCase):
     """GHOSTポータル掲載・アクセス解析・SNS共有メタデータの検証"""
