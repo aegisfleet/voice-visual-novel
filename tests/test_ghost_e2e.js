@@ -258,6 +258,46 @@ async function runE2ETest() {
     console.log(`   ・初回テキスト: "${textFirst.slice(0, 20)}..."`);
     console.log(`   ・進行後テキスト: "${textSecond.slice(0, 20)}..."`);
 
+    console.log('5.1️⃣ カットシークエンス終了後のAUTO進行検証...');
+    await page.evaluate(() => {
+      const app = window.gameApp;
+      app.stopVoicePlayback();
+      app.stopAuto();
+      app.audio.voiceEnabled = false;
+      app.isAutoActive = true;
+      app.isSkipActive = false;
+      app.currentDialogueQueue = [
+        {
+          speaker: 'narrator',
+          text: 'だが——まさにその瞬間だった！！',
+          cutSequence: {
+            intervalMs: 10,
+            cuts: [
+              { frame: 1, caption: '自動遷移テスト 1', visualDesc: '1枚目' },
+              { frame: 2, caption: '自動遷移テスト 2', visualDesc: '2枚目' },
+            ],
+          },
+        },
+        { speaker: 'aria', text: '次のセリフに進みました。' },
+        { speaker: 'narrator', text: '停止確認用の最終行です。' },
+      ];
+      app.queueIndex = 0;
+      app.renderCurrentLine();
+    });
+    await page.waitForFunction(() => window.gameApp.queueIndex === 1, { timeout: 8000 });
+    const sequenceAdvance = await page.evaluate(() => {
+      const app = window.gameApp;
+      app.stopAuto();
+      return {
+        queueIndex: app.queueIndex,
+        sequenceVisible: !document.getElementById('cut-sequence-stage').classList.contains('hidden'),
+      };
+    });
+    if (sequenceAdvance.queueIndex !== 1 || sequenceAdvance.sequenceVisible) {
+      throw new Error('カットシークエンス終了後に次のセリフへ自動進行していません');
+    }
+    console.log('   ✅ カットシークエンス終了後の次セリフへの自動進行を確認');
+
     // Test 5: インゲームHUDからの設定モーダル開閉
     console.log('6️⃣ インゲームHUDからの設定モーダル開閉検証...');
     await page.click('#btn-hud-settings');

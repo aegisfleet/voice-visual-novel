@@ -1367,6 +1367,14 @@ class NovelApp {
         this.scheduleNextLine(1200);
         return;
       }
+      if (
+        this.currentCutSequence &&
+        this.dom.cutSequenceStage &&
+        !this.dom.cutSequenceStage.classList.contains('hidden')
+      ) {
+        this.scheduleNextLine(ms);
+        return;
+      }
       this.advanceDialogue();
     }, ms);
   }
