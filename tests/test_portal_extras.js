@@ -54,8 +54,9 @@ function createPortal(storageData) {
 test('EVE and BOX bonus links unlock after their respective clear requirements', () => {
   assert.equal((portalHtml.match(/data-eve-clear-bonus/g) || []).length, 4);
   assert.equal((portalHtml.match(/data-box-clear-bonus/g) || []).length, 2);
-  assert.match(portalHtml, /⏱ 想定20〜30分/);
-  assert.equal((portalHtml.match(/⏱ 想定45〜60分/g) || []).length, 2);
+  assert.match(portalHtml, /⏱ 本編目安 15〜20分/);
+  assert.equal((portalHtml.match(/⏱ 本編目安 30〜45分/g) || []).length, 2);
+  assert.match(portalHtml, /音声再生の有無で前後し、クリア後特典・音声試聴は含みません/);
   assert.match(portalHtml, /assets\/js\/portal-extras\.js/);
 
   const uncleared = createPortal({});
