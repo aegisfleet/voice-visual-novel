@@ -66,6 +66,12 @@ function collectChapter(chapter, entries, seen) {
 
   if (chapter.finalDeduction?.steps) {
     chapter.finalDeduction.steps.forEach((step, stepIndex) => {
+      collectLines(
+        [{ speaker: 'aria', text: step.question }],
+        `${prefix}_final_s${stepIndex + 1}_question`,
+        entries,
+        seen,
+      );
       collectLines(step.reaction, `${prefix}_final_s${stepIndex + 1}_reaction`, entries, seen);
     });
   }

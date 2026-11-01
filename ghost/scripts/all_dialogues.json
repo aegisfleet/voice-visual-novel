@@ -1330,6 +1330,13 @@
     "existingVoiceUrl": null
   },
   {
+    "id": "ch5_final_s1_question_01",
+    "speaker": "aria",
+    "text": "【法的根拠の立証】民間直接申請がなく基幹インフラ15分野に縛られる壁を突破し、正午に発生した「第1号」公開と明日の「第2号」予告に対し国家機関が職権介入するための法理論拠を示す証拠を提示せよ！",
+    "file": "assets/audio/voice/ch5_final_s1_question_01.mp3",
+    "existingVoiceUrl": null
+  },
+  {
     "id": "ch5_final_s1_reaction_01",
     "speaker": "kei",
     "text": "これを見てください、統括官！ 『国家サイバー対処法理・要件適合性審査レポート』です！",
@@ -1348,6 +1355,13 @@
     "speaker": "kuroda",
     "text": "見事だ……！ 法の壁は完全に打ち破られた！ だが次は侵入経路の物理的遮断だ！",
     "file": "assets/audio/voice/ch5_final_s1_reaction_03.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch5_final_s2_question_01",
+    "speaker": "aria",
+    "text": "【物理的侵害ルートの立証】なぜ攻撃者はマルウェアなしで被害者の自宅PCから4,352ファイルを吸い出し、「第1号」を晒すことができたのか？ 物理的接続設定の証拠を提示せよ！",
+    "file": "assets/audio/voice/ch5_final_s2_question_01.mp3",
     "existingVoiceUrl": null
   },
   {
@@ -1376,6 +1390,13 @@
     "speaker": "kuroda",
     "text": "よし！ そして最後に残る最大の謎……多段プロキシの奥に潜む真の発信源を特定し、晒しサイトと保管庫を消滅させる決定打を出せ！",
     "file": "assets/audio/voice/ch5_final_s2_reaction_04.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch5_final_s3_question_01",
+    "speaker": "aria",
+    "text": "【最終決定打の立証】多段偽装プロキシの奥に潜む真の発信源を暴き、正午に晒された「第1号」を消去し「第2号」以降の公開を永久に阻止するための最終決定打となる証拠を提示せよ！",
+    "file": "assets/audio/voice/ch5_final_s3_question_01.mp3",
     "existingVoiceUrl": null
   },
   {

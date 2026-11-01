@@ -1707,9 +1707,21 @@ class NovelApp {
     if (this.dom.choiceBadge) {
       this.dom.choiceBadge.textContent = '⚡ FINAL DEDUCTION / 最終証拠連結作戦';
     }
-    this.dom.choiceQuestion.innerHTML = `<span class="deduction-step-badge">STEP ${step.stepNumber} / ${steps.length}</span> ${step.question}`;
+    this.dom.choiceQuestion.innerHTML = `
+      <span class="deduction-step-badge">STEP ${step.stepNumber} / ${steps.length}</span>
+      ${step.question}
+      <button type="button" class="deduction-question-voice" aria-label="問題文をもう一度読み上げる">
+        🔊 問題文を読み上げ
+      </button>
+    `;
     this.dom.choiceOptions.innerHTML = '';
     this.deductionHintIndex = 0;
+    this.dom.choiceQuestion
+      .querySelector('.deduction-question-voice')
+      .addEventListener('click', (event) => {
+        event.stopPropagation();
+        this.speakDeductionQuestion(step);
+      });
 
     const grid = this.buildDeductionEvidenceGrid();
     this.dom.choiceOptions.appendChild(grid);
@@ -1719,7 +1731,13 @@ class NovelApp {
     this.dom.choiceStage.classList.remove('hidden');
     const cardEl = this.dom.choiceStage.querySelector('.choice-modal-card');
     if (cardEl) cardEl.scrollTop = 0;
-    this.speakText(step.question, 'aria');
+    this.speakDeductionQuestion(step);
+  }
+
+  speakDeductionQuestion(step) {
+    const speaker = 'aria';
+    const voiceUrl = this.resolveVoiceUrl({ speaker, text: step.question });
+    this.speakText(step.question, speaker, voiceUrl);
   }
 
   buildDeductionEvidenceGrid() {

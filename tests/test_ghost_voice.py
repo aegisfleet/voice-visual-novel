@@ -46,10 +46,13 @@ class TestGhostVoiceCoverage(unittest.TestCase):
         cls.manifest = read_manifest()
 
     def test_dialogue_catalog_is_complete(self):
-        """全221セリフがカタログに登録され、IDが一意であること"""
-        self.assertEqual(len(self.dialogues), 221)
+        """全224セリフと最終立証の読み上げ設問が登録され、IDが一意であること"""
+        self.assertEqual(len(self.dialogues), 224)
         ids = [entry["id"] for entry in self.dialogues]
         self.assertEqual(len(ids), len(set(ids)), "重複したセリフIDが存在します")
+        questions = [entry for entry in self.dialogues if "_final_s" in entry["id"] and "_question_" in entry["id"]]
+        self.assertEqual(len(questions), 3)
+        self.assertTrue(all(entry["speaker"] == "aria" for entry in questions))
 
     def test_dialogue_keys_are_unique(self):
         """マニフェストキー（speaker::text）が全セリフで一意であること"""

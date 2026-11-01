@@ -1735,6 +1735,28 @@ body {
   margin-right: 8px;
 }
 
+.deduction-question-voice {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 8px;
+  padding: 8px 12px;
+  border: 1px solid var(--nco-cyan);
+  border-radius: 6px;
+  background: rgba(0, 240, 255, 0.1);
+  color: #ffffff;
+  font: inherit;
+  font-size: 0.82rem;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.deduction-question-voice:hover,
+.deduction-question-voice:focus-visible {
+  background: rgba(0, 240, 255, 0.22);
+  outline: 2px solid var(--nco-cyan);
+  outline-offset: 2px;
+}
+
 .deduction-evidence-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));

@@ -258,7 +258,65 @@ async function runE2ETest() {
     console.log(`   ・初回テキスト: "${textFirst.slice(0, 20)}..."`);
     console.log(`   ・進行後テキスト: "${textSecond.slice(0, 20)}..."`);
 
-    console.log('5.1️⃣ カットシークエンス終了後のAUTO進行検証...');
+    console.log('5.1️⃣ 最終証拠連結の収録音声とTTS読み上げ検証...');
+    const deductionVoiceCheck = await page.evaluate(() => {
+      const app = window.gameApp;
+      const originalSpeak = app.audio.speak;
+      const originalVoiceEnabled = app.audio.voiceEnabled;
+      const originalData = app.finalDeductionData;
+      const originalStepIndex = app.deductionStepIndex;
+      const originalChoiceHidden = app.dom.choiceStage.classList.contains('hidden');
+      const originalNovelHidden = app.dom.novelWindow.classList.contains('choice-mode-hidden');
+      const spokenLines = [];
+      try {
+        app.stopVoicePlayback();
+        app.stopAuto();
+        app.audio.voiceEnabled = true;
+        app.audio.speak = (text, character, onEnd, voiceUrl) => {
+          spokenLines.push({ text, speaker: character?.id, voiceUrl });
+          onEnd?.();
+        };
+        app.finalDeductionData = app.scenario.chapters.find((chapter) => chapter.id === 5).finalDeduction;
+        app.deductionStepIndex = 0;
+        app.renderDeductionStep();
+        const voiceButton = app.dom.choiceQuestion.querySelector('.deduction-question-voice');
+        voiceButton?.click();
+        return {
+          question: app.finalDeductionData.steps[0].question,
+          voiceUrl: app.resolveVoiceUrl({
+            speaker: 'aria',
+            text: app.finalDeductionData.steps[0].question,
+          }),
+          voiceButtonAvailable: Boolean(voiceButton),
+          spokenLines,
+        };
+      } finally {
+        app.audio.speak = originalSpeak;
+        app.audio.voiceEnabled = originalVoiceEnabled;
+        app.stopVoicePlayback();
+        app.pauseAutoAdvance();
+        app.dom.choiceStage.classList.toggle('hidden', originalChoiceHidden);
+        app.dom.novelWindow.classList.toggle('choice-mode-hidden', originalNovelHidden);
+        app.finalDeductionData = originalData;
+        app.deductionStepIndex = originalStepIndex;
+      }
+    });
+    if (
+      !deductionVoiceCheck.voiceButtonAvailable ||
+      !deductionVoiceCheck.voiceUrl?.endsWith('ch5_final_s1_question_01.mp3') ||
+      deductionVoiceCheck.spokenLines.length !== 2 ||
+      deductionVoiceCheck.spokenLines.some(
+        (line) =>
+          line.text !== deductionVoiceCheck.question ||
+          line.speaker !== 'aria' ||
+          line.voiceUrl !== deductionVoiceCheck.voiceUrl,
+      )
+    ) {
+      throw new Error(`最終立証の収録音声/TTS読み上げが正しく接続されていません: ${JSON.stringify(deductionVoiceCheck)}`);
+    }
+    console.log('   ✅ アリアの収録音声を優先し、TTSにフォールバックする設問読み上げを確認');
+
+    console.log('5.2️⃣ カットシークエンス終了後のAUTO進行検証...');
     await page.evaluate(() => {
       const app = window.gameApp;
       app.stopVoicePlayback();
