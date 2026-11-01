@@ -16,9 +16,11 @@ import json
 import subprocess
 import unittest
 from pathlib import Path
+from xml.etree import ElementTree
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 GHOST_DIR = REPO_ROOT / "ghost"
+BASE_URL = "https://aegisfleet.github.io/voice-visual-novel"
 
 
 def run_node(code: str) -> str:
@@ -96,6 +98,49 @@ class TestGhostHtmlStructure(unittest.TestCase):
         """マナーモード回避用のSafari/外部ブラウザ起動導線が存在すること"""
         self.assertIn('id="line-external-notice"', self.html_content)
         self.assertIn("openExternalBrowser=1", self.html_content)
+
+
+class TestGhostPublishingMetadata(unittest.TestCase):
+    """GHOSTポータル掲載・アクセス解析・SNS共有メタデータの検証"""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.portal_html = (REPO_ROOT / "index.html").read_text(encoding="utf-8")
+        cls.game_html = (GHOST_DIR / "index.html").read_text(encoding="utf-8")
+        cls.sitemap = ElementTree.parse(REPO_ROOT / "sitemap.xml")
+
+    def test_portal_lists_ghost_game(self):
+        """ポータルカード・構造化データ・フッターからゲームへ移動できること"""
+        self.assertIn('id="cardGhost"', self.portal_html)
+        self.assertIn('id="btnPlayGhost"', self.portal_html)
+        self.assertIn('href="ghost/"', self.portal_html)
+        self.assertIn(f'"url": "{BASE_URL}/ghost/"', self.portal_html)
+        self.assertIn('3 TITLES AVAILABLE', self.portal_html)
+
+    def test_game_uses_shared_google_analytics_property(self):
+        """他作品と同じGoogle Analyticsプロパティを使うこと"""
+        self.assertIn("googletagmanager.com/gtag/js?id=G-YLW887GX7D", self.game_html)
+        self.assertIn("gtag('config', 'G-YLW887GX7D')", self.game_html)
+
+    def test_game_ogp_image_is_a_real_jpeg(self):
+        """OGP画像URLの拡張子・実ファイル形式・画像寸法が一致すること"""
+        image_path = GHOST_DIR / "assets" / "images" / "ogp-ghost.jpg"
+        self.assertTrue(image_path.is_file())
+        self.assertEqual(image_path.read_bytes()[:3], b"\xff\xd8\xff")
+        self.assertIn(f'"og:image" content="{BASE_URL}/ghost/assets/images/ogp-ghost.jpg"', self.game_html)
+        self.assertIn(f'"twitter:image" content="{BASE_URL}/ghost/assets/images/ogp-ghost.jpg"', self.game_html)
+        self.assertIn('name="twitter:card" content="summary_large_image"', self.game_html)
+        self.assertIn('property="og:image:width" content="1376"', self.game_html)
+        self.assertIn('property="og:image:height" content="768"', self.game_html)
+
+    def test_game_is_listed_in_sitemap(self):
+        """公開したゲームの正規URLがサイトマップに登録されること"""
+        namespace = {"sm": "http://www.sitemaps.org/schemas/sitemap/0.9"}
+        locations = [
+            node.text
+            for node in self.sitemap.findall(".//sm:loc", namespace)
+        ]
+        self.assertIn(f"{BASE_URL}/ghost/", locations)
 
 
 class TestGhostAudioPipeline(unittest.TestCase):
