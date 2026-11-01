@@ -298,6 +298,69 @@ async function runE2ETest() {
     }
     console.log('   ✅ カットシークエンス終了後の次セリフへの自動進行を確認');
 
+    console.log('5.2️⃣ 最終証拠連結の段階ヒントと設問TTS検証...');
+    const deductionPromptCheck = await page.evaluate(() => {
+      const app = window.gameApp;
+      const originalSpeak = app.audio.speak;
+      const originalVoiceEnabled = app.audio.voiceEnabled;
+      const originalData = app.finalDeductionData;
+      const originalStepIndex = app.deductionStepIndex;
+      const originalChoiceHidden = app.dom.choiceStage.classList.contains('hidden');
+      const originalNovelHidden = app.dom.novelWindow.classList.contains('choice-mode-hidden');
+      const spokenLines = [];
+      try {
+        app.stopVoicePlayback();
+        app.stopAuto();
+        app.audio.voiceEnabled = true;
+        app.audio.speak = (text, character, onEnd) => {
+          spokenLines.push({ text, speaker: character?.id });
+          onEnd?.();
+        };
+        app.finalDeductionData = app.scenario.chapters.find((chapter) => chapter.id === 5).finalDeduction;
+        app.deductionStepIndex = 0;
+        app.renderDeductionStep();
+        const step = app.finalDeductionData.steps[0];
+        app.handleDeductionIncorrect(step);
+        const firstHint = app.dom.choiceOptions.querySelector('.deduction-hint-banner')?.textContent;
+        app.handleDeductionIncorrect(step);
+        const secondHint = app.dom.choiceOptions.querySelector('.deduction-hint-banner')?.textContent;
+        return {
+          question: step.question,
+          firstHint,
+          secondHint,
+          spokenLines,
+          autoTimer: app.autoTimer,
+        };
+      } finally {
+        app.audio.speak = originalSpeak;
+        app.audio.voiceEnabled = originalVoiceEnabled;
+        app.stopVoicePlayback();
+        app.pauseAutoAdvance();
+        app.dom.choiceStage.classList.toggle('hidden', originalChoiceHidden);
+        app.dom.novelWindow.classList.toggle('choice-mode-hidden', originalNovelHidden);
+        app.finalDeductionData = originalData;
+        app.deductionStepIndex = originalStepIndex;
+      }
+    });
+    if (
+      deductionPromptCheck.firstHint === deductionPromptCheck.secondHint ||
+      !deductionPromptCheck.firstHint?.includes('アリアのヒント (1/3)') ||
+      !deductionPromptCheck.secondHint?.includes('アリアのヒント (2/3)')
+    ) {
+      throw new Error(`最終証拠連結のヒントが段階的に変化していません: ${JSON.stringify(deductionPromptCheck)}`);
+    }
+    if (
+      deductionPromptCheck.spokenLines.length !== 1 ||
+      deductionPromptCheck.spokenLines[0].text !== deductionPromptCheck.question ||
+      deductionPromptCheck.spokenLines[0].speaker !== 'aria'
+    ) {
+      throw new Error(`最終証拠連結の設問がアリアのTTSに渡されていません: ${JSON.stringify(deductionPromptCheck)}`);
+    }
+    if (deductionPromptCheck.autoTimer) {
+      throw new Error('最終証拠連結の設問TTS終了後にAUTO送りが予約されています');
+    }
+    console.log('   ✅ 不正解ごとに変化するヒントとアリアの設問TTSを確認');
+
     // Test 5: インゲームHUDからの設定モーダル開閉
     console.log('6️⃣ インゲームHUDからの設定モーダル開閉検証...');
     await page.click('#btn-hud-settings');

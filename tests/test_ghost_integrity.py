@@ -170,7 +170,9 @@ class TestGhostScenarioAndAssets(unittest.TestCase):
         for step in steps:
             self.assertTrue(step.get("question"))
             self.assertTrue(step.get("correctEvidenceId"))
-            self.assertTrue(step.get("hint"))
+            hints = step.get("hints", [])
+            self.assertGreaterEqual(len(hints), 3)
+            self.assertEqual(len(hints), len(set(hints)))
             self.assertGreaterEqual(len(step.get("reaction", [])), 1)
 
     def test_all_evidence_registered(self):

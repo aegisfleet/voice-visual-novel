@@ -67,6 +67,7 @@ class NovelApp {
     this.currentSpeaker = null;
     this.backlog = [];
     this.deductionStepIndex = 0;
+    this.deductionHintIndex = 0;
     this.selectedDeductionEvidence = null;
     this.isFinalDeductionComplete = false;
     this.pendingRetryChoice = null;
@@ -1259,7 +1260,12 @@ class NovelApp {
     this.dom.voiceWaveIndicator?.classList.add('hidden');
 
     // タイピングが既に終わっており、AUTOモードなら次のセリフへ自動進行
-    if (!this.isTyping && this.isAutoActive && !this.isSkipActive) {
+    if (
+      !this.isTyping &&
+      this.isAutoActive &&
+      !this.isSkipActive &&
+      this.dom.choiceStage?.classList.contains('hidden')
+    ) {
       const speedFactor = this.audio.voiceSpeed || 1.0;
       const waitTime = Math.max(300, Math.round(500 / speedFactor));
       this.scheduleNextLine(waitTime);
@@ -1703,6 +1709,7 @@ class NovelApp {
     }
     this.dom.choiceQuestion.innerHTML = `<span class="deduction-step-badge">STEP ${step.stepNumber} / ${steps.length}</span> ${step.question}`;
     this.dom.choiceOptions.innerHTML = '';
+    this.deductionHintIndex = 0;
 
     const grid = this.buildDeductionEvidenceGrid();
     this.dom.choiceOptions.appendChild(grid);
@@ -1712,6 +1719,7 @@ class NovelApp {
     this.dom.choiceStage.classList.remove('hidden');
     const cardEl = this.dom.choiceStage.querySelector('.choice-modal-card');
     if (cardEl) cardEl.scrollTop = 0;
+    this.speakText(step.question, 'aria');
   }
 
   buildDeductionEvidenceGrid() {
@@ -1818,13 +1826,19 @@ class NovelApp {
 
   handleDeductionIncorrect(step) {
     this.audio.playSe('evidence_b');
+    const hints = step.hints || [step.hint];
+    const hintIndex = Math.min(this.deductionHintIndex, hints.length - 1);
+    const hint = hints[hintIndex];
+    if (!hint) return;
+
     let hintBanner = this.dom.choiceOptions?.querySelector('.deduction-hint-banner');
     if (!hintBanner) {
       hintBanner = document.createElement('div');
       hintBanner.className = 'deduction-hint-banner';
       this.dom.choiceOptions.insertBefore(hintBanner, this.dom.choiceOptions.firstChild);
     }
-    hintBanner.textContent = `❌ 不正解です！ 【ヒント】${step.hint}`;
+    hintBanner.textContent = `❌ 不正解です！ 💡 アリアのヒント (${hintIndex + 1}/${hints.length}): ${hint}`;
+    this.deductionHintIndex += 1;
   }
 
   triggerCutin(
