@@ -1481,7 +1481,8 @@ class NovelApp {
   }
 
   showChoice(choiceData, type = 'forensic', retryMessage = null) {
-    this.stopAuto();
+    // 選択待ちの間だけ自動送りを止める。AUTOのON/OFF設定は保持し、選択後の会話で再開する
+    this.pauseAutoAdvance();
     this.stopSkip();
     this.stopVoicePlayback();
     this.closeCutSequence();
@@ -1670,7 +1671,8 @@ class NovelApp {
   // 6.1 最終証拠連結 (FINAL DEDUCTION) コントローラー
   startFinalDeduction(deductionData) {
     this.finalDeductionData = deductionData;
-    this.stopAuto();
+    // 証拠選択の待機中だけ自動送りを停止し、連結成功後の会話でAUTOを再開する
+    this.pauseAutoAdvance();
     this.stopSkip();
     this.stopVoicePlayback();
     this.renderDeductionStep();
@@ -1909,6 +1911,15 @@ class NovelApp {
   stopAuto() {
     this.isAutoActive = false;
     this.dom.btnDialogueAuto?.classList.remove('active');
+    if (this.autoTimer) {
+      clearTimeout(this.autoTimer);
+      this.autoTimer = null;
+    }
+  }
+
+  // 選択肢・最終立証の待機中に自動送りタイマーだけを止める。
+  // isAutoActive とボタンの点灯状態は維持し、選択後の会話からAUTOを再開させる。
+  pauseAutoAdvance() {
     if (this.autoTimer) {
       clearTimeout(this.autoTimer);
       this.autoTimer = null;

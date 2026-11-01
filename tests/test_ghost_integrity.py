@@ -278,5 +278,37 @@ class TestGhostGlossaryDecoration(unittest.TestCase):
         )
 
 
+class TestGhostAutoChoiceContinuity(unittest.TestCase):
+    """AUTO中に選択肢・最終立証へ入ってもAUTO設定が解除されないこと（回帰防止）"""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.app_js = (GHOST_DIR / "js" / "app.js").read_text(encoding="utf-8")
+
+    def method_body(self, name: str, next_marker: str) -> str:
+        start = self.app_js.index(f"  {name}(")
+        end = self.app_js.index(next_marker, start)
+        return self.app_js[start:end]
+
+    def test_show_choice_pauses_auto_without_disabling_it(self):
+        """選択肢表示は自動送りだけを止め、AUTOのON/OFF設定を落とさないこと"""
+        body = self.method_body("showChoice", "\n  setupChoiceHeader")
+        self.assertIn("this.pauseAutoAdvance();", body)
+        self.assertNotIn("this.stopAuto();", body)
+
+    def test_final_deduction_pauses_auto_without_disabling_it(self):
+        """最終証拠連結の証拠選択中もAUTO設定を保持すること"""
+        body = self.method_body("startFinalDeduction", "\n  renderDeductionStep")
+        self.assertIn("this.pauseAutoAdvance();", body)
+        self.assertNotIn("this.stopAuto();", body)
+
+    def test_pause_auto_advance_keeps_active_flag(self):
+        """pauseAutoAdvance がタイマーだけを止め、isAutoActive を変更しないこと"""
+        body = self.method_body("pauseAutoAdvance", "\n  toggleSkip")
+        self.assertIn("clearTimeout(this.autoTimer)", body)
+        self.assertNotIn("this.isAutoActive = false", body)
+        self.assertNotIn("classList.remove('active')", body)
+
+
 if __name__ == "__main__":
     unittest.main()

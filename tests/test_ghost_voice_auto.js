@@ -338,8 +338,69 @@ async function runTest() {
       window.ghostApp.stopVoicePlayback();
     });
 
-    console.log('✅ 全検証ステップに成功しました！');
-    if (consoleErrors.length > 0) {
+    // 8. 選択肢を選んでもAUTOが解除されず、選択後の会話で自動進行が再開されること
+    console.log('8. 選択肢選択後のAUTO継続検証');
+    const choicePage = await browser.newPage();
+    await choicePage.setViewport({ width: 1280, height: 720 });
+    await choicePage.goto(baseUrl, { waitUntil: 'domcontentloaded' });
+    await new Promise((r) => setTimeout(r, 600));
+    await choicePage.click('#btn-start-game');
+    await new Promise((r) => setTimeout(r, 600));
+
+    const autoBeforeChoice = await choicePage.evaluate(() => {
+      const app = window.ghostApp;
+      // 反応セリフの進行を決定的にするため、この検証ページのみ合成音声を止める
+      app.audio.voiceEnabled = false;
+      app.stopVoicePlayback();
+      const ch1 = app.scenario.chapters.find((c) => c.id === 1);
+      app.currentChapterData = ch1;
+      app.showChoice(ch1.choiceSteps[0], 'tactic');
+      return {
+        autoWhileChoosing: app.isAutoActive,
+        btnActive: document.getElementById('btn-dialogue-auto').classList.contains('active'),
+      };
+    });
+    console.log('選択表示中のAUTO状態:', autoBeforeChoice);
+    if (!autoBeforeChoice.autoWhileChoosing || !autoBeforeChoice.btnActive) {
+      throw new Error(`選択肢の表示でAUTOが解除されました: ${JSON.stringify(autoBeforeChoice)}`);
+    }
+
+    await choicePage.evaluate(() => {
+      const app = window.ghostApp;
+      const step = app.scenario.chapters[0].choiceSteps[0];
+      const correctIndex = step.options.findIndex((opt) => opt.isCorrect !== false);
+      const btns = Array.from(document.querySelectorAll('#choice-options .choice-btn'));
+      btns[correctIndex].click();
+    });
+    await new Promise((r) => setTimeout(r, 400));
+
+    const autoAfterChoice = await choicePage.evaluate(() => {
+      const app = window.ghostApp;
+      const result = {
+        autoAfterSelect: app.isAutoActive,
+        btnActive: document.getElementById('btn-dialogue-auto').classList.contains('active'),
+        choiceStageHidden: document.getElementById('choice-stage').classList.contains('hidden'),
+      };
+      // 反応セリフの読み上げ終了直後と同じ状態にして、自動送りが再スケジュールされるか確認
+      app.isTyping = false;
+      app.isVoicePlaying = false;
+      app.checkAutoAdvance();
+      result.autoResumed = app.autoTimer !== null;
+      return result;
+    });
+    console.log('選択後のAUTO状態:', autoAfterChoice);
+    if (!autoAfterChoice.autoAfterSelect || !autoAfterChoice.btnActive) {
+      throw new Error(`選択肢の選択でAUTOが解除されました: ${JSON.stringify(autoAfterChoice)}`);
+    }
+    if (!autoAfterChoice.choiceStageHidden) {
+      throw new Error('選択後に選択肢ステージが閉じていません');
+    }
+    if (!autoAfterChoice.autoResumed) {
+      throw new Error('選択後の会話でAUTOの自動進行が再開されませんでした');
+    }
+    await choicePage.close();
+
+    console.log('✅ 全検証ステップに成功しました！');    if (consoleErrors.length > 0) {
       console.warn('⚠️ コンソールエラーが発生しています:', consoleErrors);
     } else {
       console.log('✅ コンソールエラー 0件');
