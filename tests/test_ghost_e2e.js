@@ -218,6 +218,14 @@ async function runE2ETest() {
       );
     }, { timeout: 5000 });
 
+    await page.waitForFunction(
+      () => {
+        const audio = window.ghostApp?.audio?.voiceAudio;
+        return audio?.src.includes('disclaimer_01.mp3') && audio.readyState >= 2 && !audio.paused;
+      },
+      { timeout: 10000 },
+    );
+
     // ゲーム開始後も音量 50% (0.5) がリセットされず維持されていることの確認
     const inGameBgmVolume = await page.evaluate(() => window.ghostApp?.state?.bgmVolume);
     if (Math.abs(inGameBgmVolume - 0.5) > 0.01) {
@@ -246,7 +254,14 @@ async function runE2ETest() {
     // Test 4: ノベル会話進行の検証
     console.log('5️⃣ ノベル会話テキスト進行の検証...');
     await page.waitForSelector('#dialogue-text', { timeout: 5000 });
+    await page.waitForFunction(
+      () => document.getElementById('dialogue-text')?.textContent.includes('本作はフィクションです'),
+      { timeout: 10000 },
+    );
     const textFirst = await page.$eval('#dialogue-text', (el) => el.textContent.trim());
+    if (!textFirst.includes('本作はフィクションです')) {
+      throw new Error('プロローグ冒頭にフィクション免責ナレーションが表示されていません。');
+    }
 
     // 画面タップでセリフ進行
     await page.click('#novel-window');
@@ -257,6 +272,33 @@ async function runE2ETest() {
     const textSecond = await page.$eval('#dialogue-text', (el) => el.textContent.trim());
     console.log(`   ・初回テキスト: "${textFirst.slice(0, 20)}..."`);
     console.log(`   ・進行後テキスト: "${textSecond.slice(0, 20)}..."`);
+
+    // Test 4.5: バックログから冒頭免責ボイスを再生・停止できること
+    console.log('5.5️⃣ バックログ音声の再生・停止検証...');
+    await page.click('#btn-dialogue-log');
+    const firstLogText = await page.$eval(
+      '#modal-log-list .log-item .log-text',
+      (el) => el.textContent,
+    );
+    if (!firstLogText.includes('本作はフィクションです')) {
+      throw new Error('冒頭免責ナレーションがバックログに記録されていません。');
+    }
+    const firstLogVoiceButton = '#modal-log-list .log-item .log-voice-btn';
+    await page.click(firstLogVoiceButton);
+    await page.waitForFunction(
+      () => window.ghostApp?.audio?.voiceAudio?.src.includes('disclaimer_01.mp3'),
+      { timeout: 5000 },
+    );
+    const playingBacklogButton = await page.$eval(firstLogVoiceButton, (el) => ({
+      text: el.textContent,
+      pressed: el.getAttribute('aria-pressed'),
+    }));
+    if (playingBacklogButton.pressed !== 'true' || !playingBacklogButton.text.includes('停止')) {
+      throw new Error('バックログ音声の再生状態がボタンに反映されていません。');
+    }
+    await page.click(firstLogVoiceButton);
+    await page.click('#btn-close-log');
+    console.log('   ✅ 免責ナレーションのバックログ再生・停止を確認');
 
     console.log('5.1️⃣ 最終証拠連結の収録音声とTTS読み上げ検証...');
     const deductionVoiceCheck = await page.evaluate(() => {
@@ -505,24 +547,51 @@ async function runE2ETest() {
     }, { timeout: 5000 });
     console.log('   ✅ タイトル画面復帰正常確認');
 
-    // Test 7: 未解禁アーカイブのネタバレ防止（ロックマスク）検証
-    console.log('8️⃣ 未解禁アーカイブのネタバレ防止（ロックマスク）検証...');
-    await page.click('#btn-open-gallery');
-    await page.waitForFunction(() => {
-      const modal = document.getElementById('modal-gallery');
-      return modal && !modal.classList.contains('hidden');
-    });
-    const lockedMaskCount = await page.$$eval('.locked-mask', (els) => els.length);
-    console.log(`   ・検出されたロックマスク画像数: ${lockedMaskCount}`);
-    if (lockedMaskCount === 0) {
-      throw new Error('未解禁アイテム・証拠画像に locked-mask が適用されていません！');
+    // Test 7: クリア後特典のロックと開始前の音響設定アクセスを検証
+    console.log('8️⃣ クリア後特典と開始前設定へのアクセス検証...');
+    const extrasState = await page.evaluate(() => ({
+      extrasHidden: document.getElementById('title-extras')?.classList.contains('hidden'),
+      lockedNoticeVisible: !document.getElementById('title-extras-locked')?.classList.contains('hidden'),
+      audioSettingsVisible: window.getComputedStyle(document.getElementById('btn-title-settings')).display !== 'none',
+      gameCleared: window.ghostApp?.state?.isGameCleared(),
+    }));
+    if (
+      !extrasState.extrasHidden ||
+      !extrasState.lockedNoticeVisible ||
+      !extrasState.audioSettingsVisible ||
+      extrasState.gameCleared
+    ) {
+      throw new Error(`未クリア時の特典ロックまたは音響設定が不正です: ${JSON.stringify(extrasState)}`);
     }
-    await page.click('#btn-close-gallery');
-    await page.waitForFunction(() => {
-      const modal = document.getElementById('modal-gallery');
-      return modal && modal.classList.contains('hidden');
+    await page.evaluate(() => window.ghostApp?.openGalleryModal());
+    const galleryStillLocked = await page.$eval(
+      '#modal-gallery',
+      (el) => el.classList.contains('hidden'),
+    );
+    if (!galleryStillLocked) {
+      throw new Error('未クリア時に設定資料アーカイブが開けてしまいます。');
+    }
+    console.log('   ✅ 特典アーカイブをロックし、音響設定は開始前から利用可能');
+
+    await page.evaluate(() => {
+      window.ghostApp?.state?.markGameCleared();
+      window.ghostApp?.checkSavedSession();
     });
-    console.log('   ✅ 未解禁アーカイブ画像のネタバレ防止（ブラー＆暗転マスク）正常確認');
+    const extrasUnlocked = await page.evaluate(() => ({
+      extrasVisible: !document.getElementById('title-extras')?.classList.contains('hidden'),
+      lockedNoticeHidden: document.getElementById('title-extras-locked')?.classList.contains('hidden'),
+      novelButtonVisible: window.getComputedStyle(document.getElementById('btn-open-novel')).display !== 'none',
+      galleryButtonVisible: window.getComputedStyle(document.getElementById('btn-open-gallery')).display !== 'none',
+    }));
+    if (
+      !extrasUnlocked.extrasVisible ||
+      !extrasUnlocked.lockedNoticeHidden ||
+      !extrasUnlocked.novelButtonVisible ||
+      !extrasUnlocked.galleryButtonVisible
+    ) {
+      throw new Error(`クリア後特典が解放されません: ${JSON.stringify(extrasUnlocked)}`);
+    }
+    console.log('   ✅ クリア後に小説・設定資料アーカイブを解放');
 
     // Test 8: Chapter 5 Step 3 (100万ドル懸賞金・特別お見舞金) とスマホ画面 (375x750) レスポンシブ検証
     console.log('9️⃣ Chapter 5 第12報（100万ドル懸賞金）選択肢＆スマホ画面(375x750)検証...');

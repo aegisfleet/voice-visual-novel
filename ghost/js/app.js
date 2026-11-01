@@ -104,6 +104,8 @@ class NovelApp {
       btnContinueGame: get('btn-continue-game'),
       btnOpenNovel: get('btn-open-novel'),
       btnOpenGallery: get('btn-open-gallery'),
+      titleExtras: get('title-extras'),
+      titleExtrasLocked: get('title-extras-locked'),
       btnTitleSettings: get('btn-title-settings'),
       btnResetSave: get('btn-reset-save'),
       titleLoopInfo: get('title-loop-info'),
@@ -518,9 +520,11 @@ class NovelApp {
 
   // 3. タイトル＆セッション管理
   checkSavedSession() {
-    if (this.state.isGameCleared()) {
-      this.dom.titleClearBadge?.classList.remove('hidden');
-    }
+    const isGameCleared = this.state.isGameCleared();
+    this.dom.titleClearBadge?.classList.toggle('hidden', !isGameCleared);
+    this.dom.titleExtras?.classList.toggle('hidden', !isGameCleared);
+    this.dom.titleExtrasLocked?.classList.toggle('hidden', isGameCleared);
+    this.dom.btnHudNovel?.classList.toggle('hidden', !isGameCleared);
     if (this.state.hasSavedSession()) {
       this.dom.btnContinueGame?.classList.remove('hidden');
     }
@@ -615,7 +619,11 @@ class NovelApp {
   }
 
   loadPrologue(isResuming) {
-    this.currentDialogueQueue = [...this.scenario.prologue.dialogue];
+    const includeDisclaimer = !isResuming || this.state.openingNoticeVersion === 1;
+    this.currentDialogueQueue = [
+      ...(includeDisclaimer && this.scenario.disclaimer ? [this.scenario.disclaimer] : []),
+      ...this.scenario.prologue.dialogue,
+    ];
     this.queueIndex = isResuming ? this.state.currentLineIndex : 0;
     this.updateHudBadge('PROLOGUE', '予兆なき暗転');
     if (!isResuming) {
@@ -823,8 +831,9 @@ class NovelApp {
     );
     this.handleLineIllustration(item.illustration);
     this.applyDialogueDirectives(item);
-    this.startTyping(item.text, item.speaker, this.resolveVoiceUrl(item));
-    this.addToBacklog(item.speaker, item.text);
+    const voiceUrl = this.resolveVoiceUrl(item);
+    this.startTyping(item.text, item.speaker, voiceUrl);
+    this.addToBacklog(item.speaker, item.text, voiceUrl);
   }
 
   // セリフに対応する収録音声URLを解決する（直接指定 → 自動生成マニフェストの順）
@@ -1423,9 +1432,9 @@ class NovelApp {
     this.dom.voiceWaveIndicator?.classList.add('hidden');
   }
 
-  addToBacklog(speakerId, text) {
+  addToBacklog(speakerId, text, voiceUrl) {
     const char = this.characters[speakerId] || { name: speakerId };
-    this.backlog.push({ speaker: char.name, text });
+    this.backlog.push({ speaker: char.name, speakerId, text, voiceUrl });
   }
 
   // 6. キュー終了処理＆体験型選択肢
@@ -1986,6 +1995,7 @@ class NovelApp {
   // 8. モーダル制御
   openLogModal() {
     this.stopAuto();
+    this.stopSkip();
     this.renderBacklog();
     this.openModal(this.dom.modalLog);
   }
@@ -1996,13 +2006,70 @@ class NovelApp {
     this.backlog.forEach((item) => {
       const el = document.createElement('div');
       el.className = 'log-item';
-      el.innerHTML = `
-        <div class="log-speaker">${item.speaker}</div>
-        <div class="log-text">${item.text}</div>
-      `;
+      const header = document.createElement('div');
+      header.className = 'log-item-header';
+      const speaker = document.createElement('div');
+      speaker.className = 'log-speaker';
+      speaker.textContent = item.speaker;
+      header.appendChild(speaker);
+
+      if (item.voiceUrl) {
+        const voiceButton = document.createElement('button');
+        voiceButton.type = 'button';
+        voiceButton.className = 'log-voice-btn';
+        voiceButton.textContent = this.audio.voiceEnabled ? '▶ 再生' : '音声OFF';
+        voiceButton.disabled = !this.audio.voiceEnabled;
+        voiceButton.title = this.audio.voiceEnabled
+          ? 'このセリフの録音ボイスを再生'
+          : '音声設定がOFFです';
+        voiceButton.setAttribute('aria-label', `${item.speaker}のボイスを再生`);
+        voiceButton.addEventListener('click', () => this.playBacklogVoice(item, voiceButton));
+        header.appendChild(voiceButton);
+      }
+
+      const text = document.createElement('div');
+      text.className = 'log-text';
+      text.textContent = item.text;
+      el.append(header, text);
       this.dom.modalLogList.appendChild(el);
     });
     this.dom.modalLogList.scrollTop = this.dom.modalLogList.scrollHeight;
+  }
+
+  playBacklogVoice(item, button) {
+    if (this.activeBacklogVoiceButton === button) {
+      this.stopVoicePlayback();
+      this.resetBacklogVoiceButton();
+      return;
+    }
+
+    this.stopVoicePlayback();
+    this.resetBacklogVoiceButton();
+    this.activeBacklogVoiceButton = button;
+    button.textContent = '■ 停止';
+    button.setAttribute('aria-label', `${item.speaker}のボイスを停止`);
+    button.setAttribute('aria-pressed', 'true');
+
+    const charData = this.characters[item.speakerId] || null;
+    this.audio.speak(
+      item.text,
+      charData,
+      () => this.resetBacklogVoiceButton(button),
+      item.voiceUrl,
+    );
+  }
+
+  resetBacklogVoiceButton(button = this.activeBacklogVoiceButton) {
+    if (!button) return;
+    button.textContent = '▶ 再生';
+    button.setAttribute(
+      'aria-label',
+      `${button.closest('.log-item')?.querySelector('.log-speaker')?.textContent || 'このセリフ'}のボイスを再生`,
+    );
+    button.setAttribute('aria-pressed', 'false');
+    if (this.activeBacklogVoiceButton === button) {
+      this.activeBacklogVoiceButton = null;
+    }
   }
 
   openEvidenceModal() {
@@ -2054,6 +2121,7 @@ class NovelApp {
   }
 
   openNovelModal() {
+    if (!this.state.isGameCleared()) return;
     this.stopAuto();
     if (this.dom.modalNovelBody) {
       this.dom.modalNovelBody.innerHTML = this.formatMarkdown(this.scenario.novelFullText);
@@ -2062,6 +2130,7 @@ class NovelApp {
   }
 
   openGalleryModal() {
+    if (!this.state.isGameCleared()) return;
     this.stopAuto();
     if (this.dom.modalGalleryBody) {
       this.dom.modalGalleryBody.innerHTML = this.renderGalleryArchive();
@@ -2262,6 +2331,10 @@ class NovelApp {
   }
 
   closeModal(modalEl) {
+    if (modalEl === this.dom.modalLog && this.activeBacklogVoiceButton) {
+      this.stopVoicePlayback();
+      this.resetBacklogVoiceButton();
+    }
     modalEl?.classList.add('hidden');
   }
 

@@ -40,6 +40,7 @@ class GameState {
     this.currentPhase = 'intro'; // intro | mid | resolution | choice | deduction
     this.currentBgmMode = 'investigate';
     this.currentLineIndex = 0;
+    this.openingNoticeVersion = 1;
     this.selectedChoices = {};
     this.failedChoices = {}; // { [choiceId]: [optionId, ...] }
     this.collectedEvidence = new Set();
@@ -111,6 +112,7 @@ class GameState {
         currentPhase: this.currentPhase,
         currentBgmMode: this.currentBgmMode,
         currentLineIndex: this.currentLineIndex,
+        openingNoticeVersion: this.openingNoticeVersion,
         maxUnlockedChapter: this.maxUnlockedChapter,
         selectedChoices: this.selectedChoices,
         failedChoices: this.failedChoices,
@@ -148,6 +150,7 @@ class GameState {
     this.currentPhase = data.currentPhase || 'intro';
     this.currentBgmMode = data.currentBgmMode || 'investigate';
     this.currentLineIndex = this.normalizeNumber(data.currentLineIndex, 0);
+    this.openingNoticeVersion = data.openingNoticeVersion === 1 ? 1 : 0;
     this.maxUnlockedChapter = data.maxUnlockedChapter || 1;
     this.selectedChoices = data.selectedChoices || {};
     this.failedChoices = data.failedChoices || {};

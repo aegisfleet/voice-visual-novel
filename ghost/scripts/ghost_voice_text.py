@@ -50,6 +50,7 @@ VOICE_PROFILES = {
 
 # 長い表記から先に置換する（FT4/FT5 → FT4 の順序事故を防ぐ）
 MIXED_TERMS = [
+    ("脚色", "きゃくしょく"),
     ("AD（Active Directory）", "エーディー、アクティブディレクトリ"),
     ("AD (Active Directory)", "エーディー、アクティブディレクトリ"),
     ("Remote Desktop Protocol", "リモートデスクトッププロトコル"),

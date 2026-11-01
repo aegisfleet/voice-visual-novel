@@ -89,6 +89,7 @@ function main() {
   collectLines(scenario.prologue?.dialogue, 'prologue', entries, seen);
   (scenario.chapters || []).forEach((chapter) => collectChapter(chapter, entries, seen));
   collectEpilogue(scenario.epilogue, entries, seen);
+  collectLines([scenario.disclaimer], 'disclaimer', entries, seen);
 
   const missing = entries.filter((entry) => entry.file.startsWith('assets/audio/voice/'));
   const existing = entries.length - missing.length;

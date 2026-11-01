@@ -13,7 +13,9 @@
    - Chapter 5の終盤では、ストーリー進行中に手に入れた**6大核心鑑識証拠カード**を手元に展開。
    - プレイヤー自身が「制度上の壁の突破」「物理的侵入ルートの遮断」「真C2特定と無害化措置執行」の3つの問いに対し、正しい証拠品を選択・提示（突きつけ）して事件を自らの手で完全解決へと導きます（不正解時はヒント付きで何度でも再挑戦可能）。
 3. **「全編小説＆事件真相レポート」リーダーモード（`📖 小説版` / `READ FULL NOVEL & REPORT` ボタン）**
-   - タイトル画面や上部HUDの「📖 小説版」ボタン（またはキーボードの `N` キー）から、**プロローグ〜全5章〜エピローグの小説テキスト全文と、各章で暴かれた現実のインシデント構造解説レポート**を、いつでも一つの長編小説として通読・章別閲覧できます。
+   - 本編クリア後、タイトル画面のクリア特典または上部HUDの「📖 小説版」ボタン（キーボードの `N` キー）から、**プロローグ〜全5章〜エピローグの小説テキスト全文と、各章で暴かれた現実のインシデント構造解説レポート**を一つの長編小説として通読・章別閲覧できます。
+   - ゲーム開始時にはフィクションである旨をナレーションで案内し、バックログの各セリフから収録ボイスを再生・停止できます。
+   - 設定資料・ボイスアーカイブも本編クリア後のおまけとして解放します。プレイ中の鑑識手帳と音響設定はいつでも利用できます。
 4. **現実のサイバー攻撃・制度設計の深層と「企業の過失・SNS炎上」の光と影を完全網羅**
    - **Chapter 1（10/19〜10/21）**：なぜ攻撃者は資金を自分の口座へ盗み出さず、わざわざ高スプレッド往復注文（`DEMOFASTLOSS`）で顧客の口座残高を「溶かした」のか？（証券口座の出金名義一致制限と、顧客資産を人質にしたインフラ事業者への恐喝構造。さらに**全26,739台共通の管理者アカウント設計という基本欠陥**と、**第1報の「悪用・流出は確認されていない」という早計な安全宣言が招いた被害拡大**）
    - **Chapter 2（10/22）**：なぜ第2報の指示通りにパスワードを変更したのに不正取引が止まらなかったのか？（**第1報から一転した「小出し・後出し発表」へのSNS大炎上**、金融取引端末FT4/FT5の既存認証済みソケット維持仕様、企業の隠蔽体質への不信に付け込んだ攻撃者『Hacking Team』の集団訴訟煽動工作、KPS Office中国語メタデータによる多国籍偽旗工作）
@@ -57,9 +59,9 @@ Google Cloud Vertex AI の最新音声合成モデル「Gemini 3.8 Flash TTS」�
 - **設定資料モーダル内**: 本編の「機密設定資料集（FORENSIC ARCHIVE）」内の各キャラクターシート直下でも直接試聴可能
 - **生成スクリプト**: `ghost/scripts/generate_ghost_samples.py`（Vertex AI Python SDK + ffmpeg による 128kbps 軽量 MP3 変換パイプライン）
 
-## 全シナリオ収録ボイス（本編224セリフ）
+## 全シナリオ収録ボイス（本編225セリフ）
 
-プロローグ・全5章（導入／作戦選択の反応／次Dialogue／解決パート／最終立証の設問を含む）・エピローグの全224セリフに収録MP3ボイスを配備しています。Web Speech API が使えない環境（LINE内ブラウザ・iOS WKWebView等）でも同じ声で再生されます。
+冒頭のフィクションに関する免責ナレーション、プロローグ・全5章（導入／作戦選択の反応／次Dialogue／解決パート／最終立証の設問を含む）・エピローグの全225セリフに収録MP3ボイスを配備しています。Web Speech API が使えない環境（LINE内ブラウザ・iOS WKWebView等）でも同じ声で再生されます。
 
 - **音声格納先**: `ghost/assets/audio/voice/{安定ID}.mp3`（128kbps）。プロローグ18件は既存の `ghost/assets/audio/prologue/prologue_XX.mp3` を再利用。
 - **マニフェスト**: `ghost/js/voice-manifest.js`（自動生成）。`speaker::本文` をキーに音声パスを引き、`ghost/js/app.js` の `resolveVoiceUrl()` がセリフ単位で解決する。`scenario.js` 側に `voiceUrl` を大量追記しないため、本文修正時もキー再生成だけで整合が取れる。
@@ -68,7 +70,8 @@ Google Cloud Vertex AI の最新音声合成モデル「Gemini 3.8 Flash TTS」�
   2. `python ghost/scripts/generate_ghost_all_voices.py` — Gemini 3.8 Flash TTS (Vertex AI) で未生成分のみ生成（再開可能・リトライ付き）。1セリフだけ作り直す場合は `--id ch3_s1_opt2_reaction_04`、マニフェストのみ再構築する場合は `--manifest-only`。
   3. 生成結果は `ghost/scripts/voice_generation_report.json` に記録。
 - **読み上げ正規化**: `ghost/scripts/ghost_voice_text.py` が話者別ボイス（narrator=Fenrir / kei=Puck / aria=Zephyr / takamiya=Puck / kuroda=Algenib / mio=Leda）とスタイル、技術用語・ファイルパス・IPアドレス・記号の読み替えを管理する。
-- **整合性テスト**: `python tests/test_ghost_voice.py` が全224件の音声実在・MP3ヘッダ・マニフェスト網羅・読み込み順を検証する。
+- **整合性テスト**: `python tests/test_ghost_voice.py` が全225件の音声実在・MP3ヘッダ・マニフェスト網羅・読み込み順を検証する。
+- **クリア後特典**: 全編小説・事件真相レポート、設定資料・ボイス試聴アーカイブは本編クリア後に解放されます。プレイ中の鑑識手帳と音響設定はいつでも利用できます。
 
 ## ディレクトリ構成
 
@@ -76,7 +79,7 @@ Google Cloud Vertex AI の最新音声合成モデル「Gemini 3.8 Flash TTS」�
 - `ghost/samples.html` - Gemini 3.8 Flash TTS 公式キャラクターボイス＆ナレーション試聴室
 - `ghost/scripts/generate_ghost_samples.py` - Vertex AI Gemini 3.8 Flash TTS ボイスサンプル一括生成スクリプト
 - `ghost/assets/audio/samples/` - 生成された全24種類のキャラクターボイスMP3（128kbps）
-- `ghost/scripts/extract_ghost_dialogues.js` - `scenario.js` から全224セリフを抽出するカタログ生成スクリプト
+- `ghost/scripts/extract_ghost_dialogues.js` - `scenario.js` から全225セリフを抽出するカタログ生成スクリプト
 - `ghost/scripts/generate_ghost_all_voices.py` - 本編全セリフの収録ボイス生成・マニフェスト更新スクリプト
 - `ghost/scripts/ghost_voice_text.py` - 話者別ボイス設定とTTS用読み上げ正規化
 - `ghost/js/voice-manifest.js` - `speaker::本文` → 音声パスの自動生成マニフェスト

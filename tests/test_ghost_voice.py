@@ -12,6 +12,7 @@ GHOST PROTOCOL - 全シナリオ音声（収録MP3）整合性テストスイー
 
 import json
 import re
+import sys
 import unittest
 from pathlib import Path
 
@@ -19,6 +20,9 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 GHOST_DIR = REPO_ROOT / "ghost"
 DIALOGUES_PATH = GHOST_DIR / "scripts" / "all_dialogues.json"
 MANIFEST_PATH = GHOST_DIR / "js" / "voice-manifest.js"
+sys.path.insert(0, str(GHOST_DIR / "scripts"))
+from ghost_voice_text import normalize_for_tts  # noqa: E402
+
 MIN_BYTES = 1000
 
 MP3_FRAME_SYNC = re.compile(rb"[\xff][\xfb\xf3\xf2\xfa\xe3]")
@@ -46,8 +50,11 @@ class TestGhostVoiceCoverage(unittest.TestCase):
         cls.manifest = read_manifest()
 
     def test_dialogue_catalog_is_complete(self):
-        """全224セリフと最終立証の読み上げ設問が登録され、IDが一意であること"""
-        self.assertEqual(len(self.dialogues), 224)
+        """冒頭の免責ナレーションを含む全225セリフと最終立証設問のIDが一意であること"""
+        self.assertEqual(len(self.dialogues), 225)
+        disclaimer = [entry for entry in self.dialogues if entry["id"] == "disclaimer_01"]
+        self.assertEqual(len(disclaimer), 1)
+        self.assertIn("フィクションです", disclaimer[0]["text"])
         ids = [entry["id"] for entry in self.dialogues]
         self.assertEqual(len(ids), len(set(ids)), "重複したセリフIDが存在します")
         questions = [entry for entry in self.dialogues if "_final_s" in entry["id"] and "_question_" in entry["id"]]
@@ -140,6 +147,15 @@ class TestGhostVoiceWiring(unittest.TestCase):
         self.assertIn("resolveVoiceUrl(item)", self.app_js)
         self.assertIn("window.GHOST_VOICE_MANIFEST", self.app_js)
         self.assertIn("this.resolveVoiceUrl(item)", self.app_js)
+
+
+class TestGhostVoiceText(unittest.TestCase):
+    """読み上げ用テキスト正規化の検証"""
+
+    def test_kyakushoku_reading(self):
+        """脚色を音声合成が誤読しないよう、ひらがなの読みへ変換すること"""
+        self.assertIn("きゃくしょく", normalize_for_tts("物語上の脚色が含まれます。"))
+        self.assertNotIn("脚色", normalize_for_tts("物語上の脚色が含まれます。"))
 
 
 if __name__ == "__main__":

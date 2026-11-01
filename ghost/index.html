@@ -39,7 +39,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700;800&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="css/style.css?v=20261101_v20">
+  <link rel="stylesheet" href="css/style.css?v=20261101_v21">
 </head>
 <body>
   <div class="bg-grid"></div>
@@ -107,19 +107,22 @@
             <span class="btn-text">▶ START NOVEL (全5章)</span>
             <span class="btn-subtext">体験型電脳サスペンスノベルを開始する</span>
           </button>
-          <button type="button" id="btn-open-novel" class="btn-cyber-plate" title="全編小説＆事件真相レポートを読む">
-            <span class="btn-text">📖 READ FULL NOVEL &amp; REPORT</span>
-            <span class="btn-subtext">全編小説ビュー＆事件の技術・法制度解剖を読む</span>
-          </button>
-
-          <button type="button" id="btn-open-gallery" class="btn-cyber-plate" title="機密鑑識ファイル一覧を閲覧">
-            <span class="btn-text">◆ FORENSIC ARCHIVE</span>
-            <span class="btn-subtext">獲得した核心鑑識ファイル・証拠資料集</span>
-          </button>
-          <a href="samples.html" target="_blank" class="btn-cyber-plate btn-link-plate" title="Gemini 3.8 Flash TTS ボイス試聴室を開く">
-            <span class="btn-text">🎙️ VOICE ARCHIVE</span>
-            <span class="btn-subtext">全ボイス試聴室を開く (Gemini 3.8 Flash TTS)</span>
-          </a>
+          <p id="title-extras-locked" class="title-extras-locked">📦 小説全文・設定資料・ボイスアーカイブはゲームクリア後に解放</p>
+          <section id="title-extras" class="title-extras hidden" aria-labelledby="title-extras-heading">
+            <h2 id="title-extras-heading" class="title-extras-heading">CLEAR BONUS / EXTRA ARCHIVE</h2>
+            <button type="button" id="btn-open-novel" class="btn-cyber-plate" title="全編小説＆事件真相レポートを読む">
+              <span class="btn-text">📖 READ FULL NOVEL &amp; REPORT</span>
+              <span class="btn-subtext">全編小説ビュー＆事件の技術・法制度解剖を読む</span>
+            </button>
+            <button type="button" id="btn-open-gallery" class="btn-cyber-plate" title="機密鑑識ファイル一覧を閲覧">
+              <span class="btn-text">◆ FORENSIC ARCHIVE</span>
+              <span class="btn-subtext">設定資料・ボイス試聴・鑑識記録を閲覧</span>
+            </button>
+            <a href="samples.html" target="_blank" rel="noopener" class="btn-cyber-plate btn-link-plate" title="Gemini 3.8 Flash TTS ボイス試聴室を開く">
+              <span class="btn-text">🎙️ VOICE ARCHIVE</span>
+              <span class="btn-subtext">全ボイス試聴室を開く (Gemini 3.8 Flash TTS)</span>
+            </a>
+          </section>
           <button type="button" id="btn-title-settings" class="btn-cyber-plate" title="音量・オーディオ環境設定">
             <span class="btn-text">⚙️ AUDIO CONFIG</span>
             <span class="btn-subtext">音声・SE・BGM音量バランス設定</span>
@@ -428,9 +431,9 @@
   <!-- スクリプト読み込み -->
   <script src="js/audio.js?v=20261028_v19"></script>
   <script src="js/character.js?v=20261028_v19"></script>
-  <script src="js/scenario.js?v=20261101_v20"></script>
-  <script src="js/voice-manifest.js?v=20261101_v21"></script>
+  <script src="js/scenario.js?v=20261101_v21"></script>
+  <script src="js/voice-manifest.js?v=20261101_v22"></script>
   <script src="js/state.js?v=20261028_v19"></script>
-  <script src="js/app.js?v=20261101_v23"></script>
+  <script src="js/app.js?v=20261101_v24"></script>
 </body>
 </html>

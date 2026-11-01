@@ -7,6 +7,11 @@ window.SCENARIO_DATA = {
     description:
       '2026年10月VPS大規模サイバー侵害事件の光と影——窓口に黙殺された脆弱性報告者（バグハンター）の歪んだ報復と、企業の設計過失・後出し広報への批判、そして犯人が求めた「100万ドルの報奨金」が「100万ドルの犯人検挙懸賞金」へと反転する社会派サイバーサスペンス（第16報完全反映版）',
   },
+  disclaimer: {
+    speaker: 'narrator',
+    text: '本作はフィクションです。作中の人物・企業・団体・サービスは架空のものであり、実在の人物・企業・団体・サービスとは一切関係ありません。事件・制度・技術の描写には、物語上の脚色が含まれます。',
+    voiceUrl: 'assets/audio/voice/disclaimer_01.mp3',
+  },
   evidence: {
     ad_demofastloss_log: {
       id: 'ad_demofastloss_log',

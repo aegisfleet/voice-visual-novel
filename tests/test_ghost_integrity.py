@@ -82,6 +82,16 @@ class TestGhostHtmlStructure(unittest.TestCase):
         self.assertIn('id="modal-log"', self.html_content)
         self.assertIn('id="modal-log-list"', self.html_content)
 
+    def test_post_clear_extras_and_audio_settings_are_separated(self):
+        """小説・資料アーカイブをクリア後特典にし、音響設定を開始前から利用できること"""
+        extras_start = self.html_content.index('id="title-extras"')
+        extras_end = self.html_content.index("</section>", extras_start)
+        settings_position = self.html_content.index('id="btn-title-settings"')
+        self.assertIn('id="title-extras-locked"', self.html_content)
+        self.assertIn('id="btn-open-novel"', self.html_content[extras_start:extras_end])
+        self.assertIn('id="btn-open-gallery"', self.html_content[extras_start:extras_end])
+        self.assertNotIn('id="btn-title-settings"', self.html_content[extras_start:extras_end])
+
     def test_line_external_notice_present(self):
         """マナーモード回避用のSafari/外部ブラウザ起動導線が存在すること"""
         self.assertIn('id="line-external-notice"', self.html_content)
@@ -134,6 +144,13 @@ class TestGhostScenarioAndAssets(unittest.TestCase):
         self.assertGreaterEqual(len(self.scenario["prologue"].get("dialogue", [])), 5)
         self.assertIn("epilogue", self.scenario)
         self.assertGreaterEqual(len(self.scenario["epilogue"].get("dialogue", [])), 5)
+
+    def test_disclaimer_is_a_separate_opening_line(self):
+        """免責説明が既存シナリオIDをずらさない独立した冒頭セリフであること"""
+        disclaimer = self.scenario.get("disclaimer", {})
+        self.assertEqual(disclaimer.get("speaker"), "narrator")
+        self.assertIn("実在の人物・企業・団体・サービスとは一切関係ありません", disclaimer.get("text", ""))
+        self.assertEqual(disclaimer.get("voiceUrl"), "assets/audio/voice/disclaimer_01.mp3")
 
     def test_five_chapters_registered(self):
         """全5章の体験型ノベルシナリオが登録され、各章に導入・選択肢ステップ・解決パートが存在すること"""
