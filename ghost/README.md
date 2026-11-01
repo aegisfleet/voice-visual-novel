@@ -57,12 +57,30 @@ Google Cloud Vertex AI の最新音声合成モデル「Gemini 3.8 Flash TTS」�
 - **設定資料モーダル内**: 本編の「機密設定資料集（FORENSIC ARCHIVE）」内の各キャラクターシート直下でも直接試聴可能
 - **生成スクリプト**: `ghost/scripts/generate_ghost_samples.py`（Vertex AI Python SDK + ffmpeg による 128kbps 軽量 MP3 変換パイプライン）
 
+## 全シナリオ収録ボイス（本編221セリフ）
+
+プロローグ・全5章（導入／作戦選択の反応／次Dialogue／解決パート／最終立証）・エピローグの全221セリフに収録MP3ボイスを配備しています。Web Speech API が使えない環境（LINE内ブラウザ・iOS WKWebView等）でも同じ声で再生されます。
+
+- **音声格納先**: `ghost/assets/audio/voice/{安定ID}.mp3`（128kbps）。プロローグ18件は既存の `ghost/assets/audio/prologue/prologue_XX.mp3` を再利用。
+- **マニフェスト**: `ghost/js/voice-manifest.js`（自動生成）。`speaker::本文` をキーに音声パスを引き、`ghost/js/app.js` の `resolveVoiceUrl()` がセリフ単位で解決する。`scenario.js` 側に `voiceUrl` を大量追記しないため、本文修正時もキー再生成だけで整合が取れる。
+- **生成パイプライン**:
+  1. `node ghost/scripts/extract_ghost_dialogues.js` — `scenario.js` から全セリフを抽出し `ghost/scripts/all_dialogues.json` を更新。
+  2. `python ghost/scripts/generate_ghost_all_voices.py` — Gemini 3.8 Flash TTS (Vertex AI) で未生成分のみ生成（再開可能・リトライ付き）。1セリフだけ作り直す場合は `--id ch3_s1_opt2_reaction_04`、マニフェストのみ再構築する場合は `--manifest-only`。
+  3. 生成結果は `ghost/scripts/voice_generation_report.json` に記録。
+- **読み上げ正規化**: `ghost/scripts/ghost_voice_text.py` が話者別ボイス（narrator=Fenrir / kei=Puck / aria=Zephyr / takamiya=Puck / kuroda=Algenib / mio=Leda）とスタイル、技術用語・ファイルパス・IPアドレス・記号の読み替えを管理する。
+- **整合性テスト**: `python tests/test_ghost_voice.py` が全221件の音声実在・MP3ヘッダ・マニフェスト網羅・読み込み順を検証する。
+
 ## ディレクトリ構成
 
 - `ghost/index.html` - 5章タイムラインバー・小説リーダー・最終証拠連結UI・設定資料ボイス試聴搭載メイン画面
 - `ghost/samples.html` - Gemini 3.8 Flash TTS 公式キャラクターボイス＆ナレーション試聴室
 - `ghost/scripts/generate_ghost_samples.py` - Vertex AI Gemini 3.8 Flash TTS ボイスサンプル一括生成スクリプト
 - `ghost/assets/audio/samples/` - 生成された全24種類のキャラクターボイスMP3（128kbps）
+- `ghost/scripts/extract_ghost_dialogues.js` - `scenario.js` から全221セリフを抽出するカタログ生成スクリプト
+- `ghost/scripts/generate_ghost_all_voices.py` - 本編全セリフの収録ボイス生成・マニフェスト更新スクリプト
+- `ghost/scripts/ghost_voice_text.py` - 話者別ボイス設定とTTS用読み上げ正規化
+- `ghost/js/voice-manifest.js` - `speaker::本文` → 音声パスの自動生成マニフェスト
+- `ghost/assets/audio/voice/` - 本編全セリフの収録ボイスMP3（128kbps）
 - `ghost/css/style.css` - サイバーサスペンスUI・証拠連結カード・小説リーダー用スタイルシート
 - `ghost/js/scenario.js` - 全5章シナリオ・6大フォレンジック証拠・最終推論立証＆小説全文マスターデータ
 - `ghost/js/character.js` - 登場人物（ナギサ ケイ・アリア・タカミヤ レン・クロダ統括官・ミオ分析官・ナレーション）定義＆ボイスサンプル設定

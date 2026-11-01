@@ -16,6 +16,7 @@
       "box/css/**/*.css",
       "box/**/*.html",
       "ghost/js/**/*.js",
+      "!ghost/js/voice-manifest.js",
       "ghost/css/**/*.css",
       "ghost/**/*.html",
       "*.html",

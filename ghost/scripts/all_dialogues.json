@@ -1,0 +1,1549 @@
+[
+  {
+    "id": "prologue_01",
+    "speaker": "narrator",
+    "text": "2026年10月20日、火曜日、深夜23時45分。",
+    "file": "assets/audio/prologue/prologue_01.mp3",
+    "existingVoiceUrl": "assets/audio/prologue/prologue_01.mp3"
+  },
+  {
+    "id": "prologue_02",
+    "speaker": "narrator",
+    "text": "都内の静まり返った自室で、独立系金融インフラエンジニア・ナギサ ケイの監視モニターが突如、断末魔のようなエラーログを吹き鳴らした。",
+    "file": "assets/audio/prologue/prologue_02.mp3",
+    "existingVoiceUrl": "assets/audio/prologue/prologue_02.mp3"
+  },
+  {
+    "id": "prologue_03",
+    "speaker": "kei",
+    "text": "……なんだ？ 自前の自動取引アルゴリズム監視サーバーから、全APIの異常切断アラートが連続で出ている……！？",
+    "file": "assets/audio/prologue/prologue_03.mp3",
+    "existingVoiceUrl": "assets/audio/prologue/prologue_03.mp3"
+  },
+  {
+    "id": "prologue_04",
+    "speaker": "aria",
+    "text": "マスター、緊急事態です！ 接続先の金融VPSクラウド基盤……国内最大手『ネオドットコム デスクトップクラウド』の全インスタンスで、一斉に内部RPCエラーが検知されました！",
+    "file": "assets/audio/prologue/prologue_04.mp3",
+    "existingVoiceUrl": "assets/audio/prologue/prologue_04.mp3"
+  },
+  {
+    "id": "prologue_05",
+    "speaker": "kei",
+    "text": "全インスタンスだと！？ あのクラウドは、全国数万人規模の個人トレーダーが24時間体制で金融自動売買（FT4/FT5）を動かしている国内屈指の巨大基盤だぞ！",
+    "file": "assets/audio/prologue/prologue_05.mp3",
+    "existingVoiceUrl": "assets/audio/prologue/prologue_05.mp3"
+  },
+  {
+    "id": "prologue_06",
+    "speaker": "aria",
+    "text": "はい。稼働仮想マシン総数は26,739台……そのほぼすべてが管理ネットワークから次々と蒸発し、応答を喪失しつつあります！",
+    "file": "assets/audio/prologue/prologue_06.mp3",
+    "existingVoiceUrl": "assets/audio/prologue/prologue_06.mp3"
+  },
+  {
+    "id": "prologue_07",
+    "speaker": "narrator",
+    "text": "その直後、ケイの私用スマートフォンが狂ったように震え出した。発信元は——クラウド運用本部CSIRT現場リーダーであり、大学時代からの親友、タカミヤ レン。",
+    "file": "assets/audio/prologue/prologue_07.mp3",
+    "existingVoiceUrl": "assets/audio/prologue/prologue_07.mp3"
+  },
+  {
+    "id": "prologue_08",
+    "speaker": "takamiya",
+    "text": "『ケイ……！ 頼む、助けてくれ！ 現場のAD（Active Directory）管理プレーンが……全部乗っ取られた！』",
+    "file": "assets/audio/prologue/prologue_08.mp3",
+    "existingVoiceUrl": "assets/audio/prologue/prologue_08.mp3"
+  },
+  {
+    "id": "prologue_09",
+    "speaker": "kei",
+    "text": "レン！？ 落ち着け、一体何が起きてるんだ！？",
+    "file": "assets/audio/prologue/prologue_09.mp3",
+    "existingVoiceUrl": "assets/audio/prologue/prologue_09.mp3"
+  },
+  {
+    "id": "prologue_10",
+    "speaker": "takamiya",
+    "text": "『深夜、管理基盤の深部に侵入された……！ 2万6千台のWindows VPSのマスターパスワードが吸い出され、顧客の口座情報が……裏コマンドから次々と書き換えられている！』",
+    "file": "assets/audio/prologue/prologue_10.mp3",
+    "existingVoiceUrl": "assets/audio/prologue/prologue_10.mp3"
+  },
+  {
+    "id": "prologue_11",
+    "speaker": "takamiya",
+    "text": "『このまま夜が明ければ、数万人の顧客資産が全滅する……！ 我々は午前4時をもって、26,739台すべての【全回線切断・強制シャットダウン】を決断する！』",
+    "file": "assets/audio/prologue/prologue_11.mp3",
+    "existingVoiceUrl": "assets/audio/prologue/prologue_11.mp3"
+  },
+  {
+    "id": "prologue_12",
+    "speaker": "kei",
+    "text": "26,739台の全停止……！ 日本の金融インフラを揺るがす未曾有のインシデントになるぞ……！",
+    "file": "assets/audio/prologue/prologue_12.mp3",
+    "existingVoiceUrl": "assets/audio/prologue/prologue_12.mp3"
+  },
+  {
+    "id": "prologue_13",
+    "speaker": "narrator",
+    "text": "深夜の死闘の末、運命の午前4時00分が訪れた。対策本部は苦渋の決断として、全仮想マシンの強制回線切断に踏み切った。",
+    "file": "assets/audio/prologue/prologue_13.mp3",
+    "existingVoiceUrl": "assets/audio/prologue/prologue_13.mp3"
+  },
+  {
+    "id": "prologue_14",
+    "speaker": "aria",
+    "text": "マスター、シャットダウンが執行されました。全サーバーが沈黙……ですが、不吉なデータを受信しました！",
+    "file": "assets/audio/prologue/prologue_14.mp3",
+    "existingVoiceUrl": "assets/audio/prologue/prologue_14.mp3"
+  },
+  {
+    "id": "prologue_15",
+    "speaker": "kei",
+    "text": "……なんだ、このメッセージは？",
+    "file": "assets/audio/prologue/prologue_15.mp3",
+    "existingVoiceUrl": "assets/audio/prologue/prologue_15.mp3"
+  },
+  {
+    "id": "prologue_16",
+    "speaker": "narrator",
+    "text": "ブラックアウトした画面の中央に、攻撃者からの暗号化メッセージが浮かび上がった。《シャットダウンご苦労様。だが、本当のゲームはこれからだ》。",
+    "file": "assets/audio/prologue/prologue_16.mp3",
+    "existingVoiceUrl": "assets/audio/prologue/prologue_16.mp3"
+  },
+  {
+    "id": "prologue_17",
+    "speaker": "kei",
+    "text": "全26,739台のVPSを物理遮断した直後に、この挑発メッセージ……敵の仕掛けはまだ終わっていない！ アリア、セキュアVMを展開しろ！ これよりクラウド緊急対策本部の支援に入る！",
+    "file": "assets/audio/prologue/prologue_17.mp3",
+    "existingVoiceUrl": "assets/audio/prologue/prologue_17.mp3"
+  },
+  {
+    "id": "prologue_18",
+    "speaker": "aria",
+    "text": "了解しました、マスター。沈黙した26,739台の背後に潜む『亡霊の通信規約（ゴースト・プロトコル）』——命を削る電脳戦争の幕開けです！",
+    "file": "assets/audio/prologue/prologue_18.mp3",
+    "existingVoiceUrl": "assets/audio/prologue/prologue_18.mp3"
+  },
+  {
+    "id": "ch1_intro_01",
+    "speaker": "narrator",
+    "text": "10月21日、午前4時00分。国内大手GNOインターネットグループは、26,739台におよぶWindows VPSのネットワークを全面遮断し、全サーバーの緊急停止に踏み切った。",
+    "file": "assets/audio/voice/ch1_intro_01.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch1_intro_02",
+    "speaker": "narrator",
+    "text": "しかし夜明けとともに、SNS上には全国のトレーダーたちの悲鳴と怒号が津波のように押し寄せた。「ふざけるな！ サーバー停止直前に勝手に見覚えのないハイレバ注文が乱発され、口座残高400万円が2秒でゼロになった！」「全財産が消えた、返せ！」",
+    "file": "assets/audio/voice/ch1_intro_02.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch1_intro_03",
+    "speaker": "takamiya",
+    "text": "ケイ、問い合わせ窓口が完全にパンクしている……！ 1時間で数千件の口座破綻報告だ。実は今朝の第1報で、法務と広報が「現時点で情報の悪用や個人情報の外部流出は確認されておりません」と発表してしまったんだ……！",
+    "file": "assets/audio/voice/ch1_intro_03.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch1_intro_04",
+    "speaker": "kei",
+    "text": "なっ……！？ 調査も終わっていないのに「悪用は確認されていない」なんて安全宣言を出したのか！？ その第1報を信じて口座を放置したユーザーが今、次々と焼き払われているんだぞ！ しかもログを見れば、全26,739台のVPSに「共通の管理者アカウント」が使われているじゃないか！ 1箇所破られただけで2万6千台すべてが一網打尽になるなんて、クラウド設計の基本すら守られていないぞ！",
+    "file": "assets/audio/voice/ch1_intro_04.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch1_intro_05",
+    "speaker": "takamiya",
+    "text": "返す言葉もない……レガシーな一括管理設計のツケと、初動広報の矮小化が最悪の形で重なってしまった……！ ケイ、一体どこから鑑識のメスを入れればいいんだ！？",
+    "file": "assets/audio/voice/ch1_intro_05.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch1_s1_next_01",
+    "speaker": "takamiya",
+    "text": "被害の傾向は掴めた……だが不可解すぎる！ 証券会社には本人名義出金制限と二段階認証がある。攻撃者は1円も出金できていない！ 金を盗めないのに、なぜ他人の口座をゼロにするんだ！？",
+    "file": "assets/audio/voice/ch1_s1_next_01.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch1_s1_next_02",
+    "speaker": "kei",
+    "text": "出金できないのに残高が消える……？ アリア、抽出したFT4取引ログの生テレメトリをモニターに展開しろ！",
+    "file": "assets/audio/voice/ch1_s1_next_02.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch1_s1_opt1_reaction_01",
+    "speaker": "kei",
+    "text": "アリア、被害を受けた上位50口座のFT4取引プロトコルから、ミリ秒単位の注文パラメータをすべて抽出しろ！",
+    "file": "assets/audio/voice/ch1_s1_opt1_reaction_01.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch1_s1_opt1_reaction_02",
+    "speaker": "aria",
+    "text": "承知しました！ 異常な注文テレメトリを捕捉しました……全口座で極めて特異なシグネチャが刻まれています！",
+    "file": "assets/audio/voice/ch1_s1_opt1_reaction_02.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch1_s1_opt2_reaction_01",
+    "speaker": "kei",
+    "text": "外部へ不正送金するバンキング型マルウェアが仕組まれていないか、OSログを洗ってくれ！",
+    "file": "assets/audio/voice/ch1_s1_opt2_reaction_01.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch1_s1_opt2_reaction_02",
+    "speaker": "aria",
+    "text": "外部送金マルウェアは……ゼロです！ 攻撃者は送金など行っていません。調査時間を1時間ロスしてしまいました！",
+    "file": "assets/audio/voice/ch1_s1_opt2_reaction_02.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch1_s1_opt3_reaction_01",
+    "speaker": "kei",
+    "text": "証券会社のWeb画面にブルートフォースや二段階認証突破の形跡がないか照会しろ！",
+    "file": "assets/audio/voice/ch1_s1_opt3_reaction_01.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch1_s1_opt3_reaction_02",
+    "speaker": "aria",
+    "text": "Webログイン試行はゼロ件です！ 攻撃者はWeb画面ではなく、端末内部から直接仕掛けています！",
+    "file": "assets/audio/voice/ch1_s1_opt3_reaction_02.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch1_s2_next_01",
+    "speaker": "takamiya",
+    "text": "なんて残酷な……顧客の運用資金を人質にして焼き払ったというのか！ しかしこれで手口は暴かれた。至急、第2報でユーザーに対策を呼びかけるぞ！",
+    "file": "assets/audio/voice/ch1_s2_next_01.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch1_s2_opt1_reaction_01",
+    "speaker": "kei",
+    "text": "攻撃者が別口座で反対売買を待ち構え、資金を自己口座へ移転させたんじゃないか？",
+    "file": "assets/audio/voice/ch1_s2_opt1_reaction_01.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch1_s2_opt1_reaction_02",
+    "speaker": "takamiya",
+    "text": "いや、被害口座はすべてインターバンク市場に直結したECN口座だ！ 流動性プロバイダを介すため、特定口座へ資金を吸い上げることは構造的に不可能だ！",
+    "file": "assets/audio/voice/ch1_s2_opt1_reaction_02.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch1_s2_opt2_reaction_01",
+    "speaker": "kei",
+    "text": "やっぱりだ……！ 高スプレッド通貨を0.1秒で高速往復売買させ、残高を手数料として瞬時に市場へ蒸発させている！ 送金ではなく『口座の焼却』だ！",
+    "file": "assets/audio/voice/ch1_s2_opt2_reaction_01.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch1_s2_opt2_reaction_02",
+    "speaker": "aria",
+    "text": "ビンゴですマスター！ 出金制限を逆手に取り、顧客資産を人質（レバレッジ）に変えてインフラ企業を脅迫する構造です！",
+    "file": "assets/audio/voice/ch1_s2_opt2_reaction_02.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch1_s2_opt2_reaction_03",
+    "speaker": "kei",
+    "text": "だが待てよ……注文コメントに刻まれた『DEMOFASTLOSS（高速損失デモ）』という文字列。犯罪組織の署名にしては、まるで「脆弱性の概念実証（PoC）デモ」のような妙な名前だな……？",
+    "file": "assets/audio/voice/ch1_s2_opt2_reaction_03.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch1_s3_opt1_reaction_01",
+    "speaker": "kei",
+    "text": "原因が完全特定できるまで公表を控え、水面下でサイレント調査を進めるべきだ。",
+    "file": "assets/audio/voice/ch1_s3_opt1_reaction_01.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch1_s3_opt1_reaction_02",
+    "speaker": "takamiya",
+    "text": "だめだ！ すでにSNSで被害報告が爆発している！ 沈黙すれば隠蔽工作とみなされ金融庁から業務改善命令どころか業務停止命令が飛ぶぞ！",
+    "file": "assets/audio/voice/ch1_s3_opt1_reaction_02.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch1_s3_opt2_reaction_01",
+    "speaker": "kei",
+    "text": "全ブローカーに要請し、無関係な一般口座も含めて全顧客口座を無期限凍結してはどうだ？",
+    "file": "assets/audio/voice/ch1_s3_opt2_reaction_01.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch1_s3_opt2_reaction_02",
+    "speaker": "takamiya",
+    "text": "無茶を言うな！ 被害のない正常な数百万口座まで止めたら金融市場が大混乱に陥る！ ブローカー各社から即座に拒絶された！",
+    "file": "assets/audio/voice/ch1_s3_opt2_reaction_02.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch1_s3_opt3_reaction_01",
+    "speaker": "kei",
+    "text": "全ユーザーにパスワードの即時変更を呼びかけろ！ これでアカウントの不正操作は防げるはずだ！",
+    "file": "assets/audio/voice/ch1_s3_opt3_reaction_01.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch1_s3_opt3_reaction_02",
+    "speaker": "takamiya",
+    "text": "よし、第2報として公式発表する！ これで最悪の事態は防げるはずだ！",
+    "file": "assets/audio/voice/ch1_s3_opt3_reaction_02.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch1_resolution_01",
+    "speaker": "aria",
+    "text": "核心鑑識データ『AD侵入痕跡・取引プロトコル生ログ』を取得しました。口座焼却の真相が完全に立証されました！",
+    "file": "assets/audio/voice/ch1_resolution_01.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch1_resolution_02",
+    "speaker": "takamiya",
+    "text": "10月22日昼、第2報のリリース完了！ 昨日の第1報を訂正して口座情報閲覧の可能性を公表し、全ユーザーへパスワードの即時変更を呼びかけた。これで今夜の不正取引は阻止できるはずだ……！",
+    "file": "assets/audio/voice/ch1_resolution_02.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch1_resolution_03",
+    "speaker": "narrator",
+    "text": "安堵の息を漏らした瞬間、対策本部のホットラインがけたたましい警報音を鳴り響かせた。",
+    "file": "assets/audio/voice/ch1_resolution_03.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch1_resolution_04",
+    "speaker": "takamiya",
+    "text": "……な、なんだ！？ 攻撃者から対策室の直通シークレットチャットに、直筆の暗号化メッセージが届いた……！？",
+    "file": "assets/audio/voice/ch1_resolution_04.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch1_resolution_05",
+    "speaker": "kei",
+    "text": "メッセージの内容は何だ、レン！？",
+    "file": "assets/audio/voice/ch1_resolution_05.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch1_resolution_06",
+    "speaker": "takamiya",
+    "text": "『無様な抵抗だ。数ヶ月前、俺が貴様らの脆弱性通報窓口に何十回この設計欠陥を報告してやったか覚えているか？ テンプレ返信ひとつ寄越さず、俺の報告をゴミ箱へ捨てて無視（ゴースト）したな』……！？",
+    "file": "assets/audio/voice/ch1_resolution_06.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch1_resolution_07",
+    "speaker": "takamiya",
+    "text": "さらに続きがあるぞ！ 『正規の窓口でバグバウンティ（脆弱性報奨金）すら払わず黙殺した代償は高くつく。第2報を出してユーザーにパスワード変更を呼びかけたところで、貴様らの無力さを全国に晒してやる』……だと！？",
+    "file": "assets/audio/voice/ch1_resolution_07.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch1_resolution_08",
+    "speaker": "kei",
+    "text": "脆弱性通報窓口に何十回も報告して無視された……！？ まさか犯人は、過去に報奨金（バグバウンティ）目当てで会社の窓口へ連絡していた発見者なのか！？ しかもパスワード変更が無駄だと言い切っている……一体何が起きようとしているんだ！？",
+    "file": "assets/audio/voice/ch1_resolution_08.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch2_intro_01",
+    "speaker": "narrator",
+    "text": "10月22日昼の第2報発表から数時間が経過した同日夜19時30分。ユーザーによるパスワード変更が進み、「これで口座破壊は食い止められるはずだ」と対策室が祈るような思いで監視を続けていた矢先だった。",
+    "file": "assets/audio/voice/ch2_intro_01.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch2_intro_02",
+    "speaker": "narrator",
+    "text": "SNSは前日を遥かに超える地獄絵図と化していた。「昨日の第1報では『悪用は確認されていない』と言い切ったくせに、今日の第2報で後出し発表か！」「しかも公式の指示通りパスワードを変えたのに、今夜も勝手に取引されて口座が全滅した！」「不都合な事実を小出しにして隠蔽するな！」",
+    "file": "assets/audio/voice/ch2_intro_02.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch2_intro_03",
+    "speaker": "takamiya",
+    "text": "くそっ……！ 21日午前4時に全26,739台のVPSを完全停止させているんだぞ！？ 死んだはずのVPSから、なぜ外部の取引所に注文が通るんだ……！？ 電源を落とした2万6千台の亡霊（ゴースト）が勝手に取引しているとでもいうのか！？",
+    "file": "assets/audio/voice/ch2_intro_03.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch2_s1_next_01",
+    "speaker": "takamiya",
+    "text": "全ブローカーに要請し、全セッション強制パージ（Session Kill）を発令した！ これで不正注文は完全に止まったぞ！",
+    "file": "assets/audio/voice/ch2_s1_next_01.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch2_s1_next_02",
+    "speaker": "narrator",
+    "text": "だがその直後、対策本部のモニターに緊急メールが着弾した。送信者はロシア系ハッカー集団を名乗る『Hacking Team (Dmitry Orlov)』。",
+    "file": "assets/audio/voice/ch2_s1_next_02.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch2_s1_next_03",
+    "speaker": "aria",
+    "text": "メールの文面をモニターに投影します。『親愛なる被害者の皆様。貴方の損失は企業側の隠蔽と脆弱性のせいです。当社を相手取った集団訴訟を起こすなら、企業が隠蔽している証拠リストを無償で提供します』……完璧な分断工作です！",
+    "file": "assets/audio/voice/ch2_s1_next_03.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch2_s1_next_04",
+    "speaker": "takamiya",
+    "text": "くそっ……！ 被害の45%は金融庁無登録の海外FX業者（ApexTrading、IS8FX等）だ。被害者の怒りが会社へ集中し、集団訴訟の呼びかけがSNSで大拡散されている！ どうやってこの信用を突き崩すんだ！？",
+    "file": "assets/audio/voice/ch2_s1_next_04.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch2_s1_opt1_reaction_01",
+    "speaker": "kei",
+    "text": "データベースのレプリケーション遅延で、新パスワードの反映が遅れているんじゃないか？",
+    "file": "assets/audio/voice/ch2_s1_opt1_reaction_01.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch2_s1_opt1_reaction_02",
+    "speaker": "aria",
+    "text": "各クラスタのDB同期遅延を検証しました……遅延はわずか5ミリ秒以下です！ パスワードは全サーバーで即時更新されています！ 原因はDB遅延ではありません！",
+    "file": "assets/audio/voice/ch2_s1_opt1_reaction_02.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch2_s1_opt2_reaction_01",
+    "speaker": "kei",
+    "text": "被害者の自宅PCにキーロガーが潜んでいて、変更後の新パスワードが再窃取されたのではないか？",
+    "file": "assets/audio/voice/ch2_s1_opt2_reaction_01.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch2_s1_opt2_reaction_02",
+    "speaker": "takamiya",
+    "text": "いや、スマホの4G回線からパスワード変更しただけの口座でも同様に不正注文が通っている！ それにセキュリティベンダーの調査でも、被害者のPCからキーロガーなどのマルウェアは一切検出されていないんだ！",
+    "file": "assets/audio/voice/ch2_s1_opt2_reaction_02.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch2_s1_opt3_reaction_01",
+    "speaker": "kei",
+    "text": "アリア、FT4/FT5の通信仕様書と既存ソケットのハンドシェイク状態を調べろ！",
+    "file": "assets/audio/voice/ch2_s1_opt3_reaction_01.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch2_s1_opt3_reaction_02",
+    "speaker": "aria",
+    "text": "判明しました！ FT4/FT5はWeb上でパスワードを変更しても、既に確立されたTCP接続（ソケット）をサーバー側で強制切断（Session Kill）しない限り、既存セッションから自動売買コマンドを受け付け続けます！",
+    "file": "assets/audio/voice/ch2_s1_opt3_reaction_02.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch2_s1_opt3_reaction_03",
+    "speaker": "kei",
+    "text": "やっぱりだ！ VPS自体は停止していても、攻撃者はシャットダウン前に窃取した認証情報を使い、外部サーバーから各ブローカーのFT4取引サーバーへ直接TCPソケットを繋ぎっぱなしにしていたんだ！ 玄関の鍵（Webパスワード）を替えても、すでに居座っている『幽霊ソケット（Ghost Protocol）』を取引所側で強制切断（Session Kill）しない限り、死んだはずの口座から注文が通り続けていたんだ！",
+    "file": "assets/audio/voice/ch2_s1_opt3_reaction_03.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch2_s2_opt1_reaction_01",
+    "speaker": "kei",
+    "text": "送信元アドレスやXML作成者名がロシア人名義になっている点から、ロシア系組織と断定してはどうか？",
+    "file": "assets/audio/voice/ch2_s2_opt1_reaction_01.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch2_s2_opt1_reaction_02",
+    "speaker": "aria",
+    "text": "だめですマスター！ 表層のメタデータは攻撃者がいくらでも偽装できます！ 表層の看板に惑わされてはいけません！",
+    "file": "assets/audio/voice/ch2_s2_opt1_reaction_02.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch2_s2_opt2_reaction_01",
+    "speaker": "kei",
+    "text": "SMTPリレーIPの185.220.101.44を調査し、サーバーの物理位置から発信源を特定できないか？",
+    "file": "assets/audio/voice/ch2_s2_opt2_reaction_01.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch2_s2_opt2_reaction_02",
+    "speaker": "aria",
+    "text": "このIPは公開されているTor出口ノードです！ 匿名化ネットワークを経由しているため、IPアドレスから発信国を特定することは不可能です！",
+    "file": "assets/audio/voice/ch2_s2_opt2_reaction_02.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch2_s2_opt3_reaction_01",
+    "speaker": "kei",
+    "text": "アリア、内部XMLの xl/workbook.xml を見ろ！ シート名定義タグが「工作表1」になっているぞ！",
+    "file": "assets/audio/voice/ch2_s2_opt3_reaction_01.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch2_s2_opt3_reaction_02",
+    "speaker": "aria",
+    "text": "ビンゴですマスター！ ロシア語版Officeなら「Лист1」、英語版なら「Sheet1」のはずです。「工作表」は中国語簡体字版KPS Office特有の自動付与シート名です！",
+    "file": "assets/audio/voice/ch2_s2_opt3_reaction_02.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch2_s2_opt3_reaction_03",
+    "speaker": "kei",
+    "text": "ロシア人を騙りながら、ファイル生成環境は中国語圏のオフィスソフト……多国籍の偽旗工作（False Flag）だ！",
+    "file": "assets/audio/voice/ch2_s2_opt3_reaction_03.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch2_s2_opt3_reaction_04",
+    "speaker": "kei",
+    "text": "しかも昨日のチャットの「窓口に何十回も報告したのに無視された」という個人的な怨嗟と、この『工作表1』を合わせると、敵の正体が見えてくるぞ。脆弱性を見つけて窓口に無視された『発見者（バグハンター）』が逆恨みし、2万6千台の同時攻撃と巨額のマネーロンダリングを実行するために、中国語圏のダークウェブ恐喝シンジケートに脆弱性を持ち込んで手を組んだんだ！",
+    "file": "assets/audio/voice/ch2_s2_opt3_reaction_04.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch2_resolution_01",
+    "speaker": "kei",
+    "text": "レン、偽旗工作の決定打が掴めた。集団訴訟を煽るExcelの正体は中国語版オフィスの『工作表』だ。直ちにこの物証を公表し、敵の分断工作を無力化しろ！",
+    "file": "assets/audio/voice/ch2_resolution_01.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch2_resolution_02",
+    "speaker": "takamiya",
+    "text": "了解だ！ 偽旗工作の解析結果を公式リリースした。敵の煽動に乗せられていた被害者たちも冷静さを取り戻し、集団訴訟パニックは一気に沈静化したぞ！",
+    "file": "assets/audio/voice/ch2_resolution_02.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch2_resolution_03",
+    "speaker": "aria",
+    "text": "核心鑑識データ『取引通信ソケット監査票＆脅迫添付Excel』を取得しました。永続ソケットと偽旗工作の真相が立証されました！",
+    "file": "assets/audio/voice/ch2_resolution_03.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch2_resolution_04",
+    "speaker": "narrator",
+    "text": "その時、対策本部の巨大メインモニターが突如激しい砂嵐を走らせ、ある画面を映し出した。",
+    "file": "assets/audio/voice/ch2_resolution_04.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch2_resolution_05",
+    "speaker": "takamiya",
+    "text": "……！？ な、なんだこれは……！？ 画面が勝手に切り替わった……？",
+    "file": "assets/audio/voice/ch2_resolution_05.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch2_resolution_06",
+    "speaker": "kei",
+    "text": "おい、待て……！ これはVPSの画面じゃないぞ！ ある被害者の【自宅PCのデスクトップ画面】だ……確定申告書、家族の写真、そしてChromeブラウザの個人情報フォルダーが……丸ごと映し出されている！？",
+    "file": "assets/audio/voice/ch2_resolution_06.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch2_resolution_07",
+    "speaker": "takamiya",
+    "text": "な、なぜだ……！？ 被害者は自宅PCからVPSにリモート接続していただけのはずだ！ なぜクラウドの外にある【自宅PCの中身】が奪われているんだ……！？",
+    "file": "assets/audio/voice/ch2_resolution_07.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch2_resolution_08",
+    "speaker": "kei",
+    "text": "侵入はクラウドにとどまっていなかった……！？ アリア、緊急鑑識を急げ！！",
+    "file": "assets/audio/voice/ch2_resolution_08.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch3_intro_01",
+    "speaker": "narrator",
+    "text": "10月23日午後。事態はインフラの停止を超え、個人のプライバシー空間への全面侵食という戦慄のフェーズへ突入した。",
+    "file": "assets/audio/voice/ch3_intro_01.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch3_intro_02",
+    "speaker": "narrator",
+    "text": "攻撃者から対策室とメディア宛てに『samples.zip』というアーカイブが送りつけられた。中身は被害者たちの「自宅PC」のデスクトップにあった確定申告書、家族写真、そしてChromeブラウザの暗号化パスワード保管ファイル『Login Data』。実に4,352ファイルが抜き取られ、10,891ファイルがリスト化されていた。",
+    "file": "assets/audio/voice/ch3_intro_02.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch3_intro_03",
+    "speaker": "takamiya",
+    "text": "ケイ、被害者の自宅PCからはマルウェアが一切検出されない。それなのに、なぜ自宅PCの確定申告書や家族写真、Login Dataが丸ごと抜き取られたのか皆目見当がつかない……！ 一体どんな手口で手元のPCへ侵入したんだ！？",
+    "file": "assets/audio/voice/ch3_intro_03.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch3_intro_04",
+    "speaker": "kei",
+    "text": "自宅PCからマルウェアが出ない……？ だとすれば、怪しいファイルを送り込んだのではなく、正規のリモートデスクトップ接続経路やデフォルトの構成設定そのものが悪用された可能性がある。配布されている接続設定ファイルを徹底的に洗うぞ！",
+    "file": "assets/audio/voice/ch3_intro_04.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch3_s1_next_01",
+    "speaker": "kei",
+    "text": "全本番VPSを停止させている今、攻撃者のリバースRDP手口を実証しておびき寄せるため、隔離サンドボックスに1台だけおとりVPSとハニーポット自宅PCを稼働させておいたんだが……唯一生きているサーバーを見つけた敵が、早速食いついてきたぞ！",
+    "file": "assets/audio/voice/ch3_s1_next_01.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch3_s1_next_02",
+    "speaker": "aria",
+    "text": "マスターの読み通りです！ 今まさに攻撃者が、調査用ハニーポット端末のCドライブから『Login Data』をコピーしようとしています！",
+    "file": "assets/audio/voice/ch3_s1_next_02.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch3_s1_next_03",
+    "speaker": "takamiya",
+    "text": "な、なんだって！？ 転送完了まで残り15秒……！ すぐに回線をブチ切らないと、ハニーポット端末まで完全に掌握されるぞ！！",
+    "file": "assets/audio/voice/ch3_s1_next_03.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch3_s1_opt1_reaction_01",
+    "speaker": "kei",
+    "text": "administrative session:i:1 か？ 管理者セッションの強制フラグだが……",
+    "file": "assets/audio/voice/ch3_s1_opt1_reaction_01.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch3_s1_opt1_reaction_02",
+    "speaker": "aria",
+    "text": "いいえマスター、これはVPSサーバー側のコンソール接続フラグです！ クライアント自宅PCのファイル共有とは無関係です！",
+    "file": "assets/audio/voice/ch3_s1_opt1_reaction_02.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch3_s1_opt2_reaction_01",
+    "speaker": "kei",
+    "text": "これだ……！ 『drivestoredirect:s:*』！ ローカルドライブの全自動リダイレクト共有設定！",
+    "file": "assets/audio/voice/ch3_s1_opt2_reaction_01.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch3_s1_opt2_reaction_02",
+    "speaker": "aria",
+    "text": "ビンゴです！ 自宅PCからVPSに接続した瞬間、VPS側から自宅PCの全ドライブが『\\\\tsclient\\C』として自動認識されていました！",
+    "file": "assets/audio/voice/ch3_s1_opt2_reaction_02.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch3_s1_opt2_reaction_03",
+    "speaker": "kei",
+    "text": "ウイルスを送り込んだんじゃない。Windows正規のリモート接続プロトコル（RDP: Remote Desktop Protocol）の自動共有設定を悪用し、アンチウイルスに影すら踏ませずCドライブへ逆流する『第2のゴースト・プロトコル（幽霊通信経路）』だ！ だからこそ痕跡ゼロで確定申告書やLogin Dataが吸い出されたんだ！",
+    "file": "assets/audio/voice/ch3_s1_opt2_reaction_03.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch3_s1_opt2_reaction_04",
+    "speaker": "takamiya",
+    "text": "……っ！？ まさか、.rdp のドライブ共有設定か……！ ケイ、実は数ヶ月前、グループ傘下のセキュリティ専門会社に所属する社内ホワイトハッカー集団が、この設定と共通管理者アカウントの危険性を上層部に報告していたんだ！ だが「顧客に再設定させるな、自動売買の可用性（稼働継続）最優先だ」と先送りされていた……！",
+    "file": "assets/audio/voice/ch3_s1_opt2_reaction_04.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch3_s1_opt2_reaction_05",
+    "speaker": "takamiya",
+    "text": "それだけじゃない……！ 今、外部向けの『脆弱性通報窓口』の未処理アーカイブを検索したら、数ヶ月前から【38回】も同一の外部調査者から通報チケットが届いていた……！ 『共通管理者アカウントと .rdp の自動共有で2万6千台と自宅PCが丸ごと抜ける。バグバウンティ（報奨金）の対象として評価してほしい』と実証デモまで添えられていたのに、「対象外サービスにつき回答不要」のラベルが貼られて1通も返信せず放置されていたんだ……！",
+    "file": "assets/audio/voice/ch3_s1_opt2_reaction_05.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch3_s1_opt2_reaction_06",
+    "speaker": "kei",
+    "text": "38回も窓口をノックしていたのか……！ あいつは最初、犯罪者としてじゃなく『発見者』として正当な評価とバグバウンティ（報奨金）を求めていたんだ。だが何十回真剣なレポートを送っても、企業側に一顧だにされず『存在しないもの（ゴースト）』としてゴミ箱へ捨てられた……その絶望と屈辱が、あいつを本物の黒い亡霊（恐喝犯）に変えてしまったんだ！",
+    "file": "assets/audio/voice/ch3_s1_opt2_reaction_06.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch3_s1_opt2_reaction_07",
+    "speaker": "kei",
+    "text": "レン、社内ホワイトハッカーの警告も、外部からの38回の通報も握り潰していたとなれば、これは経営判断と窓口の機能不全が招いた『100%の人災』だぞ！ 世間に知られれば猛批判は免れないが、隠せばさらに罪を重ねる。直ちにこの手口を公表し、全ユーザーに共有解除を呼びかけるぞ！",
+    "file": "assets/audio/voice/ch3_s1_opt2_reaction_07.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch3_s1_opt3_reaction_01",
+    "speaker": "kei",
+    "text": "redirectclipboard:i:1 だろうか？",
+    "file": "assets/audio/voice/ch3_s1_opt3_reaction_01.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch3_s1_opt3_reaction_02",
+    "speaker": "aria",
+    "text": "これはテキストや画像の一時コピー用フラグです！ 4,352件におよぶディレクトリ全体の自動探索・コピーの元凶ではありません！",
+    "file": "assets/audio/voice/ch3_s1_opt3_reaction_02.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch3_s2_opt1_reaction_01",
+    "speaker": "kei",
+    "text": "直ちに回線を切断しろ！ ファイルの流出を何としても阻止するんだ！",
+    "file": "assets/audio/voice/ch3_s2_opt1_reaction_01.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch3_s2_opt1_reaction_02",
+    "speaker": "aria",
+    "text": "セッションを強制切断しました……ファイルの流出は防ぎましたが、多段プロキシの奥に潜む敵の真のC2サーバーを追跡する手がかりを完全に失ってしまいました……！ マスター、ここはあえて罠を仕掛けるべきです！",
+    "file": "assets/audio/voice/ch3_s2_opt1_reaction_02.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch3_s2_opt2_reaction_01",
+    "speaker": "kei",
+    "text": "切断するな！ 敵が見えない『幽霊のプロトコル』で抜いていくなら、その逆流パイプラインにこちら側の亡霊——解凍した瞬間に発火する逆探知用カナリアトークンを混入させ、あえて敵の本拠地へ持ち帰らせるんだ！",
+    "file": "assets/audio/voice/ch3_s2_opt2_reaction_01.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch3_s2_opt2_reaction_02",
+    "speaker": "aria",
+    "text": "カナリアトークン混入完了！ 攻撃者が自前の攻撃サーバーでこのファイルを解凍した瞬間、偽装プロキシの背後にある真のC2サーバー座標が逆探知されます！",
+    "file": "assets/audio/voice/ch3_s2_opt2_reaction_02.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch3_s2_opt2_reaction_03",
+    "speaker": "takamiya",
+    "text": "リスクを冒して敵を罠にハメ返したのか……！ 頼もしすぎるぞケイ！ これでリバースRDPの全容を公表し、ユーザーに手動共有解除を周知できる！",
+    "file": "assets/audio/voice/ch3_s2_opt2_reaction_03.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch3_resolution_01",
+    "speaker": "aria",
+    "text": "核心鑑識データ『クライアント接続構成ファイル＆共有API証跡』を取得しました。リバースRDPの真相が立証されました！",
+    "file": "assets/audio/voice/ch3_resolution_01.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch3_resolution_02",
+    "speaker": "narrator",
+    "text": "リバースRDPの解明により、社内には勝利の空気が漂いかけた。しかし——その時、社内のすべてのプリンターと内線電話が一斉に狂ったように動き始めた！",
+    "file": "assets/audio/voice/ch3_resolution_02.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch3_resolution_03",
+    "speaker": "takamiya",
+    "text": "ひっ……！？ プリンターから、犯行声明が一斉に印刷されている……！？ 全国の報道機関にもFAXが一斉送信されたぞ！",
+    "file": "assets/audio/voice/ch3_resolution_03.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch3_resolution_04",
+    "speaker": "kei",
+    "text": "紙を寄越せ、なんて書いてある！？",
+    "file": "assets/audio/voice/ch3_resolution_04.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch3_resolution_05",
+    "speaker": "takamiya",
+    "text": "【四重脅迫状】だ……！ 当社の『脆弱性通報窓口』に38回送信した画面のスクリーンショットまで添えられている！ 『何十回警告しても無視してバグバウンティ（報奨金）をケチった貴様らに、被害者を語る資格はない』と……！",
+    "file": "assets/audio/voice/ch3_resolution_05.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch3_resolution_06",
+    "speaker": "takamiya",
+    "text": "要求は4つだ！ ①国内外70社超の金融口座の破壊再開、②自宅PC個人情報のダークウェブ無制限公開、③窓口黙殺の証拠と内部システム構成の暴露、④経営陣が隠蔽している暗号資産【5,000万ドル（約80億円）】の支払い要求……！ タイムリミットは明日10月24日12時！ 1秒でも遅れれば、すべてを実行すると……！！",
+    "file": "assets/audio/voice/ch3_resolution_06.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch3_resolution_07",
+    "speaker": "kei",
+    "text": "窓口に無視された恨みを大義名分にして、共犯のシンジケートと一緒に80億円を毟り取る気か……！ いよいよ奴らが本気でこの会社と顧客の人生を潰しにかかってきたぞ……！！",
+    "file": "assets/audio/voice/ch3_resolution_07.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch4_intro_01",
+    "speaker": "narrator",
+    "text": "10月24日午前。四重脅迫のタイムリミットまで、あと数十分。",
+    "file": "assets/audio/voice/ch4_intro_01.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch4_intro_02",
+    "speaker": "narrator",
+    "text": "役員会議室からは、机を叩く怒号と悲痛な叫びが廊下にまで響き渡っていた。「身代金を払うべきだ！」「いや、払ってもデータが消える保証はない！」「約款には『サイバー攻撃による損害は免責』と明記されている！ 免責を盾に突っぱねるべきだ！」",
+    "file": "assets/audio/voice/ch4_intro_02.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch4_intro_03",
+    "speaker": "takamiya",
+    "text": "ケイ、実は犯人は10月21日の最初期に、社長室宛ての極秘メールで暗号資産【5,000万ドル（約80億円）】を要求していたんだ！ 経営陣は公表すらできず抱え込んでいたが、昨日の四重脅迫状で社内とマスコミに暴露されて役員会は完全にパニックだ！ 80億円なんて払えるはずもない！",
+    "file": "assets/audio/voice/ch4_intro_03.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch4_intro_04",
+    "speaker": "kei",
+    "text": "経営陣が隠していた80億円の要求が露呈したのか……！ 払えば会社は破産、突っぱねれば集団訴訟で倒産。敵の武器は「顧客を人質にした分断工作」だ。経営陣を説得するぞ！",
+    "file": "assets/audio/voice/ch4_intro_04.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch4_s1_next_01",
+    "speaker": "narrator",
+    "text": "だがその瞬間、財務役員と法務役員が机を叩いて立ち上がった！",
+    "file": "assets/audio/voice/ch4_s1_next_01.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch4_s1_next_02",
+    "speaker": "takamiya",
+    "text": "『100%補償だと！？ 被害の45%は金融庁無登録の海外FX業者（ApexTrading、IS8FX等）だぞ！ 顧客が通常のトレードの負けまで不正取引だと嘘をついて請求してきたらどう見分けるんだ！？ 会社が破産するぞ！』と猛反発されている！",
+    "file": "assets/audio/voice/ch4_s1_next_02.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch4_s1_next_03",
+    "speaker": "kei",
+    "text": "モラルハザードを防ぐ客観的鑑識手段……！ レン、諦めるな、取引端末の通信プロトコルには必ずそのための安全弁が備わっている！",
+    "file": "assets/audio/voice/ch4_s1_next_03.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch4_s1_opt1_reaction_01",
+    "speaker": "kei",
+    "text": "身代金を支払って事態の沈静化を図るべきでは……？",
+    "file": "assets/audio/voice/ch4_s1_opt1_reaction_01.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch4_s1_opt1_reaction_02",
+    "speaker": "takamiya",
+    "text": "ダメだ！ 国際的なサイバー犯罪統計を見ろ、一度金を払った標的の80%が二重恐喝を受けている！ 犯罪者に金を渡しても、データを消す保証なんてどこにもない！",
+    "file": "assets/audio/voice/ch4_s1_opt1_reaction_02.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch4_s1_opt2_reaction_01",
+    "speaker": "kei",
+    "text": "約款に明記された免責条項を盾に、法務防衛を貫くべきでは……？",
+    "file": "assets/audio/voice/ch4_s1_opt2_reaction_01.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch4_s1_opt2_reaction_02",
+    "speaker": "takamiya",
+    "text": "顧客を見捨てれば、70社超の国内外金融機関から即座にAPIを切断されてインフラ企業として即死するぞ！ 被害者の怒りを放置すれば集団訴訟で会社は倒産だ！",
+    "file": "assets/audio/voice/ch4_s1_opt2_reaction_02.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch4_s1_opt3_reaction_01",
+    "speaker": "kei",
+    "text": "犯人の5,000万ドル（約80億円）など完全黙殺しろ！ 約款の免責条項を破り捨て、被害者の不正取引損失を企業が100%直接補償し、身代金支払ゼロを全世界に宣言するんだ！",
+    "file": "assets/audio/voice/ch4_s1_opt3_reaction_01.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch4_s1_opt3_reaction_02",
+    "speaker": "takamiya",
+    "text": "実損の100%直接補償……！ さらに全員への見舞金5,000円と新基盤半年間無償移行をつける！ これなら顧客と企業が再び一枚岩になり、攻撃者の分断工作は完全に破綻する！",
+    "file": "assets/audio/voice/ch4_s1_opt3_reaction_02.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch4_s1_opt3_reaction_03",
+    "speaker": "aria",
+    "text": "ゲーム理論に基づく最適解です！ 攻撃者が持っていた『被害者を人質にして企業を脅す』というレバレッジが完全に消滅しました！",
+    "file": "assets/audio/voice/ch4_s1_opt3_reaction_03.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch4_s2_opt1_reaction_01",
+    "speaker": "kei",
+    "text": "海外ブローカー各社に照会状を送り、公式ログを提供してもらっては？",
+    "file": "assets/audio/voice/ch4_s2_opt1_reaction_01.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch4_s2_opt1_reaction_02",
+    "speaker": "takamiya",
+    "text": "相手は無登録業者だぞ！ 日本の民間企業の照会に応じる法的義務などなく、返答を待つ間にタイムリミットが過ぎてしまう！",
+    "file": "assets/audio/voice/ch4_s2_opt1_reaction_02.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch4_s2_opt2_reaction_01",
+    "speaker": "kei",
+    "text": "顧客から取引画面のスクリーンショットや録画動画を提出してもらおう！",
+    "file": "assets/audio/voice/ch4_s2_opt2_reaction_01.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch4_s2_opt2_reaction_02",
+    "speaker": "aria",
+    "text": "危険ですマスター！ ブラウザの開発者ツール（F12）でHTML数値を書き換える画像・動画の偽造を防げません！ 監査証拠として脆弱すぎます！",
+    "file": "assets/audio/voice/ch4_s2_opt2_reaction_02.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch4_s2_opt3_reaction_01",
+    "speaker": "kei",
+    "text": "これだ！ FT4/FT5に標準搭載されている『閲覧専用パスワード（Investor Password）』を提供してもらおう！",
+    "file": "assets/audio/voice/ch4_s2_opt3_reaction_01.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch4_s2_opt3_reaction_02",
+    "speaker": "aria",
+    "text": "素晴らしい着眼点です！ Investor Passwordなら出金権限なしでサーバー側のミリ秒取引生ログのみを客観監査できます！ VPSの侵入時刻と突合すれば、1円の狂いもなく不正取引だけを特定可能です！",
+    "file": "assets/audio/voice/ch4_s2_opt3_reaction_02.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch4_s2_opt3_reaction_03",
+    "speaker": "takamiya",
+    "text": "技術的裏付けが完全に取れた！ これなら取締役会も100%納得する！ 直ちに第4報として全世界へ公式発表するぞ！！",
+    "file": "assets/audio/voice/ch4_s2_opt3_reaction_03.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch4_resolution_01",
+    "speaker": "takamiya",
+    "text": "11時50分、第4報リリース完了！ 『攻撃者への支払ゼロ、不正取引実損の100%直接補償、全員への一律5,000円のお見舞金、新基盤半年無償移行』を発表した！ だが……同時にグループのオーナー代表が個人ブログとSNSで「実は社内ホワイトハッカーから事前に指摘されていたが可用性を優先して遅れた」「これはAIによるサイバー飽和攻撃であり政府に能動的サイバー防御を要請した」と発信してしまい、ネットが大炎上している……！",
+    "file": "assets/audio/voice/ch4_resolution_01.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch4_resolution_02",
+    "speaker": "kei",
+    "text": "SNSのタイムラインを見てみろ。『ホワイトハッカーの事前警告を無視した完全な人災を、AI飽和攻撃や国家防衛の問題にすり替えるな！』『5,000円のお見舞金や補償で殴って、肝心の技術的侵入原因（Root Cause）の説明から逃げる気か！』とエンジニアやユーザーから猛批判が噴出している。当然の批判だ、企業の過失は補償金だけでは消えない。",
+    "file": "assets/audio/voice/ch4_resolution_02.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch4_resolution_03",
+    "speaker": "aria",
+    "text": "ですがマスター、世論の厳しい批判を浴びつつも、ゲーム理論上の効果は劇的です！ 被害者が求めた実損補償を企業が100%引き受けたことで、攻撃者が握っていた『顧客の損失を人質にして企業を脅す』という交渉カードは完全に消滅しました！ 核心鑑識データ『顧客実損算定マトリクス＆API照会監査票』を取得しました！",
+    "file": "assets/audio/voice/ch4_resolution_03.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch4_resolution_04",
+    "speaker": "narrator",
+    "text": "その刹那、対策本部のメインモニターが激しく点滅し、攻撃者からの新たな緊急メッセージが突き刺さった。",
+    "file": "assets/audio/voice/ch4_resolution_04.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch4_resolution_05",
+    "speaker": "takamiya",
+    "text": "ケイ、信じられない事態が起きた！ 5,000万ドルの要求を完全黙殺され、顧客への直接補償で人質を奪われた攻撃者が……パニックを起こして自ら要求額を【100万ドル（約1.6億円）】へと98%もダンピング（値下げ）してきたぞ！！",
+    "file": "assets/audio/voice/ch4_resolution_05.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch4_resolution_06",
+    "speaker": "kei",
+    "text": "80億円から1.6億円への価格崩壊……！ 完全に奴らの交渉レバレッジが崩壊した証拠だ！ ゲーム理論の完全勝利だな。",
+    "file": "assets/audio/voice/ch4_resolution_06.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch4_resolution_07",
+    "speaker": "takamiya",
+    "text": "だがケイ、値下げ要求のメッセージに犯人の激しい怨念が綴られている……！ 『ふざけるな！ 顧客に何十億円も直接補償する金があるなら、なぜ最初から俺の38回の脆弱性報告に報奨金（バグバウンティ）を払わなかった！？』",
+    "file": "assets/audio/voice/ch4_resolution_07.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch4_resolution_08",
+    "speaker": "takamiya",
+    "text": "『俺が何晩も徹夜して見つけた26,739台の致命的欠陥だ！ 5,000万ドルとは言わない、俺が発見者として正当に受け取るはずだったバグバウンティ【100万ドル（約1.6億円）】だけでいい！ 10月27日正午までに俺の評価額である100万ドルを払わなければ、シャットダウン直前にリバースRDP経由で全26,739台の自宅PCへ潜伏させた【時限発火型ランサムウェア】を一斉起爆し、全国のPCを文房具に変えてやる』……！！",
+    "file": "assets/audio/voice/ch4_resolution_08.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch4_resolution_09",
+    "speaker": "kei",
+    "text": "『俺が正当に受け取るはずだった報奨金100万ドル』か……。あいつが本当に欲しかったのは80億円の大金じゃない。自分の技術と発見を正当に評価し、相応のバグバウンティを払ってくれるはずだった企業からの『承認』だったんだな。",
+    "file": "assets/audio/voice/ch4_resolution_09.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch4_resolution_10",
+    "speaker": "kei",
+    "text": "だが、だからといって無関係な26,739人の顧客の財産と日常を人質に取った瞬間、そいつはもう技術者じゃない。ただの卑劣な恐喝犯だ！ 正規RDP経由ならマルウェアが潜伏している恐れもゼロじゃない。全国へ社員を飛ばして顧客PCを物理回収し、潜伏の真偽を徹夜で鑑識するぞ！",
+    "file": "assets/audio/voice/ch4_resolution_10.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch5_intro_01",
+    "speaker": "narrator",
+    "text": "10月27日、火曜日、午前11時50分。攻撃者が突きつけてきた100万ドルの支払期限——10月27日正午まで、残された時間はわずか10分。",
+    "file": "assets/audio/voice/ch5_intro_01.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch5_intro_02",
+    "speaker": "narrator",
+    "text": "GNOグループの社員は全国各地を飛び回って顧客の自宅PCを物理回収し、ホワイトハッカーチームが徹夜でバイナリ解析を続けていた。",
+    "file": "assets/audio/voice/ch5_intro_02.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch5_intro_03",
+    "speaker": "takamiya",
+    "text": "ケイ、全国から物理回収した顧客PCの鑑識結果が出た……！ 潜伏ランサムウェアは【検出ゼロ】だ！ 犯人が言っていた「シャットダウン前に時限マルウェアを送り込んだ」というのは、パニックを煽るための完全なブラフ（ハッタリ）だったんだ！！",
+    "file": "assets/audio/voice/ch5_intro_03.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch5_intro_04",
+    "speaker": "kei",
+    "text": "やっぱりそうか！ 敵は身代金値下げの焦りから、存在しないランサムウェアで脅しをかけていたに過ぎない！ タカミヤ、直ちにこの事実を公表しろ！",
+    "file": "assets/audio/voice/ch5_intro_04.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch5_intro_05",
+    "speaker": "takamiya",
+    "text": "了解だ！ 午前9時58分の第8報で「12時前に念のためPCの電源コードを抜くよう」呼びかけていたが、今11時59分の【第9報】で「潜伏マルウェア検出ゼロ、万一被害が出ても新品PCを無償提供する」と電撃リリースした！ これで世間のパニックは完全に食い止めたぞ！",
+    "file": "assets/audio/voice/ch5_intro_05.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch5_intro_06",
+    "speaker": "narrator",
+    "text": "その時、暗号化セキュア回線に突如、政府専用の最優先プロトコルが割り込んできた。国家サイバー統括室（NCO）のクロダ統括官とミオ分析官だ。",
+    "file": "assets/audio/voice/ch5_intro_06.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch5_intro_07",
+    "speaker": "kuroda",
+    "text": "ナギサ君、タカミヤ君。本題に入る前に一つ釘を刺しておく。貴社のオーナー代表が個人SNSで「AIによるサイバー飽和攻撃だ、政府に能動的サイバー防御を要請した」と発信し、世論から「自社のずさんな共通管理者設計と事前警告無視による人災を、国家防衛の問題にすり替えるな」と猛批判を浴びているな。",
+    "file": "assets/audio/voice/ch5_intro_07.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch5_intro_08",
+    "speaker": "kuroda",
+    "text": "勘違いするなよ。国家の盾は、一企業のガバナンス不全や設計過失を免罪するための道具ではない！ 我々が動くのは貴社のメンツを守るためではなく、今この瞬間に人質にされている26,739人の国民を守るためだ！",
+    "file": "assets/audio/voice/ch5_intro_08.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch5_intro_09",
+    "speaker": "mio",
+    "text": "はい……！ 敵のランサム予告がブラフだったとしても、4,352件の実データは依然として敵の手にあります。2026年10月1日に施行された『能動的サイバー防御法（サイバー対処能力強化法）』を発動して敵の司令塔を無害化したいところですが……現行法には【制度上の3つの壁】が存在します。",
+    "file": "assets/audio/voice/ch5_intro_09.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch5_intro_10",
+    "speaker": "narrator",
+    "text": "その刹那——壁のデジタル時計が非情にも『12:00:00』を刻んだ！",
+    "file": "assets/audio/voice/ch5_intro_10.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch5_intro_11",
+    "speaker": "narrator",
+    "text": "全国のPCに異変はなし！ ランサムウェアは1件も起動しなかった。しかし直後、攻撃者の犯行サイト『coronamng.store』が更新された！",
+    "file": "assets/audio/voice/ch5_intro_11.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch5_intro_12",
+    "speaker": "takamiya",
+    "text": "ひっ……！？ 犯人が逆上して、犯行サイトにデータをアップロードした！ 『身代金を払わなかった見せしめに【被害者 第1号】の実名・個人情報を公開する。明日正午には第2号、明後日は第3号と、毎日正午に1人ずつ全員の人生を晒し上げてやる』……！！",
+    "file": "assets/audio/voice/ch5_intro_12.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch5_intro_13",
+    "speaker": "takamiya",
+    "text": "しかも、さらに異常な混乱が起きている！ 晒された『被害者 第1号』の本人がメディアの緊急取材に「そんなFX用VPSサービスなど一度も使ったことがない！ 書かれている内容もデタラメだ！」と証言したんだ！ それなのにうちの代表が個人ブログでその人物の情報に言及したせいで、「なぜ未利用者の情報が混ざっているんだ！？ 別サービスからの漏洩を隠しているんじゃないか！？」とSNSが大パニックになっているぞ！",
+    "file": "assets/audio/voice/ch5_intro_13.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch5_intro_14",
+    "speaker": "narrator",
+    "text": "だが——まさにその瞬間だった！！",
+    "file": "assets/audio/voice/ch5_intro_14.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch5_intro_15",
+    "speaker": "aria",
+    "text": "マスター！！ 謎が解けました！ 攻撃者は脅迫のハッタリを効かせるため、古い別名簿の断片と私たちがハニーポットから掴ませたダミーデータをツギハギして、実在しない架空の被害者——いわば『幽霊（ゴースト）の第1号』を捏造していました！ そして自前のアジトでダミーLogin Dataを復号・加工した瞬間、仕込んでいた【逆探知用カナリアトークン】が発火し、DNS/HTTPコールバックが着弾しました！！",
+    "file": "assets/audio/voice/ch5_intro_15.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch5_intro_16",
+    "speaker": "kei",
+    "text": "ツギハギ工作の瞬間にカナリアが喰らいついたか！ だが代表が個人ブログで不用意に反応したせいで世論の不信は極限に達している。クロダ統括官、これ以上の混乱と明日正午の『第2号』公開を止めるため、今すぐ法理を突破して敵のサーバーを叩くぞ！",
+    "file": "assets/audio/voice/ch5_intro_16.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch5_s1_next_01",
+    "speaker": "kuroda",
+    "text": "だが最後に立ち塞がる第3の壁……外国主権と『真の発信源特定』だ！ 敵は多段プロキシの奥に隠れており、誤爆すれば外交上の重大問題になる！ 発火したカナリアのログから、真のC2を100%特定せよ！",
+    "file": "assets/audio/voice/ch5_s1_next_01.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch5_s1_next_02",
+    "speaker": "kei",
+    "text": "了解だ！ アリア、発火したカナリアトークンの逆探知生テレメトリを直ちに展開しろ！",
+    "file": "assets/audio/voice/ch5_s1_next_02.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch5_s1_opt1_reaction_01",
+    "speaker": "kei",
+    "text": "不正アクセス禁止法で被害届を出し、裁判所の捜査令状を待つべきでは？",
+    "file": "assets/audio/voice/ch5_s1_opt1_reaction_01.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch5_s1_opt1_reaction_02",
+    "speaker": "kuroda",
+    "text": "甘い！ 通常令状の発付には数日を要する！ 明日正午には「被害者 第2号」が晒され、毎日国民の尊厳が破壊されていくんだ！ そんな猶予はない！",
+    "file": "assets/audio/voice/ch5_s1_opt1_reaction_02.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch5_s1_opt2_reaction_01",
+    "speaker": "kei",
+    "text": "クロダ統括官、企業側はすべての侵入ログと通信パケットを100%任意提出します！ これで通信の秘密侵害の懸念は完全にクリアされます！",
+    "file": "assets/audio/voice/ch5_s1_opt2_reaction_01.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch5_s1_opt2_reaction_02",
+    "speaker": "takamiya",
+    "text": "さらに今正午に第1号の実名が晒され、明日正午に第2号が晒されるサラミ戦術は、個人の生活とプライバシーに対する明白かつ現在進行形の重大危害です！ 警察官職務執行法第6条の2に基づく職権認知要件を完全に満たしています！",
+    "file": "assets/audio/voice/ch5_s1_opt2_reaction_02.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch5_s1_opt2_reaction_03",
+    "speaker": "kuroda",
+    "text": "……見事な法理論拠だ！ これで制度上の第1の壁（基幹インフラ外）と第2の壁（無同意通信取得）は完全に打ち破られた！",
+    "file": "assets/audio/voice/ch5_s1_opt2_reaction_03.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch5_s2_next_01",
+    "speaker": "narrator",
+    "text": "10月27日午後から夕刻にかけて、NCOと警察庁が国際連携によるテイクダウン準備を進める一方、企業側は第10報・第11報を発令し、犯行サイトへのアクセス警告と二次拡散者への法的措置を打ち出した。しかし——。",
+    "file": "assets/audio/voice/ch5_s2_next_01.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch5_s2_next_02",
+    "speaker": "takamiya",
+    "text": "ケイ！ 真のC2は捕捉できたが、犯人がミラーサイトを次々と立ち上げ、SNSの拡散屋を使って晒しデータを広めようとしているぞ！ 第10報・第11報でサイトへのアクセス警告と拡散者への刑事告訴を出し、代表も個人SNSで特定の拡散アカウントを名指しで警告したが……ネットでは「公式窓口ではなく社長個人のSNSで一般人を威圧するな」「強気なパフォーマンスで犯人を挑発したせいで晒されたんじゃないか」と逆に大炎上している……！",
+    "file": "assets/audio/voice/ch5_s2_next_02.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch5_s2_next_03",
+    "speaker": "takamiya",
+    "text": "さらに19時を回り、犯人はその炎上を見てあざ笑い、『毎日1人ずつ晒されたくなければ、値下げした100万米ドル（約1.5億円）を今すぐ払え』と執拗に脅迫を続けている！",
+    "file": "assets/audio/voice/ch5_s2_next_03.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch5_s2_next_04",
+    "speaker": "kuroda",
+    "text": "トップ個人のSNS発信に依存した危機管理広報の危うさは後で厳しく総括してもらうとして……これよりNCOと警察庁でC2サーバーとミラーサイトのテイクダウン承認手続に入る。だが匿名化された多国籍の実行犯組織そのものを自壊させるには、民間側からの決定的な『劇薬』が必要だ！",
+    "file": "assets/audio/voice/ch5_s2_next_04.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch5_s2_next_05",
+    "speaker": "kei",
+    "text": "ああ。世論から「劇場型だ」と叩かれようとも、今ここで犯人の思い通りにさせれば26,739人の被害者が本当に傷つく。敵が要求してきた『100万米ドル』と、22日の集団訴訟煽動メールの鑑識で暴いた『中国語環境（工作表1）を使う多国籍の烏合の衆』という弱点を突き、奴らの組織を内部から引き裂く究極のカウンターを撃つぞ！",
+    "file": "assets/audio/voice/ch5_s2_next_05.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch5_s2_opt1_reaction_01",
+    "speaker": "kei",
+    "text": "オランダのアムステルダムにある 45.154.255.89 が攻撃拠点ではないか？",
+    "file": "assets/audio/voice/ch5_s2_opt1_reaction_01.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch5_s2_opt1_reaction_02",
+    "speaker": "aria",
+    "text": "違いますマスター！ ログの右端を見てください、[Tor Relay] つまり表層の匿名中継ノードです！ そこを叩いても無関係な海外拠点を巻き込むだけです！",
+    "file": "assets/audio/voice/ch5_s2_opt1_reaction_02.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch5_s2_opt2_reaction_01",
+    "speaker": "kei",
+    "text": "ルーマニアの 185.220.101.5 はどうだ？ 以前の脅迫メールでも使われていたIP帯だぞ！",
+    "file": "assets/audio/voice/ch5_s2_opt2_reaction_01.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch5_s2_opt2_reaction_02",
+    "speaker": "aria",
+    "text": "いいえマスター！ そこは [SOCKS5 Bridge] とある通り、2段目の踏み台プロキシです！ 実際にSQLite復号フックを発火させた実行元は別にあります！",
+    "file": "assets/audio/voice/ch5_s2_opt2_reaction_02.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch5_s2_opt3_reaction_01",
+    "speaker": "kei",
+    "text": "アリア、SQLite復号フックを直接発火させたIP『91.240.118.174』を見ろ！ これが多段プロキシの裏にある真のC2サーバー、そして「被害者 第1号」を晒しているリークサイトの実体だ！",
+    "file": "assets/audio/voice/ch5_s2_opt3_reaction_01.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch5_s2_opt3_reaction_02",
+    "speaker": "aria",
+    "text": "ビンゴですマスター！ オランダやルーマニアのプロキシを完全にバイパスし、攻撃者が自前でダミーLogin Dataを開いた真の実行元IPと、全盗難データ保管庫の物理サーバーを完全に捕捉しました！！",
+    "file": "assets/audio/voice/ch5_s2_opt3_reaction_02.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch5_s3_opt1_reaction_01",
+    "speaker": "kei",
+    "text": "1.5億円まで下がったなら、秘密裏に支払ってデータを消してもらえないか？",
+    "file": "assets/audio/voice/ch5_s3_opt1_reaction_01.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch5_s3_opt1_reaction_02",
+    "speaker": "takamiya",
+    "text": "絶対にダメだ！ 犯罪組織に金を渡せば更なる攻撃の資金源になり、約束を守る保証などゼロだ！ 『要求には永久に応じない』のが我々の鉄則だぞ！",
+    "file": "assets/audio/voice/ch5_s3_opt1_reaction_02.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch5_s3_opt2_reaction_01",
+    "speaker": "kei",
+    "text": "企業側はこれ以上動かず、NCOの非公然措置だけで静かに収束するのを待とうか？",
+    "file": "assets/audio/voice/ch5_s3_opt2_reaction_01.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch5_s3_opt2_reaction_02",
+    "speaker": "aria",
+    "text": "それではダメですマスター！ 政府の措置は公表されないため、企業側が晒し被害者の救済と犯人追及の強い意志を示さなければ、SNSでの二次拡散と不安を抑え込めません！",
+    "file": "assets/audio/voice/ch5_s3_opt2_reaction_02.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch5_s3_opt3_reaction_01",
+    "speaker": "kei",
+    "text": "犯人は『俺が正当に受け取るはずだった100万ドルのバグバウンティ（報奨金）を払え』と叫んでいたな。……いいだろう、望み通り【100万米ドルのバウンティ（報奨金）】を用意してやる！",
+    "file": "assets/audio/voice/ch5_s3_opt3_reaction_01.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch5_s3_opt3_reaction_02",
+    "speaker": "kei",
+    "text": "ただし、犯人には永久に1セントも払わない！ 情報が公開された被害者には別枠で1公開につき『上限300万円の特別お見舞金』を支給して守り抜き、奴が渇望した『100万米ドル（約1.5億円）』はそのまま、一線を越えた犯人自身を特定・検挙するための『サイバー犯罪撲滅・懸賞金（Cybercrime Bounty）』として世界中の情報提供者に懸ける！",
+    "file": "assets/audio/voice/ch5_s3_opt3_reaction_02.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch5_s3_opt3_reaction_03",
+    "speaker": "takamiya",
+    "text": "19時10分、第12報として緊急リリース完了だ！ 基本情報1万円、金融・認証1.5万円、機微情報2.5万円を合算して最大300万円の特別お見舞金……！ だがケイ、SNSでは「個人のプライバシーに1万円や2万5千円と細かい値札をつけるのか」「技術的な侵入原因の報告書も出さずに1.5億円の懸賞金で劇場型ショーにするな」と厳しい批判も出ているぞ……！",
+    "file": "assets/audio/voice/ch5_s3_opt3_reaction_03.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch5_s3_opt3_reaction_04",
+    "speaker": "kei",
+    "text": "その批判は甘んじて受けろ、レン！ 企業としてのガバナンス不全や原因開示の遅れに対する批判は当然の報いだ。だが今この瞬間、発見者と多国籍シンジケートの急ごしらえの同盟を内部から引き裂き、明日正午の『第2号』公開を止めるには、この劇薬を撃つしかない！",
+    "file": "assets/audio/voice/ch5_s3_opt3_reaction_04.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch5_s3_opt3_reaction_05",
+    "speaker": "aria",
+    "text": "はい！ 孤独な復讐心で暴走している主犯（脆弱性の発見者）に対し、金目当てで手を組んだ中国語オフィス（工作表1）の多国籍シンジケートには義理も忠誠もありません！ 【日本語・英語・中国語の3言語】で『主犯を売れば1.5億円が手に入り、黙っていれば仲間に売られて逮捕される』と突きつければ、究極の【囚人のジレンマ】で敵組織は必ず自壊します！",
+    "file": "assets/audio/voice/ch5_s3_opt3_reaction_05.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch5_resolution_01",
+    "speaker": "aria",
+    "text": "核心鑑識データ『ハニーポット端末・外部通信ビーコン記録』を取得しました！ 全6つの鑑識が手元に揃いました！",
+    "file": "assets/audio/voice/ch5_resolution_01.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch5_resolution_02",
+    "speaker": "kuroda",
+    "text": "見事だナギサ君、タカミヤ君！ 民間側の『上限300万円の特別お見舞金』と『100万米ドルの逆転懸賞金』、そして国家側の『3つの壁を突破する全物証』が完璧に揃った！",
+    "file": "assets/audio/voice/ch5_resolution_02.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch5_resolution_03",
+    "speaker": "kuroda",
+    "text": "外務大臣協議およびサイバー通信情報監理委員会に対する【完全無欠の証拠連結（FINAL DEDUCTION）】を直ちに構築し、無害化措置の承認を勝ち取るぞ！",
+    "file": "assets/audio/voice/ch5_resolution_03.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch5_resolution_04",
+    "speaker": "kei",
+    "text": "了解だ！ 集めた全鑑識カードを手元に展開しろ、アリア！ 最後のパズルを完成させる！",
+    "file": "assets/audio/voice/ch5_resolution_04.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch5_resolution_05",
+    "speaker": "aria",
+    "text": "了解しましたマスター！ 【FINAL DEDUCTION: 最終証拠連結システム】を展開します！",
+    "file": "assets/audio/voice/ch5_resolution_05.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch5_final_s1_reaction_01",
+    "speaker": "kei",
+    "text": "これを見てください、統括官！ 『国家サイバー対処法理・要件適合性審査レポート』です！",
+    "file": "assets/audio/voice/ch5_final_s1_reaction_01.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch5_final_s1_reaction_02",
+    "speaker": "kei",
+    "text": "被害企業の100%任意ログ提供により通信の秘密侵害を回避し、正午に発生した実名晒しと毎日1人ずつのサラミ予告という明白な重大危害を根拠に、警職法6条の2による職権認知を成立させます！",
+    "file": "assets/audio/voice/ch5_final_s1_reaction_02.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch5_final_s1_reaction_03",
+    "speaker": "kuroda",
+    "text": "見事だ……！ 法の壁は完全に打ち破られた！ だが次は侵入経路の物理的遮断だ！",
+    "file": "assets/audio/voice/ch5_final_s1_reaction_03.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch5_final_s2_reaction_01",
+    "speaker": "kei",
+    "text": "接続構成に潜んでいた『クライアント接続構成ファイル＆共有API証跡』です！",
+    "file": "assets/audio/voice/ch5_final_s2_reaction_01.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch5_final_s2_reaction_02",
+    "speaker": "kei",
+    "text": "drivestoredirect:s:* の記述により、ユーザーがVPSに接続した瞬間、VPS側から自宅PCのCドライブが全自動共有されていた！ 敵はこのリバースRDPのパイプラインを使って個人情報を吸い出しました！",
+    "file": "assets/audio/voice/ch5_final_s2_reaction_02.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch5_final_s2_reaction_03",
+    "speaker": "mio",
+    "text": "接続パイプラインの構造を完全に特定！ 各プロバイダへ緊急パッチと共有遮断フィルタを展開、さらに同等性能の新品PC無償保証で二次被害を完全封殺します！",
+    "file": "assets/audio/voice/ch5_final_s2_reaction_03.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch5_final_s2_reaction_04",
+    "speaker": "kuroda",
+    "text": "よし！ そして最後に残る最大の謎……多段プロキシの奥に潜む真の発信源を特定し、晒しサイトと保管庫を消滅させる決定打を出せ！",
+    "file": "assets/audio/voice/ch5_final_s2_reaction_04.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch5_final_s3_reaction_01",
+    "speaker": "kei",
+    "text": "これが最後の決定打だ！ あの逆流潜入調査でハニーポットに仕込んだ【ハニーポット端末・外部通信ビーコン記録】！",
+    "file": "assets/audio/voice/ch5_final_s3_reaction_01.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch5_final_s3_reaction_02",
+    "speaker": "aria",
+    "text": "攻撃者が正午に第1号を晒すためデータを解凍した瞬間、カナリア逆探知ビーコンが発火！ 真のC2サーバーIPアドレス【91.240.118.174】および、リークサイトと全盗難データ保管庫をピンポイントで捕捉しました！！",
+    "file": "assets/audio/voice/ch5_final_s3_reaction_02.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch5_final_s3_reaction_03",
+    "speaker": "kuroda",
+    "text": "全証拠の連結を確認！ 外務大臣協議・サイバー通信情報監理委員会の緊急承認を受理した！ 政府は『手の内を明かさない』原則に基づき、本措置の発動を公には一切認めない。歴史の表舞台には決して記録されない、史上初の非公然アクセス・無害化執行手順——作戦コード『GHOST PROTOCOL（ゴースト・プロトコル）』をこれより発動する！！",
+    "file": "assets/audio/voice/ch5_final_s3_reaction_03.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch5_final_s3_reaction_04",
+    "speaker": "kei",
+    "text": "通信プロトコルの亡霊（ゴースト）を使って26,739人を脅迫した奴らを、記録に残らない国家の非公然プロトコル『GHOST PROTOCOL』で音もなく葬り去る……！ アリア、無害化パケットを撃ち込め！！",
+    "file": "assets/audio/voice/ch5_final_s3_reaction_04.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "ch5_final_s3_reaction_05",
+    "speaker": "narrator",
+    "text": "暗黒の電脳空間で、非公然無害化プログラム『GHOST PROTOCOL』が光の矢となって放たれた。犯行本拠地のストレージは次々とパージされ、国際連携による全ミラーサイトのテイクダウン包囲網が一斉に発動した！",
+    "file": "assets/audio/voice/ch5_final_s3_reaction_05.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "epilogue_01",
+    "speaker": "narrator",
+    "text": "2026年10月28日、水曜日、午前4時00分。10月21日午前4時の「26,739台VPS全停止」から、ちょうど丸7日が経過した運命の時刻。",
+    "file": "assets/audio/voice/epilogue_01.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "epilogue_02",
+    "speaker": "narrator",
+    "text": "ドイツ・フランクフルトのC2拠点に展開されていた犯行サイトと盗難データ保管庫は完全に消去・無害化され、国内外の関係機関との連携によりミラーサイトを含む全ドメインの完全停止（テイクダウン）が確認された。",
+    "file": "assets/audio/voice/epilogue_02.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "epilogue_03",
+    "speaker": "takamiya",
+    "text": "1週間前の午前4時は絶望の中で26,739台の電源を落としたが……1週間後の午前4時、ついに奴らの脅迫サイトを完全に沈黙させたぞ！ 第13報として全国へリリース完了だ！",
+    "file": "assets/audio/voice/epilogue_03.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "epilogue_04",
+    "speaker": "mio",
+    "text": "さらに凄いことになっています！ 10月28日正午に日・英・中の3言語でオープンした『総額100万米ドル・サイバー犯罪撲滅懸賞金』の専用窓口ですが……！",
+    "file": "assets/audio/voice/epilogue_04.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "epilogue_05",
+    "speaker": "aria",
+    "text": "マスター！ 開設からわずか6時間で【113件】（第14報）、そして翌10月29日夕刻（第16報）には累計【321件もの有力情報】が国内外から殺到しました！ 100万ドルの懸賞金に目が眩んだ共犯ブローカーたちが、我先にと主犯の身元や暗号資産の送金経路を売り渡しています！",
+    "file": "assets/audio/voice/epilogue_05.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "epilogue_06",
+    "speaker": "takamiya",
+    "text": "そして10月29日、ついに決定打が繋がった（第15報）……！ 懸賞金窓口のタレコミと、うちの社内ホワイトハッカーチームの独自調査——あの放置されていた【38件の脆弱性通報チケット】の添付データを突合したんだ！",
+    "file": "assets/audio/voice/epilogue_06.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "epilogue_07",
+    "speaker": "aria",
+    "text": "はい！ 数ヶ月前に窓口へ送られてきた1通目のバグ報告チケットに添付されていた概念実証（PoC）スクリプトを解析したところ、今回の口座焼却と全く同じ関数名『DEMOFASTLOSS』、同一のコンパイラ署名、そして今回のカナリア逆探知で浮上した主犯のテスト環境IPおよび報奨金受取用ウォレットアドレスが100%一致しました！",
+    "file": "assets/audio/voice/epilogue_07.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "epilogue_08",
+    "speaker": "mio",
+    "text": "提出された特定情報に基づき、警察庁および国際捜査網が不正アクセス禁止法違反容疑等で主犯と共犯ブローカーの検挙・国際手配へ動いています！ 完全なる包囲網の完成です！",
+    "file": "assets/audio/voice/epilogue_08.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "epilogue_09",
+    "speaker": "takamiya",
+    "text": "……なあケイ。これが数ヶ月前、あいつが最初に窓口へ送ってきた1通目のレポートだ。この時はまだ脅迫の言葉なんて一言もなかった。『このままでは2万6千人のユーザーの資産が危険に晒されます。修正案と実証コードを添えるので確認してください』と、最初は純粋な技術者として手を差し伸べていたんだ……。",
+    "file": "assets/audio/voice/epilogue_09.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "epilogue_10",
+    "speaker": "takamiya",
+    "text": "もし俺たちの会社が、その1通目にたった一言『報告ありがとう、すぐ直す』と返して正当なバグバウンティ（報奨金）を払っていれば……あいつは犯罪者にならずに済んだのかもしれないな。",
+    "file": "assets/audio/voice/epilogue_10.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "epilogue_11",
+    "speaker": "kei",
+    "text": "……ああ。渾身の技術と善意の警告を、顔も見えない企業の窓口に38回もゴミ箱へ捨てられ、『存在しないもの（ゴースト）』として扱われた孤独と絶望は、同じエンジニアとして痛いほど分かる。企業の傲慢と怠慢が、一人の優秀な技術者を闇へ突き落とした事実は決して消えない。",
+    "file": "assets/audio/voice/epilogue_11.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "epilogue_12",
+    "speaker": "kei",
+    "text": "だがなレン、どんなに理不尽に無視されようと、その怒りを無関係な26,739人の顧客に向け、他人の財産と人生を焼き払った瞬間に、あいつが誇っていたはずの技術の魂は死んだんだ。",
+    "file": "assets/audio/voice/epilogue_12.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "epilogue_13",
+    "speaker": "kei",
+    "text": "あいつが渇望した『100万ドルの報奨金（Bug Bounty）』は、皮肉にも共犯者に裏切られ、自分自身を檻へ送る『100万ドルの懸賞金（Cybercrime Bounty）』となって返ってきた——それが一線を越えた亡霊の末路だ。",
+    "file": "assets/audio/voice/epilogue_13.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "epilogue_14",
+    "speaker": "kuroda",
+    "text": "その通りだナギサ君。政府は『手の内を明かさない』原則に基づき、非公然無害化措置『GHOST PROTOCOL』の発動を永遠に公表しない。……だがタカミヤ君、国家の亡霊が消したのは「敵のサーバー」だけだ。貴社が免罪されたとは夢にも思うなよ。",
+    "file": "assets/audio/voice/epilogue_14.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "epilogue_15",
+    "speaker": "kuroda",
+    "text": "全26,739台共通の管理者アカウント設計、2019年からのRDPドライブ共有設定放置、傘下ホワイトハッカーの事前警告と外部からの38回の脆弱性通報の黙殺、そして第1報の矮小化発表とトップ個人のSNS発信による混乱……金融庁・個人情報保護委員会・総務省による行政調査とガバナンス責任の追及は、これからが本番だ。",
+    "file": "assets/audio/voice/epilogue_15.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "epilogue_16",
+    "speaker": "kei",
+    "text": "統括官の言う通りだ、レン。これを『100万ドルの懸賞金で悪党を倒した企業の英雄的勝利』なんて美談にして終わらせるなよ。企業の過失や、38回の警告を亡霊（なかったこと）にした罪まで消して逃げることは許されない。本当の戦いは、都合の悪い技術的侵入原因（Root Cause）を1ミリも隠さず天下に開示することから始まるんだ。",
+    "file": "assets/audio/voice/epilogue_16.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "epilogue_17",
+    "speaker": "takamiya",
+    "text": "……ああ、胸に刻むよケイ。トップのパフォーマンスや金銭補償の裏に隠れず、俺たちが犯した設計上の過ちも、善意の脆弱性報告を無視し続けた窓口の罪も、すべて第三者検証報告書として世の中に晒す。二度と技術者の警告を『亡霊』にしない——それが26,739人のユーザーと、闇に堕ちたあいつに対する、俺たちの本当の償いだ。",
+    "file": "assets/audio/voice/epilogue_17.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "epilogue_18",
+    "speaker": "aria",
+    "text": "攻撃者のサーバーは沈黙し、321件の包囲網と1通目のレポートがすべての真相を結びました。そして残された企業と社会には、痛みを伴う再出発の朝が訪れようとしていますね、マスター。",
+    "file": "assets/audio/voice/epilogue_18.mp3",
+    "existingVoiceUrl": null
+  },
+  {
+    "id": "epilogue_19",
+    "speaker": "narrator",
+    "text": "黙殺された38通の警告から始まり、26,739台の沈黙へと至った電脳金融戦争は、報奨金を巡る痛烈なアイロニーと企業ガバナンスへの重い問いを残して、その幕を閉じたのである。",
+    "file": "assets/audio/voice/epilogue_19.mp3",
+    "existingVoiceUrl": null
+  }
+]

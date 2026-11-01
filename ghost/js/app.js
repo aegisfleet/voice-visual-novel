@@ -822,8 +822,17 @@ class NovelApp {
     );
     this.handleLineIllustration(item.illustration);
     this.applyDialogueDirectives(item);
-    this.startTyping(item.text, item.speaker, item.voiceUrl);
+    this.startTyping(item.text, item.speaker, this.resolveVoiceUrl(item));
     this.addToBacklog(item.speaker, item.text);
+  }
+
+  // セリフに対応する収録音声URLを解決する（直接指定 → 自動生成マニフェストの順）
+  resolveVoiceUrl(item) {
+    if (!item) return null;
+    if (item.voiceUrl) return item.voiceUrl;
+    const manifest = window.GHOST_VOICE_MANIFEST;
+    if (!manifest || !item.speaker || !item.text) return null;
+    return manifest[`${item.speaker}::${item.text}`] || null;
   }
 
   // 演出ディレクティブ（BGM・SE・エフェクト・テロップ・マルチカットシークエンス）の適用

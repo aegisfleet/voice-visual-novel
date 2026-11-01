@@ -195,6 +195,7 @@ async function runTest() {
 
     // PC画面キャプチャ保存
     const outDir = 'C:\\Users\\raizi\\.gemini\\antigravity\\brain\\3eafd1a5-bdd4-4e5b-a845-8f42a7fe5c00';
+    fs.mkdirSync(outDir, { recursive: true });
     await page.screenshot({ path: path.join(outDir, 'ghost_auto_speed_pc.png') });
     console.log('📷 PCキャプチャ保存完了: ghost_auto_speed_pc.png');
 
@@ -293,6 +294,48 @@ async function runTest() {
     await page.evaluate(() => {
       window.ghostApp.stopVoicePlayback();
       window.ghostApp.audio.setVoiceSpeed(1.0);
+    });
+
+    // 7. マニフェスト経由の収録ボイス解決＆実再生検証（プロローグ以外の章セリフ）
+    console.log('7. マニフェスト経由の章セリフ音声検証');
+    const manifestVoice = await page.evaluate(async () => {
+      const app = window.ghostApp;
+      const line = app.scenario.chapters[0].introDialogue[0];
+      const resolved = app.resolveVoiceUrl(line);
+      const response = resolved ? await fetch(resolved, { method: 'HEAD' }) : null;
+      return {
+        speaker: line.speaker,
+        resolved,
+        status: response?.status ?? 0,
+        manifestSize: Object.keys(window.GHOST_VOICE_MANIFEST || {}).length,
+      };
+    });
+    console.log('マニフェスト解決結果:', manifestVoice);
+    if (!manifestVoice.resolved || !manifestVoice.resolved.startsWith('assets/audio/voice/')) {
+      throw new Error(`章セリフの音声URLを解決できませんでした: ${JSON.stringify(manifestVoice)}`);
+    }
+    if (manifestVoice.status !== 200) {
+      throw new Error(`音声ファイルが配信されていません (HTTP ${manifestVoice.status})`);
+    }
+
+    const chapterVoicePlayback = await page.evaluate(async () => {
+      const app = window.ghostApp;
+      const line = app.scenario.chapters[0].introDialogue[0];
+      app.speakText(line.text, line.speaker, app.resolveVoiceUrl(line));
+      await new Promise((r) => setTimeout(r, 2500));
+      const audio = app.audio.voiceAudio;
+      return {
+        isVoicePlaying: app.isVoicePlaying,
+        currentTime: audio?.currentTime ?? 0,
+        duration: audio?.duration ?? 0,
+      };
+    });
+    console.log('章セリフ実再生結果:', chapterVoicePlayback);
+    if (!(chapterVoicePlayback.currentTime > 0.3)) {
+      throw new Error(`収録ボイスが再生されていません: ${JSON.stringify(chapterVoicePlayback)}`);
+    }
+    await page.evaluate(() => {
+      window.ghostApp.stopVoicePlayback();
     });
 
     console.log('✅ 全検証ステップに成功しました！');
