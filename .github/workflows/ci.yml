@@ -32,6 +32,9 @@ jobs:
       - name: Run Cognitive Complexity Check
         run: npm run check:complexity
 
+      - name: Run Portal Extras Tests
+        run: node --test tests/test_portal_extras.js
+
       - name: Run Ghost E2E Tests
         run: npm run test:e2e
 

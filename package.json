@@ -4,7 +4,7 @@
   "description": "AIフルボイス・Webビジュアルノベルゲームのポータルサイトおよび第1作『PROJECT EVE』",
   "private": true,
   "scripts": {
-    "test": "python tests/test_scenario_integrity.py && python tests/test_audio_lifecycle.py && python tests/test_ghost_integrity.py && python tests/test_ghost_voice.py",
+    "test": "python tests/test_scenario_integrity.py && python tests/test_audio_lifecycle.py && python tests/test_ghost_integrity.py && python tests/test_ghost_voice.py && node --test tests/test_portal_extras.js",
     "test:box": "python box/tests/run_all_tests.py",
     "check": "biome check .",
     "check:fix": "biome check --write .",

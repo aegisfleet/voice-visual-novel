@@ -539,6 +539,9 @@
       text-decoration: none;
       transition: all 0.2s ease;
     }
+    .clear-bonus-link[hidden] {
+      display: none;
+    }
 
     .btn-sub:hover {
       background: rgba(14, 165, 233, 0.2);
@@ -758,7 +761,7 @@
           <div class="card-thumb">
             <img src="eve/assets/backgrounds/cyber_hq.jpg" alt="PROJECT EVE: 家族のためのハッキング">
             <span class="status-badge available">● 公開中 (PLAYABLE)</span>
-            <span class="playtime-badge">⏱ 約3〜5分</span>
+            <span class="playtime-badge">⏱ 想定20〜30分</span>
           </div>
           <div class="card-body">
             <h3 class="game-title">PROJECT EVE</h3>
@@ -782,8 +785,8 @@
                 <span class="btn-play-title">🎮 事件の捜査を開始する</span>
               </a>
               <div class="sub-actions">
-                <a href="eve/samples.html" class="btn-sub" id="btnSamplesEve">🎧 ボイス試聴室</a>
-                <a href="eve/novel.html" class="btn-sub" id="btnNovelEve">📖 小説版 (TRUE END)</a>
+                <a href="eve/samples.html" class="btn-sub clear-bonus-link" id="btnSamplesEve" data-eve-clear-bonus hidden>🎧 ボイス試聴室</a>
+                <a href="eve/novel.html" class="btn-sub clear-bonus-link" id="btnNovelEve" data-eve-clear-bonus hidden>📖 小説版 (TRUE END)</a>
               </div>
             </div>
           </div>
@@ -794,7 +797,7 @@
           <div class="card-thumb">
             <img src="box/assets/images/card_thumb_composite.jpg" alt="BOX WORM 〜55ドルの自己増殖知性〜">
             <span class="status-badge available">● 公開中 (PLAYABLE)</span>
-            <span class="playtime-badge">⏱ 約10〜15分</span>
+            <span class="playtime-badge">⏱ 想定45〜60分</span>
           </div>
           <div class="card-body">
             <h3 class="game-title" style="color: #38bdf8;">BOX WORM</h3>
@@ -818,7 +821,7 @@
                 <span class="btn-play-title">⚡ 部屋の調査を開始する</span>
               </a>
               <div class="sub-actions">
-                <a href="box/samples.html" class="btn-sub" id="btnSamplesBox">🎙️ ボイス試聴室</a>
+                <a href="box/samples.html" class="btn-sub clear-bonus-link" id="btnSamplesBox" data-box-clear-bonus hidden>🎙️ ボイス試聴室</a>
               </div>
             </div>
           </div>
@@ -829,7 +832,7 @@
           <div class="card-thumb">
             <img src="ghost/assets/images/ogp-ghost.jpg" alt="GHOST PROTOCOL 〜26,739台の亡霊と能動的サイバー防御・発動第1号〜">
             <span class="status-badge available">● 公開中 (PLAYABLE)</span>
-            <span class="playtime-badge">⏱ 全5章・フルボイス</span>
+            <span class="playtime-badge">⏱ 想定45〜60分</span>
           </div>
           <div class="card-body">
             <h3 class="game-title">GHOST PROTOCOL</h3>
@@ -894,9 +897,9 @@
         <a href="./eve/">🎮 PROJECT EVE 本編</a>
         <a href="./box/">📺 BOX WORM 本編</a>
         <a href="./ghost/">⚡ GHOST PROTOCOL 本編</a>
-        <a href="./box/samples.html">🎙️ BOX WORM ボイス試聴室</a>
-        <a href="./eve/novel.html">📖 EVE トゥルーエンド小説</a>
-        <a href="./eve/samples.html">🎧 EVE ボイス＆BGM試聴室</a>
+        <a href="./box/samples.html" class="clear-bonus-link" id="footerBoxSamples" data-box-clear-bonus hidden>🎙️ BOX WORM ボイス試聴室</a>
+        <a href="./eve/novel.html" class="clear-bonus-link" id="footerEveNovel" data-eve-clear-bonus hidden>📖 EVE トゥルーエンド小説</a>
+        <a href="./eve/samples.html" class="clear-bonus-link" id="footerEveSamples" data-eve-clear-bonus hidden>🎧 EVE ボイス＆BGM試聴室</a>
         <a href="https://github.com/aegisfleet/voice-visual-novel" target="_blank" rel="noopener noreferrer">🐙 GitHub リポジトリ</a>
       </div>
       <div class="footer-env">
@@ -907,6 +910,7 @@
     </footer>
   </main>
 
+  <script src="assets/js/portal-extras.js"></script>
   <script src="assets/js/share.js"></script>
 </body>
 </html>
