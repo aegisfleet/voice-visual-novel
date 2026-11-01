@@ -58,6 +58,9 @@ class NovelApp {
     this.isTyping = false;
     this.isAutoActive = true; // デフォルトでAUTO有効
     this.isVoicePlaying = false;
+    // セリフごとの音声トークン。前セリフの遅延コールバック（onended/onerror）で
+    // 再生中の次セリフを打ち切ってしまわないよう、古い通知を識別する。
+    this.voiceLineToken = 0;
     this.isSkipActive = false;
     this.currentDialogueQueue = [];
     this.queueIndex = 0;
@@ -1206,6 +1209,40 @@ class NovelApp {
     this.scheduleNextLine(waitTime);
   }
 
+  // 音声の終了通知（onended）を取りこぼした場合の保険。
+  // 実際に音声が流れている間は絶対に打ち切らず、停止を確認してから次へ進める。
+  armVoiceEndWatchdog(token, text) {
+    clearTimeout(this.voiceWaveFallbackTimer);
+    const speedFactor = this.audio.voiceSpeed || 1.0;
+    const charCount = text?.length || 10;
+    // onended も speaking 判定も更新されない異常時のみ発火する最終復帰期限
+    const hardDeadline =
+      Date.now() + Math.min(180000, Math.max(30000, Math.round((charCount * 600) / speedFactor)));
+    this.voiceWaveFallbackTimer = setTimeout(() => {
+      this.pollVoicePlaybackEnd(token, hardDeadline);
+    }, 3000);
+  }
+
+  pollVoicePlaybackEnd(token, hardDeadline) {
+    if (token !== this.voiceLineToken || !this.isVoicePlaying) return;
+
+    // 実際の音声が再生中なら、このセリフの自動進行はまだ行わない
+    if (this.audio.isVoicePlaying()) {
+      if (Date.now() >= hardDeadline) {
+        // 再生が固まったまま最終期限を超えた場合のみ強制停止して復帰
+        this.stopVoicePlayback();
+        this.handleVoicePlaybackEnd();
+        return;
+      }
+      this.voiceWaveFallbackTimer = setTimeout(() => {
+        this.pollVoicePlaybackEnd(token, hardDeadline);
+      }, 500);
+      return;
+    }
+
+    this.handleVoicePlaybackEnd();
+  }
+
   // 音声再生完了時のハンドラ（AUTOモード時、音声終了後に適度な余韻を置いて自動進行）
   handleVoicePlaybackEnd() {
     clearTimeout(this.voiceWaveFallbackTimer);
@@ -1328,6 +1365,8 @@ class NovelApp {
   speakText(text, speakerId, voiceUrl = null) {
     clearTimeout(this.voiceWaveFallbackTimer);
     clearTimeout(this.autoTimer);
+    const token = ++this.voiceLineToken;
+
     if (!this.audio.voiceEnabled) {
       this.isVoicePlaying = false;
       this.dom.voiceWaveIndicator?.classList.add('hidden');
@@ -1337,20 +1376,15 @@ class NovelApp {
     this.dom.voiceWaveIndicator?.classList.remove('hidden');
     this.isVoicePlaying = true;
 
-    // Web Speech API / MP3再生のフォールバックタイマー：文字数に応じた最大時間で確実に波形を消し、AUTO進行を発火
-    const speedFactor = this.audio.voiceSpeed || 1.0;
-    const maxDuration = Math.min(
-      20000,
-      Math.max(3000, Math.round(((text?.length || 10) * 180) / speedFactor)),
-    );
-    this.voiceWaveFallbackTimer = setTimeout(() => {
-      this.handleVoicePlaybackEnd();
-    }, maxDuration);
+    // 終了通知の取りこぼしに備え、実再生の停止を確認してから進行する監視を開始
+    this.armVoiceEndWatchdog(token, text);
 
     this.audio.speak(
       text,
       char,
       () => {
+        // 前セリフの遅延コールバックなら、現在のセリフを打ち切らない
+        if (token !== this.voiceLineToken) return;
         this.handleVoicePlaybackEnd();
       },
       voiceUrl,
@@ -1358,6 +1392,8 @@ class NovelApp {
   }
 
   stopVoicePlayback() {
+    // 進行中の音声コールバックを無効化してから停止する
+    this.voiceLineToken += 1;
     clearTimeout(this.voiceWaveFallbackTimer);
     this.isVoicePlaying = false;
     this.audio.stopVoice();

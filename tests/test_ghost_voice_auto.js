@@ -256,6 +256,45 @@ async function runTest() {
       throw new Error('音声再生終了後に正しくautoTimerがスケジュールされませんでした！');
     }
 
+    // 6. 長尺ボイスがウォッチドッグで途中打ち切りされないことの回帰検証
+    console.log('6. 長尺ボイスの自動進行タイミング検証');
+    await page.evaluate(() => {
+      const app = window.ghostApp;
+      app.stopAuto();
+      app.stopSkip();
+      app.stopVoicePlayback();
+      app.audio.setVoiceSpeed(2.0);
+    });
+    const longVoiceText =
+      '了解しました、マスター。沈黙した26,739台の背後に潜む『亡霊の通信規約（ゴースト・プロトコル）』——命を削る電脳戦争の幕開けです！';
+    await page.evaluate(
+      (text) => {
+        const app = window.ghostApp;
+        app.speakText(text, 'aria', 'assets/audio/prologue/prologue_18.mp3');
+      },
+      longVoiceText,
+    );
+    // 旧実装の打ち切り時刻（文字数×180ms÷2倍速 ≒ 6.0秒）を超えても再生中であること
+    await new Promise((r) => setTimeout(r, 7000));
+    const longVoiceState = await page.evaluate(() => {
+      const app = window.ghostApp;
+      const audio = app.audio.voiceAudio;
+      return {
+        isVoicePlaying: app.isVoicePlaying,
+        audioTime: audio?.currentTime ?? 0,
+        audioDuration: audio?.duration ?? 0,
+        audioEnded: audio?.ended ?? true,
+      };
+    });
+    console.log('長尺ボイス検証結果:', longVoiceState);
+    if (!longVoiceState.isVoicePlaying || longVoiceState.audioEnded) {
+      throw new Error(`長尺ボイスが途中で打ち切られました: ${JSON.stringify(longVoiceState)}`);
+    }
+    await page.evaluate(() => {
+      window.ghostApp.stopVoicePlayback();
+      window.ghostApp.audio.setVoiceSpeed(1.0);
+    });
+
     console.log('✅ 全検証ステップに成功しました！');
     if (consoleErrors.length > 0) {
       console.warn('⚠️ コンソールエラーが発生しています:', consoleErrors);
