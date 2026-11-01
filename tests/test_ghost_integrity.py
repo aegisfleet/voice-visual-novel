@@ -99,6 +99,21 @@ class TestGhostHtmlStructure(unittest.TestCase):
         self.assertIn('id="line-external-notice"', self.html_content)
         self.assertIn("openExternalBrowser=1", self.html_content)
 
+    def test_portal_navigation_is_available_from_title_and_ending(self):
+        """全作品でタイトル画面、エンディング画面からポータルへ戻れること"""
+        title_start = self.html_content.index('id="screen-title"')
+        title_end = self.html_content.index('id="screen-novel"')
+        ending_start = self.html_content.index('id="screen-ending"')
+        ending_end = self.html_content.index('id="overlay-cutin"')
+        self.assertIn('href="../index.html" id="portal-link-title"', self.html_content[title_start:title_end])
+        self.assertIn('href="../index.html" id="portal-link-ending"', self.html_content[ending_start:ending_end])
+
+        eve_html = (REPO_ROOT / "eve" / "index.html").read_text(encoding="utf-8")
+        box_html = (REPO_ROOT / "box" / "index.html").read_text(encoding="utf-8")
+        self.assertIn('id="portalLink" href="../"', eve_html)
+        self.assertIn('href="../index.html" class="portal-link-btn"', box_html)
+        self.assertIn('href="../index.html" class="btn-subtle btn-link-plate"', box_html)
+
 
 class TestGhostPublishingMetadata(unittest.TestCase):
     """GHOSTポータル掲載・アクセス解析・SNS共有メタデータの検証"""
