@@ -48,7 +48,7 @@ window.CHARACTER_DATA = {
     shortName: 'ケイ',
     role: '独立系セキュリティ＆金融取引基盤エンジニア (27歳)',
     color: '#38bdf8',
-    ttsModel: 'Iapetus',
+    ttsModel: 'Puck',
     ttsRate: 1.05,
     ttsPitch: 1.0,
     sprite: 'assets/characters/kei.png',

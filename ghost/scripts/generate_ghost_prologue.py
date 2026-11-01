@@ -45,8 +45,8 @@ OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 # ナレーション: narrator_sample2 (Voice: Fenrir)
 STYLE_NARRATOR = "gritty, mature, calm, noir detective narrator, atmospheric and steady low voice, clear Japanese articulation, serious tension"
 
-# ナギサ ケイ: kei_sample2 (Voice: Iapetus)
-STYLE_KEI = "calm, intellectual, thoughtful young Japanese specialist in his late 20s, precise, logical, sincere and composed, clear Japanese articulation"
+# ナギサ ケイ: kei_sample1 (Voice: Puck)
+STYLE_KEI = "youthful articulate young Japanese engineer in his late 20s, energetic, intellectual, sharp and determined, speaking up firmly and clearly"
 
 # アリア (ARIA): aria_sample1 (Voice: Zephyr)
 STYLE_ARIA = "clear, articulate, gentle ethereal cyber AI girl, sweet, transparent, softly emotional, speaking clearly in Japanese with subtle digital warmth"
@@ -83,7 +83,7 @@ PROLOGUE_LINES = [
     {
         "id": "prologue_03",
         "speaker": "kei",
-        "voice": "Iapetus",
+        "voice": "Puck",
         "style": STYLE_KEI,
         "text": "……なんだ？ 自前の自動取引アルゴリズム監視サーバーから、全APIの異常切断アラートが連続で出ている……！？",
         "speech_text": "…なんだ？ じまえのじどうとりひきアルゴリズムかんしサーバーから、ぜんエーピーアイのいじょうせつだんアラートが、れんぞくででている…！？"
@@ -101,7 +101,7 @@ PROLOGUE_LINES = [
     {
         "id": "prologue_05",
         "speaker": "kei",
-        "voice": "Iapetus",
+        "voice": "Puck",
         "style": STYLE_KEI,
         "text": "全インスタンスだと！？ あのクラウドは、全国数万人規模の個人トレーダーが24時間体制で金融自動売買（FT4/FT5）を動かしている国内屈指の巨大基盤だぞ！",
         "speech_text": "ぜんインスタンスだと！？ あのクラウドは、ぜんこくすうまんにんきぼのこじんトレーダーが、にじゅうよじかんたいせいで、きんゆうじどうばいばい、エフティーフォー、エフティーファイブをうごかしている、こくないくっしのきょだいきばんだぞ！"
@@ -137,7 +137,7 @@ PROLOGUE_LINES = [
     {
         "id": "prologue_09",
         "speaker": "kei",
-        "voice": "Iapetus",
+        "voice": "Puck",
         "style": STYLE_KEI,
         "text": "レン！？ 落ち着け、一体何が起きてるんだ！？",
         "speech_text": "レン！？ おちつけ、いったいなにがおきてるんだ！？"
@@ -164,7 +164,7 @@ PROLOGUE_LINES = [
     {
         "id": "prologue_12",
         "speaker": "kei",
-        "voice": "Iapetus",
+        "voice": "Puck",
         "style": STYLE_KEI,
         "text": "26,739台の全停止……！ 日本の金融インフラを揺るがす未曾有のインシデントになるぞ……！",
         "speech_text": "にまんろくせんななひゃくさんじゅうきゅうだいの、ぜんていし…！ にほんのきんゆうインフラをゆるがす、みぞうのインシデントになるぞ…！"
@@ -191,7 +191,7 @@ PROLOGUE_LINES = [
     {
         "id": "prologue_15",
         "speaker": "kei",
-        "voice": "Iapetus",
+        "voice": "Puck",
         "style": STYLE_KEI,
         "text": "……なんだ、このメッセージは？",
         "speech_text": "…なんだ、このメッセージは？"
@@ -209,7 +209,7 @@ PROLOGUE_LINES = [
     {
         "id": "prologue_17",
         "speaker": "kei",
-        "voice": "Iapetus",
+        "voice": "Puck",
         "style": STYLE_KEI,
         "text": "全26,739台のVPSを物理遮断した直後に、この挑発メッセージ……敵の仕掛けはまだ終わっていない！ アリア、セキュアVMを展開しろ！ これよりクラウド緊急対策本部の支援に入る！",
         "speech_text": "ぜんにまんろくせんななひゃくさんじゅうきゅうだいの、ブイピーエスを、ぶつりしゃだんしたちょくごに、このちょうはつメッセージ…てきのしかけは、まだおわっていない！ アリア、セキュアブイエムをてんかいしろ！ これより、クラウドきんきゅうたいさくほんぶのしえんにはいる！"
