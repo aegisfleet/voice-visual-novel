@@ -30,6 +30,6 @@
   "license": "MIT",
   "devDependencies": {
     "@biomejs/biome": "2.6.7",
-    "puppeteer": "^25.17.0"
+    "puppeteer": "^25.18.1"
   }
 }
