@@ -16,10 +16,9 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+  # 成果物のアップロードとデプロイを別ジョブに分離する
+  # （同一ジョブだとアーティファクト API の反映遅延で "Found 0 artifact(s)" となるため）
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -34,6 +33,13 @@ jobs:
           # リポジトリ直下の全静的ファイルをアーティファクトとしてアップロード
           path: '.'
 
+  deploy:
+    needs: build
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v5
